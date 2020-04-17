@@ -6,6 +6,7 @@
 
 # Common build directory
 build/*
+install/*
 
 # Compiled Object files
 *.slo

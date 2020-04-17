@@ -12,18 +12,18 @@ endif()
 
 add_library (co_sim_c_io SHARED ${CMAKE_CURRENT_SOURCE_DIR}/co_sim_c_io.cpp)
 
-# enable C++11
-set_target_properties(co_sim_c_io PROPERTIES
-    CXX_STANDARD 11
-    CXX_STANDARD_REQUIRED YES
-    CXX_EXTENSIONS NO
-)
+# # enable C++11
+# set_target_properties(co_sim_c_io PROPERTIES
+#     CXX_STANDARD 11
+#     CXX_STANDARD_REQUIRED YES
+#     CXX_EXTENSIONS NO
+# )
 
 # using PARENT_DIRECTORY to check whether installed in Kratos or standalone
 get_directory_property( IN_KRATOS PARENT_DIRECTORY )
 if(IN_KRATOS)
     # if compiled from inside of Kratos, then install to the "libs" folder
-    install(TARGETS co_sim_c_io DESTINATION libs )
+    install(TARGETS co_sim_c_io DESTINATION ${CMAKE_SOURCE_DIR}/install )
 else()
     # otherwise install to current directory
     install(TARGETS co_sim_c_io DESTINATION ${CMAKE_SOURCE_DIR} )
