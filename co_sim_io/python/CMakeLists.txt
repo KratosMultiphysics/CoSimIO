@@ -16,13 +16,7 @@ else()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus")
     endif()
 
-    if(DEFINED CO_SIM_IO_PYBIND)
-        message( "CO_SIM_IO_PYBIND set to: " ${CO_SIM_IO_PYBIND})
-    else()
-        message( FATAL_ERROR "CO_SIM_IO_PYBIND not defined" )
-    endif()
-
-    add_subdirectory(${CO_SIM_IO_PYBIND} dummy_dir)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/../../external_libraries/pybind11 dummy)
 endif()
 
 pybind11_add_module(CoSimIO co_sim_io_python.cpp)
