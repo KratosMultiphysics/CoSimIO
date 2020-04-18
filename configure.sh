@@ -1,5 +1,5 @@
 rm -r build/
 rm -r install/
 
-cmake -H"." -B"build" -DENABLE_FORTRAN_EXAMPLES=ON
+cmake -H"." -B"build"
 cmake --build "build" --target install
