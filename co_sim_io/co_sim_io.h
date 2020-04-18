@@ -24,11 +24,11 @@ Note that this introduces dependencies such as e.g. boost (header-only version) 
 */
 
 // macros are protected to avoid redefinition in case they were defined externally (e.g. in CMake)
-#ifndef KRATOS_CO_SIM_IO_ENABLE_SOCKETS
-// #define KRATOS_CO_SIM_IO_ENABLE_SOCKETS // uncomment for Sockets support
+#ifndef CO_SIM_IO_USING_SOCKETS
+// #define CO_SIM_IO_USING_SOCKETS // uncomment for Sockets support
 #endif
-#ifndef KRATOS_CO_SIM_IO_ENABLE_MPI
-// #define KRATOS_CO_SIM_IO_ENABLE_MPI // uncomment for MPI support
+#ifndef CO_SIM_IO_USING_MPI
+// #define CO_SIM_IO_USING_MPI // uncomment for MPI support
 #endif
 
 // System includes

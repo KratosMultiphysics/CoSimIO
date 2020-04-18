@@ -14,14 +14,14 @@
 #define KRATOS_CO_SIM_CONNECTION_H_INCLUDED
 
 // Optional includes
-#ifdef KRATOS_CO_SIM_IO_ENABLE_SOCKETS
+#ifdef CO_SIM_IO_USING_SOCKETS
 #include "co_sim_sockets_communication.h"
-#endif // KRATOS_CO_SIM_IO_ENABLE_SOCKETS
+#endif // CO_SIM_IO_USING_SOCKETS
 
 
-#ifdef KRATOS_CO_SIM_IO_ENABLE_MPI
+#ifdef CO_SIM_IO_USING_MPI
 #include "co_sim_mpi_communication.h"
-#endif // KRATOS_CO_SIM_IO_ENABLE_MPI
+#endif // CO_SIM_IO_USING_MPI
 
 // System includes
 #include <iostream>
@@ -178,17 +178,17 @@ private:
         if (comm_format == "file") {
             mpComm = std::unique_ptr<CoSimCommunication>(new CoSimFileCommunication(mConnectionName, rSettings, mIsConnectionMaster));
         } else if (comm_format == "sockets") {
-            #ifdef KRATOS_CO_SIM_IO_ENABLE_SOCKETS
+            #ifdef CO_SIM_IO_USING_SOCKETS
             mpComm = std::unique_ptr<CoSimCommunication>(new CoSimSocketsCommunication(mConnectionName, rSettings, mIsConnectionMaster));
             #else
             KRATOS_CO_SIM_ERROR << "Support for Sockets was not compiled!" << std::endl;
-            #endif /* KRATOS_CO_SIM_IO_ENABLE_SOCKETS */
+            #endif // CO_SIM_IO_USING_SOCKETS
         } else if (comm_format == "mpi") {
-            #ifdef KRATOS_CO_SIM_IO_ENABLE_MPI
+            #ifdef CO_SIM_IO_USING_MPI
             mpComm = std::unique_ptr<CoSimCommunication>(new CoSimMPICommunication(mConnectionName, rSettings, mIsConnectionMaster));
             #else
             KRATOS_CO_SIM_ERROR << "Support for MPI was not compiled!" << std::endl;
-            #endif /* KRATOS_CO_SIM_IO_ENABLE_MPI */
+            #endif // CO_SIM_IO_USING_MPI
         } else {
             KRATOS_CO_SIM_ERROR << "Unsupported communication format: " << comm_format << std::endl;
         }
