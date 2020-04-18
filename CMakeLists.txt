@@ -1,9 +1,10 @@
 project(CoSimIOTesting CXX)
 cmake_minimum_required (VERSION 2.8.6)
 
+include(CMakeDependentOption)
 OPTION ( ENABLE_SOCKETS "Enable sockets communication" OFF )
 OPTION ( ENABLE_MPI "Enable MPI communication and MPI examples" OFF )
-OPTION ( ENABLE_FORTRAN_EXAMPLES "Enable Fortran examples" OFF )
+cmake_dependent_option(ENABLE_FORTRAN_EXAMPLES "Enable Fortran example" OFF MSVC ON) # disable by default in Win, enable otherwise
 
 message("\nUsing the following configuration:")
 message("    ENABLE_SOCKETS:          " ${ENABLE_SOCKETS})
