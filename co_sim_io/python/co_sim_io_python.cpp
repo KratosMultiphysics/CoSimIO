@@ -5,7 +5,7 @@
 //       \____/\____/____/_/_/ /_/ /_/___/\____/
 //      Kratos CoSimulationApplication
 //
-//  License:		 BSD License, see license.txt
+//  License:         BSD License, see license.txt
 //
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
