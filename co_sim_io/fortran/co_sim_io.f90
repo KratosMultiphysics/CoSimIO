@@ -1,12 +1,13 @@
-! KRATOS  / ___|___/ ___|(_)_ __ ___  _   _| | __ _| |_(_) ___  _ ___
-!        | |   / _ \___ \| | '_ ` _ \| | | | |/ _` | __| |/ _ \| '_  |
-!        | |__| (_) |__) | | | | | | | |_| | | (_| | |_| | (_) | | | |
-!         \____\___/____/|_|_| |_| |_|\__,_|_|\__,_|\__|_|\___/|_| |_|
+! Kratos   ______     _____ _           ________
+!         / ____/___ / ___/(_)___ ___  /  _/ __ |
+!        / /   / __ \\__ \/ / __ `__ \ / // / / /
+!       / /___/ /_/ /__/ / / / / / / // // /_/ /
+!       \____/\____/____/_/_/ /_/ /_/___/\____/
+!      Kratos CoSimulationApplication
 !
-!  License:		 BSD License
-!                   license: CoSimulationApplication/license.txt
+!  License:		 BSD License, see license.txt
 !
-!  Main authors:    Philipp Bucher
+!  Main authors:    Philipp Bucher (https://github.com/philbucher)
 !
 
 MODULE co_sim_io
