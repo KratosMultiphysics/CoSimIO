@@ -267,7 +267,7 @@ private:
                 line_stream >> num_cells;
                 line_stream >> cell_list_size;
 
-                rElementConnectivities.resize(cell_list_size);
+                rElementConnectivities.resize(cell_list_size-num_cells); // the first in number in each line is the number of connectivities, which is not needed bcs it can be derived form the elements-type
                 rElementTypes.resize(num_cells);
 
                 KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Mesh contains " << num_cells << " Elements" << std::endl;
