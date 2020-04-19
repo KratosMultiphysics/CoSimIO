@@ -12,16 +12,19 @@
 
 // Exposure of the CoSimIO to Python
 
+// System includes
 #include <functional>
 #include <vector>
 #include <string>
 #include <tuple>
 
+// pybind includes
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
 
+// CoSimIO include
 #include "../co_sim_io.h"
 
 namespace CoSimIO_Py_Wrappers {
