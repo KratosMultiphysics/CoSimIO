@@ -13,6 +13,9 @@
 // Exposure of the CoSimIO to Python
 
 #include <functional>
+#include <vector>
+#include <string>
+#include <tuple>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
@@ -23,8 +26,22 @@
 
 namespace CoSimIO_Py_Wrappers {
 
-void ImportMesh() {
-    KRATOS_CO_SIM_ERROR << "this function is not yet implemented!" << std::endl;
+std::tuple<std::vector<double>, std::vector<int>, std::vector<int>> ImportMesh(
+    const std::string& rConnectionName,
+    const std::string& rIdentifier)
+{
+    std::vector<double> nodal_coordinates;
+    std::vector<int> element_connectivities;
+    std::vector<int> element_types;
+
+    CoSimIO::ImportMesh(
+        rConnectionName,
+        rIdentifier,
+        nodal_coordinates,
+        element_connectivities,
+        element_types);
+
+    return std::make_tuple(nodal_coordinates, element_connectivities, element_types);
 }
 
 void ExportMesh(
@@ -109,5 +126,4 @@ PYBIND11_MODULE(CoSimIO, m)
         CoSimIO::Register(rConnectionName, "ImportMesh", FunctionPointer);});;
     m.def("Register_ExportMesh",   [](const std::string& rConnectionName, std::function<void(const std::string&, const std::string&)> FunctionPointer){
         CoSimIO::Register(rConnectionName, "ExportMesh", FunctionPointer);});
-
 }
