@@ -170,6 +170,20 @@ inline ReturnInfo ExportMesh(
     Internals::GetConnection(rConnectionName).ExportMesh(rIdentifier, rNodalCoordinates, rElementConnectivities, rElementTypes);
 }
 
+inline ReturnInfo ImportSolutionInfo(
+    const std::string& rConnectionName,
+    SolutionInfo& rSolutionInfo)
+{
+    // Internals::GetConnection(rConnectionName).ImportSolutionInfo(rSolutionInfo);
+}
+
+inline ReturnInfo ExportSolutionInfo(
+    const std::string& rConnectionName,
+    const SolutionInfo& rSolutionInfo)
+{
+    // Internals::GetConnection(rConnectionName).ExportSolutionInfo(rSolutionInfo);
+}
+
 inline int IsConverged(const std::string& rConnectionName)
 {
     return Internals::GetConnection(rConnectionName).IsConverged();
