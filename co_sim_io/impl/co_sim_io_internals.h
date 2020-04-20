@@ -37,7 +37,12 @@ public:
     virtual void resize(const std::size_t NewSize) = 0;
 
     virtual TDataType* data() = 0;
-    virtual const TDataType* data() const  = 0;
+    virtual const TDataType* data() const = 0;
+    const TDataType* data_const() const
+    {
+        const auto& r_const_this = *this;
+        return data();
+    }
 
     const TDataType& operator[](const std::size_t Index) const
     {
