@@ -51,7 +51,7 @@ inline void SendControlSignal(
 
 } // namespace Internals
 
-inline void Connect(const std::string& rConnectionName, CoSimIO::SettingsType Settings)
+inline ReturnInfo Connect(const std::string& rConnectionName, CoSimIO::SettingsType Settings)
 {
     using namespace Internals;
     KRATOS_CO_SIM_ERROR_IF(HasIO(rConnectionName)) << "A connection for \"" << rConnectionName << "\" already exists!" << std::endl;
@@ -60,12 +60,12 @@ inline void Connect(const std::string& rConnectionName, CoSimIO::SettingsType Se
     GetConnection(rConnectionName).Connect();
 }
 
-inline void Connect(const std::string& rConnectionName, const std::string& rSettingsFileName)
+inline ReturnInfo Connect(const std::string& rConnectionName, const std::string& rSettingsFileName)
 {
     Connect(rConnectionName, Internals::ReadSettingsFile(rSettingsFileName)); // forward call to funciton above
 }
 
-inline void Disconnect(const std::string& rConnectionName)
+inline ReturnInfo Disconnect(const std::string& rConnectionName)
 {
     using namespace Internals;
     KRATOS_CO_SIM_ERROR_IF_NOT(HasIO(rConnectionName)) << "Trying to disconnect connection \"" << rConnectionName << "\" which does not exist!" << std::endl;
@@ -76,7 +76,7 @@ inline void Disconnect(const std::string& rConnectionName)
 
 // Version for C++, there this input is a std::vector, which we have to wrap before passing it on
 template<>
-inline void ImportData(
+inline ReturnInfo ImportData(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     std::vector<double>& rData)
@@ -88,7 +88,7 @@ inline void ImportData(
 
 // Version for C and fortran, there we already get a container
 template<>
-inline void ImportData(
+inline ReturnInfo ImportData(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     CoSimIO::Internals::DataContainer<double>& rData)
@@ -98,7 +98,7 @@ inline void ImportData(
 
 // Version for C++, there this input is a std::vector, which we have to wrap before passing it on
 template<>
-inline void ExportData(
+inline ReturnInfo ExportData(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     std::vector<double>& rData)
@@ -110,7 +110,7 @@ inline void ExportData(
 
 // Version for C and fortran, there we already get a container
 template<>
-inline void ExportData(
+inline ReturnInfo ExportData(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     CoSimIO::Internals::DataContainer<double>& rData)
@@ -119,7 +119,7 @@ inline void ExportData(
 }
 
 template<>
-inline void ImportMesh(
+inline ReturnInfo ImportMesh(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     std::vector<double>& rNodalCoordinates,
@@ -134,7 +134,7 @@ inline void ImportMesh(
 }
 
 template<>
-inline void ImportMesh(
+inline ReturnInfo ImportMesh(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
@@ -145,7 +145,7 @@ inline void ImportMesh(
 }
 
 template<>
-inline void ExportMesh(
+inline ReturnInfo ExportMesh(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     std::vector<double>& rNodalCoordinates,
@@ -160,7 +160,7 @@ inline void ExportMesh(
 }
 
 template<>
-inline void ExportMesh(
+inline ReturnInfo ExportMesh(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
@@ -175,13 +175,13 @@ inline int IsConverged(const std::string& rConnectionName)
     return Internals::GetConnection(rConnectionName).IsConverged();
 }
 
-inline void Run(const std::string& rConnectionName)
+inline ReturnInfo Run(const std::string& rConnectionName)
 {
     Internals::GetConnection(rConnectionName).Run();
 }
 
 template<>
-inline void Register(
+inline ReturnInfo Register(
     const std::string& rConnectionName,
     const std::string& rFunctionName,
     std::function<void()> FunctionPointer)
@@ -197,7 +197,7 @@ inline void Register(
 }
 
 template<>
-inline void Register(
+inline ReturnInfo Register(
     const std::string& rConnectionName,
     const std::string& rFunctionName,
     void (*pFunctionPointer)(void))
@@ -213,7 +213,7 @@ inline void Register(
 }
 
 template<>
-inline void Register(
+inline ReturnInfo Register(
     const std::string& rConnectionName,
     const std::string& rFunctionName,
     std::function<double(double)> FunctionPointer)
@@ -232,7 +232,7 @@ inline void Register(
     Internals::GetConnection(rConnectionName).Register(rFunctionName, fct_callback);
 }
 
-inline void Register(
+inline ReturnInfo Register(
     const std::string& rConnectionName,
     const std::string& rFunctionName,
     double (*pFunctionPointer)(double))
@@ -252,7 +252,7 @@ inline void Register(
 }
 
 template<>
-inline void Register(
+inline ReturnInfo Register(
     const std::string& rConnectionName,
     const std::string& rFunctionName,
     std::function<void(const std::string&, const std::string&)> FunctionPointer)
@@ -268,7 +268,7 @@ inline void Register(
 }
 
 template<>
-inline void Register(
+inline ReturnInfo Register(
     const std::string& rConnectionName,
     const std::string& rFunctionName,
     void (*pFunctionPointer)(const std::string&, const std::string&))
@@ -284,7 +284,7 @@ inline void Register(
 }
 
 template<>
-inline void Register(
+inline ReturnInfo Register(
     const std::string& rConnectionName,
     const std::string& rFunctionName,
     void (*pFunctionPointer)(const char*, const char*))

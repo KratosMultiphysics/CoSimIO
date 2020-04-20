@@ -36,30 +36,31 @@ Note that this introduces dependencies such as e.g. boost (header-only version) 
 
 // Project includes
 #include "impl/co_sim_io_define.h"
+#include "impl/co_sim_io_info.h"
 
 namespace CoSimIO {
 
-inline void Connect(const std::string& rConnectionName, CoSimIO::SettingsType Settings);
-inline void Connect(const std::string& rConnectionName, const std::string& rSettingsFileName);
+inline ReturnInfo Connect(const std::string& rConnectionName, CoSimIO::SettingsType Settings);
+inline ReturnInfo Connect(const std::string& rConnectionName, const std::string& rSettingsFileName);
 
-inline void Disconnect(const std::string& rConnectionName);
+inline ReturnInfo Disconnect(const std::string& rConnectionName);
 
 
 template<class TContainerType>
-inline void ImportData(
+inline ReturnInfo ImportData(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     TContainerType& rData);
 
 template<class TContainerType>
-inline void ExportData(
+inline ReturnInfo ExportData(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     TContainerType& rData);
 
 
 template<class TDoubleContainerType, class TIntContainerType>
-inline void ImportMesh(
+inline ReturnInfo ImportMesh(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     TDoubleContainerType& rNodalCoordinates,
@@ -67,7 +68,7 @@ inline void ImportMesh(
     TIntContainerType& rElementTypes);
 
 template<class TDoubleContainerType, class TIntContainerType>
-inline void ExportMesh(
+inline ReturnInfo ExportMesh(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     TDoubleContainerType& rNodalCoordinates,
@@ -77,10 +78,10 @@ inline void ExportMesh(
 
 inline int IsConverged(const std::string& rConnectionName);
 
-inline void Run(const std::string& rConnectionName);
+inline ReturnInfo Run(const std::string& rConnectionName);
 
 template<typename TFunctionType>
-inline void Register(
+inline ReturnInfo Register(
     const std::string& rConnectionName,
     const std::string& rFunctionName,
     TFunctionType rFunction);
