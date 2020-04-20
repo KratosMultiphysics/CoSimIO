@@ -101,10 +101,10 @@ template<>
 inline ReturnInfo ExportData(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
-    std::vector<double>& rData)
+    const std::vector<double>& rData)
 {
     using namespace CoSimIO::Internals;
-    std::unique_ptr<DataContainer<double>> p_container(new DataContainerStdVector<double>(rData));
+    std::unique_ptr<DataContainer<double>> p_container(new DataContainerStdVectorReadOnly<double>(rData));
     GetConnection(rConnectionName).ExportData(rIdentifier, *p_container);
 }
 
@@ -113,7 +113,7 @@ template<>
 inline ReturnInfo ExportData(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
-    CoSimIO::Internals::DataContainer<double>& rData)
+    const CoSimIO::Internals::DataContainer<double>& rData)
 {
     Internals::GetConnection(rConnectionName).ExportData(rIdentifier, rData);
 }
@@ -148,14 +148,14 @@ template<>
 inline ReturnInfo ExportMesh(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
-    std::vector<double>& rNodalCoordinates,
-    std::vector<int>& rElementConnectivities,
-    std::vector<int>& rElementTypes)
+    const std::vector<double>& rNodalCoordinates,
+    const std::vector<int>& rElementConnectivities,
+    const std::vector<int>& rElementTypes)
 {
     using namespace CoSimIO::Internals;
-    std::unique_ptr<DataContainer<double>> p_container_coords(new DataContainerStdVector<double>(rNodalCoordinates));
-    std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerStdVector<int>(rElementConnectivities));
-    std::unique_ptr<DataContainer<int>> p_container_types(new DataContainerStdVector<int>(rElementTypes));
+    std::unique_ptr<DataContainer<double>> p_container_coords(new DataContainerStdVectorReadOnly<double>(rNodalCoordinates));
+    std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerStdVectorReadOnly<int>(rElementConnectivities));
+    std::unique_ptr<DataContainer<int>> p_container_types(new DataContainerStdVectorReadOnly<int>(rElementTypes));
     Internals::GetConnection(rConnectionName).ExportMesh(rIdentifier, *p_container_coords, *p_container_conn, *p_container_types);
 }
 
@@ -163,9 +163,9 @@ template<>
 inline ReturnInfo ExportMesh(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
-    CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
-    CoSimIO::Internals::DataContainer<int>& rElementConnectivities,
-    CoSimIO::Internals::DataContainer<int>& rElementTypes)
+    const CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
+    const CoSimIO::Internals::DataContainer<int>& rElementConnectivities,
+    const CoSimIO::Internals::DataContainer<int>& rElementTypes)
 {
     Internals::GetConnection(rConnectionName).ExportMesh(rIdentifier, rNodalCoordinates, rElementConnectivities, rElementTypes);
 }

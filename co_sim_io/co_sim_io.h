@@ -56,7 +56,7 @@ template<class TContainerType>
 inline ReturnInfo ExportData(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
-    TContainerType& rData);
+    const TContainerType& rData);
 
 
 template<class TDoubleContainerType, class TIntContainerType>
@@ -71,9 +71,9 @@ template<class TDoubleContainerType, class TIntContainerType>
 inline ReturnInfo ExportMesh(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
-    TDoubleContainerType& rNodalCoordinates,
-    TIntContainerType& rElementConnectivities,
-    TIntContainerType& rElementTypes);
+    const TDoubleContainerType& rNodalCoordinates,
+    const TIntContainerType& rElementConnectivities,
+    const TIntContainerType& rElementTypes);
 
 
 inline int IsConverged(const std::string& rConnectionName);
