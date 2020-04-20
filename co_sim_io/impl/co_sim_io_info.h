@@ -99,13 +99,12 @@ namespace CoSimIO {
 //     std::string Identifier;
 // };
 
-// struct TransferInfo
-// {
-//     TransferInfo(const TransferInfoC& rCInfo) {/*...*/} // conversion happens IMPLICITLY!
-//     TransferInfo(const std::string& rIdentifier) : Identifier(rIdentifier) {}
+struct TransferInfo
+{
+    // TransferInfo(const std::string& rIdentifier) : Identifier(rIdentifier) {}
 
-//     std::string Identifier;
-// };
+    // std::string Identifier;
+};
 
 // struct MeshInfo
 // {
@@ -114,17 +113,18 @@ namespace CoSimIO {
 
 
 
-// struct SolutionInfo
-// {
-//     SolutionInfo() {}
+class SolutionInfo
+{
+public:
+    SolutionInfo() {}
 
-//     double CurrentTime;
-//     double NewTime;
-//     bool IsConverged=true;
+    double CurrentTime;
+    double NewTime;
+    bool IsConverged=true;
 
-//     std::unordered_map<std::string, int> MeshStates; // 0=Unchanged // 1=NodesMoved // 2=FullRemesh
+    std::unordered_map<std::string, int> MeshStates; // 0=Unchanged // 1=NodesMoved // 2=FullRemesh
 
-// };
+};
 
 
 struct ReturnInfo
