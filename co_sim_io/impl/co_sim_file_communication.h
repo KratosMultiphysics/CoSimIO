@@ -303,9 +303,9 @@ private:
 
     void ExportMeshImpl(
         const std::string& rIdentifier,
-        CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
-        CoSimIO::Internals::DataContainer<int>& rElementConnectivities,
-        CoSimIO::Internals::DataContainer<int>& rElementTypes) override
+        const CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
+        const CoSimIO::Internals::DataContainer<int>& rElementConnectivities,
+        const CoSimIO::Internals::DataContainer<int>& rElementTypes) override
     {
         const std::string file_name(GetFullPath("CoSimIO_mesh_" + GetConnectionName() + "_" + rIdentifier + ".vtk"));
 

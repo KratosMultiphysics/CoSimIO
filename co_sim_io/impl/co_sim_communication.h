@@ -172,9 +172,9 @@ private:
 
     virtual void ExportMeshImpl(
         const std::string& rIdentifier,
-        CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
-        CoSimIO::Internals::DataContainer<int>& rElementConnectivities,
-        CoSimIO::Internals::DataContainer<int>& rElementTypes)
+        const CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
+        const CoSimIO::Internals::DataContainer<int>& rElementConnectivities,
+        const CoSimIO::Internals::DataContainer<int>& rElementTypes)
     {
         KRATOS_CO_SIM_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
     }
