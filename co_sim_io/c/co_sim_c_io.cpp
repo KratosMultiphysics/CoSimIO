@@ -16,18 +16,25 @@ extern "C" {
 }
 #include "../co_sim_io.h"
 
-
-void CoSimIO_Connect(const char* pConnectionName, const char* pSettingsFileName)
-{
-    CoSimIO::Connect(pConnectionName, pSettingsFileName);
+namespace {
+    CoSimIO_ReturnInfo ConvertInfo(CoSimIO::ReturnInfo yyy) {
+        CoSimIO_ReturnInfo nnn;
+        return nnn;
+    }
 }
 
-void CoSimIO_Disconnect(const char* pConnectionName)
+
+CoSimIO_ReturnInfo CoSimIO_Connect(const char* pConnectionName, const char* pSettingsFileName)
 {
-    CoSimIO::Disconnect(pConnectionName);
+    return ConvertInfo(CoSimIO::Connect(pConnectionName, pSettingsFileName));
 }
 
-void CoSimIO_ImportData(
+CoSimIO_ReturnInfo CoSimIO_Disconnect(const char* pConnectionName)
+{
+    return ConvertInfo(CoSimIO::Disconnect(pConnectionName));
+}
+
+CoSimIO_ReturnInfo CoSimIO_ImportData(
     const char* pConnectionName,
     const char* pIdentifier,
     int* pSize,
@@ -35,11 +42,12 @@ void CoSimIO_ImportData(
 {
     using namespace CoSimIO::Internals;
     std::unique_ptr<DataContainer<double>> p_container(new DataContainerRawMemory<double>(ppData, *pSize));
-    CoSimIO::ImportData(pConnectionName, pIdentifier, *p_container);
+    auto info = ConvertInfo(CoSimIO::ImportData(pConnectionName, pIdentifier, *p_container));
     *pSize = p_container->size();
+    return info;
 }
 
-void CoSimIO_ExportData(
+CoSimIO_ReturnInfo CoSimIO_ExportData(
     const char* pConnectionName,
     const char* pIdentifier,
     int Size,
@@ -47,10 +55,10 @@ void CoSimIO_ExportData(
 {
     using namespace CoSimIO::Internals;
     std::unique_ptr<DataContainer<double>> p_container(new DataContainerRawMemory<double>(pData, Size));
-    CoSimIO::ExportData(pConnectionName, pIdentifier, *p_container);
+    return ConvertInfo(CoSimIO::ExportData(pConnectionName, pIdentifier, *p_container));
 }
 
-void CoSimIO_ImportMesh(
+CoSimIO_ReturnInfo CoSimIO_ImportMesh(
     const char* pConnectionName,
     const char* pIdentifier,
     int* pNumberOfNodes,
@@ -63,12 +71,13 @@ void CoSimIO_ImportMesh(
     std::unique_ptr<DataContainer<double>> p_container_coords(new DataContainerRawMemory<double>(ppNodalCoordinates, *pNumberOfNodes));
     std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerRawMemory<int>(ppElementConnectivities, *pNumberOfElements)); // using "NumberOfElements" here is wrong! => has to be computed! Or sth like this ... (maybe even has to be passed...)
     std::unique_ptr<DataContainer<int>> p_container_types(new DataContainerRawMemory<int>(ppElementTypes, *pNumberOfElements));
-    CoSimIO::ImportMesh(pConnectionName, pIdentifier, *p_container_coords, *p_container_conn, *p_container_types);
+    auto info = ConvertInfo(CoSimIO::ImportMesh(pConnectionName, pIdentifier, *p_container_coords, *p_container_conn, *p_container_types));
     *pNumberOfNodes = p_container_coords->size();
     *pNumberOfElements = p_container_types->size();
+    return info;
 }
 
-void CoSimIO_ExportMesh(
+CoSimIO_ReturnInfo CoSimIO_ExportMesh(
     const char* pConnectionName,
     const char* pIdentifier,
     int NumberOfNodes,
@@ -81,41 +90,43 @@ void CoSimIO_ExportMesh(
     std::unique_ptr<DataContainer<double>> p_container_coords(new DataContainerRawMemory<double>(pNodalCoordinates, NumberOfNodes));
     std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerRawMemory<int>(pElementConnectivities, NumberOfElements)); // using "NumberOfElements" here is wrong! => has to be computed! Or sth like this ... (maybe even has to be passed...)
     std::unique_ptr<DataContainer<int>> p_container_types(new DataContainerRawMemory<int>(pElementTypes, NumberOfElements));
-    CoSimIO::ExportMesh(pConnectionName, pIdentifier, *p_container_coords, *p_container_conn, *p_container_types);
+    return ConvertInfo(CoSimIO::ExportMesh(pConnectionName, pIdentifier, *p_container_coords, *p_container_conn, *p_container_types));
 }
 
-void CoSimIO_RegisterAdvanceInTime(
+CoSimIO_ReturnInfo CoSimIO_RegisterAdvanceInTime(
     const char* pConnectionName,
     double (*pFunctionPointer)(double))
 {
-    CoSimIO::Register(pConnectionName, "AdvanceInTime", pFunctionPointer);
+    return ConvertInfo(CoSimIO::Register(pConnectionName, "AdvanceInTime", pFunctionPointer));
 }
 
-void CoSimIO_RegisterSolvingFunction(
+CoSimIO_ReturnInfo CoSimIO_RegisterSolvingFunction(
     const char* pConnectionName,
     const char* pFunctionName,
     void (*pFunctionPointer)())
 {
-    CoSimIO::Register(pConnectionName, pFunctionName, pFunctionPointer);
+    return ConvertInfo(CoSimIO::Register(pConnectionName, pFunctionName, pFunctionPointer));
 }
 
-void CoSimIO_RegisterDataExchangeFunction(
+CoSimIO_ReturnInfo CoSimIO_RegisterDataExchangeFunction(
     const char* pConnectionName,
     const char* pFunctionName,
     void (*pFunctionPointer)(const char*, const char*))
 {
-    CoSimIO::Register(pConnectionName, pFunctionName, pFunctionPointer);
+    return ConvertInfo(CoSimIO::Register(pConnectionName, pFunctionName, pFunctionPointer));
 }
 
-void CoSimIO_Run(const char* pConnectionName)
+CoSimIO_ReturnInfo CoSimIO_Run(const char* pConnectionName)
 {
-    CoSimIO::Run(pConnectionName);
+    return ConvertInfo(CoSimIO::Run(pConnectionName));
 }
 
 int CoSimIO_IsConverged(const char* pConnectionName)
 {
     return CoSimIO::IsConverged(pConnectionName);
 }
+
+
 
 void _AllocateMemoryInt(const int* pSize, int** ppData)
 {

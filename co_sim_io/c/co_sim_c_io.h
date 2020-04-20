@@ -16,30 +16,32 @@
 // C Interface for CoSimulation
 // see "co_sim_io.h"
 
+#include "co_sim_io_c_info.h"
+
 #ifdef __cplusplus
 extern "C" { // Define extern C if C++ compiler is used
 #endif
 
-void CoSimIO_Connect(
+struct CoSimIO_ReturnInfo CoSimIO_Connect(
     const char* pConnectionName,
     const char* pSettingsFileName);
 
-void CoSimIO_Disconnect(
+struct CoSimIO_ReturnInfo CoSimIO_Disconnect(
     const char* pConnectionName);
 
-void CoSimIO_ImportData(
+struct CoSimIO_ReturnInfo CoSimIO_ImportData(
     const char* pConnectionName,
     const char* pIdentifier,
     int* pSize,
     double** ppData);
 
-void CoSimIO_ExportData(
+struct CoSimIO_ReturnInfo CoSimIO_ExportData(
     const char* pConnectionName,
     const char* pIdentifier,
     int Size,
     double** pData);
 
-void CoSimIO_ImportMesh(
+struct CoSimIO_ReturnInfo CoSimIO_ImportMesh(
     const char* pConnectionName,
     const char* pIdentifier,
     int* pNumberOfNodes,
@@ -48,7 +50,7 @@ void CoSimIO_ImportMesh(
     int** ppElementConnectivities,
     int** ppElementTypes);
 
-void CoSimIO_ExportMesh(
+struct CoSimIO_ReturnInfo CoSimIO_ExportMesh(
     const char* pConnectionName,
     const char* pIdentifier,
     int NumberOfNodes,
@@ -57,24 +59,25 @@ void CoSimIO_ExportMesh(
     int** pElementConnectivities,
     int** pElementTypes);
 
-void CoSimIO_RegisterAdvanceInTime(
+struct CoSimIO_ReturnInfo CoSimIO_RegisterAdvanceInTime(
     const char* pConnectionName,
     double (*pFunctionPointer)(double));
 
-void CoSimIO_RegisterSolvingFunction(
+struct CoSimIO_ReturnInfo CoSimIO_RegisterSolvingFunction(
     const char* pConnectionName,
     const char* pFunctionName,
     void (*pFunctionPointer)());
 
-void CoSimIO_RegisterDataExchangeFunction(
+struct CoSimIO_ReturnInfo CoSimIO_RegisterDataExchangeFunction(
     const char* pConnectionName,
     const char* pFunctionName,
     void (*pFunctionPointer)(const char*, const char*));
 
-void CoSimIO_Run(const char* pConnectionName);
+struct CoSimIO_ReturnInfo CoSimIO_Run(const char* pConnectionName);
 
 int CoSimIO_IsConverged(const char* pConnectionName);
 
+// TODO refactor and move these functions to separate file, sicne they are only used in the fortran interface
 // The following functions are intended to only be used from Fortran
 // This is because memory used in the CoSimIO should be allocated and freed in C
 void _AllocateMemoryInt(const int Size, int** ppData);
