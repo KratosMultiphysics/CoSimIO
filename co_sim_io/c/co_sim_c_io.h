@@ -38,8 +38,8 @@ struct CoSimIO_ReturnInfo CoSimIO_ImportData(
 struct CoSimIO_ReturnInfo CoSimIO_ExportData(
     const char* pConnectionName,
     const char* pIdentifier,
-    int Size,
-    double** pData);
+    const int Size,
+    const double** pData);
 
 struct CoSimIO_ReturnInfo CoSimIO_ImportMesh(
     const char* pConnectionName,
@@ -53,11 +53,11 @@ struct CoSimIO_ReturnInfo CoSimIO_ImportMesh(
 struct CoSimIO_ReturnInfo CoSimIO_ExportMesh(
     const char* pConnectionName,
     const char* pIdentifier,
-    int NumberOfNodes,
-    int NumberOfElements,
-    double** pNodalCoordinates,
-    int** pElementConnectivities,
-    int** pElementTypes);
+    const int NumberOfNodes,
+    const int NumberOfElements,
+    const double** pNodalCoordinates,
+    const int** pElementConnectivities,
+    const int** pElementTypes);
 
 struct CoSimIO_ReturnInfo CoSimIO_RegisterAdvanceInTime(
     const char* pConnectionName,
