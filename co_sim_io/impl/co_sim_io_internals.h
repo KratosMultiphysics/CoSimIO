@@ -86,6 +86,22 @@ private:
 };
 
 template<typename TDataType>
+class DataContainerStdVectorReadOnly : public DataContainer<TDataType>
+{
+public:
+    explicit DataContainerStdVectorReadOnly(const std::vector<TDataType>& rVector)
+        : mrVector(rVector) {}
+
+    std::size_t size() const override {return mrVector.size();}
+    void resize(const std::size_t NewSize) override {KRATOS_CO_SIM_ERROR << "This is const!" << std::endl;}
+    const TDataType* data() const override {return mrVector.data();}
+    TDataType* data() override {KRATOS_CO_SIM_ERROR << "This is const!" << std::endl;}
+
+private:
+    const std::vector<TDataType>& mrVector;
+};
+
+template<typename TDataType>
 class DataContainerRawMemory : public DataContainer<TDataType>
 {
 public:
@@ -110,6 +126,23 @@ public:
 private:
     TDataType** mppData;
     std::size_t mSize;
+};
+
+template<typename TDataType>
+class DataContainerRawMemoryReadOnly : public DataContainer<TDataType>
+{
+public:
+    explicit DataContainerRawMemoryReadOnly(const TDataType** ppData, const std::size_t Size)
+        : mppData(ppData), mSize(Size) {}
+
+    std::size_t size() const override {return mSize;};
+    void resize(const std::size_t NewSize) override {KRATOS_CO_SIM_ERROR << "This is const!" << std::endl;};
+    const TDataType* data() const override {return *mppData;}
+    TDataType* data() override {KRATOS_CO_SIM_ERROR << "This is const!" << std::endl;}
+
+private:
+    const TDataType** mppData;
+    const std::size_t mSize;
 };
 
 inline void AddMissingSettings(const SettingsType& rDefaultSettings, SettingsType& rSettings)
