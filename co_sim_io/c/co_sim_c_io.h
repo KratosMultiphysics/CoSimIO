@@ -22,26 +22,26 @@
 extern "C" { // Define extern C if C++ compiler is used
 #endif
 
-struct CoSimIO_ReturnInfo CoSimIO_Connect(
+CoSimIO_ReturnInfo CoSimIO_Connect(
     const char* pConnectionName,
     const char* pSettingsFileName);
 
-struct CoSimIO_ReturnInfo CoSimIO_Disconnect(
+CoSimIO_ReturnInfo CoSimIO_Disconnect(
     const char* pConnectionName);
 
-struct CoSimIO_ReturnInfo CoSimIO_ImportData(
+CoSimIO_ReturnInfo CoSimIO_ImportData(
     const char* pConnectionName,
     const char* pIdentifier,
     int* pSize,
     double** ppData);
 
-struct CoSimIO_ReturnInfo CoSimIO_ExportData(
+CoSimIO_ReturnInfo CoSimIO_ExportData(
     const char* pConnectionName,
     const char* pIdentifier,
     const int Size,
     const double** pData);
 
-struct CoSimIO_ReturnInfo CoSimIO_ImportMesh(
+CoSimIO_ReturnInfo CoSimIO_ImportMesh(
     const char* pConnectionName,
     const char* pIdentifier,
     int* pNumberOfNodes,
@@ -50,7 +50,7 @@ struct CoSimIO_ReturnInfo CoSimIO_ImportMesh(
     int** ppElementConnectivities,
     int** ppElementTypes);
 
-struct CoSimIO_ReturnInfo CoSimIO_ExportMesh(
+CoSimIO_ReturnInfo CoSimIO_ExportMesh(
     const char* pConnectionName,
     const char* pIdentifier,
     const int NumberOfNodes,
@@ -59,21 +59,30 @@ struct CoSimIO_ReturnInfo CoSimIO_ExportMesh(
     const int** pElementConnectivities,
     const int** pElementTypes);
 
-struct CoSimIO_ReturnInfo CoSimIO_RegisterAdvanceInTime(
+
+CoSimIO_ReturnInfo CoSimIO_ImportSolutionInfo(
+    const char* pConnectionName,
+    CoSimIO_SolutionInfo* pSolutionInfo);
+
+CoSimIO_ReturnInfo CoSimIO_ExportSolutionInfo(
+    const char* pConnectionName,
+    const CoSimIO_SolutionInfo SolutionInfo);
+
+CoSimIO_ReturnInfo CoSimIO_RegisterAdvanceInTime(
     const char* pConnectionName,
     double (*pFunctionPointer)(double));
 
-struct CoSimIO_ReturnInfo CoSimIO_RegisterSolvingFunction(
+CoSimIO_ReturnInfo CoSimIO_RegisterSolvingFunction(
     const char* pConnectionName,
     const char* pFunctionName,
     void (*pFunctionPointer)());
 
-struct CoSimIO_ReturnInfo CoSimIO_RegisterDataExchangeFunction(
+CoSimIO_ReturnInfo CoSimIO_RegisterDataExchangeFunction(
     const char* pConnectionName,
     const char* pFunctionName,
     void (*pFunctionPointer)(const char*, const char*));
 
-struct CoSimIO_ReturnInfo CoSimIO_Run(const char* pConnectionName);
+CoSimIO_ReturnInfo CoSimIO_Run(const char* pConnectionName);
 
 int CoSimIO_IsConverged(const char* pConnectionName);
 

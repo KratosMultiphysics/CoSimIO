@@ -21,6 +21,26 @@ namespace {
         CoSimIO_ReturnInfo nnn;
         return nnn;
     }
+
+    CoSimIO_SolutionInfo ConvertInfo(CoSimIO::SolutionInfo yyy) {
+        CoSimIO_SolutionInfo nnn;
+        return nnn;
+    }
+
+    CoSimIO::SolutionInfo ConvertInfo(CoSimIO_SolutionInfo yyy) {
+        CoSimIO::SolutionInfo nnn;
+        return nnn;
+    }
+
+    CoSimIO_TransferInfo ConvertInfo(CoSimIO::TransferInfo yyy) {
+        CoSimIO_TransferInfo nnn;
+        return nnn;
+    }
+
+    CoSimIO::TransferInfo ConvertInfo(CoSimIO_TransferInfo yyy) {
+        CoSimIO::TransferInfo nnn;
+        return nnn;
+    }
 }
 
 
@@ -91,6 +111,23 @@ CoSimIO_ReturnInfo CoSimIO_ExportMesh(
     std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerRawMemoryReadOnly<int>(pElementConnectivities, NumberOfElements)); // using "NumberOfElements" here is wrong! => has to be computed! Or sth like this ... (maybe even has to be passed...)
     std::unique_ptr<DataContainer<int>> p_container_types(new DataContainerRawMemoryReadOnly<int>(pElementTypes, NumberOfElements));
     return ConvertInfo(CoSimIO::ExportMesh(pConnectionName, pIdentifier, *p_container_coords, *p_container_conn, *p_container_types));
+}
+
+CoSimIO_ReturnInfo CoSimIO_ImportSolutionInfo(
+    const char* pConnectionName,
+    CoSimIO_SolutionInfo* pSolutionInfo)
+{
+    // // TODO: check if the conversions are working
+    // CoSimIO::SolutionInfo tmp_info = ConvertInfo(rSolutionInfo);
+    // CoSimIO::ImportSolutionInfo(pConnectionName, tmp_info);
+    // rSolutionInfo = ConvertInfo(tmp_info);
+}
+
+CoSimIO_ReturnInfo CoSimIO_ExportSolutionInfo(
+    const char* pConnectionName,
+    const CoSimIO_SolutionInfo SolutionInfo)
+{
+    CoSimIO::ExportSolutionInfo(pConnectionName, ConvertInfo(SolutionInfo));
 }
 
 CoSimIO_ReturnInfo CoSimIO_RegisterAdvanceInTime(

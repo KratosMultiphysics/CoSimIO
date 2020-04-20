@@ -19,9 +19,17 @@
 #include "mpi.h"
 #endif // CO_SIM_IO_USING_MPI
 
-struct CoSimIO_ReturnInfo
+typedef struct CoSimIO_SolutionInfo
+{
+} CoSimIO_SolutionInfo;
+
+typedef struct CoSimIO_TransferInfo
+{
+} CoSimIO_TransferInfo;
+
+typedef struct CoSimIO_ReturnInfo
 {
     int ReturnCode;
-};
+} CoSimIO_ReturnInfo;
 
 #endif // KRATOS_CO_SIM_IO_C_INFO_H_INCLUDED
