@@ -38,15 +38,15 @@ CoSimIO_ReturnInfo CoSimIO_ImportData(
 CoSimIO_ReturnInfo CoSimIO_ExportData(
     const char* pConnectionName,
     const char* pIdentifier,
-    const int Size,
+    const int I_Size,
     const double** pData);
 
 CoSimIO_ReturnInfo CoSimIO_ImportMesh(
-    const char* pConnectionName,
+    const char* I_ConnectionName,
     const char* pIdentifier,
     int* pNumberOfNodes,
     int* pNumberOfElements,
-    double** ppNodalCoordinates,
+    double** O_NodalCoordinates,
     int** ppElementConnectivities,
     int** ppElementTypes);
 
@@ -75,7 +75,7 @@ CoSimIO_ReturnInfo CoSimIO_RegisterAdvanceInTime(
 CoSimIO_ReturnInfo CoSimIO_RegisterSolvingFunction(
     const char* pConnectionName,
     const char* pFunctionName,
-    void (*pFunctionPointer)());
+    void (*pFunctionPointer)(CoSimIO_SolutionInfo*));
 
 CoSimIO_ReturnInfo CoSimIO_RegisterDataExchangeFunction(
     const char* pConnectionName,

@@ -130,19 +130,13 @@ CoSimIO_ReturnInfo CoSimIO_ExportSolutionInfo(
     CoSimIO::ExportSolutionInfo(pConnectionName, ConvertInfo(SolutionInfo));
 }
 
-CoSimIO_ReturnInfo CoSimIO_RegisterAdvanceInTime(
-    const char* pConnectionName,
-    double (*pFunctionPointer)(double))
-{
-    return ConvertInfo(CoSimIO::Register(pConnectionName, "AdvanceInTime", pFunctionPointer));
-}
-
 CoSimIO_ReturnInfo CoSimIO_RegisterSolvingFunction(
     const char* pConnectionName,
     const char* pFunctionName,
-    void (*pFunctionPointer)())
+    void (*pFunctionPointer)(CoSimIO_SolutionInfo*))
 {
-    return ConvertInfo(CoSimIO::Register(pConnectionName, pFunctionName, pFunctionPointer));
+    // TODO use lambdas to do conversion of types, like done in other places!
+    // return ConvertInfo(CoSimIO::Register(pConnectionName, pFunctionName, pFunctionPointer));
 }
 
 CoSimIO_ReturnInfo CoSimIO_RegisterDataExchangeFunction(
@@ -150,7 +144,8 @@ CoSimIO_ReturnInfo CoSimIO_RegisterDataExchangeFunction(
     const char* pFunctionName,
     void (*pFunctionPointer)(const char*, const char*))
 {
-    return ConvertInfo(CoSimIO::Register(pConnectionName, pFunctionName, pFunctionPointer));
+    // TODO use lambdas to do conversion of types, like done in other places!
+    // return ConvertInfo(CoSimIO::Register(pConnectionName, pFunctionName, pFunctionPointer));
 }
 
 CoSimIO_ReturnInfo CoSimIO_Run(const char* pConnectionName)

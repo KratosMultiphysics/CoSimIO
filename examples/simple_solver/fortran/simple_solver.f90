@@ -298,9 +298,10 @@ program simple_solver_fortran
 
         call CoSimIO_Connect("external_simple_solver"//c_null_char, "unspecified"//c_null_char)
 
-        call CoSimIO_RegisterAdvanceInTime("external_simple_solver"//c_null_char, C_FUNLOC(advance_in_time))
         call CoSimIO_RegisterSolvingFunction("external_simple_solver"//c_null_char,&
-            "InitializeSolutionStep"//c_null_char, C_FUNLOC(initialize_solution_step))
+            "AdvanceInTime"//c_null_char, C_FUNLOC(advance_in_time))
+            call CoSimIO_RegisterSolvingFunction("external_simple_solver"//c_null_char,&
+                "InitializeSolutionStep"//c_null_char, C_FUNLOC(initialize_solution_step))
         call CoSimIO_RegisterSolvingFunction("external_simple_solver"//c_null_char,&
             "SolveSolutionStep"//c_null_char, C_FUNLOC(solve_solution_step))
 

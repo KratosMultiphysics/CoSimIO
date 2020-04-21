@@ -86,14 +86,6 @@ MODULE co_sim_io
             CHARACTER(C_CHAR), DIMENSION(*), INTENT(IN) :: ConnectionName
         END SUBROUTINE CoSimIO_Run
 
-
-        SUBROUTINE CoSimIO_RegisterAdvanceInTime(ConnectionName, &
-            FunctionPointer) BIND(C, NAME="CoSimIO_RegisterAdvanceInTime")
-            USE, INTRINSIC :: ISO_C_BINDING
-            CHARACTER(KIND=C_CHAR), DIMENSION(*), INTENT(IN) :: ConnectionName
-            TYPE(C_FUNPTR), INTENT(IN), VALUE :: FunctionPointer
-        END SUBROUTINE CoSimIO_RegisterAdvanceInTime
-
         SUBROUTINE CoSimIO_RegisterSolvingFunction(ConnectionName, FunctionName, &
             FunctionPointer) BIND(C, NAME="CoSimIO_RegisterSolvingFunction")
             USE, INTRINSIC :: ISO_C_BINDING

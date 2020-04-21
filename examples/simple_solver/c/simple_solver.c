@@ -31,22 +31,22 @@ void ExportMesh(const char* pConnectionName, const char* pIdentifier)
 
 }
 
-double AdvanceInTime(double pCurrentTime)
+void AdvanceInTime(CoSimIO_SolutionInfo* pSolutionInfo)
 {
-    return pCurrentTime + 0.1;
+    // return pCurrentTime + 0.1;
 }
 
-void InitializeSolutionStep()
-{
-
-}
-
-void SolveSolutionStep()
+void InitializeSolutionStep(CoSimIO_SolutionInfo* pSolutionInfo)
 {
 
 }
 
-void FinalizeSolutionStep()
+void SolveSolutionStep(CoSimIO_SolutionInfo* pSolutionInfo)
+{
+
+}
+
+void FinalizeSolutionStep(CoSimIO_SolutionInfo* pSolutionInfo)
 {
 
 }
@@ -56,7 +56,7 @@ int main()
 {
     CoSimIO_Connect("aaa", "ccc");
 
-    CoSimIO_RegisterAdvanceInTime("aaa", &AdvanceInTime);
+    CoSimIO_RegisterSolvingFunction("aaa", "AdvanceInTime", &AdvanceInTime);
     CoSimIO_RegisterSolvingFunction("aaa", "InitializeSolutionStep", &InitializeSolutionStep);
     CoSimIO_RegisterSolvingFunction("aaa", "SolveSolutionStep",      &SolveSolutionStep);
     CoSimIO_RegisterSolvingFunction("aaa", "FinalizeSolutionStep",   &FinalizeSolutionStep);
