@@ -1,27 +1,72 @@
+~~~
+   ______     _____ _           ________
+  / ____/___ / ___/(_)___ ___  /  _/ __ |
+ / /   / __ \\__ \/ / __ `__ \ / // / / /
+/ /___/ /_/ /__/ / / / / / / // // /_/ /
+\____/\____/____/_/_/ /_/ /_/___/\____/
+Kratos CoSimulationApplication
+~~~
+
 # CoSimIO
 
 _CoSimIO_ for exchanging data between different solvers. It works in combination with the [_CoSimulationApplication_](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/CoSimulationApplication)
 
-The (**C++**) interface is defined in **`co_sim_io.h`**.
-Interfaces for **C** (`c/co_sim_c_io.h`) and **Fortran** (`fortran/co_sim_io.f90`) also exist, which internally use the C++ interface.
+The implementation is defined in **co_sim_io**\
+Examples for coupling solvers in different languages can be found in the **examples** folder\
+A tutorial can be found in **tutorial**\
+The tests are contained in **tests**\
 
-### Usage
 
-Examples for the usage of the _CoSimIO_ in solvers can be found in `CoSimulationApplication/custom_helpers/dummy_solver/`
 
-**C++**
-Include `co_sim_io.h` in your code and use it.
+Mapping (DataTransfer) happens inside of CoSimulation
 
-**C**
-1. Include `c/co_sim_c_io.h` in your code and use it
-2. Compile `c/co_sim_c_io.h` into a shared library (see `c/CMakeLists.txt`) and link against it
+element types are the same as in vtk
 
-**Fortran**
-1. Include `fortran/co_sim_io.f90` in your code and use it
-2. Compile `c/co_sim_c_io.cpp` into a shared library (see `c/CMakeLists.txt`) and link against it. The `ISO_C_BINDING` module of fortran 2003 is used to connect the C-library with Fortran
+https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf Page 9 & 10
 
-### Notes on implementation:
-- Dependency on Kratos: There is **NO** dependency on Kratos. The _CoSimIO_ can be used completely without including or linking against Kratos
-- _CoSimIO_ is **header-only**, no linking is required
-- The only dependency is **C++11**
-- Different means of communication / data-exchange are available. Communication through files is the default, others (e.g. through Sockets or MPI) can be enabled at compile time (and selected at run time). This can introduce other dependencies such as boost or MPI. Except MPI, all these dependencies are header-only.
+Connect establishes _Connection_ which internally uses _Communication_
+
+print received values / mesh etc in DEBUG like empire did
+
+Precice: Make sending/receiving of multiple things at the same time possible, for improved performance! (writeBlockVectorData)
+
+Future:
+- MPI
+- Unittests-style for checking functions
+
+
+
+
+maybe add a fct that sends or receives some sort of info?
+
+We are typesafe => no void* => we are using the NATIVE data-formats in each language (Ok fortran not 100% but still ok!)
+
+
+VIII: 2.9.2: Definition of Coordinate System
+
+
+
+Tutorial / UnitTest style
+
+Connect - Disconnect => Hello World
+
+
+Connect - ImportData - Disconnect
+Connect - ExportData - Disconnect
+Connect - ImportData - ExportData - Disconnect
+
+Connect - ImportMesh - Disconnect
+Connect - ExportMesh - Disconnect
+Connect - ImportMesh - ExportMesh - Disconnect
+
+Data Exchange
+
+
+
+
+**POOYAN**
+- Now that we pass the SolutionInfo directly to the SolvingFunctions, maybe we can get rid of AdvanceInTime? I mean the signature is the same, it is anyway only called one per TS and can be integrated into InitializeSolutionStep
+    Or do we want to have this more explicit? (precice has a function for it) Still seems a bit redundant from the CoSim point of view...
+
+- I am again unsure if we should only have one _Info_ object (in C++) from which we can get everything. This would make life easier e.g. for saving the function pointers. Esp since we said that we would save everything in the Map it seems no longer necessary to have different objects. Or do we want to keep the special AccessFunctions (e.g. GetEchoLevel)? => then it be sommehow necessary.
+    Furthermore for Fortran and C we anyway need it to be separate objects
