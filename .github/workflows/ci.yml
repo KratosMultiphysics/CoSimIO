@@ -26,6 +26,16 @@ jobs:
 
     - name: Build CoSimCIO
       run: |
+        if [ ${{ matrix.os }} = ubuntu-latest ]; then
+
+        elif [ ${{ matrix.os }} = windows-latest ]; then
+          export CMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} /Zc:__cplusplus /WX"
+        elif [ ${{ matrix.os }} = macOS-latest ]; then
+
+        else
+          echo 'Unsupported os: ${{ matrix.os }}'
+          exit 1
+        fi
         cd co_sim_io/c
         cmake -H"." -B"build"
         cmake --build "build" --target install
