@@ -27,11 +27,11 @@ jobs:
     - name: Build CoSimCIO
       run: |
         if [ ${{ matrix.os }} = ubuntu-latest ]; then
-
+          export CMAKE_CXX_FLAGS="-Wignored-qualifiers -Werror=ignored-qualifiers -Werror=suggest-override -Werror=unused-variable -Werror=misleading-indentation -Werror=return-type -Werror=sign-compare -Werror=unused-but-set-variable -Werror=unused-local-typedefs -Werror=reorder -Werror=maybe-uninitialized"
         elif [ ${{ matrix.os }} = windows-latest ]; then
           export CMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} /Zc:__cplusplus /WX"
         elif [ ${{ matrix.os }} = macOS-latest ]; then
-
+          echo "Mac"
         else
           echo 'Unsupported os: ${{ matrix.os }}'
           exit 1
