@@ -19,8 +19,15 @@
 #include "mpi.h"
 #endif // CO_SIM_IO_USING_MPI
 
+// #define CreateNewGetValue(type) \
+// type ##type,  const char* Key)
+
+// #define DefineNewGetValue(type) \
+// type GetValue##type(char* label, CoSimIO_TransferInfo);
+
 typedef struct CoSimIO_SolutionInfo
 {
+    void* PtrCppInfo;
 } CoSimIO_SolutionInfo;
 
 typedef struct CoSimIO_TransferInfo

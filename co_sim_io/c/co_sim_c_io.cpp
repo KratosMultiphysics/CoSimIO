@@ -16,14 +16,26 @@ extern "C" {
 }
 #include "../co_sim_io.h"
 
+// #define CreateGetValueInt(CoSimIO_SolutionInfo CInfo, const char* Key)
+// {
+//     return static_cast<CoSimIO::SolutionInfo>(CInfo.cpp_info_ptr).GetValue<int>(Key);
+// }
+
+
 namespace {
     CoSimIO_ReturnInfo ConvertInfo(CoSimIO::ReturnInfo yyy) {
         CoSimIO_ReturnInfo nnn;
         return nnn;
     }
 
+    int GetValueInt(CoSimIO_SolutionInfo CInfo, const char* Key)
+    {
+        // return static_cast<CoSimIO::SolutionInfo>(CInfo.cpp_info_ptr).GetValue<int>(Key);
+    }
+
     CoSimIO_SolutionInfo ConvertInfo(CoSimIO::SolutionInfo yyy) {
         CoSimIO_SolutionInfo nnn;
+        // nnn.EchoLevel = yyy.GetValue<int>("EchoLevel");
         return nnn;
     }
 
