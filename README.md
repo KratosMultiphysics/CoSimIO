@@ -64,7 +64,7 @@ Data Exchange
 
 
 
-**POOYAN**
+# POOYAN
 - Now that we pass the SolutionInfo directly to the SolvingFunctions, maybe we can get rid of AdvanceInTime? I mean the signature is the same, it is anyway only called one per TS and can be integrated into InitializeSolutionStep
     Or do we want to have this more explicit? (precice has a function for it) Still seems a bit redundant from the CoSim point of view...
 
