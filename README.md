@@ -60,13 +60,3 @@ Connect - ExportMesh - Disconnect
 Connect - ImportMesh - ExportMesh - Disconnect
 
 Data Exchange
-
-
-
-
-# POOYAN
-- Now that we pass the SolutionInfo directly to the SolvingFunctions, maybe we can get rid of AdvanceInTime? I mean the signature is the same, it is anyway only called one per TS and can be integrated into InitializeSolutionStep
-    Or do we want to have this more explicit? (precice has a function for it) Still seems a bit redundant from the CoSim point of view...
-
-- I am again unsure if we should only have one _Info_ object (in C++) from which we can get everything. This would make life easier e.g. for saving the function pointers. Esp since we said that we would save everything in the Map it seems no longer necessary to have different objects. Or do we want to keep the special AccessFunctions (e.g. GetEchoLevel)? => then it be sommehow necessary.
-    Furthermore for Fortran and C we anyway need it to be separate objects
