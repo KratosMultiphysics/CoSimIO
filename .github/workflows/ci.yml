@@ -1,0 +1,42 @@
+name: Building and Testing
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron:  '0 1 * * *'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    timeout-minutes: 5
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+
+    - name: Build CoSimCIO
+      run: |
+        cd co_sim_io/c
+        cmake -H"." -B"build"
+        cmake --build "build" --target install
+
+    - name: Build CoSimPythonIO
+      run: |
+        cd co_sim_io/python
+        cmake -H"." -B"build"
+        cmake --build "build" --target install
+
+    - name: Run tests
+      run: |
+        cd tests
+        python run_all_tests.py
