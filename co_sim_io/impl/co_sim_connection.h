@@ -223,8 +223,10 @@ private:
         const static std::vector<std::string> allowed_function_names {
             "AdvanceInTime",
             "InitializeSolutionStep",
+            "Predict",
             "SolveSolutionStep",
             "FinalizeSolutionStep",
+            "OutputSolutionStep",
             // "ImportGeometry", // not yet implemented
             // "ExportGeometry", // not yet implemented
             "ImportMesh",
@@ -245,8 +247,10 @@ private:
             case ControlSignal::BreakSolutionLoop:      return "BreakSolutionLoop";
             case ControlSignal::AdvanceInTime:          return "AdvanceInTime";
             case ControlSignal::InitializeSolutionStep: return "InitializeSolutionStep";
+            case ControlSignal::Predict:                return "Predict";
             case ControlSignal::SolveSolutionStep:      return "SolveSolutionStep";
             case ControlSignal::FinalizeSolutionStep:   return "FinalizeSolutionStep";
+            case ControlSignal::OutputSolutionStep:     return "OutputSolutionStep";
             case ControlSignal::ImportGeometry:         return "ImportGeometry";
             case ControlSignal::ExportGeometry:         return "ExportGeometry";
             case ControlSignal::ImportMesh:             return "ImportMesh";

@@ -29,8 +29,10 @@ enum class ControlSignal
 
     AdvanceInTime,
     InitializeSolutionStep,
+    Predict,
     SolveSolutionStep,
     FinalizeSolutionStep,
+    OutputSolutionStep,
 
     ImportGeometry,
     ExportGeometry,
