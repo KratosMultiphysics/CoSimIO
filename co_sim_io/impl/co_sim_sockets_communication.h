@@ -30,9 +30,8 @@ public:
     explicit CoSimSocketsCommunication(const std::string& rName, SettingsType& rSettings, const bool IsConnectionMaster)
         : CoSimCommunication(rName, rSettings, IsConnectionMaster)
     {
-       CO_SIM_IO_ERROR << "Sockets Communication is not implemented yet" << std::endl;
+       static_assert(false,"Sockets Communication is not implemented yet");
     }
-
 };
 
 } // namespace Internals
