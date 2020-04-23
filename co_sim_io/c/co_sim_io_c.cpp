@@ -12,7 +12,7 @@
 
 // Project includes
 extern "C" {
-#include "co_sim_c_io.h"
+#include "co_sim_io_c.h"
 }
 #include "../co_sim_io.h"
 

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "co_sim_c_io.h"
+#include "co_sim_io_c.h"
 
 void ImportData(const char* pConnectionName, const char* pIdentifier)
 {
