@@ -16,57 +16,42 @@ extern "C" {
 }
 #include "../co_sim_io.h"
 
-// #define CreateGetValueInt(CoSimIO_SolutionInfo CInfo, const char* Key)
+// #define CreateGetValueInt(CoSimIO_Info CInfo, const char* Key)
 // {
 //     return static_cast<CoSimIO::SolutionInfo>(CInfo.cpp_info_ptr).GetValue<int>(Key);
 // }
 
 
 namespace {
-    CoSimIO_ReturnInfo ConvertInfo(CoSimIO::ReturnInfo yyy) {
-        CoSimIO_ReturnInfo nnn;
+    CoSimIO_Info ConvertInfo(CoSimIO::Info yyy) {
+        CoSimIO_Info nnn;
         return nnn;
     }
 
-    int GetValueInt(CoSimIO_SolutionInfo CInfo, const char* Key)
+    CoSimIO::Info ConvertInfo(CoSimIO_Info yyy) {
+        CoSimIO::Info nnn;
+        return nnn;
+    }
+
+    int GetValueInt(CoSimIO_Info CInfo, const char* Key)
     {
         // return static_cast<CoSimIO::SolutionInfo>(CInfo.cpp_info_ptr).GetValue<int>(Key);
-    }
-
-    CoSimIO_SolutionInfo ConvertInfo(CoSimIO::SolutionInfo yyy) {
-        CoSimIO_SolutionInfo nnn;
-        // nnn.EchoLevel = yyy.GetValue<int>("EchoLevel");
-        return nnn;
-    }
-
-    CoSimIO::SolutionInfo ConvertInfo(CoSimIO_SolutionInfo yyy) {
-        CoSimIO::SolutionInfo nnn;
-        return nnn;
-    }
-
-    CoSimIO_TransferInfo ConvertInfo(CoSimIO::TransferInfo yyy) {
-        CoSimIO_TransferInfo nnn;
-        return nnn;
-    }
-
-    CoSimIO::TransferInfo ConvertInfo(CoSimIO_TransferInfo yyy) {
-        CoSimIO::TransferInfo nnn;
-        return nnn;
+        return 0;
     }
 }
 
 
-CoSimIO_ReturnInfo CoSimIO_Connect(const char* pConnectionName, const char* pSettingsFileName)
+CoSimIO_Info CoSimIO_Connect(const char* pConnectionName, const char* pSettingsFileName)
 {
     return ConvertInfo(CoSimIO::Connect(pConnectionName, pSettingsFileName));
 }
 
-CoSimIO_ReturnInfo CoSimIO_Disconnect(const char* pConnectionName)
+CoSimIO_Info CoSimIO_Disconnect(const char* pConnectionName)
 {
     return ConvertInfo(CoSimIO::Disconnect(pConnectionName));
 }
 
-CoSimIO_ReturnInfo CoSimIO_ImportData(
+CoSimIO_Info CoSimIO_ImportData(
     const char* pConnectionName,
     const char* pIdentifier,
     int* pSize,
@@ -79,7 +64,7 @@ CoSimIO_ReturnInfo CoSimIO_ImportData(
     return info;
 }
 
-CoSimIO_ReturnInfo CoSimIO_ExportData(
+CoSimIO_Info CoSimIO_ExportData(
     const char* pConnectionName,
     const char* pIdentifier,
     const int Size,
@@ -90,7 +75,7 @@ CoSimIO_ReturnInfo CoSimIO_ExportData(
     return ConvertInfo(CoSimIO::ExportData(pConnectionName, pIdentifier, *p_container));
 }
 
-CoSimIO_ReturnInfo CoSimIO_ImportMesh(
+CoSimIO_Info CoSimIO_ImportMesh(
     const char* pConnectionName,
     const char* pIdentifier,
     int* pNumberOfNodes,
@@ -109,7 +94,7 @@ CoSimIO_ReturnInfo CoSimIO_ImportMesh(
     return info;
 }
 
-CoSimIO_ReturnInfo CoSimIO_ExportMesh(
+CoSimIO_Info CoSimIO_ExportMesh(
     const char* pConnectionName,
     const char* pIdentifier,
     const int NumberOfNodes,
@@ -125,9 +110,9 @@ CoSimIO_ReturnInfo CoSimIO_ExportMesh(
     return ConvertInfo(CoSimIO::ExportMesh(pConnectionName, pIdentifier, *p_container_coords, *p_container_conn, *p_container_types));
 }
 
-CoSimIO_ReturnInfo CoSimIO_ImportSolutionInfo(
+CoSimIO_Info CoSimIO_ImportInfo(
     const char* pConnectionName,
-    CoSimIO_SolutionInfo* pSolutionInfo)
+    CoSimIO_Info* pSolutionInfo)
 {
     // // TODO: check if the conversions are working
     // CoSimIO::SolutionInfo tmp_info = ConvertInfo(rSolutionInfo);
@@ -135,23 +120,23 @@ CoSimIO_ReturnInfo CoSimIO_ImportSolutionInfo(
     // rSolutionInfo = ConvertInfo(tmp_info);
 }
 
-CoSimIO_ReturnInfo CoSimIO_ExportSolutionInfo(
+CoSimIO_Info CoSimIO_ExportInfo(
     const char* pConnectionName,
-    const CoSimIO_SolutionInfo SolutionInfo)
+    const CoSimIO_Info SolutionInfo)
 {
-    CoSimIO::ExportSolutionInfo(pConnectionName, ConvertInfo(SolutionInfo));
+    // CoSimIO::ExportInfo(pConnectionName, ConvertInfo(SolutionInfo));
 }
 
-CoSimIO_ReturnInfo CoSimIO_RegisterSolvingFunction(
+CoSimIO_Info CoSimIO_RegisterSolvingFunction(
     const char* pConnectionName,
     const char* pFunctionName,
-    void (*pFunctionPointer)(CoSimIO_SolutionInfo*))
+    void (*pFunctionPointer)(CoSimIO_Info*))
 {
     // TODO use lambdas to do conversion of types, like done in other places!
     // return ConvertInfo(CoSimIO::Register(pConnectionName, pFunctionName, pFunctionPointer));
 }
 
-CoSimIO_ReturnInfo CoSimIO_RegisterDataExchangeFunction(
+CoSimIO_Info CoSimIO_RegisterDataExchangeFunction(
     const char* pConnectionName,
     const char* pFunctionName,
     void (*pFunctionPointer)(const char*, const char*))
@@ -160,7 +145,7 @@ CoSimIO_ReturnInfo CoSimIO_RegisterDataExchangeFunction(
     // return ConvertInfo(CoSimIO::Register(pConnectionName, pFunctionName, pFunctionPointer));
 }
 
-CoSimIO_ReturnInfo CoSimIO_Run(const char* pConnectionName)
+CoSimIO_Info CoSimIO_Run(const char* pConnectionName)
 {
     return ConvertInfo(CoSimIO::Run(pConnectionName));
 }

@@ -25,18 +25,10 @@
 // #define DefineNewGetValue(type) \
 // type GetValue##type(char* label, CoSimIO_TransferInfo);
 
-typedef struct CoSimIO_SolutionInfo
+typedef struct CoSimIO_Info
 {
     void* PtrCppInfo;
 } CoSimIO_SolutionInfo;
 
-typedef struct CoSimIO_TransferInfo
-{
-} CoSimIO_TransferInfo;
-
-typedef struct CoSimIO_ReturnInfo
-{
-    int ReturnCode;
-} CoSimIO_ReturnInfo;
 
 #endif // CO_SIM_IO_C_INFO_H_INCLUDED

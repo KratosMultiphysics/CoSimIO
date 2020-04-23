@@ -76,13 +76,13 @@ inline Info ExportMesh(
     const TIntContainerType& rElementTypes);
 
 
-inline Info ImportSolutionInfo(
+inline Info ImportInfo(
     const std::string& rConnectionName,
-    SolutionInfo& rSolutionInfo);
+    Info& rSolutionInfo);
 
-inline Info ExportSolutionInfo(
+inline Info ExportInfo(
     const std::string& rConnectionName,
-    const SolutionInfo& rSolutionInfo);
+    const Info& rSolutionInfo);
 
 
 inline int IsConverged(const std::string& rConnectionName);

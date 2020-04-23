@@ -172,17 +172,17 @@ inline Info ExportMesh(
     return Internals::GetConnection(rConnectionName).ExportMesh(rIdentifier, rNodalCoordinates, rElementConnectivities, rElementTypes);
 }
 
-inline Info ImportSolutionInfo(
+inline Info ImportInfo(
     const std::string& rConnectionName,
-    SolutionInfo& rSolutionInfo)
+    Info& rSolutionInfo)
 {
     // Internals::GetConnection(rConnectionName).ImportSolutionInfo(rSolutionInfo);
     return Info();
 }
 
-inline Info ExportSolutionInfo(
+inline Info ExportInfo(
     const std::string& rConnectionName,
-    const SolutionInfo& rSolutionInfo)
+    const Info& rSolutionInfo)
 {
     // Internals::GetConnection(rConnectionName).ExportSolutionInfo(rSolutionInfo);
     return Info();
@@ -195,7 +195,7 @@ inline int IsConverged(const std::string& rConnectionName)
 
 inline Info Run(const std::string& rConnectionName)
 {
-    eturn Internals::GetConnection(rConnectionName).Run();
+    return Internals::GetConnection(rConnectionName).Run();
 }
 
 
