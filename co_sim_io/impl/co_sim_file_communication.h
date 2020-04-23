@@ -185,7 +185,7 @@ private:
 
         WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
-        const int size = rData.size();
+        const std::size_t size = rData.size();
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to send array \"" << rIdentifier << "\" with size: " << size << " in file \"" << file_name << "\" ..." << std::endl;
 
         const auto start_time(std::chrono::steady_clock::now());
@@ -198,7 +198,7 @@ private:
 
         output_file << size << "\n";
 
-        for (int i=0; i<size-1; ++i) {
+        for (std::size_t i=0; i<size-1; ++i) {
             output_file << rData[i] << " ";
         }
         // TODO check if size == 0!
@@ -311,8 +311,8 @@ private:
 
         WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
-        const int num_nodes = rNodalCoordinates.size()/3;
-        const int num_elems = rElementTypes.size();
+        const std::size_t num_nodes = rNodalCoordinates.size()/3;
+        const std::size_t num_elems = rElementTypes.size();
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to send mesh \"" << rIdentifier << "\" with " << num_nodes << " Nodes | " << num_elems << " Elements in file \"" << file_name << "\" ..." << std::endl;
 
@@ -332,19 +332,19 @@ private:
 
         // write nodes
         output_file << "POINTS " << num_nodes << " float\n";
-        for (int i=0; i<num_nodes; ++i) {
+        for (std::size_t i=0; i<num_nodes; ++i) {
             output_file << rNodalCoordinates[i*3] << " " << rNodalCoordinates[i*3+1] << " " << rNodalCoordinates[i*3+2] << "\n";
         }
         output_file << "\n";
 
         // get connectivity information
-        int cell_list_size = 0;
-        int counter = 0;
+        std::size_t cell_list_size = 0;
+        std::size_t counter = 0;
         int connectivities_offset = std::numeric_limits<int>::max(); //in paraview the connectivities start from 0, hence we have to check beforehand what is the connectivities offset
-        for (int i=0; i<num_elems; ++i) {
-            const int num_nodes_cell = GetNumNodesForVtkCellType(rElementTypes[i]);
+        for (std::size_t i=0; i<num_elems; ++i) {
+            const std::size_t num_nodes_cell = GetNumNodesForVtkCellType(rElementTypes[i]);
             cell_list_size += num_nodes_cell + 1; // +1 for size of connectivity
-            for (int j=0; j<num_nodes_cell; ++j) {
+            for (std::size_t j=0; j<num_nodes_cell; ++j) {
                 connectivities_offset = std::min(connectivities_offset, rElementConnectivities[counter++]);
             }
         }
@@ -354,10 +354,10 @@ private:
         // write cells connectivity
         counter = 0;
         output_file << "CELLS " << num_elems << " " << cell_list_size << "\n";
-        for (int i=0; i<num_elems; ++i) {
-            const int num_nodes_cell = GetNumNodesForVtkCellType(rElementTypes[i]);
+        for (std::size_t i=0; i<num_elems; ++i) {
+            const std::size_t num_nodes_cell = GetNumNodesForVtkCellType(rElementTypes[i]);
             output_file << num_nodes_cell << " ";
-            for (int j=0; j<num_nodes_cell; ++j) {
+            for (std::size_t j=0; j<num_nodes_cell; ++j) {
                 output_file << (rElementConnectivities[counter++]-connectivities_offset);
                 if (j<num_nodes_cell-1) output_file << " "; // not adding a whitespace after last number
             }
