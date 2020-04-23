@@ -60,7 +60,7 @@ CoSimIO_Info CoSimIO_ImportData(
     using namespace CoSimIO::Internals;
     std::unique_ptr<DataContainer<double>> p_container(new DataContainerRawMemory<double>(ppData, *pSize));
     auto info = ConvertInfo(CoSimIO::ImportData(pConnectionName, pIdentifier, *p_container));
-    *pSize = p_container->size();
+    *pSize = static_cast<int>(p_container->size());
     return info;
 }
 
@@ -89,8 +89,8 @@ CoSimIO_Info CoSimIO_ImportMesh(
     std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerRawMemory<int>(ppElementConnectivities, *pNumberOfElements)); // using "NumberOfElements" here is wrong! => has to be computed! Or sth like this ... (maybe even has to be passed...)
     std::unique_ptr<DataContainer<int>> p_container_types(new DataContainerRawMemory<int>(ppElementTypes, *pNumberOfElements));
     auto info = ConvertInfo(CoSimIO::ImportMesh(pConnectionName, pIdentifier, *p_container_coords, *p_container_conn, *p_container_types));
-    *pNumberOfNodes = p_container_coords->size();
-    *pNumberOfElements = p_container_types->size();
+    *pNumberOfNodes = static_cast<int>(p_container_coords->size());
+    *pNumberOfElements = static_cast<int>(p_container_types->size());
     return info;
 }
 
