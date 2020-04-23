@@ -43,7 +43,7 @@ class CoSimConnection
 
 public:
 
-    using FunctionPointerType = std::function<void(CoSimConnection&, const std::string&)>;
+    using FunctionPointerType = std::function<void(Info&)>;
 
     explicit CoSimConnection(const std::string& rName, const std::string& rSettingsFileName)
     : CoSimConnection(rName, Internals::ReadSettingsFile(rSettingsFileName)) { } // forwarding constructor call
@@ -102,7 +102,8 @@ public:
             } else {
                 const std::string function_name(ControlSignalName(control_signal));
                 CO_SIM_IO_ERROR_IF_NOT((mRegisteredFunctions.count(function_name)>0)) << "No function was registered for \"" << function_name << "\"!" << std::endl;
-                mRegisteredFunctions.at(function_name)(*this, identifier);
+                Info info;
+                mRegisteredFunctions.at(function_name)(info);
             }
         }
         return Info(); // TODO use this

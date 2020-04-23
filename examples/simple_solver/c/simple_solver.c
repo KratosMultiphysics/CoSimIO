@@ -43,22 +43,22 @@ void ExportMesh(const char* pConnectionName, const char* pIdentifier)
 
 }
 
-void AdvanceInTime(CoSimIO_SolutionInfo* pSolutionInfo)
+void AdvanceInTime(CoSimIO_Info* pSolutionInfo)
 {
     // return pCurrentTime + 0.1;
 }
 
-void InitializeSolutionStep(CoSimIO_SolutionInfo* pSolutionInfo)
+void InitializeSolutionStep(CoSimIO_Info* pSolutionInfo)
 {
 
 }
 
-void SolveSolutionStep(CoSimIO_SolutionInfo* pSolutionInfo)
+void SolveSolutionStep(CoSimIO_Info* pSolutionInfo)
 {
 
 }
 
-void FinalizeSolutionStep(CoSimIO_SolutionInfo* pSolutionInfo)
+void FinalizeSolutionStep(CoSimIO_Info* pSolutionInfo)
 {
 
 }
@@ -68,15 +68,15 @@ int main()
 {
     CoSimIO_Connect("aaa", "ccc");
 
-    CoSimIO_RegisterSolvingFunction("aaa", "AdvanceInTime", &AdvanceInTime);
-    CoSimIO_RegisterSolvingFunction("aaa", "InitializeSolutionStep", &InitializeSolutionStep);
-    CoSimIO_RegisterSolvingFunction("aaa", "SolveSolutionStep",      &SolveSolutionStep);
-    CoSimIO_RegisterSolvingFunction("aaa", "FinalizeSolutionStep",   &FinalizeSolutionStep);
+    // CoSimIO_RegisterSolvingFunction("aaa", "AdvanceInTime", &AdvanceInTime);
+    // CoSimIO_RegisterSolvingFunction("aaa", "InitializeSolutionStep", &InitializeSolutionStep);
+    // CoSimIO_RegisterSolvingFunction("aaa", "SolveSolutionStep",      &SolveSolutionStep);
+    // CoSimIO_RegisterSolvingFunction("aaa", "FinalizeSolutionStep",   &FinalizeSolutionStep);
 
-    CoSimIO_RegisterDataExchangeFunction("aaa", "ImportData", &ImportData);
-    CoSimIO_RegisterDataExchangeFunction("aaa", "ExportData", &ExportData);
-    CoSimIO_RegisterDataExchangeFunction("aaa", "ImportMesh", &ImportMesh);
-    CoSimIO_RegisterDataExchangeFunction("aaa", "ExportMesh", &ExportMesh);
+    // CoSimIO_RegisterDataExchangeFunction("aaa", "ImportData", &ImportData);
+    // CoSimIO_RegisterDataExchangeFunction("aaa", "ExportData", &ExportData);
+    // CoSimIO_RegisterDataExchangeFunction("aaa", "ImportMesh", &ImportMesh);
+    // CoSimIO_RegisterDataExchangeFunction("aaa", "ExportMesh", &ExportMesh);
 
     CoSimIO_Run("aaa");
 

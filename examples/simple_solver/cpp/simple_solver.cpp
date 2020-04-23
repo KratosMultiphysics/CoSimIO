@@ -226,21 +226,27 @@ void RunSolutionLoopWithStrongCoupling()
     CoSimIO::Disconnect(comm_name);
 }
 
+void FctWithCorrectSignature(CoSimIO::Info& rInfo)
+{
+
+}
+
 void RunSolutionCoSimulationOrchestrated()
 {
     const std::string comm_name("external_simple_solver");
 
     CoSimIO::Connect(comm_name, "unspecified");
 
-    CoSimIO::Register(comm_name, "AdvanceInTime",          &AdvanceInTime);
-    CoSimIO::Register(comm_name, "InitializeSolutionStep", &InitializeSolutionStep);
-    CoSimIO::Register(comm_name, "SolveSolutionStep",      &SolveSolutionStep);
-    CoSimIO::Register(comm_name, "FinalizeSolutionStep",   &FinalizeSolutionStep);
+    CoSimIO::Register(comm_name, "AdvanceInTime",          &FctWithCorrectSignature);
+    // CoSimIO::Register(comm_name, "AdvanceInTime",          &AdvanceInTime);
+    // CoSimIO::Register(comm_name, "InitializeSolutionStep", &InitializeSolutionStep);
+    // CoSimIO::Register(comm_name, "SolveSolutionStep",      &SolveSolutionStep);
+    // CoSimIO::Register(comm_name, "FinalizeSolutionStep",   &FinalizeSolutionStep);
 
-    CoSimIO::Register(comm_name, "ImportData",     &ImportDataFromCoSim);
-    CoSimIO::Register(comm_name, "ExportData",     &ExportDataToCoSim);
-    CoSimIO::Register(comm_name, "ImportMesh",     &ImportMesh);
-    CoSimIO::Register(comm_name, "ExportMesh",     &ExportMesh);
+    // CoSimIO::Register(comm_name, "ImportData",     &ImportDataFromCoSim);
+    // CoSimIO::Register(comm_name, "ExportData",     &ExportDataToCoSim);
+    // CoSimIO::Register(comm_name, "ImportMesh",     &ImportMesh);
+    // CoSimIO::Register(comm_name, "ExportMesh",     &ExportMesh);
 
     CoSimIO::Run(comm_name);
 

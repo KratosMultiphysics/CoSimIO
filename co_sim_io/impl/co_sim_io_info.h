@@ -110,38 +110,38 @@ private:
 //     std::string Identifier;
 // };
 
-struct TransferInfo
-{
-    // TransferInfo(const std::string& rIdentifier) : Identifier(rIdentifier) {}
-
-    // std::string Identifier;
-};
-
-// struct MeshInfo
+// struct TransferInfo
 // {
+//     // TransferInfo(const std::string& rIdentifier) : Identifier(rIdentifier) {}
+
+//     // std::string Identifier;
+// };
+
+// // struct MeshInfo
+// // {
+
+// // };
+
+
+
+// class SolutionInfo
+// {
+// public:
+//     SolutionInfo() {}
+
+//     double CurrentTime;
+//     double NewTime;
+//     bool IsConverged=true;
+
+//     std::unordered_map<std::string, int> MeshStates; // 0=Unchanged // 1=NodesMoved // 2=FullRemesh
 
 // };
 
 
-
-class SolutionInfo
-{
-public:
-    SolutionInfo() {}
-
-    double CurrentTime;
-    double NewTime;
-    bool IsConverged=true;
-
-    std::unordered_map<std::string, int> MeshStates; // 0=Unchanged // 1=NodesMoved // 2=FullRemesh
-
-};
-
-
-struct ReturnInfo
-{
-    int ReturnCode;
-};
+// struct ReturnInfo
+// {
+//     int ReturnCode;
+// };
 
 } // namespace CoSimIO
 

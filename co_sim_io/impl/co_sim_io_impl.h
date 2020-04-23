@@ -174,17 +174,17 @@ inline Info ExportMesh(
 
 inline Info ImportInfo(
     const std::string& rConnectionName,
-    Info& rSolutionInfo)
+    Info& rInfo)
 {
-    // Internals::GetConnection(rConnectionName).ImportSolutionInfo(rSolutionInfo);
+    // Internals::GetConnection(rConnectionName).ImportInfo(rInfo);
     return Info(); // TODO use this
 }
 
 inline Info ExportInfo(
     const std::string& rConnectionName,
-    const Info& rSolutionInfo)
+    const Info& rInfo)
 {
-    // Internals::GetConnection(rConnectionName).ExportSolutionInfo(rSolutionInfo);
+    // Internals::GetConnection(rConnectionName).ExportInfo(rInfo);
     return Info(); // TODO use this
 }
 
@@ -203,13 +203,13 @@ template<>
 inline Info Register(
     const std::string& rConnectionName,
     const std::string& rFunctionName,
-    std::function<void(SolutionInfo&)> FunctionPointer)
+    std::function<void(Info&)> FunctionPointer)
 {
     using namespace CoSimIO::Internals;
 
-    auto fct_callback = [FunctionPointer](const std::string& I_ConnectionName, SolutionInfo& IO_SolutionInfo)
+    auto fct_callback = [FunctionPointer](Info& IO_Info)
     {
-        FunctionPointer(IO_SolutionInfo);
+        FunctionPointer(IO_Info);
     };
 
     // Internals::GetConnection(rConnectionName).Register(rFunctionName, fct_callback);
@@ -221,49 +221,13 @@ template<>
 inline Info Register(
     const std::string& rConnectionName,
     const std::string& rFunctionName,
-    void (*pFunctionPointer)(SolutionInfo&))
+    void (*pFunctionPointer)(Info&))
 {
     using namespace CoSimIO::Internals;
 
-    auto fct_callback = [pFunctionPointer](const std::string& I_ConnectionName, SolutionInfo& IO_SolutionInfo)
+    auto fct_callback = [pFunctionPointer](Info& IO_Info)
     {
-        pFunctionPointer(IO_SolutionInfo);
-    };
-
-    // Internals::GetConnection(rConnectionName).Register(rFunctionName, fct_callback);
-
-    return Info(); // TODO use this
-}
-
-template<>
-inline Info Register(
-    const std::string& rConnectionName,
-    const std::string& rFunctionName,
-    std::function<void(const std::string&, TransferInfo&)> FunctionPointer)
-{
-    using namespace CoSimIO::Internals;
-
-    auto fct_callback = [FunctionPointer](const std::string& I_ConnectionName, TransferInfo& IO_TransferInfo)
-    {
-        FunctionPointer(I_ConnectionName, IO_TransferInfo);
-    };
-
-    // Internals::GetConnection(rConnectionName).Register(rFunctionName, fct_callback);
-
-    return Info(); // TODO use this
-}
-
-template<>
-inline Info Register(
-    const std::string& rConnectionName,
-    const std::string& rFunctionName,
-    void (*pFunctionPointer)(const std::string&, TransferInfo&))
-{
-    using namespace CoSimIO::Internals;
-
-    auto fct_callback = [pFunctionPointer](const std::string& I_ConnectionName, TransferInfo& IO_TransferInfo)
-    {
-        pFunctionPointer(I_ConnectionName, IO_TransferInfo);
+        pFunctionPointer(IO_Info);
     };
 
     // Internals::GetConnection(rConnectionName).Register(rFunctionName, fct_callback);
