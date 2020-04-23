@@ -32,4 +32,5 @@ jobs:
     - name: Run tests
       run: |
         cd tests
+        # TODO set paths
         python run_all_tests.py
