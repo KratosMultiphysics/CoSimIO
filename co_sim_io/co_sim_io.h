@@ -40,27 +40,27 @@ Note that this introduces dependencies such as e.g. boost (header-only version) 
 
 namespace CoSimIO {
 
-inline ReturnInfo Connect(const std::string& rConnectionName, CoSimIO::SettingsType Settings);
-inline ReturnInfo Connect(const std::string& rConnectionName, const std::string& rSettingsFileName);
+inline Info Connect(const std::string& rConnectionName, CoSimIO::SettingsType Settings);
+inline Info Connect(const std::string& rConnectionName, const std::string& rSettingsFileName);
 
-inline ReturnInfo Disconnect(const std::string& rConnectionName);
+inline Info Disconnect(const std::string& rConnectionName);
 
 
 template<class TContainerType>
-inline ReturnInfo ImportData(
+inline Info ImportData(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     TContainerType& rData);
 
 template<class TContainerType>
-inline ReturnInfo ExportData(
+inline Info ExportData(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     const TContainerType& rData);
 
 
 template<class TDoubleContainerType, class TIntContainerType>
-inline ReturnInfo ImportMesh(
+inline Info ImportMesh(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     TDoubleContainerType& rNodalCoordinates,
@@ -68,7 +68,7 @@ inline ReturnInfo ImportMesh(
     TIntContainerType& rElementTypes);
 
 template<class TDoubleContainerType, class TIntContainerType>
-inline ReturnInfo ExportMesh(
+inline Info ExportMesh(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     const TDoubleContainerType& rNodalCoordinates,
@@ -76,21 +76,21 @@ inline ReturnInfo ExportMesh(
     const TIntContainerType& rElementTypes);
 
 
-inline ReturnInfo ImportSolutionInfo(
+inline Info ImportSolutionInfo(
     const std::string& rConnectionName,
     SolutionInfo& rSolutionInfo);
 
-inline ReturnInfo ExportSolutionInfo(
+inline Info ExportSolutionInfo(
     const std::string& rConnectionName,
     const SolutionInfo& rSolutionInfo);
 
 
 inline int IsConverged(const std::string& rConnectionName);
 
-inline ReturnInfo Run(const std::string& rConnectionName);
+inline Info Run(const std::string& rConnectionName);
 
 template<typename TFunctionType>
-inline ReturnInfo Register(
+inline Info Register(
     const std::string& rConnectionName,
     const std::string& rFunctionName,
     TFunctionType rFunction);
