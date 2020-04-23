@@ -28,7 +28,7 @@
 typedef struct CoSimIO_Info
 {
     void* PtrCppInfo;
-} CoSimIO_SolutionInfo;
+} CoSimIO_Info;
 
 
 #endif // CO_SIM_IO_C_INFO_H_INCLUDED
