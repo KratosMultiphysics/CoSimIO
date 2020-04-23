@@ -86,21 +86,13 @@ MODULE co_sim_io
             CHARACTER(C_CHAR), DIMENSION(*), INTENT(IN) :: ConnectionName
         END SUBROUTINE CoSimIO_Run
 
-        SUBROUTINE CoSimIO_RegisterSolvingFunction(ConnectionName, FunctionName, &
-            FunctionPointer) BIND(C, NAME="CoSimIO_RegisterSolvingFunction")
+        SUBROUTINE CoSimIO_Register(ConnectionName, FunctionName, &
+            FunctionPointer) BIND(C, NAME="CoSimIO_Register")
             USE, INTRINSIC :: ISO_C_BINDING
             CHARACTER(KIND=C_CHAR), DIMENSION(*), INTENT(IN) :: ConnectionName
             CHARACTER(KIND=C_CHAR), DIMENSION(*), INTENT(IN) :: FunctionName
             TYPE(C_FUNPTR), INTENT(IN), VALUE :: FunctionPointer
-        END SUBROUTINE CoSimIO_RegisterSolvingFunction
-
-        SUBROUTINE CoSimIO_RegisterDataExchangeFunction(ConnectionName, FunctionName, &
-            FunctionPointer) BIND(C, NAME="CoSimIO_RegisterDataExchangeFunction")
-            USE, INTRINSIC :: ISO_C_BINDING
-            CHARACTER(KIND=C_CHAR), DIMENSION(*), INTENT(IN) :: ConnectionName
-            CHARACTER(KIND=C_CHAR), DIMENSION(*), INTENT(IN) :: FunctionName
-            TYPE(C_FUNPTR), INTENT(IN), VALUE :: FunctionPointer
-        END SUBROUTINE CoSimIO_RegisterDataExchangeFunction
+        END SUBROUTINE CoSimIO_Register
 
 
         SUBROUTINE AllocateCMemoryInt(size, c_pointer) BIND (C,NAME='_AllocateMemoryInt')

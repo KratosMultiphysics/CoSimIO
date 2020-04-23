@@ -311,21 +311,21 @@ program simple_solver_fortran
 
         call CoSimIO_Connect("external_simple_solver"//c_null_char, "unspecified"//c_null_char)
 
-        call CoSimIO_RegisterSolvingFunction("external_simple_solver"//c_null_char,&
+        call CoSimIO_Register("external_simple_solver"//c_null_char,&
             "AdvanceInTime"//c_null_char, C_FUNLOC(advance_in_time))
-            call CoSimIO_RegisterSolvingFunction("external_simple_solver"//c_null_char,&
+            call CoSimIO_Register("external_simple_solver"//c_null_char,&
                 "InitializeSolutionStep"//c_null_char, C_FUNLOC(initialize_solution_step))
-        call CoSimIO_RegisterSolvingFunction("external_simple_solver"//c_null_char,&
+        call CoSimIO_Register("external_simple_solver"//c_null_char,&
             "SolveSolutionStep"//c_null_char, C_FUNLOC(solve_solution_step))
 
-        call CoSimIO_RegisterDataExchangeFunction("external_simple_solver"//c_null_char,&
+        call CoSimIO_Register("external_simple_solver"//c_null_char,&
             "ImportData"//c_null_char, C_FUNLOC(import_data_from_co_sim))
-        call CoSimIO_RegisterDataExchangeFunction("external_simple_solver"//c_null_char,&
+        call CoSimIO_Register("external_simple_solver"//c_null_char,&
             "ExportData"//c_null_char, C_FUNLOC(export_data_to_co_sim))
 
-        call CoSimIO_RegisterDataExchangeFunction("external_simple_solver"//c_null_char,&
+        call CoSimIO_Register("external_simple_solver"//c_null_char,&
             "ImportMesh"//c_null_char, C_FUNLOC(import_mesh_from_co_sim))
-        call CoSimIO_RegisterDataExchangeFunction("external_simple_solver"//c_null_char,&
+        call CoSimIO_Register("external_simple_solver"//c_null_char,&
             "ExportMesh"//c_null_char, C_FUNLOC(export_mesh_to_co_sim))
 
         call CoSimIO_Run("external_simple_solver"//c_null_char)
