@@ -68,23 +68,14 @@ CoSimIO_Info CoSimIO_ExportInfo(
     const char* pConnectionName,
     const CoSimIO_Info SolutionInfo);
 
-CoSimIO_Info CoSimIO_RegisterAdvanceInTime(
-    const char* pConnectionName,
-    double (*pFunctionPointer)(double));
+CoSimIO_Info CoSimIO_Register(
+    const char* I_ConnectionName,
+    const char* I_FunctionName,
+    double (*FunctionPointer)(CoSimIO_Info*));
 
-CoSimIO_Info CoSimIO_RegisterSolvingFunction(
-    const char* pConnectionName,
-    const char* pFunctionName,
-    void (*pFunctionPointer)(CoSimIO_Info*));
+CoSimIO_Info CoSimIO_Run(const char* I_ConnectionName);
 
-CoSimIO_Info CoSimIO_RegisterDataExchangeFunction(
-    const char* pConnectionName,
-    const char* pFunctionName,
-    void (*pFunctionPointer)(const char*, const char*));
-
-CoSimIO_Info CoSimIO_Run(const char* pConnectionName);
-
-int CoSimIO_IsConverged(const char* pConnectionName);
+int CoSimIO_IsConverged(const char* I_ConnectionName);
 
 // TODO refactor and move these functions to separate file, since they are only used in the fortran interface
 // The following functions are intended to only be used from Fortran

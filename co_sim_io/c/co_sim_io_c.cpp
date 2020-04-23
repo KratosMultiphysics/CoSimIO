@@ -118,6 +118,8 @@ CoSimIO_Info CoSimIO_ImportInfo(
     // CoSimIO::SolutionInfo tmp_info = ConvertInfo(rSolutionInfo);
     // CoSimIO::ImportSolutionInfo(pConnectionName, tmp_info);
     // rSolutionInfo = ConvertInfo(tmp_info);
+    CoSimIO_Info aaa;
+    return aaa;
 }
 
 CoSimIO_Info CoSimIO_ExportInfo(
@@ -125,24 +127,19 @@ CoSimIO_Info CoSimIO_ExportInfo(
     const CoSimIO_Info SolutionInfo)
 {
     // CoSimIO::ExportInfo(pConnectionName, ConvertInfo(SolutionInfo));
+    CoSimIO_Info aaa;
+    return aaa;
 }
 
-CoSimIO_Info CoSimIO_RegisterSolvingFunction(
-    const char* pConnectionName,
-    const char* pFunctionName,
-    void (*pFunctionPointer)(CoSimIO_Info*))
+CoSimIO_Info CoSimIO_Register(
+    const char* I_ConnectionName,
+    const char* I_FunctionName,
+    double (*FunctionPointer)(CoSimIO_Info*))
 {
     // TODO use lambdas to do conversion of types, like done in other places!
-    // return ConvertInfo(CoSimIO::Register(pConnectionName, pFunctionName, pFunctionPointer));
-}
-
-CoSimIO_Info CoSimIO_RegisterDataExchangeFunction(
-    const char* pConnectionName,
-    const char* pFunctionName,
-    void (*pFunctionPointer)(const char*, const char*))
-{
-    // TODO use lambdas to do conversion of types, like done in other places!
-    // return ConvertInfo(CoSimIO::Register(pConnectionName, pFunctionName, pFunctionPointer));
+    // return ConvertInfo(CoSimIO::Register(I_ConnectionName, I_FunctionName, pFunctionPointer));
+    CoSimIO_Info aaa;
+    return aaa;
 }
 
 CoSimIO_Info CoSimIO_Run(const char* pConnectionName)

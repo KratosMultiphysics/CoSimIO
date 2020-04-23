@@ -63,6 +63,8 @@ inline Info Connect(const std::string& rConnectionName, CoSimIO::SettingsType Se
 inline Info Connect(const std::string& rConnectionName, const std::string& rSettingsFileName)
 {
     Connect(rConnectionName, Internals::ReadSettingsFile(rSettingsFileName)); // forward call to funciton above
+
+    return Info(); // TODO use this
 }
 
 inline Info Disconnect(const std::string& rConnectionName)
