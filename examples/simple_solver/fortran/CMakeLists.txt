@@ -6,4 +6,4 @@ link_directories(${CMAKE_SOURCE_DIR}/install)
 add_executable (simple_solver_fortran ${CMAKE_CURRENT_SOURCE_DIR}/simple_solver.f90)
 target_link_libraries(simple_solver_fortran co_sim_c_io)
 
-install(TARGETS simple_solver_fortran DESTINATION ${CMAKE_SOURCE_DIR}/install )
+install(TARGETS simple_solver_fortran DESTINATION ${CMAKE_SOURCE_DIR}/bin)

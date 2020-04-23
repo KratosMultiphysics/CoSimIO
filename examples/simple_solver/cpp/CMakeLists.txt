@@ -20,4 +20,4 @@ set_target_properties(simple_solver_cpp PROPERTIES
     CXX_EXTENSIONS NO
 )
 
-install(TARGETS simple_solver_cpp DESTINATION ${CMAKE_SOURCE_DIR}/install )
+install(TARGETS simple_solver_cpp DESTINATION ${CMAKE_SOURCE_DIR}/bin )

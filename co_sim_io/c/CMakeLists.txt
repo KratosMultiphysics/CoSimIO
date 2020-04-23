@@ -19,12 +19,4 @@ set_target_properties(co_sim_c_io PROPERTIES
     CXX_EXTENSIONS NO
 )
 
-# using PARENT_DIRECTORY to check whether installed in Kratos or standalone
-get_directory_property( IN_KRATOS PARENT_DIRECTORY )
-if(IN_KRATOS)
-    # if compiled from inside of Kratos, then install to the "libs" folder
-    install(TARGETS co_sim_c_io DESTINATION ${CMAKE_SOURCE_DIR}/install )
-else()
-    # otherwise install to current directory
-    install(TARGETS co_sim_c_io DESTINATION ${CMAKE_SOURCE_DIR} )
-endif()
+install(TARGETS co_sim_c_io DESTINATION ${CMAKE_SOURCE_DIR}/bin)
