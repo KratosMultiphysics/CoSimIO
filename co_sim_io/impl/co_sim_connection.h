@@ -56,20 +56,20 @@ public:
     Info Connect()
     {
         mpComm->Connect();
-        return Info();
+        return Info(); // TODO use this
     }
 
     Info Disconnect()
     {
         mpComm->Disconnect();
-        return Info();
+        return Info(); // TODO use this
     }
 
     Info SendControlSignal(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal)
     {
         CO_SIM_IO_ERROR_IF_NOT(mIsConnectionMaster) << "This function can only be called as the Connection-Master!" << std::endl;
         mpComm->SendControlSignal(rIdentifier, Signal);
-        return Info();
+        return Info(); // TODO use this
     }
 
     Info Register(
@@ -85,7 +85,7 @@ public:
         CO_SIM_IO_ERROR_IF((mRegisteredFunctions.count(rFunctionName)>0)) << "A function was already registered for " << rFunctionName << "!" << std::endl;
 
         mRegisteredFunctions[rFunctionName] = FunctionPointer;
-        return Info();
+        return Info(); // TODO use this
     }
 
     Info Run()
@@ -105,7 +105,7 @@ public:
                 mRegisteredFunctions.at(function_name)(*this, identifier);
             }
         }
-        return Info();
+        return Info(); // TODO use this
     }
 
     bool IsConverged()
@@ -120,7 +120,7 @@ public:
     {
         mpComm->ImportData(std::forward<Args>(args)...);
 
-        return Info();
+        return Info(); // TODO use this
     }
 
     template<class... Args>
@@ -128,7 +128,7 @@ public:
     {
         mpComm->ExportData(std::forward<Args>(args)...);
 
-        return Info();
+        return Info(); // TODO use this
     }
 
     template<class... Args>
@@ -136,7 +136,7 @@ public:
     {
         mpComm->ImportMesh(std::forward<Args>(args)...);
 
-        return Info();
+        return Info(); // TODO use this
     }
 
     template<class... Args>
@@ -144,7 +144,7 @@ public:
     {
         mpComm->ExportMesh(std::forward<Args>(args)...);
 
-        return Info();
+        return Info(); // TODO use this
     }
 
     template<class... Args>
@@ -153,7 +153,7 @@ public:
         CO_SIM_IO_ERROR << "Importing of Geometry is not yet implemented!" << std::endl;
         mpComm->ImportGeometry(std::forward<Args>(args)...);
 
-        return Info();
+        return Info(); // TODO use this
     }
 
     template<class... Args>
@@ -162,12 +162,7 @@ public:
         CO_SIM_IO_ERROR << "Exporting of Geometry is not yet implemented!" << std::endl;
         mpComm->ExportGeometry(std::forward<Args>(args)...);
 
-        return Info();
-    }
-
-    std::string GetConnectionName() const // TODO removeMe
-    {
-        return mConnectionName;
+        return Info(); // TODO use this
     }
 
 private:

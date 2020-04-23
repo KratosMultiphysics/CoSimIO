@@ -73,7 +73,7 @@ inline Info Disconnect(const std::string& rConnectionName)
     auto info = GetConnection(rConnectionName).Disconnect();
     s_co_sim_connections.erase(rConnectionName);
 
-    return Info();
+    return Info(); // TODO use this
 }
 
 // Version for C++, there this input is a std::vector, which we have to wrap before passing it on
@@ -177,7 +177,7 @@ inline Info ImportInfo(
     Info& rSolutionInfo)
 {
     // Internals::GetConnection(rConnectionName).ImportSolutionInfo(rSolutionInfo);
-    return Info();
+    return Info(); // TODO use this
 }
 
 inline Info ExportInfo(
@@ -185,7 +185,7 @@ inline Info ExportInfo(
     const Info& rSolutionInfo)
 {
     // Internals::GetConnection(rConnectionName).ExportSolutionInfo(rSolutionInfo);
-    return Info();
+    return Info(); // TODO use this
 }
 
 inline int IsConverged(const std::string& rConnectionName)
@@ -214,7 +214,7 @@ inline Info Register(
 
     // Internals::GetConnection(rConnectionName).Register(rFunctionName, fct_callback);
 
-    return Info();
+    return Info(); // TODO use this
 }
 
 template<>
@@ -232,7 +232,7 @@ inline Info Register(
 
     // Internals::GetConnection(rConnectionName).Register(rFunctionName, fct_callback);
 
-    return Info();
+    return Info(); // TODO use this
 }
 
 template<>
@@ -250,7 +250,7 @@ inline Info Register(
 
     // Internals::GetConnection(rConnectionName).Register(rFunctionName, fct_callback);
 
-    return Info();
+    return Info(); // TODO use this
 }
 
 template<>
@@ -268,7 +268,7 @@ inline Info Register(
 
     // Internals::GetConnection(rConnectionName).Register(rFunctionName, fct_callback);
 
-    return Info();
+    return Info(); // TODO use this
 }
 
 } // namespace CoSimIO
