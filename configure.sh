@@ -1,5 +1,5 @@
 rm -r build/
-rm -r install/
+rm -r bin/
 
 cmake -H"." -B"build"
 cmake --build "build" --target install
