@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef KRATOS_CO_SIM_IO_DEFINE_H_INCLUDED
-#define KRATOS_CO_SIM_IO_DEFINE_H_INCLUDED
+#ifndef CO_SIM_IO_DEFINE_H_INCLUDED
+#define CO_SIM_IO_DEFINE_H_INCLUDED
 
 // System includes
 #include <string>
@@ -42,4 +42,4 @@ enum class ControlSignal
 
 } //namespace CoSimIO
 
-#endif // KRATOS_CO_SIM_IO_DEFINE_H_INCLUDED
+#endif // CO_SIM_IO_DEFINE_H_INCLUDED

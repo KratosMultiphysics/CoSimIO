@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef KRATOS_CO_SIM_IO_IMPL_H_INCLUDED
-#define KRATOS_CO_SIM_IO_IMPL_H_INCLUDED
+#ifndef CO_SIM_IO_IMPL_H_INCLUDED
+#define CO_SIM_IO_IMPL_H_INCLUDED
 
 /*
 This file contains the implementation of the functions defined in "co_sim_io.h"
@@ -37,7 +37,7 @@ static bool HasIO(const std::string& rConnectionName)
 
 static CoSimConnection& GetConnection(const std::string& rConnectionName)
 {
-    KRATOS_CO_SIM_ERROR_IF_NOT(HasIO(rConnectionName)) << "Trying to use connection \"" << rConnectionName << "\" which does not exist!" << std::endl;
+    CO_SIM_IO_ERROR_IF_NOT(HasIO(rConnectionName)) << "Trying to use connection \"" << rConnectionName << "\" which does not exist!" << std::endl;
     return *s_co_sim_connections.at(rConnectionName);
 }
 
@@ -54,7 +54,7 @@ inline void SendControlSignal(
 inline ReturnInfo Connect(const std::string& rConnectionName, CoSimIO::SettingsType Settings)
 {
     using namespace Internals;
-    KRATOS_CO_SIM_ERROR_IF(HasIO(rConnectionName)) << "A connection for \"" << rConnectionName << "\" already exists!" << std::endl;
+    CO_SIM_IO_ERROR_IF(HasIO(rConnectionName)) << "A connection for \"" << rConnectionName << "\" already exists!" << std::endl;
 
     s_co_sim_connections[rConnectionName] = std::unique_ptr<CoSimConnection>(new CoSimConnection(rConnectionName, Settings));
     GetConnection(rConnectionName).Connect();
@@ -68,7 +68,7 @@ inline ReturnInfo Connect(const std::string& rConnectionName, const std::string&
 inline ReturnInfo Disconnect(const std::string& rConnectionName)
 {
     using namespace Internals;
-    KRATOS_CO_SIM_ERROR_IF_NOT(HasIO(rConnectionName)) << "Trying to disconnect connection \"" << rConnectionName << "\" which does not exist!" << std::endl;
+    CO_SIM_IO_ERROR_IF_NOT(HasIO(rConnectionName)) << "Trying to disconnect connection \"" << rConnectionName << "\" which does not exist!" << std::endl;
 
     GetConnection(rConnectionName).Disconnect();
     s_co_sim_connections.erase(rConnectionName);
@@ -259,9 +259,6 @@ inline ReturnInfo Register(
     // Internals::GetConnection(rConnectionName).Register(rFunctionName, fct_callback);
 }
 
-
-
-
 } // namespace CoSimIO
 
-#endif // KRATOS_CO_SIM_IO_IMPL_H_INCLUDED
+#endif // CO_SIM_IO_IMPL_H_INCLUDED

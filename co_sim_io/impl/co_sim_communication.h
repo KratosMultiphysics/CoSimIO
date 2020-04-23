@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef KRATOS_CO_SIM_COMM_H_INCLUDED
-#define KRATOS_CO_SIM_COMM_H_INCLUDED
+#ifndef CO_SIM_IO_COMM_H_INCLUDED
+#define CO_SIM_IO_COMM_H_INCLUDED
 
 // System includes
 
@@ -40,35 +40,35 @@ public:
 
     bool Connect()
     {
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Connecting \"" << mConnectionName << "\" as Connection-" << (mIsConnectionMaster ? "MASTER" : "SLAVE") << " ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Connecting \"" << mConnectionName << "\" as Connection-" << (mIsConnectionMaster ? "MASTER" : "SLAVE") << " ..." << std::endl;
 
-        KRATOS_CO_SIM_ERROR_IF(mIsConnected) << "A connection was already established!" << std::endl;
+        CO_SIM_IO_ERROR_IF(mIsConnected) << "A connection was already established!" << std::endl;
 
         mIsConnected = ConnectDetail();
 
-        KRATOS_CO_SIM_ERROR_IF_NOT(mIsConnected) << "Connection was not successful!" << std::endl;
+        CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "Connection was not successful!" << std::endl;
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Connection established" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Connection established" << std::endl;
 
         return mIsConnected;
     }
 
     bool Disconnect()
     {
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Disconnecting \"" << mConnectionName << "\" ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Disconnecting \"" << mConnectionName << "\" ..." << std::endl;
 
         if (mIsConnected) {
             mIsConnected = !DisconnectDetail();
             if (mIsConnected) {
-                KRATOS_CO_SIM_INFO("CoSimIO") << "Warning: Disconnect was not successful!" << std::endl;
+                CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not successful!" << std::endl;
                 return false;
             }
         } else {
-            KRATOS_CO_SIM_INFO("CoSimIO") << "Warning: Calling Disconnect but there was no active connection!" << std::endl;
+            CO_SIM_IO_INFO("CoSimIO") << "Warning: Calling Disconnect but there was no active connection!" << std::endl;
             return false;
         }
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Disconnecting successful" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Disconnecting successful" << std::endl;
 
         return true;
     }
@@ -139,11 +139,11 @@ private:
 
     virtual void SendControlSignalDetail(const std::string& rIdentifier, CoSimIO::ControlSignal Signal)
     {
-        KRATOS_CO_SIM_ERROR << "SendControlSignalDetail not implemented for this comm-type" << std::endl;
+        CO_SIM_IO_ERROR << "SendControlSignalDetail not implemented for this comm-type" << std::endl;
     }
     virtual CoSimIO::ControlSignal RecvControlSignalDetail(std::string& rIdentifier)
     {
-        KRATOS_CO_SIM_ERROR << "RecvControlSignalDetail not implemented for this comm-type" << std::endl;
+        CO_SIM_IO_ERROR << "RecvControlSignalDetail not implemented for this comm-type" << std::endl;
         return CoSimIO::ControlSignal::Dummy;
     }
 
@@ -151,14 +151,14 @@ private:
         const std::string& rIdentifier,
         CoSimIO::Internals::DataContainer<double>& rData)
     {
-        KRATOS_CO_SIM_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
+        CO_SIM_IO_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
     }
 
     virtual void ExportDataImpl(
         const std::string& rIdentifier,
         const CoSimIO::Internals::DataContainer<double>& rData)
     {
-        KRATOS_CO_SIM_ERROR << "ExportDataImpl not implemented for this comm-type!" << std::endl;
+        CO_SIM_IO_ERROR << "ExportDataImpl not implemented for this comm-type!" << std::endl;
     }
 
     virtual void ImportMeshImpl(
@@ -167,7 +167,7 @@ private:
         CoSimIO::Internals::DataContainer<int>& rElementConnectivities,
         CoSimIO::Internals::DataContainer<int>& rElementTypes)
     {
-        KRATOS_CO_SIM_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
+        CO_SIM_IO_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
     }
 
     virtual void ExportMeshImpl(
@@ -176,16 +176,16 @@ private:
         const CoSimIO::Internals::DataContainer<int>& rElementConnectivities,
         const CoSimIO::Internals::DataContainer<int>& rElementTypes)
     {
-        KRATOS_CO_SIM_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
+        CO_SIM_IO_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
     }
 
     void CheckConnection()
     {
-        KRATOS_CO_SIM_ERROR_IF_NOT(mIsConnected) << "No active connection exists!" << std::endl;;
+        CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "No active connection exists!" << std::endl;;
     }
 };
 
 } // namespace Internals
 } // namespace CoSimIO
 
-#endif /* KRATOS_CO_SIM_COMM_H_INCLUDED */
+#endif // CO_SIM_IO_COMM_H_INCLUDED

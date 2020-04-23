@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef KRATOS_CO_SIM_SOCKETS_COMM_H_INCLUDED
-#define KRATOS_CO_SIM_SOCKETS_COMM_H_INCLUDED
+#ifndef CO_SIM_IO_SOCKETS_COMM_H_INCLUDED
+#define CO_SIM_IO_SOCKETS_COMM_H_INCLUDED
 
 // System includes
 
@@ -30,7 +30,7 @@ public:
     explicit CoSimSocketsCommunication(const std::string& rName, SettingsType& rSettings, const bool IsConnectionMaster)
         : CoSimCommunication(rName, rSettings, IsConnectionMaster)
     {
-       KRATOS_CO_SIM_ERROR << "Sockets Communication is not implemented yet" << std::endl;
+       CO_SIM_IO_ERROR << "Sockets Communication is not implemented yet" << std::endl;
     }
 
 };
@@ -38,4 +38,4 @@ public:
 } // namespace Internals
 } // namespace CoSimIO
 
-#endif /* KRATOS_CO_SIM_SOCKETS_COMM_H_INCLUDED */
+#endif // CO_SIM_IO_SOCKETS_COMM_H_INCLUDED

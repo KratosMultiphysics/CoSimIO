@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef KRATOS_CO_SIM_FILE_COMM_H_INCLUDED
-#define KRATOS_CO_SIM_FILE_COMM_H_INCLUDED
+#ifndef CO_SIM_IO_FILE_COMM_H_INCLUDED
+#define CO_SIM_IO_FILE_COMM_H_INCLUDED
 
 // System includes
 #include <chrono>
@@ -23,11 +23,11 @@
 // std::filesystem is part of C++17 and not supported by every compiler. Here we check if it is available.
 #if defined(__cplusplus) && __cplusplus >= 201703L
     #if defined(__has_include) && __has_include(<filesystem>) // has_include is C++17, hence has to be checked in a separate line
-        #define KRATOS_CO_SIM_IO_FILESYSTEM_AVAILABLE
+        #define CO_SIM_IO_FILESYSTEM_AVAILABLE
         #include <filesystem>
         namespace fs = std::filesystem;
     #elif __has_include(<experimental/filesystem>)
-        #define KRATOS_CO_SIM_IO_FILESYSTEM_AVAILABLE
+        #define CO_SIM_IO_FILESYSTEM_AVAILABLE
         #include <experimental/filesystem>
         namespace fs = std::experimental::filesystem;
     #endif
@@ -57,14 +57,14 @@ static bool FileExists(const std::string& rFileName)
 static void RemoveFile(const std::string& rFileName)
 {
     if (std::remove(rFileName.c_str()) != 0) {
-        KRATOS_CO_SIM_INFO("CoSimIO") << "Warning: \"" << rFileName << "\" could not be deleted!" << std::endl;
+        CO_SIM_IO_INFO("CoSimIO") << "Warning: \"" << rFileName << "\" could not be deleted!" << std::endl;
     }
 }
 
 template <typename T>
 static void CheckStream(const T& rStream, const std::string& rFileName)
 {
-    KRATOS_CO_SIM_ERROR_IF_NOT(rStream.is_open()) << rFileName << " could not be opened!" << std::endl;
+    CO_SIM_IO_ERROR_IF_NOT(rStream.is_open()) << rFileName << " could not be opened!" << std::endl;
 }
 
 static int GetNumNodesForVtkCellType(const int VtkCellType)
@@ -86,7 +86,7 @@ static int GetNumNodesForVtkCellType(const int VtkCellType)
     if (vtk_cell_type_map.count(VtkCellType) > 0) {
         return vtk_cell_type_map.at(VtkCellType);
     } else {
-        KRATOS_CO_SIM_ERROR << "Unsupported cell type: " << VtkCellType << std::endl;
+        CO_SIM_IO_ERROR << "Unsupported cell type: " << VtkCellType << std::endl;
         return 0;
     }
 }
@@ -108,12 +108,12 @@ public:
         mCommFolder = ".CoSimIOFileComm_"+rName;
         mCommInFolder = (mrSettings.at("use_folder_for_communication") == "1");
 
-        #ifndef KRATOS_CO_SIM_IO_FILESYSTEM_AVAILABLE
-        KRATOS_CO_SIM_ERROR_IF(mCommInFolder) << "Communication is a folder can only be used if std::filesystem (C++17) is available" << std::endl;
+        #ifndef CO_SIM_IO_FILESYSTEM_AVAILABLE
+        CO_SIM_IO_ERROR_IF(mCommInFolder) << "Communication is a folder can only be used if std::filesystem (C++17) is available" << std::endl;
         #endif
 
         if (mCommInFolder && GetIsConnectionMaster()) {
-            #ifdef KRATOS_CO_SIM_IO_FILESYSTEM_AVAILABLE
+            #ifdef CO_SIM_IO_FILESYSTEM_AVAILABLE
             // delete and recreate directory to remove potential leftovers
             fs::remove_all(mCommFolder);
             fs::create_directory(mCommFolder);
@@ -124,7 +124,7 @@ public:
     ~CoSimFileCommunication() override
     {
         if (GetIsConnected()) {
-            KRATOS_CO_SIM_INFO("CoSimIO") << "Warning: Disconnect was not performed, attempting automatic disconnection!" << std::endl;
+            CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not performed, attempting automatic disconnection!" << std::endl;
             Disconnect();
         }
     }
@@ -150,7 +150,7 @@ private:
     {
         const std::string file_name(GetFullPath("CoSimIO_data_" + GetConnectionName() + "_" + rIdentifier + ".dat"));
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to receive array \"" << rIdentifier << "\" in file \"" << file_name << "\" ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to receive array \"" << rIdentifier << "\" in file \"" << file_name << "\" ..." << std::endl;
 
         WaitForFile(file_name);
 
@@ -172,9 +172,9 @@ private:
 
         RemoveFile(file_name);
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished receiving array with size: " << size_read << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished receiving array with size: " << size_read << std::endl;
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetPrintTiming()) << "Receiving Array \"" << rIdentifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Receiving Array \"" << rIdentifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
     }
 
     void ExportDataImpl(
@@ -186,7 +186,7 @@ private:
         WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
         const int size = rData.size();
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to send array \"" << rIdentifier << "\" with size: " << size << " in file \"" << file_name << "\" ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to send array \"" << rIdentifier << "\" with size: " << size << " in file \"" << file_name << "\" ..." << std::endl;
 
         const auto start_time(std::chrono::steady_clock::now());
 
@@ -207,9 +207,9 @@ private:
         output_file.close();
         MakeFileVisible(file_name);
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished sending array" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished sending array" << std::endl;
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetPrintTiming()) << "Sending Array \"" << rIdentifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Sending Array \"" << rIdentifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
     }
 
     void ImportMeshImpl(
@@ -220,7 +220,7 @@ private:
     {
         const std::string file_name(GetFullPath("CoSimIO_mesh_" + GetConnectionName() + "_" + rIdentifier + ".vtk"));
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to receive mesh \"" << rIdentifier << "\" in file \"" << file_name << "\" ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to receive mesh \"" << rIdentifier << "\" in file \"" << file_name << "\" ..." << std::endl;
 
         WaitForFile(file_name);
 
@@ -237,8 +237,8 @@ private:
         while (std::getline(input_file, current_line)) {
             // reading nodes
             if (current_line.find("POINTS") != std::string::npos) {
-                KRATOS_CO_SIM_ERROR_IF(nodes_read) << "The nodes were read already!" << std::endl;
-                KRATOS_CO_SIM_ERROR_IF(cells_read) << "The cells were read already!" << std::endl;
+                CO_SIM_IO_ERROR_IF(nodes_read) << "The nodes were read already!" << std::endl;
+                CO_SIM_IO_ERROR_IF(cells_read) << "The cells were read already!" << std::endl;
                 nodes_read = true;
 
                 int num_nodes;
@@ -246,7 +246,7 @@ private:
                 std::istringstream line_stream(current_line);
                 line_stream >> num_nodes;
 
-                KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Mesh contains " << num_nodes << " Nodes" << std::endl;
+                CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Mesh contains " << num_nodes << " Nodes" << std::endl;
 
                 rNodalCoordinates.resize(3*num_nodes);
 
@@ -257,8 +257,8 @@ private:
 
             // reading cells
             if (current_line.find("CELLS") != std::string::npos) {
-                KRATOS_CO_SIM_ERROR_IF_NOT(nodes_read) << "The nodes were not yet read!" << std::endl;
-                KRATOS_CO_SIM_ERROR_IF(cells_read) << "The cells were read already!" << std::endl;
+                CO_SIM_IO_ERROR_IF_NOT(nodes_read) << "The nodes were not yet read!" << std::endl;
+                CO_SIM_IO_ERROR_IF(cells_read) << "The cells were read already!" << std::endl;
                 cells_read = true;
 
                 int num_nodes_per_cell, num_cells, elem_conn, cell_list_size;
@@ -270,7 +270,7 @@ private:
                 rElementConnectivities.resize(cell_list_size-num_cells); // the first in number in each line is the number of connectivities, which is not needed bcs it can be derived form the elements-type
                 rElementTypes.resize(num_cells);
 
-                KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Mesh contains " << num_cells << " Elements" << std::endl;
+                CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Mesh contains " << num_cells << " Elements" << std::endl;
 
                 int counter=0;
                 for (int i=0; i<num_cells; ++i) {
@@ -284,8 +284,8 @@ private:
 
             // reading cell types
             if (current_line.find("CELL_TYPES") != std::string::npos) {
-                KRATOS_CO_SIM_ERROR_IF_NOT(nodes_read) << "The nodes were not yet read!" << std::endl;
-                KRATOS_CO_SIM_ERROR_IF_NOT(cells_read) << "The cells were not yet read!" << std::endl;
+                CO_SIM_IO_ERROR_IF_NOT(nodes_read) << "The nodes were not yet read!" << std::endl;
+                CO_SIM_IO_ERROR_IF_NOT(cells_read) << "The cells were not yet read!" << std::endl;
 
                 for (std::size_t i=0; i<rElementTypes.size(); ++i) { // rElementTypes was resized to correct size above
                     input_file >> rElementTypes[i];
@@ -296,9 +296,9 @@ private:
 
         RemoveFile(file_name);
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished receiving mesh" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished receiving mesh" << std::endl;
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetPrintTiming()) << "Receiving Mesh \"" << file_name << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Receiving Mesh \"" << file_name << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
     }
 
     void ExportMeshImpl(
@@ -314,7 +314,7 @@ private:
         const int num_nodes = rNodalCoordinates.size()/3;
         const int num_elems = rElementTypes.size();
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to send mesh \"" << rIdentifier << "\" with " << num_nodes << " Nodes | " << num_elems << " Elements in file \"" << file_name << "\" ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to send mesh \"" << rIdentifier << "\" with " << num_nodes << " Nodes | " << num_elems << " Elements in file \"" << file_name << "\" ..." << std::endl;
 
         const auto start_time(std::chrono::steady_clock::now());
 
@@ -349,7 +349,7 @@ private:
             }
         }
 
-        KRATOS_CO_SIM_ERROR_IF(num_elems > 0 && connectivities_offset != 0) << "Connectivities have an offset of " << connectivities_offset << " which is not allowed!" << std::endl;
+        CO_SIM_IO_ERROR_IF(num_elems > 0 && connectivities_offset != 0) << "Connectivities have an offset of " << connectivities_offset << " which is not allowed!" << std::endl;
 
         // write cells connectivity
         counter = 0;
@@ -375,9 +375,9 @@ private:
         output_file.close();
         MakeFileVisible(file_name);
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished sending mesh" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished sending mesh" << std::endl;
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetPrintTiming()) << "Sending Mesh \"" << rIdentifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Sending Mesh \"" << rIdentifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
     }
 
     void SendControlSignalDetail(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal) override
@@ -386,7 +386,7 @@ private:
 
         WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to send control signal in file \"" << file_name << "\" ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to send control signal in file \"" << file_name << "\" ..." << std::endl;
 
         std::ofstream output_file;
         output_file.open(GetTempFileName(file_name));
@@ -397,14 +397,14 @@ private:
         output_file.close();
         MakeFileVisible(file_name);
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished sending control signal" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished sending control signal" << std::endl;
     }
 
     CoSimIO::ControlSignal RecvControlSignalDetail(std::string& rIdentifier) override
     {
         const std::string file_name(GetFullPath("CoSimIO_control_signal_" + GetConnectionName() + ".dat"));
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to receive control signal in file \"" << file_name << "\" ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to receive control signal in file \"" << file_name << "\" ..." << std::endl;
 
         WaitForFile(file_name);
 
@@ -417,7 +417,7 @@ private:
 
         RemoveFile(file_name);
 
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished receiving control signal" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished receiving control signal" << std::endl;
 
         return static_cast<CoSimIO::ControlSignal>(control_signal);
     }
@@ -444,30 +444,30 @@ private:
 
     void WaitForFile(const std::string& rFileName)
     {
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for file: \"" << rFileName << "\"" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for file: \"" << rFileName << "\"" << std::endl;
         while(!FileExists(rFileName)) {
             std::this_thread::sleep_for(std::chrono::milliseconds(50)); // wait 0.05s before next check
-            KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>2) << "    Waiting" << std::endl;
+            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>2) << "    Waiting" << std::endl;
         }
-        KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found file: \"" << rFileName << "\"" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found file: \"" << rFileName << "\"" << std::endl;
     }
 
     void WaitUntilFileIsRemoved(const std::string& rFileName)
     {
         if (FileExists(rFileName)) { // only issue the wating message if the file exists initially
-            KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for file: \"" << rFileName << "\" to be removed" << std::endl;
+            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for file: \"" << rFileName << "\" to be removed" << std::endl;
             while(FileExists(rFileName)) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(50)); // wait 0.05s before next check
-                KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>2) << "    Waiting" << std::endl;
+                CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>2) << "    Waiting" << std::endl;
             }
-            KRATOS_CO_SIM_INFO_IF("CoSimIO", GetEchoLevel()>0) << "File: \"" << rFileName << "\" was removed" << std::endl;
+            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "File: \"" << rFileName << "\" was removed" << std::endl;
         }
     }
 
     void MakeFileVisible(const std::string& rFinalFileName)
     {
         if (std::rename(GetTempFileName(rFinalFileName).c_str(), rFinalFileName.c_str()) != 0) {
-            KRATOS_CO_SIM_INFO("CoSimIO") << "Warning: \"" << rFinalFileName << "\" could not be made visible!" << std::endl;
+            CO_SIM_IO_INFO("CoSimIO") << "Warning: \"" << rFinalFileName << "\" could not be made visible!" << std::endl;
         }
     }
 
@@ -476,4 +476,4 @@ private:
 } // namespace Internals
 } // namespace CoSimIO
 
-#endif /* KRATOS_CO_SIM_FILE_COMM_H_INCLUDED */
+#endif // CO_SIM_IO_FILE_COMM_H_INCLUDED

@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef KRATOS_CO_SIM_CONNECTION_H_INCLUDED
-#define KRATOS_CO_SIM_CONNECTION_H_INCLUDED
+#ifndef CO_SIM_IO_CONNECTION_H_INCLUDED
+#define CO_SIM_IO_CONNECTION_H_INCLUDED
 
 // Optional includes
 #ifdef CO_SIM_IO_USING_SOCKETS
@@ -65,7 +65,7 @@ public:
 
     void SendControlSignal(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal)
     {
-        KRATOS_CO_SIM_ERROR_IF_NOT(mIsConnectionMaster) << "This function can only be called as the Connection-Master!" << std::endl;
+        CO_SIM_IO_ERROR_IF_NOT(mIsConnectionMaster) << "This function can only be called as the Connection-Master!" << std::endl;
         mpComm->SendControlSignal(rIdentifier, Signal);
     }
 
@@ -73,20 +73,20 @@ public:
         const std::string& rFunctionName,
         FunctionPointerType FunctionPointer)
     {
-        KRATOS_CO_SIM_INFO("CoSimIO") << "Registering function for: " << rFunctionName << std::endl;
+        CO_SIM_IO_INFO("CoSimIO") << "Registering function for: " << rFunctionName << std::endl;
 
-        KRATOS_CO_SIM_ERROR_IF(mIsConnectionMaster) << "This function can only be called as the Connection-Slave!" << std::endl;
+        CO_SIM_IO_ERROR_IF(mIsConnectionMaster) << "This function can only be called as the Connection-Slave!" << std::endl;
 
         CheckIfFunctionNameIsValid(rFunctionName);
 
-        KRATOS_CO_SIM_ERROR_IF((mRegisteredFunctions.count(rFunctionName)>0)) << "A function was already registered for " << rFunctionName << "!" << std::endl;
+        CO_SIM_IO_ERROR_IF((mRegisteredFunctions.count(rFunctionName)>0)) << "A function was already registered for " << rFunctionName << "!" << std::endl;
 
         mRegisteredFunctions[rFunctionName] = FunctionPointer;
     }
 
     void Run()
     {
-        KRATOS_CO_SIM_ERROR_IF(mIsConnectionMaster) << "This function can only be called as the Connection-Slave!" << std::endl;
+        CO_SIM_IO_ERROR_IF(mIsConnectionMaster) << "This function can only be called as the Connection-Slave!" << std::endl;
 
         CoSimIO::ControlSignal control_signal;
         std::string identifier;
@@ -97,7 +97,7 @@ public:
                 break; // coupled simulation is done
             } else {
                 const std::string function_name(ControlSignalName(control_signal));
-                KRATOS_CO_SIM_ERROR_IF_NOT((mRegisteredFunctions.count(function_name)>0)) << "No function was registered for \"" << function_name << "\"!" << std::endl;
+                CO_SIM_IO_ERROR_IF_NOT((mRegisteredFunctions.count(function_name)>0)) << "No function was registered for \"" << function_name << "\"!" << std::endl;
                 mRegisteredFunctions.at(function_name)(*this, identifier);
             }
         }
@@ -137,14 +137,14 @@ public:
     template<class... Args>
     void ImportGeometry(Args&&... args)
     {
-        KRATOS_CO_SIM_ERROR << "Importing of Geometry is not yet implemented!" << std::endl;
+        CO_SIM_IO_ERROR << "Importing of Geometry is not yet implemented!" << std::endl;
         mpComm->ImportGeometry(std::forward<Args>(args)...);
     }
 
     template<class... Args>
     void ExportGeometry(Args&&... args)
     {
-        KRATOS_CO_SIM_ERROR << "Exporting of Geometry is not yet implemented!" << std::endl;
+        CO_SIM_IO_ERROR << "Exporting of Geometry is not yet implemented!" << std::endl;
         mpComm->ExportGeometry(std::forward<Args>(args)...);
     }
 
@@ -173,7 +173,7 @@ private:
             mIsConnectionMaster = (rSettings.at("is_connection_master") == "1");
         }
 
-        KRATOS_CO_SIM_INFO("CoSimIO") << "CoSimIO for \"" << mConnectionName << "\" uses communication format: " << comm_format << std::endl;
+        CO_SIM_IO_INFO("CoSimIO") << "CoSimIO for \"" << mConnectionName << "\" uses communication format: " << comm_format << std::endl;
 
         if (comm_format == "file") {
             mpComm = std::unique_ptr<CoSimCommunication>(new CoSimFileCommunication(mConnectionName, rSettings, mIsConnectionMaster));
@@ -181,22 +181,22 @@ private:
             #ifdef CO_SIM_IO_USING_SOCKETS
             mpComm = std::unique_ptr<CoSimCommunication>(new CoSimSocketsCommunication(mConnectionName, rSettings, mIsConnectionMaster));
             #else
-            KRATOS_CO_SIM_ERROR << "Support for Sockets was not compiled!" << std::endl;
+            CO_SIM_IO_ERROR << "Support for Sockets was not compiled!" << std::endl;
             #endif // CO_SIM_IO_USING_SOCKETS
         } else if (comm_format == "mpi") {
             #ifdef CO_SIM_IO_USING_MPI
             mpComm = std::unique_ptr<CoSimCommunication>(new CoSimMPICommunication(mConnectionName, rSettings, mIsConnectionMaster));
             #else
-            KRATOS_CO_SIM_ERROR << "Support for MPI was not compiled!" << std::endl;
+            CO_SIM_IO_ERROR << "Support for MPI was not compiled!" << std::endl;
             #endif // CO_SIM_IO_USING_MPI
         } else {
-            KRATOS_CO_SIM_ERROR << "Unsupported communication format: " << comm_format << std::endl;
+            CO_SIM_IO_ERROR << "Unsupported communication format: " << comm_format << std::endl;
         }
     }
 
     CoSimIO::ControlSignal RecvControlSignal(std::string& rIdentifier)
     {
-        KRATOS_CO_SIM_ERROR_IF(mIsConnectionMaster) << "This function can only be called as the Connection-Slave!" << std::endl;
+        CO_SIM_IO_ERROR_IF(mIsConnectionMaster) << "This function can only be called as the Connection-Slave!" << std::endl;
         return mpComm->RecvControlSignal(rIdentifier);
     }
 
@@ -216,7 +216,7 @@ private:
             "ExportData"
         };
 
-        KRATOS_CO_SIM_ERROR_IF(std::find(allowed_function_names.begin(), allowed_function_names.end(), rFunctionName) == allowed_function_names.end()) << "The function name \"" << rFunctionName << "\" is not allowed!\nOnly the following names are allowed:\n"; // TODO print the names
+        CO_SIM_IO_ERROR_IF(std::find(allowed_function_names.begin(), allowed_function_names.end(), rFunctionName) == allowed_function_names.end()) << "The function name \"" << rFunctionName << "\" is not allowed!\nOnly the following names are allowed:\n"; // TODO print the names
     }
 
     std::string ControlSignalName(const ControlSignal Signal) const
@@ -236,7 +236,7 @@ private:
             case ControlSignal::ExportMesh:             return "ExportMesh";
             case ControlSignal::ImportData:             return "ImportData";
             case ControlSignal::ExportData:             return "ExportData";
-            default: KRATOS_CO_SIM_ERROR << "Signal is unknown: " << static_cast<int>(Signal); return "";
+            default: CO_SIM_IO_ERROR << "Signal is unknown: " << static_cast<int>(Signal); return "";
         }
     }
 
@@ -245,4 +245,4 @@ private:
 } // namespace Internals
 } // namespace CoSimIO
 
-#endif /* KRATOS_CO_SIM_CONNECTION_H_INCLUDED */
+#endif // CO_SIM_IO_CONNECTION_H_INCLUDED

@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef KRATOS_CO_SIM_MPI_COMM_H_INCLUDED
-#define KRATOS_CO_SIM_MPI_COMM_H_INCLUDED
+#ifndef CO_SIM_IO_MPI_COMM_H_INCLUDED
+#define CO_SIM_IO_MPI_COMM_H_INCLUDED
 
 // System includes
 #include "mpi.h"
@@ -28,7 +28,7 @@ public:
     explicit CoSimMPICommunication(const std::string& rName, SettingsType& rSettings, const bool IsConnectionMaster)
         : CoSimCommunication(rName, rSettings, IsConnectionMaster)
     {
-       KRATOS_CO_SIM_ERROR << "MPI Communication is not implemented yet" << std::endl;
+       CO_SIM_IO_ERROR << "MPI Communication is not implemented yet" << std::endl;
        /*
         Note to self:
         If I directly use the buffer of the sender, then I have to ensure it can be reused when returning from the sending function. This can be achieved with two variants:
@@ -42,4 +42,4 @@ public:
 } // namespace Internals
 } // namespace CoSimIO
 
-#endif /* KRATOS_CO_SIM_MPI_COMM_H_INCLUDED */
+#endif // CO_SIM_IO_MPI_COMM_H_INCLUDED

@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef KRATOS_CO_SIM_IO_INTERNALS_H_INCLUDED
-#define KRATOS_CO_SIM_IO_INTERNALS_H_INCLUDED
+#ifndef CO_SIM_IO_INTERNALS_H_INCLUDED
+#define CO_SIM_IO_INTERNALS_H_INCLUDED
 
 // System includes
 #include <iostream>
@@ -98,9 +98,9 @@ public:
         : mrVector(rVector) {}
 
     std::size_t size() const override {return mrVector.size();}
-    void resize(const std::size_t NewSize) override {KRATOS_CO_SIM_ERROR << "Using non-const member of readonly object!" << std::endl;}
+    void resize(const std::size_t NewSize) override {CO_SIM_IO_ERROR << "Using non-const member of readonly object!" << std::endl;}
     const TDataType* data() const override {return mrVector.data();}
-    TDataType* data() override {KRATOS_CO_SIM_ERROR << "Using non-const member of readonly object!" << std::endl; return nullptr;}
+    TDataType* data() override {CO_SIM_IO_ERROR << "Using non-const member of readonly object!" << std::endl; return nullptr;}
 
 private:
     const std::vector<TDataType>& mrVector;
@@ -120,7 +120,7 @@ public:
             free(*mppData); // this is ok according to the standard, no matter if it is null or allocated //also check if using "std::"
 
             *mppData = (TDataType *)malloc((NewSize)*sizeof(TDataType)); // TODO maybe use realloc? //also check if using "std::"
-            KRATOS_CO_SIM_ERROR_IF_NOT(*mppData) << "Memory reallocation failed";
+            CO_SIM_IO_ERROR_IF_NOT(*mppData) << "Memory reallocation failed";
         }
         mSize = NewSize;
 
@@ -141,9 +141,9 @@ public:
         : mppData(ppData), mSize(Size) {}
 
     std::size_t size() const override {return mSize;};
-    void resize(const std::size_t NewSize) override {KRATOS_CO_SIM_ERROR << "Using non-const member of readonly object!" << std::endl;};
+    void resize(const std::size_t NewSize) override {CO_SIM_IO_ERROR << "Using non-const member of readonly object!" << std::endl;};
     const TDataType* data() const override {return *mppData;}
-    TDataType* data() override {KRATOS_CO_SIM_ERROR << "Using non-const member of readonly object!" << std::endl; return nullptr;}
+    TDataType* data() override {CO_SIM_IO_ERROR << "Using non-const member of readonly object!" << std::endl; return nullptr;}
 
 private:
     const TDataType** mppData;
@@ -164,7 +164,7 @@ inline SettingsType ReadSettingsFile(const std::string& rSettingsFileName)
     std::ifstream settings_file(rSettingsFileName);
 
     if (!settings_file.good()) {
-        KRATOS_CO_SIM_INFO("CoSimIO") << "Input file \"" << rSettingsFileName << "\" could not be read, using default configuration" << std::endl;
+        CO_SIM_IO_INFO("CoSimIO") << "Input file \"" << rSettingsFileName << "\" could not be read, using default configuration" << std::endl;
         return SettingsType();
     }
 
@@ -179,4 +179,4 @@ inline SettingsType ReadSettingsFile(const std::string& rSettingsFileName)
 } // namespace Internals
 } // namespace CoSimIO
 
-#endif /* KRATOS_CO_SIM_IO_INTERNALS_H_INCLUDED */
+#endif // CO_SIM_IO_INTERNALS_H_INCLUDED

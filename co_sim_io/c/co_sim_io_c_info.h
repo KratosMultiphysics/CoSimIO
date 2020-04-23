@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef KRATOS_CO_SIM_IO_C_INFO_H_INCLUDED
-#define KRATOS_CO_SIM_IO_C_INFO_H_INCLUDED
+#ifndef CO_SIM_IO_C_INFO_H_INCLUDED
+#define CO_SIM_IO_C_INFO_H_INCLUDED
 
 // System includes
 
@@ -39,4 +39,4 @@ typedef struct CoSimIO_ReturnInfo
     int ReturnCode;
 } CoSimIO_ReturnInfo;
 
-#endif // KRATOS_CO_SIM_IO_C_INFO_H_INCLUDED
+#endif // CO_SIM_IO_C_INFO_H_INCLUDED
