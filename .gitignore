@@ -8,6 +8,9 @@
 build/*
 bin/*
 
+# fortran module files
+*.mod
+
 # Compiled Object files
 *.slo
 *.lo
