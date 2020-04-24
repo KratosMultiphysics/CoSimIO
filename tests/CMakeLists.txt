@@ -7,13 +7,13 @@ cmake_minimum_required (VERSION 2.8.6)
 
 ### C tests ###
 if(BUILD_C)
-include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io/c )
-link_directories( ${CMAKE_SOURCE_DIR}/bin )
+    include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io/c )
+    link_directories( ${CMAKE_SOURCE_DIR}/bin )
 
-add_executable ( test_runner_c test_runner_c.c)
-# target_link_libraries(simple_solver_c co_sim_io_c)
+    add_executable ( test_runner_c test_runner_c.c)
+    # target_link_libraries(simple_solver_c co_sim_io_c)
 
-install( TARGETS test_runner_c DESTINATION ${CMAKE_SOURCE_DIR}/bin )
+    install( TARGETS test_runner_c DESTINATION ${CMAKE_SOURCE_DIR}/bin )
 endif()
 
 

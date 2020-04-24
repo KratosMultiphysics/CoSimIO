@@ -30,20 +30,20 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 # clean the bin directory
-file(REMOVE_RECURSE ${CMAKE_SOURCE_DIR}/bin)
+file(REMOVE_RECURSE bin)
 
 # always build the C++ simple solver
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples/simple_solver/cpp)
+add_subdirectory(examples/simple_solver/cpp)
 
 if (BUILD_C)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/co_sim_io/c)
+    add_subdirectory(co_sim_io/c)
 endif()
 
 if (BUILD_PYTHON)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/co_sim_io/python)
+    add_subdirectory(co_sim_io/python)
 endif()
 
 if (BUILD_TESTS)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
+    add_subdirectory(examples)
+    add_subdirectory(tests)
 endif()
