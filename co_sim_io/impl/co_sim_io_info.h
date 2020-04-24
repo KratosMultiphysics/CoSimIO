@@ -62,6 +62,8 @@ public:
         mOptions[I_Key] = {Name(TDataType()), I_Value};
     }
 
+    // GetType?
+
     // TODO do we need "erase", "clear", "size" ?
 
 private:
