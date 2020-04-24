@@ -1,15 +1,20 @@
 project(CoSimIOTesting CXX)
 cmake_minimum_required (VERSION 2.8.6)
 
-include(CMakeDependentOption)
 OPTION ( ENABLE_SOCKETS "Enable sockets communication" OFF )
 OPTION ( ENABLE_MPI "Enable MPI communication and MPI examples" OFF )
-cmake_dependent_option(ENABLE_FORTRAN_EXAMPLES "Enable Fortran example" OFF MSVC OFF) # disable by default in Win, enable otherwise
+OPTION ( BUILD_TESTS "Enable MPI communication and MPI examples" ON )
+OPTION ( BUILD_C "Enable MPI communication and MPI examples" OFF )
+OPTION ( BUILD_PYTHON "Enable MPI communication and MPI examples" OFF )
+OPTION ( BUILD_FORTRAN "Enable MPI communication and MPI examples" OFF )
 
 message("\nUsing the following configuration:")
-message("    ENABLE_SOCKETS:           " ${ENABLE_SOCKETS})
-message("    ENABLE_MPI:               " ${ENABLE_MPI})
-message("    ENABLE_FORTRAN_EXAMPLES:  " ${ENABLE_FORTRAN_EXAMPLES})
+message("    ENABLE_SOCKETS:    " ${ENABLE_SOCKETS})
+message("    ENABLE_MPI:        " ${ENABLE_MPI})
+message("    BUILD_TESTS:       " ${BUILD_TESTS})
+message("    BUILD_C:           " ${BUILD_C})
+message("    BUILD_PYTHON:      " ${BUILD_PYTHON})
+message("    BUILD_FORTRAN:     " ${BUILD_FORTRAN})
 message("")
 
 if(MSVC)
@@ -19,21 +24,18 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus ") # /WX
 endif()
 
-
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/co_sim_io/c)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/co_sim_io/python)
-
+# always build the C++ simple solver
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples/simple_solver/cpp)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples/simple_solver/c)
-if(ENABLE_MPI)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples/mpi_solver/cpp)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples/mpi_solver/c)
+
+if (BUILD_C)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/co_sim_io/c)
 endif()
 
-if(ENABLE_FORTRAN_EXAMPLES)
-    include(CMakeAddFortranSubdirectory)
-    cmake_add_fortran_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples/simple_solver/fortran NO_EXTERNAL_INSTALL)
-    if(ENABLE_MPI)
-        cmake_add_fortran_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples/mpi_solver/fortran NO_EXTERNAL_INSTALL)
-    endif()
+if (BUILD_PYTHON)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/co_sim_io/python)
+endif()
+
+if (BUILD_TESTS)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
 endif()
