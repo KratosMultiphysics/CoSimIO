@@ -29,6 +29,9 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(CMAKE_MACOSX_RPATH 1)
 endif()
 
+# clean the bin directory
+file(REMOVE_RECURSE ${CMAKE_SOURCE_DIR}/bin)
+
 # always build the C++ simple solver
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples/simple_solver/cpp)
 
