@@ -19,4 +19,4 @@ set_target_properties(co_sim_io_c PROPERTIES
     CXX_EXTENSIONS NO
 )
 
-install(TARGETS co_sim_io_c LIBRARY DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+install(TARGETS co_sim_io_c RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/bin)
