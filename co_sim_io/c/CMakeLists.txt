@@ -20,9 +20,11 @@ set_target_properties(co_sim_io_c PROPERTIES
     CXX_EXTENSIONS NO
 )
 
-if( WIN32 )
-    install(TARGETS co_sim_io_c RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/bin)
-else()
-    install(TARGETS co_sim_io_c LIBRARY DESTINATION ${CMAKE_SOURCE_DIR}/bin)
-endif()
+install(TARGETS co_sim_io_c DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+
+# if( WIN32 )
+#     install(TARGETS co_sim_io_c RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+# else()
+#     install(TARGETS co_sim_io_c LIBRARY DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+# endif()
 
