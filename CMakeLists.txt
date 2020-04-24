@@ -17,8 +17,6 @@ message("    BUILD_PYTHON:   " ${BUILD_PYTHON})
 message("    BUILD_FORTRAN:  " ${BUILD_FORTRAN})
 message("")
 
-set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
-
 if(MSVC)
     # required such that "__cplusplus" is set to the correct value
     # see https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
