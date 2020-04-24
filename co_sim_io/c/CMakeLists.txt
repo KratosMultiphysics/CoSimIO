@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 2.8.6)
 
 message("Configuring CoSimIO for C")
 
-if(${MSVC})
+if(MSVC)
     # required such that "__cplusplus" is set to the correct value
     # see https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
     # Note: min value is c++14 => 201402L (c++11 does not exist, will also output 201402L)
@@ -19,4 +19,9 @@ set_target_properties(co_sim_io_c PROPERTIES
     CXX_EXTENSIONS NO
 )
 
-install(TARGETS co_sim_io_c RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+if( WIN32 )
+    install(TARGETS co_sim_io_c RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+else()
+    install(TARGETS co_sim_io_c LIBRARY DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+endif()
+
