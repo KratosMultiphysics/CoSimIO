@@ -19,6 +19,7 @@ endif()
 
 ### Fortran tests ###
 if(BUILD_FORTRAN)
+    enable_language( Fortran )
     # include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io/fortran )
     # link_directories( ${CMAKE_SOURCE_DIR}/bin )
 
