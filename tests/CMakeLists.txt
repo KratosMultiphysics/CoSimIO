@@ -19,12 +19,12 @@ endif()
 
 ### Fortran tests ###
 if(BUILD_FORTRAN)
-    include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io/fortran )
-    link_directories( ${CMAKE_SOURCE_DIR}/bin )
+    # include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io/fortran )
+    # link_directories( ${CMAKE_SOURCE_DIR}/bin )
 
-    add_executable ( test_runner_fortran test_runner_fortran.f90)
-    # target_link_libraries(test_runner_fortran co_sim_io_c)
+    # add_executable ( test_runner_fortran test_runner_fortran.f90)
+    # # target_link_libraries(test_runner_fortran co_sim_io_c)
 
-    install( TARGETS test_runner_fortran DESTINATION ${CMAKE_SOURCE_DIR}/bin )
+    # install( TARGETS test_runner_fortran DESTINATION ${CMAKE_SOURCE_DIR}/bin )
 endif()
 
