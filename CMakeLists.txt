@@ -24,6 +24,10 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus ") # /WX
 endif()
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(CMAKE_MACOSX_RPATH 1)
+endif()
+
 # always build the C++ simple solver
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples/simple_solver/cpp)
 
