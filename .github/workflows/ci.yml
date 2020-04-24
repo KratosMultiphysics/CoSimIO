@@ -28,7 +28,7 @@ jobs:
 
     - name: Build CoSimIO
       run: |
-        cmake -H"." -B"build"
+        cmake -H"." -B"build" -DBUILD_C=ON -DBUILD_PYTHON=ON -DBUILD_FORTRAN=ON
         cmake --build "build" --target install
 
     - name: Run tests
