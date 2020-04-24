@@ -40,4 +40,5 @@ jobs:
       run: |
         cd tests
         # TODO set paths
+        # TODO delete build dir to make sure the linking etc works correctly?
         python run_all_tests.py
