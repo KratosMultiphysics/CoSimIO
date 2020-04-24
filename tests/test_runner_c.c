@@ -12,7 +12,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-// #include "tests_c.h"
+#include "tests_c.h"
 
 // #define CONNECTION_NAME "tester_C"
 
