@@ -10,7 +10,7 @@ if(${MSVC})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus")
 endif()
 
-add_library (co_sim_io_c SHARED co_sim_io_c.cpp)
+add_library (co_sim_io_c RUNTIME co_sim_io_c.cpp)
 
 # enable C++11
 set_target_properties(co_sim_io_c PROPERTIES
