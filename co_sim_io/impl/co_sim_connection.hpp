@@ -15,12 +15,12 @@
 
 // Optional includes
 #ifdef CO_SIM_IO_USING_SOCKETS
-#include "co_sim_sockets_communication.h"
+#include "co_sim_sockets_communication.hpp"
 #endif // CO_SIM_IO_USING_SOCKETS
 
 
 #ifdef CO_SIM_IO_USING_MPI
-#include "co_sim_mpi_communication.h"
+#include "co_sim_mpi_communication.hpp"
 #endif // CO_SIM_IO_USING_MPI
 
 // System includes
@@ -33,7 +33,7 @@
 #include <functional>
 
 // Project includes
-#include "co_sim_file_communication.h"
+#include "co_sim_file_communication.hpp"
 
 namespace CoSimIO {
 namespace Internals {

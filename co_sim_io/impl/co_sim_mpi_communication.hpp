@@ -17,7 +17,7 @@
 #include "mpi.h"
 
 // Project includes
-#include "co_sim_communication.h"
+#include "co_sim_communication.hpp"
 
 namespace CoSimIO {
 namespace Internals {

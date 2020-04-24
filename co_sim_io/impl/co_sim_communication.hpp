@@ -16,7 +16,7 @@
 // System includes
 
 // Project includes
-#include "co_sim_io_internals.h"
+#include "co_sim_io_internals.hpp"
 
 namespace CoSimIO {
 namespace Internals {

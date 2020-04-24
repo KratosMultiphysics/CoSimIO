@@ -35,8 +35,8 @@ Note that this introduces dependencies such as e.g. boost (header-only version) 
 #include <string>
 
 // Project includes
-#include "impl/co_sim_io_define.h"
-#include "impl/co_sim_io_info.h"
+#include "impl/co_sim_io_define.hpp"
+#include "impl/co_sim_io_info.hpp"
 
 namespace CoSimIO {
 
@@ -97,6 +97,6 @@ inline Info Register(
 
 } // namespace CoSimIO
 
-#include "impl/co_sim_io_impl.h"
+#include "impl/co_sim_io_impl.hpp"
 
 #endif // CO_SIM_IO_H_INCLUDED

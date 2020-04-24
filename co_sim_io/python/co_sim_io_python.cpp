@@ -25,7 +25,7 @@
 #include <pybind11/stl.h>
 
 // CoSimIO include
-#include "../co_sim_io.h"
+#include "../co_sim_io.hpp"
 
 namespace CoSimIO_Py_Wrappers {
 

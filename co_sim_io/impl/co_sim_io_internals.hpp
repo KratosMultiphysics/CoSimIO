@@ -21,8 +21,8 @@
 #include <string>
 
 // Project includes
-#include "co_sim_io_define.h"
-#include "co_sim_io_macros.h"
+#include "co_sim_io_define.hpp"
+#include "co_sim_io_macros.hpp"
 
 namespace CoSimIO {
 namespace Internals {

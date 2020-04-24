@@ -14,7 +14,7 @@
 #define CO_SIM_IO_IMPL_H_INCLUDED
 
 /*
-This file contains the implementation of the functions defined in "co_sim_io.h"
+This file contains the implementation of the functions defined in "co_sim_io.hpp"
 */
 
 // System includes
@@ -22,7 +22,7 @@ This file contains the implementation of the functions defined in "co_sim_io.h"
 #include <memory>
 
 // Project includes
-#include "co_sim_connection.h"
+#include "co_sim_connection.hpp"
 
 namespace CoSimIO {
 

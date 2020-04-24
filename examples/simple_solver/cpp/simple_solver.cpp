@@ -22,7 +22,7 @@ into the CoSimulation framework works
 #include <stdexcept>
 
 // CoSimulation includes
-#include "co_sim_io.h"
+#include "co_sim_io.hpp"
 
 typedef std::vector<std::vector<std::array<double, 2>>> MeshType;
 typedef std::vector<double> DataFieldType;
