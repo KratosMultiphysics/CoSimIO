@@ -2,16 +2,17 @@ project(CoSimIOTesting C CXX)
 cmake_minimum_required (VERSION 2.8.6)
 
 
+include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io )
 ### C++ tests ###
-
+add_executable ( test_runner_cpp test_runner_cpp.cpp)
+install( TARGETS test_runner_cpp DESTINATION ${CMAKE_SOURCE_DIR}/bin )
 
 ### C tests ###
 if(BUILD_C)
-    include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io/c )
     link_directories( ${CMAKE_SOURCE_DIR}/bin )
 
     add_executable ( test_runner_c test_runner_c.c)
-    # target_link_libraries(simple_solver_c co_sim_io_c)
+    target_link_libraries(test_runner_c co_sim_io_c)
 
     install( TARGETS test_runner_c DESTINATION ${CMAKE_SOURCE_DIR}/bin )
 endif()
