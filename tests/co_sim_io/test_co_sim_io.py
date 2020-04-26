@@ -20,7 +20,7 @@ import subprocess
 class CoSimIOTests(unittest.TestCase):
     def test_with_testrunner(self):
         if os.name=="nt":
-            cmd = "Debug/test_runner_co_sim_io_tests.exe"
+            cmd = "test_runner_co_sim_io_tests.exe"
         else:
             cmd = "./test_runner_co_sim_io_tests"
 
