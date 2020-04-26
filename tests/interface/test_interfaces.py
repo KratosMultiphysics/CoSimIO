@@ -15,12 +15,11 @@ import unittest, sys, os
 import subprocess
 from abc import ABCMeta, abstractmethod
 
-
-from interface_tests import RunTest
-
 if __name__ == '__main__':
-    # necessary to import from parent dir
-    sys.path.append(os.pardir)
+    sys.path.append(os.pardir) # necessary to import from parent dir
+    from interface_tests import RunTest
+else:
+    from .interface_tests import RunTest
 
 from testing_utilities import IsOptionEnabled, LaunchSubprocess, CollectSubprocessResult
 
