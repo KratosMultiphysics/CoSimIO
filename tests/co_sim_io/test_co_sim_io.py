@@ -27,7 +27,7 @@ class CoSimIOTests(unittest.TestCase):
         sp = subprocess.Popen(
             [cmd],
             stdout=subprocess.PIPE,
-            cwd=os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../", "bin"))
+            cwd=os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, os.pardir, "bin"))
 
         process_stdout, process_stderr = sp.communicate()
         if process_stdout:
