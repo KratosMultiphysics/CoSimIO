@@ -32,7 +32,16 @@ int main(int argc, char **argv)
 
     const std::string test_name(argv[1]);
 
-    // run the test with the given test name ...
+    int return_code = 0;
 
-    return 0;
+    if (test_name == "mytest") {
+        // return_code = CallMyTest();
+    } else if (test_name == "dddd") {
+
+    } else {
+        std::cout << "Test name is unknown: " << test_name << std::endl;
+        return_code = 1;
+    }
+
+    return return_code;
 }

@@ -10,8 +10,12 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
+
+// System includes
 #include <stdio.h>
 #include <stdlib.h>
+
+// Test includes
 #include "interface/interface_tests.h"
 #include "solver_integration/connect_disconnect/solver.h"
 #include "solver_integration/data_exchange/solver.h"
