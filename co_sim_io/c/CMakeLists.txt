@@ -21,4 +21,9 @@ set_target_properties(co_sim_io_c PROPERTIES
     CXX_EXTENSIONS NO
 )
 
+# changing the .dylib suffix to .so (OS X)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set_target_properties(co_sim_io_c PROPERTIES SUFFIX .so)
+endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+
 install(TARGETS co_sim_io_c DESTINATION ${CMAKE_SOURCE_DIR}/bin)
