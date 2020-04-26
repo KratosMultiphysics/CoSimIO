@@ -19,7 +19,10 @@ import subprocess
 # Hence it is only for better integration with the remaining tests, such that they can be run alltogether
 class CoSimIOTests(unittest.TestCase):
     def test_with_testrunner(self):
-        print("PATH:", os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, os.pardir, "bin"))
+        path_to_testrunner = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, os.pardir, "bin")
+        print("PATH:", path_to_testrunner)
+
+        print(os.listdir(path_to_testrunner))
 
         if os.name=="nt":
             cmd = "test_runner_co_sim_io_tests.exe"
