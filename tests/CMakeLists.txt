@@ -39,13 +39,13 @@ endif()
 ### Fortran tests ###
 if(BUILD_FORTRAN)
     enable_language( Fortran )
-    # include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io/fortran )
-    # link_directories( ${CMAKE_SOURCE_DIR}/bin )
+    include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io/fortran )
+    link_directories( ${CMAKE_SOURCE_DIR}/bin )
 
-    # TODO glob all fortran files
-    # add_executable ( test_runner_fortran test_runners/test_runner_fortran.f90)
-    # # target_link_libraries(test_runner_fortran co_sim_io_c)
+    file( GLOB_RECURSE FORTRAN_TEST_FILES *.f90)
+    add_executable ( test_runner_fortran test_runners/test_runner.f90 ${FORTRAN_TEST_FILES})
+    target_link_libraries(test_runner_fortran co_sim_io_c)
 
-    # install( TARGETS test_runner_fortran DESTINATION ${CMAKE_SOURCE_DIR}/bin )
+    install( TARGETS test_runner_fortran DESTINATION ${CMAKE_SOURCE_DIR}/bin )
 endif()
 
