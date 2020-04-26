@@ -12,7 +12,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "tests_c.h"
+#include "interface/interface_tests.h"
+#include "solver_integration/connect_disconnect/solver.h"
+#include "solver_integration/data_exchange/solver.h"
+#include "solver_integration/mesh_exchange/solver.h"
 
 // #define CONNECTION_NAME "tester_C"
 
