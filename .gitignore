@@ -8,6 +8,9 @@
 build/*
 bin/*
 
+# file with compiled config
+tests/compiled_config.json
+
 # fortran module files
 *.mod
 

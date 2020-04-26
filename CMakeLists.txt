@@ -47,3 +47,8 @@ if (BUILD_TESTS)
     add_subdirectory(examples)
     add_subdirectory(tests)
 endif()
+
+configure_file(
+  "tests/compiled_config.json.in"
+  "${CMAKE_SOURCE_DIR}/tests/compiled_config.json"
+)
