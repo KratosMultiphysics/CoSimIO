@@ -20,7 +20,7 @@ program test_runner
     ! Make sure the right number of command line arguments have been provided
     IF(COMMAND_ARGUMENT_COUNT().NE.2)THEN
       WRITE(*,*)'ERROR, TWO COMMAND-LINE ARGUMENTS REQUIRED, STOPPING'
-      STOP
+      STOP 1
     ENDIF
 
     ! Read the command line arguments
@@ -40,7 +40,7 @@ program test_runner
         ! call run_solution_co_simulation_orchestrated()
     ELSE
         WRITE(*,*)'ERROR, WRONG LEVEL OF COUPLING; CAN ONLY BE 0, 1, 2, 3, STOPPING'
-        STOP
+        STOP 1
     END IF
 
 end program
