@@ -16,7 +16,6 @@
 // System includes
 #include <string>
 #include <unordered_map>
-// #include <typeinfo>
 #include <utility>
 
 #ifdef CO_SIM_IO_USING_MPI
