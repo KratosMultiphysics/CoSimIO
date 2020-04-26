@@ -26,7 +26,7 @@ endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # to suppress warning "MACOSX_RPATH is not specified for the following targets"
-    set(CMAKE_MACOSX_RPATH 1)
+    set(CMAKE_MACOSX_RPATH 0)
 endif()
 
 # clean the bin directory
