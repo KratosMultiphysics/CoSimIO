@@ -17,16 +17,16 @@
 #include "mpi.h"
 
 // Project includes
-#include "co_sim_communication.hpp"
+#include "communication.hpp"
 
 namespace CoSimIO {
 namespace Internals {
 
-class CoSimMPICommunication : public CoSimCommunication
+class MPICommunication : public Communication
 {
 public:
-    explicit CoSimMPICommunication(const std::string& rName, SettingsType& rSettings, const bool IsConnectionMaster)
-        : CoSimCommunication(rName, rSettings, IsConnectionMaster)
+    explicit MPICommunication(const std::string& rName, SettingsType& rSettings, const bool IsConnectionMaster)
+        : Communication(rName, rSettings, IsConnectionMaster)
     {
        static_assert(false,"MPI Communication is not implemented yet");
        /*

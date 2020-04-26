@@ -19,16 +19,16 @@
 #include <boost/asio.hpp>
 
 // Project includes
-#include "co_sim_communication.hpp"
+#include "communication.hpp"
 
 namespace CoSimIO {
 namespace Internals {
 
-class CoSimSocketsCommunication : public CoSimCommunication
+class SocketsCommunication : public Communication
 {
 public:
-    explicit CoSimSocketsCommunication(const std::string& rName, SettingsType& rSettings, const bool IsConnectionMaster)
-        : CoSimCommunication(rName, rSettings, IsConnectionMaster)
+    explicit SocketsCommunication(const std::string& rName, SettingsType& rSettings, const bool IsConnectionMaster)
+        : Communication(rName, rSettings, IsConnectionMaster)
     {
        static_assert(false,"Sockets Communication is not implemented yet");
     }

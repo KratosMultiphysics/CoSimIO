@@ -35,7 +35,7 @@
 
 
 // Project includes
-#include "co_sim_communication.hpp"
+#include "communication.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -94,11 +94,11 @@ static int GetNumNodesForVtkCellType(const int VtkCellType)
 } // helpers namespace
 
 
-class CoSimFileCommunication : public CoSimCommunication
+class FileCommunication : public Communication
 {
 public:
-    explicit CoSimFileCommunication(const std::string& rName, SettingsType& rSettings, const bool IsConnectionMaster)
-        : CoSimCommunication(rName, rSettings, IsConnectionMaster)
+    explicit FileCommunication(const std::string& rName, SettingsType& rSettings, const bool IsConnectionMaster)
+        : Communication(rName, rSettings, IsConnectionMaster)
     {
         const SettingsType default_settings {
             {"use_folder_for_communication" , "0"}
@@ -121,7 +121,7 @@ public:
         }
     }
 
-    ~CoSimFileCommunication() override
+    ~FileCommunication() override
     {
         if (GetIsConnected()) {
             CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not performed, attempting automatic disconnection!" << std::endl;

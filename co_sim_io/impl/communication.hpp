@@ -16,15 +16,15 @@
 // System includes
 
 // Project includes
-#include "co_sim_io_internals.hpp"
+#include "data_container.hpp"
 
 namespace CoSimIO {
 namespace Internals {
 
-class CoSimCommunication
+class Communication
 {
 public:
-    explicit CoSimCommunication(const std::string& rName, SettingsType& rSettings, const bool IsConnectionMaster) : mrSettings(rSettings),mConnectionName(rName), mIsConnectionMaster(IsConnectionMaster)
+    explicit Communication(const std::string& rName, SettingsType& rSettings, const bool IsConnectionMaster) : mrSettings(rSettings),mConnectionName(rName), mIsConnectionMaster(IsConnectionMaster)
     {
         const SettingsType default_settings {
             {"echo_level",   "1"},
@@ -36,7 +36,7 @@ public:
         mPrintTiming = (mrSettings.at("print_timing") == "1");
     }
 
-    virtual ~CoSimCommunication() = default; // impl of disconnect has to be in derived class due to order of class destruction
+    virtual ~Communication() = default; // impl of disconnect has to be in derived class due to order of class destruction
 
     bool Connect()
     {

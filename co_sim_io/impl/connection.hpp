@@ -15,12 +15,12 @@
 
 // Optional includes
 #ifdef CO_SIM_IO_USING_SOCKETS
-#include "co_sim_sockets_communication.hpp"
+#include "sockets_communication.hpp"
 #endif // CO_SIM_IO_USING_SOCKETS
 
 
 #ifdef CO_SIM_IO_USING_MPI
-#include "co_sim_mpi_communication.hpp"
+#include "mpi_communication.hpp"
 #endif // CO_SIM_IO_USING_MPI
 
 // System includes
@@ -33,22 +33,22 @@
 #include <functional>
 
 // Project includes
-#include "co_sim_file_communication.hpp"
+#include "file_communication.hpp"
 
 namespace CoSimIO {
 namespace Internals {
 
-class CoSimConnection
+class Connection
 {
 
 public:
 
     using FunctionPointerType = std::function<void(Info&)>;
 
-    explicit CoSimConnection(const std::string& rName, const std::string& rSettingsFileName)
-    : CoSimConnection(rName, Internals::ReadSettingsFile(rSettingsFileName)) { } // forwarding constructor call
+    explicit Connection(const std::string& rName, const std::string& rSettingsFileName)
+    : Connection(rName, Internals::ReadSettingsFile(rSettingsFileName)) { } // forwarding constructor call
 
-    explicit CoSimConnection(const std::string& rName, SettingsType Settings) : mConnectionName(rName)
+    explicit Connection(const std::string& rName, SettingsType Settings) : mConnectionName(rName)
     {
         Initialize(Settings);
     }
@@ -167,7 +167,7 @@ public:
     }
 
 private:
-    std::unique_ptr<CoSimCommunication> mpComm; // handles communication (File, Sockets, MPI, ...)
+    std::unique_ptr<Communication> mpComm; // handles communication (File, Sockets, MPI, ...)
 
     std::string mConnectionName;
 
@@ -189,16 +189,16 @@ private:
         CO_SIM_IO_INFO("CoSimIO") << "CoSimIO for \"" << mConnectionName << "\" uses communication format: " << comm_format << std::endl;
 
         if (comm_format == "file") {
-            mpComm = std::unique_ptr<CoSimCommunication>(new CoSimFileCommunication(mConnectionName, rSettings, mIsConnectionMaster));
+            mpComm = std::unique_ptr<Communication>(new FileCommunication(mConnectionName, rSettings, mIsConnectionMaster));
         } else if (comm_format == "sockets") {
             #ifdef CO_SIM_IO_USING_SOCKETS
-            mpComm = std::unique_ptr<CoSimCommunication>(new CoSimSocketsCommunication(mConnectionName, rSettings, mIsConnectionMaster));
+            mpComm = std::unique_ptr<Communication>(new SocketsCommunication(mConnectionName, rSettings, mIsConnectionMaster));
             #else
             CO_SIM_IO_ERROR << "Support for Sockets was not compiled!" << std::endl;
             #endif // CO_SIM_IO_USING_SOCKETS
         } else if (comm_format == "mpi") {
             #ifdef CO_SIM_IO_USING_MPI
-            mpComm = std::unique_ptr<CoSimCommunication>(new CoSimMPICommunication(mConnectionName, rSettings, mIsConnectionMaster));
+            mpComm = std::unique_ptr<Communication>(new MPICommunication(mConnectionName, rSettings, mIsConnectionMaster));
             #else
             CO_SIM_IO_ERROR << "Support for MPI was not compiled!" << std::endl;
             #endif // CO_SIM_IO_USING_MPI
@@ -257,7 +257,7 @@ private:
         }
     }
 
-}; // class CoSimConnection
+}; // class Connection
 
 } // namespace Internals
 } // namespace CoSimIO

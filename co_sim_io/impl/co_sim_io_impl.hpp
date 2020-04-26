@@ -22,20 +22,20 @@ This file contains the implementation of the functions defined in "co_sim_io.hpp
 #include <memory>
 
 // Project includes
-#include "co_sim_connection.hpp"
+#include "connection.hpp"
 
 namespace CoSimIO {
 
 namespace Internals {
 // TODO make sure this is unique even across compilation units (test somehow)
-static std::unordered_map<std::string, std::unique_ptr<CoSimConnection>> s_co_sim_connections;
+static std::unordered_map<std::string, std::unique_ptr<Connection>> s_co_sim_connections;
 
 static bool HasIO(const std::string& rConnectionName)
 {
     return s_co_sim_connections.find(rConnectionName) != s_co_sim_connections.end();
 }
 
-static CoSimConnection& GetConnection(const std::string& rConnectionName)
+static Connection& GetConnection(const std::string& rConnectionName)
 {
     CO_SIM_IO_ERROR_IF_NOT(HasIO(rConnectionName)) << "Trying to use connection \"" << rConnectionName << "\" which does not exist!" << std::endl;
     return *s_co_sim_connections.at(rConnectionName);
@@ -56,7 +56,7 @@ inline Info Connect(const std::string& rConnectionName, CoSimIO::SettingsType Se
     using namespace Internals;
     CO_SIM_IO_ERROR_IF(HasIO(rConnectionName)) << "A connection for \"" << rConnectionName << "\" already exists!" << std::endl;
 
-    s_co_sim_connections[rConnectionName] = std::unique_ptr<CoSimConnection>(new CoSimConnection(rConnectionName, Settings));
+    s_co_sim_connections[rConnectionName] = std::unique_ptr<Connection>(new Connection(rConnectionName, Settings));
     return GetConnection(rConnectionName).Connect();
 }
 

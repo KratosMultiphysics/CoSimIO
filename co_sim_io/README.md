@@ -25,3 +25,7 @@ Include `co_sim_io.h` in your code and use it.
 - _CoSimIO_ is **header-only**, no linking is required
 - The only dependency is **C++11**
 - Different means of communication / data-exchange are available. Communication through files is the default, others (e.g. through Sockets or MPI) can be enabled at compile time (and selected at run time). This can introduce other dependencies such as boost or MPI. Except MPI, all these dependencies are header-only.
+
+
+
+## Memory Management
