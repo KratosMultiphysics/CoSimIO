@@ -20,20 +20,19 @@ import subprocess
 class CoSimIOTests(unittest.TestCase):
     def test_with_testrunner(self):
         path_to_testrunner = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, os.pardir, "bin")
-        print("PATH:", path_to_testrunner)
-
-        print(os.listdir(path_to_testrunner))
 
         if os.name=="nt":
             cmd = "test_runner_co_sim_io_tests.exe"
+            use_shell=True
         else:
             cmd = "./test_runner_co_sim_io_tests"
+            use_shell=False
 
         sp = subprocess.Popen(
             [cmd],
             stdout=subprocess.PIPE,
-            cwd=os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, os.pardir, "bin"),
-            shell=True)
+            cwd=path_to_testrunner,
+            shell=use_shell)
 
         process_stdout, process_stderr = sp.communicate()
         if process_stdout:
