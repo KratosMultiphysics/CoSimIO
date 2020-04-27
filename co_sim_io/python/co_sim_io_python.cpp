@@ -92,8 +92,8 @@ void ExportData(
 
 PYBIND11_MODULE(CoSimIO, m)
 {
-    CoSimIO::Info (*ConnectWithSettingsFileName)(const std::string&, const std::string&) = &CoSimIO::Connect;
-    CoSimIO::Info (*ConnectWithSettings)(const std::string&, CoSimIO::SettingsType) = &CoSimIO::Connect;
+    CoSimIO::ReturnInfo (*ConnectWithSettingsFileName)(const std::string&, const std::string&) = &CoSimIO::Connect;
+    CoSimIO::ReturnInfo (*ConnectWithSettings)(const std::string&, CoSimIO::SettingsType) = &CoSimIO::Connect;
 
     m.def("Connect", ConnectWithSettingsFileName);
     m.def("Connect", ConnectWithSettings);

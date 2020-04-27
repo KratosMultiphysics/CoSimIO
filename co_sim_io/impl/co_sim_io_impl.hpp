@@ -51,7 +51,7 @@ inline void SendControlSignal(
 
 } // namespace Internals
 
-inline Info Connect(const std::string& rConnectionName, CoSimIO::SettingsType Settings)
+inline ReturnInfo Connect(const std::string& rConnectionName, CoSimIO::SettingsType Settings)
 {
     using namespace Internals;
     CO_SIM_IO_ERROR_IF(HasIO(rConnectionName)) << "A connection for \"" << rConnectionName << "\" already exists!" << std::endl;
@@ -60,14 +60,14 @@ inline Info Connect(const std::string& rConnectionName, CoSimIO::SettingsType Se
     return GetConnection(rConnectionName).Connect();
 }
 
-inline Info Connect(const std::string& rConnectionName, const std::string& rSettingsFileName)
+inline ReturnInfo Connect(const std::string& rConnectionName, const std::string& rSettingsFileName)
 {
     Connect(rConnectionName, Internals::ReadSettingsFile(rSettingsFileName)); // forward call to funciton above
 
-    return Info(); // TODO use this
+    return ReturnInfo(); // TODO use this
 }
 
-inline Info Disconnect(const std::string& rConnectionName)
+inline ReturnInfo Disconnect(const std::string& rConnectionName)
 {
     using namespace Internals;
     CO_SIM_IO_ERROR_IF_NOT(HasIO(rConnectionName)) << "Trying to disconnect connection \"" << rConnectionName << "\" which does not exist!" << std::endl;
@@ -75,12 +75,12 @@ inline Info Disconnect(const std::string& rConnectionName)
     auto info = GetConnection(rConnectionName).Disconnect();
     s_co_sim_connections.erase(rConnectionName);
 
-    return Info(); // TODO use this
+    return ReturnInfo(); // TODO use this
 }
 
 // Version for C++, there this input is a std::vector, which we have to wrap before passing it on
 template<>
-inline Info ImportData(
+inline ReturnInfo ImportData(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     std::vector<double>& rData)
@@ -92,7 +92,7 @@ inline Info ImportData(
 
 // Version for C and fortran, there we already get a container
 template<>
-inline Info ImportData(
+inline ReturnInfo ImportData(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     CoSimIO::Internals::DataContainer<double>& rData)
@@ -102,7 +102,7 @@ inline Info ImportData(
 
 // Version for C++, there this input is a std::vector, which we have to wrap before passing it on
 template<>
-inline Info ExportData(
+inline ReturnInfo ExportData(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     const std::vector<double>& rData)
@@ -114,7 +114,7 @@ inline Info ExportData(
 
 // Version for C and fortran, there we already get a container
 template<>
-inline Info ExportData(
+inline ReturnInfo ExportData(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     const CoSimIO::Internals::DataContainer<double>& rData)
@@ -123,7 +123,7 @@ inline Info ExportData(
 }
 
 template<>
-inline Info ImportMesh(
+inline ReturnInfo ImportMesh(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     std::vector<double>& rNodalCoordinates,
@@ -138,7 +138,7 @@ inline Info ImportMesh(
 }
 
 template<>
-inline Info ImportMesh(
+inline ReturnInfo ImportMesh(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
@@ -149,7 +149,7 @@ inline Info ImportMesh(
 }
 
 template<>
-inline Info ExportMesh(
+inline ReturnInfo ExportMesh(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     const std::vector<double>& rNodalCoordinates,
@@ -164,7 +164,7 @@ inline Info ExportMesh(
 }
 
 template<>
-inline Info ExportMesh(
+inline ReturnInfo ExportMesh(
     const std::string& rConnectionName,
     const std::string& rIdentifier,
     const CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
@@ -174,20 +174,20 @@ inline Info ExportMesh(
     return Internals::GetConnection(rConnectionName).ExportMesh(rIdentifier, rNodalCoordinates, rElementConnectivities, rElementTypes);
 }
 
-inline Info ImportInfo(
+inline ReturnInfo ImportInfo(
     const std::string& rConnectionName,
     Info& rInfo)
 {
     // Internals::GetConnection(rConnectionName).ImportInfo(rInfo);
-    return Info(); // TODO use this
+    return ReturnInfo(); // TODO use this
 }
 
-inline Info ExportInfo(
+inline ReturnInfo ExportInfo(
     const std::string& rConnectionName,
     const Info& rInfo)
 {
     // Internals::GetConnection(rConnectionName).ExportInfo(rInfo);
-    return Info(); // TODO use this
+    return ReturnInfo(); // TODO use this
 }
 
 inline int IsConverged(const std::string& rConnectionName)
@@ -195,14 +195,14 @@ inline int IsConverged(const std::string& rConnectionName)
     return Internals::GetConnection(rConnectionName).IsConverged();
 }
 
-inline Info Run(const std::string& rConnectionName)
+inline ReturnInfo Run(const std::string& rConnectionName)
 {
     return Internals::GetConnection(rConnectionName).Run();
 }
 
 
 template<>
-inline Info Register(
+inline ReturnInfo Register(
     const std::string& rConnectionName,
     const std::string& rFunctionName,
     std::function<void(Info&)> FunctionPointer)
@@ -216,11 +216,11 @@ inline Info Register(
 
     // Internals::GetConnection(rConnectionName).Register(rFunctionName, fct_callback);
 
-    return Info(); // TODO use this
+    return ReturnInfo(); // TODO use this
 }
 
 template<>
-inline Info Register(
+inline ReturnInfo Register(
     const std::string& rConnectionName,
     const std::string& rFunctionName,
     void (*pFunctionPointer)(Info&))
@@ -234,7 +234,7 @@ inline Info Register(
 
     // Internals::GetConnection(rConnectionName).Register(rFunctionName, fct_callback);
 
-    return Info(); // TODO use this
+    return ReturnInfo(); // TODO use this
 }
 
 } // namespace CoSimIO

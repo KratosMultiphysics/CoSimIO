@@ -22,6 +22,9 @@
 #include "mpi.h"
 #endif // CO_SIM_IO_USING_MPI
 
+// Project includes
+#include "macros.hpp"
+
 namespace CoSimIO {
 
 class Info
@@ -35,8 +38,8 @@ public:
         const bool key_exists = Has(I_Key);
         if (key_exists) {
             const auto& r_val = mOptions.at(I_Key);
-            KRATOS_ERROR_IF_NOT(r_val.first == Name(TDataType())) << "Wrong DataType!";
-            return static_cast<TDataType>(r_val.second);
+            CO_SIM_IO_ERROR_IF(r_val.first != Name(TDataType())) << "Wrong DataType!" << std::endl;
+            return *static_cast<TDataType*>(r_val.second);
         } else {
             return TDataType();
         }
@@ -48,7 +51,7 @@ public:
     }
 
     template<typename TDataType>
-    void SetValue(const std::string& I_Key, const TDataType I_Value)
+    void Set(const std::string& I_Key, TDataType I_Value)
     {
         static_assert(
             std::is_same<TDataType, double>::value ||
@@ -58,7 +61,7 @@ public:
             std::is_same<TDataType, std::string>::value,
                 "Only allowed types are double, int, bool, string");
 
-        mOptions[I_Key] = {Name(TDataType()), I_Value};
+        mOptions[I_Key] = {Name(TDataType()), &I_Value};
     }
 
     // GetType?
@@ -66,19 +69,18 @@ public:
     // TODO do we need "erase", "clear", "size" ?
 
 private:
-    // TODO change type_info to std::string, otherwise serialization is not really possible
     std::unordered_map<std::string, std::pair<std::string, void*>> mOptions;
 
-    std::string Name(int dummy)         {return "int";}
-    std::string Name(double dummy)      {return "double";}
-    std::string Name(bool dummy)        {return "bool";}
-    std::string Name(std::string dummy) {return "string";}
+    std::string Name(int dummy) const         {return "int";}
+    std::string Name(double dummy) const      {return "double";}
+    std::string Name(bool dummy) const        {return "bool";}
+    std::string Name(std::string dummy) const {return "string";}
 };
 
 // TODO add ofstream operator
 
 
-class ConnectionSettings : Info
+class ConnectionSettings : public Info
 {
 public:
     // TODO set defaults in constructor
@@ -139,10 +141,10 @@ private:
 // };
 
 
-// struct ReturnInfo
-// {
-//     int ReturnCode;
-// };
+struct ReturnInfo : public Info
+{
+    int ReturnCode() const { return Get<int>("return_code"); }
+};
 
 } // namespace CoSimIO
 

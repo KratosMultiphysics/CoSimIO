@@ -53,26 +53,26 @@ public:
         Initialize(Settings);
     }
 
-    Info Connect()
+    ReturnInfo Connect()
     {
         mpComm->Connect();
-        return Info(); // TODO use this, should put a return code based on the bool that comes back from mpComm->Connect()
+        return ReturnInfo(); // TODO use this, should put a return code based on the bool that comes back from mpComm->Connect()
     }
 
-    Info Disconnect()
+    ReturnInfo Disconnect()
     {
         mpComm->Disconnect();
-        return Info(); // TODO use this
+        return ReturnInfo(); // TODO use this
     }
 
-    Info SendControlSignal(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal)
+    ReturnInfo SendControlSignal(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal)
     {
         CO_SIM_IO_ERROR_IF_NOT(mIsConnectionMaster) << "This function can only be called as the Connection-Master!" << std::endl;
         mpComm->SendControlSignal(rIdentifier, Signal);
-        return Info(); // TODO use this
+        return ReturnInfo(); // TODO use this
     }
 
-    Info Register(
+    ReturnInfo Register(
         const std::string& rFunctionName,
         FunctionPointerType FunctionPointer)
     {
@@ -85,10 +85,10 @@ public:
         CO_SIM_IO_ERROR_IF((mRegisteredFunctions.count(rFunctionName)>0)) << "A function was already registered for " << rFunctionName << "!" << std::endl;
 
         mRegisteredFunctions[rFunctionName] = FunctionPointer;
-        return Info(); // TODO use this
+        return ReturnInfo(); // TODO use this
     }
 
-    Info Run()
+    ReturnInfo Run()
     {
         CO_SIM_IO_ERROR_IF(mIsConnectionMaster) << "This function can only be called as the Connection-Slave!" << std::endl;
 
@@ -106,7 +106,7 @@ public:
                 mRegisteredFunctions.at(function_name)(info);
             }
         }
-        return Info(); // TODO use this
+        return ReturnInfo(); // TODO use this
     }
 
     bool IsConverged()
@@ -117,53 +117,53 @@ public:
 
 
     template<class... Args>
-    Info ImportData(Args&&... args)
+    ReturnInfo ImportData(Args&&... args)
     {
         mpComm->ImportData(std::forward<Args>(args)...);
 
-        return Info(); // TODO use this
+        return ReturnInfo(); // TODO use this
     }
 
     template<class... Args>
-    Info ExportData(Args&&... args)
+    ReturnInfo ExportData(Args&&... args)
     {
         mpComm->ExportData(std::forward<Args>(args)...);
 
-        return Info(); // TODO use this
+        return ReturnInfo(); // TODO use this
     }
 
     template<class... Args>
-    Info ImportMesh(Args&&... args)
+    ReturnInfo ImportMesh(Args&&... args)
     {
         mpComm->ImportMesh(std::forward<Args>(args)...);
 
-        return Info(); // TODO use this
+        return ReturnInfo(); // TODO use this
     }
 
     template<class... Args>
-    Info ExportMesh(Args&&... args)
+    ReturnInfo ExportMesh(Args&&... args)
     {
         mpComm->ExportMesh(std::forward<Args>(args)...);
 
-        return Info(); // TODO use this
+        return ReturnInfo(); // TODO use this
     }
 
     template<class... Args>
-    Info ImportGeometry(Args&&... args)
+    ReturnInfo ImportGeometry(Args&&... args)
     {
         CO_SIM_IO_ERROR << "Importing of Geometry is not yet implemented!" << std::endl;
         mpComm->ImportGeometry(std::forward<Args>(args)...);
 
-        return Info(); // TODO use this
+        return ReturnInfo(); // TODO use this
     }
 
     template<class... Args>
-    Info ExportGeometry(Args&&... args)
+    ReturnInfo ExportGeometry(Args&&... args)
     {
         CO_SIM_IO_ERROR << "Exporting of Geometry is not yet implemented!" << std::endl;
         mpComm->ExportGeometry(std::forward<Args>(args)...);
 
-        return Info(); // TODO use this
+        return ReturnInfo(); // TODO use this
     }
 
 private:
