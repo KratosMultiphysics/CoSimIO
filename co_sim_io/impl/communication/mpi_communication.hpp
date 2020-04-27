@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_MPI_COMM_H_INCLUDED
-#define CO_SIM_IO_MPI_COMM_H_INCLUDED
+#ifndef CO_SIM_IO_MPI_COMMUNICATION_H_INCLUDED
+#define CO_SIM_IO_MPI_COMMUNICATION_H_INCLUDED
 
 // System includes
 #include "mpi.h"
@@ -41,4 +41,4 @@ public:
 } // namespace Internals
 } // namespace CoSimIO
 
-#endif // CO_SIM_IO_MPI_COMM_H_INCLUDED
+#endif // CO_SIM_IO_MPI_COMMUNICATION_H_INCLUDED
