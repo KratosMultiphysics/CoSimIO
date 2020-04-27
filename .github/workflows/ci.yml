@@ -39,8 +39,11 @@ jobs:
     - name: Run tests
       shell: bash
       run: |
-        export PYTHONPATH=${GITHUB_WORKSPACE}/bin
-        echo "PYTHONPATH: " ${PYTHONPATH}
+        if [ ${{ matrix.os }} = windows-latest ]; then
+          export PYTHONPATH=${PYTHONPATH};${GITHUB_WORKSPACE}/bin
+        else
+          export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
+        fi
 
         which python
 
@@ -48,10 +51,10 @@ jobs:
         # TODO delete build dir to make sure the linking etc works correctly?
         python run_all_tests.py
 
-    - name: Run tests (Win)
-      shell: cmd
-      run: |
-        set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%/bin
+    # - name: Run tests (Win)
+    #   shell: cmd
+    #   run: |
+    #     set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%/bin
 
-        cd tests
-        python run_all_tests.py
+    #     cd tests
+    #     python run_all_tests.py
