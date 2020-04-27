@@ -10,10 +10,12 @@
 #  Main authors:    Philipp Bucher (https://github.com/philbucher)
 #
 
+import sys
+
 # import CoSimIO
 
 def my_test_for_info():
-    print("THIS WORKS")
+    pass
 
 
 registered_tests = {
@@ -26,3 +28,12 @@ def RunTest(test_name):
         registered_tests[test_name]()
     else:
         raise Exception('Test with name "{}" is not registered!'.format(test_name))
+
+
+if __name__ == '__main__':
+    if len(sys.argv) == 2:
+        test_name = sys.argv[1]
+    else:
+        raise Exception("Wrong number of arguments, expected 1 (test-name), got {}".format(len(sys.argv)-1))
+
+    RunTest(test_name)

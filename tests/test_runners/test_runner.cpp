@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 
     int return_code = 0;
 
-    if (test_name == "mytest") {
+    if (test_name == "test_Info") {
         // return_code = CallMyTest();
     } else if (test_name == "dddd") {
 

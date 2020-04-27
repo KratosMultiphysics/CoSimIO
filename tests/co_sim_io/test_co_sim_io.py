@@ -12,35 +12,19 @@
 
 # python imports
 import unittest, sys, os
-import subprocess
 
+if __name__ == '__main__':
+    sys.path.append(os.pardir) # necessary to import from parent dir
+
+from testing_utilities import RunTestRunner
 
 # This test is not strictly necessary, since the test-runner can also be executed directly
 # Hence it is only for better integration with the remaining tests, such that they can be run alltogether
 class CoSimIOTests(unittest.TestCase):
     def test_with_testrunner(self):
-        path_to_testrunner = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, os.pardir, "bin")
+        runner = RunTestRunner("test_runner_co_sim_io_tests")
 
-        if os.name=="nt":
-            cmd = "test_runner_co_sim_io_tests.exe"
-            use_shell=True
-        else:
-            cmd = "./test_runner_co_sim_io_tests"
-            use_shell=False
-
-        sp = subprocess.Popen(
-            [cmd],
-            stdout=subprocess.PIPE,
-            cwd=path_to_testrunner,
-            shell=use_shell)
-
-        process_stdout, process_stderr = sp.communicate()
-        if process_stdout:
-            print(process_stdout.decode('ascii'), file=sys.stdout)
-        if process_stderr:
-            print(process_stderr.decode('ascii'), file=sys.stderr)
-
-        self.assertEqual(sp.returncode, 0)
+        self.assertEqual(runner.GetReturnCode(), 0)
 
 
 if __name__ == '__main__':
