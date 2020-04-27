@@ -3,6 +3,8 @@ cmake_minimum_required (VERSION 2.8.6)
 
 message("Configuring CoSimIO for Python")
 
+set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
+
 if(${MSVC})
     # required such that "__cplusplus" is set to the correct value
     # see https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
