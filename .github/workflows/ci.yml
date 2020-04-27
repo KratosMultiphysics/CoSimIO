@@ -37,6 +37,7 @@ jobs:
         cmake --build "build" --target install
 
     - name: Run tests
+      shell: bash
       run: |
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
         cd tests
