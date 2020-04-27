@@ -12,7 +12,7 @@
 
 import sys
 
-# import CoSimIO
+import CoSimIO
 
 def my_test_for_info():
     pass
@@ -23,6 +23,7 @@ registered_tests = {
 }
 
 
+# For python the "test-runner" is directly integrated into this file, which makes the handling much easier
 def RunTest(test_name):
     if test_name in registered_tests:
         registered_tests[test_name]()
