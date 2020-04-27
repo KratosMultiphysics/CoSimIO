@@ -39,7 +39,7 @@ jobs:
     - name: Run tests
       shell: bash
       run: |
-        export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}\bin
+        export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}\\bin
         echo ${PYTHONPATH}
 
         cd tests
