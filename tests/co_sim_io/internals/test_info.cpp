@@ -20,6 +20,8 @@ namespace {
 
 void AddLocalInt(Info& rInfo)
 {
+    // this puts a local variable into the info
+    // it should still giv the correct result even after the local var goes out of scope
     int local_var = 15;
     REQUIRE_FALSE(rInfo.Has("local_var_int"));
 
