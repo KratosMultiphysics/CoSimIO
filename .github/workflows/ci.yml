@@ -39,8 +39,10 @@ jobs:
     - name: Run tests
       shell: bash
       run: |
-        export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}\\bin
+        export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
         echo ${PYTHONPATH}
+
+        which python
 
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly?
