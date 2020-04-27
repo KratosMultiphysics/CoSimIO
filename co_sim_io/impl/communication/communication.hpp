@@ -16,7 +16,7 @@
 // System includes
 
 // Project includes
-#include "data_container.hpp"
+#include "../data_container.hpp"
 
 namespace CoSimIO {
 namespace Internals {

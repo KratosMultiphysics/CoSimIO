@@ -1,5 +1,5 @@
 #include "catch2/catch.hpp"
-#include "impl/file_communication.hpp"
+#include "impl/communication/file_communication.hpp"
 
 
 namespace CoSimIO {
