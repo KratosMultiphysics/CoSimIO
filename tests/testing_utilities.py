@@ -32,7 +32,12 @@ def IsOptionEnabled(option):
 
 class SubprocessWrapper(object):
 
-    def __init__(self, cmd, args, cwd, shell=True):
+    def __init__(self, cmd, args, cwd):
+        shell = os.name=="nt" # using shell on win
+
+        if os.name=="nt" and cmd == "python3":
+            cmd = "python"
+
         self.sp = subprocess.Popen(
             [cmd, *args],
             stdout=subprocess.PIPE,
@@ -55,12 +60,10 @@ class RunTestRunner(SubprocessWrapper):
 
         if os.name=="nt":
             cmd = cmd + ".exe"
-            shell=True
         else:
             cmd = "./" + cmd
-            shell=False
 
         if args is None:
             args = []
 
-        super().__init__(cmd, args, cwd, shell)
+        super().__init__(cmd, args, cwd)
