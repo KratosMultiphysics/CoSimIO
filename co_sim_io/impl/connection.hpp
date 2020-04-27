@@ -56,7 +56,7 @@ public:
     Info Connect()
     {
         mpComm->Connect();
-        return Info(); // TODO use this
+        return Info(); // TODO use this, should put a return code based on the bool that comes back from mpComm->Connect()
     }
 
     Info Disconnect()

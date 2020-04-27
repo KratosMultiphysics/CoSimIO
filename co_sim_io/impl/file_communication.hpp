@@ -137,6 +137,7 @@ private:
     bool ConnectDetail() override
     {
         return true; // nothing needed here for file-based communication (maybe do sth here?)
+        // master could write a file that gets deleted by slave to aknowledge connection... Probably not a bad idea! => slave returns once it found and deleted file, master waits for deletion of file
     }
 
     bool DisconnectDetail() override
