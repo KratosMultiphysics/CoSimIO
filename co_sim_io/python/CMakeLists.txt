@@ -22,4 +22,9 @@ set_target_properties(CoSimIO PROPERTIES
     CXX_EXTENSIONS NO
 )
 
+# Changing the .dll suffix to .pyd
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    set_target_properties(CoSimIO PROPERTIES SUFFIX .pyd)
+endif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+
 install(TARGETS CoSimIO DESTINATION ${CMAKE_SOURCE_DIR}/bin)

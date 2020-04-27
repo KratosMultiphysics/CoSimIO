@@ -31,7 +31,6 @@ def IsOptionEnabled(option):
 
 
 class SubprocessWrapper(object):
-
     def __init__(self, cmd, args, cwd):
         shell = os.name=="nt" # using shell on win
 
