@@ -42,7 +42,7 @@ TEST_CASE("test_info_basics")
 
     std::cout << info.Get<int>("echo_level") << std::endl << std::endl;
 
-    // REQUIRE(info.Get<int>("echo_level") == 1); // not working
+    REQUIRE(info.Get<int>("echo_level") == 1); // not working
 }
 
 TEST_CASE("test_info_local_vars")
@@ -53,7 +53,7 @@ TEST_CASE("test_info_local_vars")
 
     REQUIRE(info.Has("local_var_int"));
 
-    // REQUIRE(info.Get<int>("local_var_int") == 15); // not working
+    REQUIRE(info.Get<int>("local_var_int") == 15); // not working
 }
 
 } // namespace CoSimIO
