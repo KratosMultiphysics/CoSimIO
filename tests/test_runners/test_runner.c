@@ -14,6 +14,7 @@
 // System includes
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Test includes
 #include "interface/interface_tests.h"
@@ -80,10 +81,26 @@
 
 // }
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
-    // read testid
-    // RunTestCase(test_id);
-    return 0;
+    // parsing input
+    if (argc != 2) {
+        printf("One input argument required: Name of the test to execute");
+        exit(1);
+    }
 
+    const char* test_name = argv[1];
+
+    int return_code = 0;
+
+    if (strcmp(test_name, "test_Info") == 0) {
+        // return_code = CallMyTest();
+    } else if (strcmp(test_name, "test_Iddddnfo") == 0) {
+
+    } else {
+        printf("Test name is unknown: %s", test_name);
+        return_code = 1;
+    }
+
+    return return_code;
 }
