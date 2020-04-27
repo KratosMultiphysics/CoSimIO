@@ -49,9 +49,9 @@ jobs:
     #     python run_all_tests.py
 
     - name: Run tests (Win)
+      shell: cmd
       run: |
         set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%/bin
 
         cd tests
-        # TODO delete build dir to make sure the linking etc works correctly?
         python run_all_tests.py
