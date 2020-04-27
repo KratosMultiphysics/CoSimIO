@@ -40,10 +40,8 @@ jobs:
       shell: bash
       run: |
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/tests
-        export PATH=${PATH}:${GITHUB_WORKSPACE}/tests
-
         echo ${PYTHONPATH}
-        echo ${PATH}
+
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly?
         python run_all_tests.py
