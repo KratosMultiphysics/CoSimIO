@@ -32,7 +32,7 @@ def IsOptionEnabled(option):
 
 class SubprocessWrapper(object):
 
-    def __init__(self, cmd, args, cwd, shell=False):
+    def __init__(self, cmd, args, cwd, shell=True):
         self.sp = subprocess.Popen(
             [cmd, *args],
             stdout=subprocess.PIPE,
