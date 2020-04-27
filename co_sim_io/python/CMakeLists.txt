@@ -24,4 +24,4 @@ set_target_properties(CoSimIO PROPERTIES
     CXX_EXTENSIONS NO
 )
 
-install(TARGETS CoSimIO DESTINATION ${CMAKE_SOURCE_DIR}/tests/interface)
+install(TARGETS CoSimIO DESTINATION ${CMAKE_SOURCE_DIR}/bin)
