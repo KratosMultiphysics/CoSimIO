@@ -17,6 +17,7 @@
 #include <string>
 #include <unordered_map>
 #include <utility>
+#include <memory>
 
 #ifdef CO_SIM_IO_USING_MPI
 #include "mpi.h"
@@ -26,6 +27,58 @@
 #include "macros.hpp"
 
 namespace CoSimIO {
+
+namespace Internals {
+    std::string Name(int dummy)         {return "int";}
+    std::string Name(double dummy)      {return "double";}
+    std::string Name(bool dummy)        {return "bool";}
+    std::string Name(std::string dummy) {return "string";}
+
+class InfoDataBase
+{
+public:
+    virtual ~InfoDataBase() = default;
+    virtual const void* GetData() const = 0;
+    virtual std::string GetDataTypeName() const = 0;
+    // virtual void Print(const void* pSource, std::ostream& rOStream) const;
+    // virtual void Save(Serializer& rSerializer, void* pData) const;
+    // virtual void Load(Serializer& rSerializer, void* pData) const;
+};
+
+template<class TDataType>
+class InfoData : public InfoDataBase
+{
+public:
+    InfoData(const TDataType Source) : mData(Source) {}
+
+    std::string GetDataTypeName() const override {return Internals::Name(TDataType());}
+
+    const void* GetData() const override
+    {
+        return &mData;
+    }
+
+    // void Print(const void* pSource, std::ostream& rOStream) const override
+    // {
+    //     rOStream << Name() << " : " << *static_cast<const TDataType* >(pSource) ;
+    // }
+
+    // void Save(Serializer& rSerializer, void* pData) const override
+    // {
+    //     // I'm saving by the value, it can be done by the pointer to detect shared data. Pooyan.
+    //     rSerializer.save("Data",*static_cast<TDataType* >(pData));
+    // }
+    // void Load(Serializer& rSerializer, void* pData) const override
+    // {
+    //     rSerializer.load("Data",*static_cast<TDataType* >(pData));
+    // }
+
+private:
+    TDataType mData;
+};
+
+} // namespace Internals
+
 
 class Info
 {
@@ -38,8 +91,8 @@ public:
         const bool key_exists = Has(I_Key);
         if (key_exists) {
             const auto& r_val = mOptions.at(I_Key);
-            CO_SIM_IO_ERROR_IF(r_val.first != Name(TDataType())) << "Wrong DataType!" << std::endl;
-            return *static_cast<TDataType*>(r_val.second);
+            CO_SIM_IO_ERROR_IF(r_val->GetDataTypeName() != Internals::Name(TDataType())) << "Wrong DataType!" << std::endl;
+            return *static_cast<const TDataType*>(r_val->GetData());
         } else {
             return TDataType();
         }
@@ -61,20 +114,13 @@ public:
             std::is_same<TDataType, std::string>::value,
                 "Only allowed types are double, int, bool, string");
 
-        mOptions[I_Key] = {Name(TDataType()), &I_Value};
+        mOptions[I_Key] = std::make_shared<Internals::InfoData<TDataType>>(I_Value);
     }
-
-    // GetType?
 
     // TODO do we need "erase", "clear", "size" ?
 
 private:
-    std::unordered_map<std::string, std::pair<std::string, void*>> mOptions;
-
-    std::string Name(int dummy) const         {return "int";}
-    std::string Name(double dummy) const      {return "double";}
-    std::string Name(bool dummy) const        {return "bool";}
-    std::string Name(std::string dummy) const {return "string";}
+    std::unordered_map<std::string, std::shared_ptr<Internals::InfoDataBase>> mOptions;
 };
 
 // TODO add ofstream operator
