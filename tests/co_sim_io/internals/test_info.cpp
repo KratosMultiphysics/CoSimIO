@@ -16,7 +16,7 @@
 
 namespace CoSimIO {
 
-TEST_CASE("test_info_basics_int")
+TEST_CASE("info_basics_int")
 {
     Info info;
 
@@ -29,7 +29,7 @@ TEST_CASE("test_info_basics_int")
     REQUIRE(info.Get<int>("echo_level") == 1);
 }
 
-TEST_CASE("test_info_basics_double")
+TEST_CASE("info_basics_double")
 {
     Info info;
 
@@ -42,7 +42,7 @@ TEST_CASE("test_info_basics_double")
     REQUIRE(info.Get<double>("tolerance") == Approx(1.5));
 }
 
-TEST_CASE("test_info_basics_bool")
+TEST_CASE("info_basics_bool")
 {
     Info info;
 
@@ -55,7 +55,7 @@ TEST_CASE("test_info_basics_bool")
     REQUIRE(info.Get<bool>("print_sth") == false);
 }
 
-TEST_CASE("test_info_basics_string")
+TEST_CASE("info_basics_string")
 {
     Info info;
 
@@ -68,7 +68,7 @@ TEST_CASE("test_info_basics_string")
     REQUIRE(info.Get<std::string>("identifier") == "pressure");
 }
 
-TEST_CASE("test_info_wrong_type")
+TEST_CASE("info_wrong_type")
 {
     Info info;
 
@@ -77,10 +77,10 @@ TEST_CASE("test_info_wrong_type")
     info.Set<std::string>("identifier", "pressure");
 
     REQUIRE(info.Has("identifier"));
-    REQUIRE_THROWS_WITH(info.Get<int>("identifier"), "std::exception"); // TODO find a better way of testing this
+    REQUIRE_THROWS_WITH(info.Get<int>("identifier"), "Error: "); // TODO find a better way of testing this
 }
 
-TEST_CASE("test_info_many_values")
+TEST_CASE("info_many_values")
 {
     Info info;
 
@@ -105,7 +105,7 @@ TEST_CASE("test_info_many_values")
     REQUIRE(info.Get<int>("echo_level") == 2);
 }
 
-TEST_CASE("test_info_set_alreay_existing")
+TEST_CASE("info_set_alreay_existing")
 {
     Info info;
 
@@ -119,7 +119,7 @@ TEST_CASE("test_info_set_alreay_existing")
     REQUIRE(info.Get<std::string>("identifier") == "pressure");
 }
 
-TEST_CASE("test_info_set_alreay_existing_different_data_type")
+TEST_CASE("info_set_alreay_existing_different_data_type")
 {
     Info info;
 
@@ -133,7 +133,7 @@ TEST_CASE("test_info_set_alreay_existing_different_data_type")
     REQUIRE(info.Get<int>("identifier") == 15);
 }
 
-TEST_CASE("test_info_size")
+TEST_CASE("info_size")
 {
     Info info;
     REQUIRE(info.Size() == 0);
@@ -148,7 +148,7 @@ TEST_CASE("test_info_size")
     REQUIRE(info.Size() == 4);
 }
 
-TEST_CASE("test_info_clear")
+TEST_CASE("info_clear")
 {
     Info info;
     REQUIRE(info.Size() == 0);
@@ -166,7 +166,7 @@ TEST_CASE("test_info_clear")
     REQUIRE(info.Size() == 0);
 }
 
-TEST_CASE("test_info_erase")
+TEST_CASE("info_erase")
 {
     Info info;
     REQUIRE(info.Size() == 0);
