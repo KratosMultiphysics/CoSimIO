@@ -91,7 +91,7 @@ public:
         const bool key_exists = Has(I_Key);
         if (key_exists) {
             const auto& r_val = mOptions.at(I_Key);
-            CO_SIM_IO_ERROR_IF(r_val->GetDataTypeName() != Internals::Name(TDataType())) << "Wrong DataType!" << std::endl;
+            CO_SIM_IO_ERROR_IF(r_val->GetDataTypeName() != Internals::Name(TDataType())) << "Wrong DataType! Trying to get \"" << I_Key << "\" which is of type \"" << r_val->GetDataTypeName() << "\" with \"" << Internals::Name(TDataType()) << "\"!" << std::endl;
             return *static_cast<const TDataType*>(r_val->GetData());
         } else {
             return TDataType();
@@ -117,7 +117,20 @@ public:
         mOptions[I_Key] = std::make_shared<Internals::InfoData<TDataType>>(I_Value);
     }
 
-    // TODO do we need "erase", "clear", "size" ?
+    void Erase(const std::string& I_Key)
+    {
+        mOptions.erase(I_Key);
+    }
+
+    void Clear()
+    {
+        mOptions.clear();
+    }
+
+    std::size_t Size() const
+    {
+        return mOptions.size();
+    }
 
 private:
     std::unordered_map<std::string, std::shared_ptr<Internals::InfoDataBase>> mOptions;
