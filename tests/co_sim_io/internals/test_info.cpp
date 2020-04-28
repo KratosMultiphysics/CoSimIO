@@ -16,44 +16,81 @@
 
 namespace CoSimIO {
 
-namespace {
-
-void AddLocalInt(Info& rInfo)
-{
-    // this puts a local variable into the info
-    // it should still giv the correct result even after the local var goes out of scope
-    int local_var = 15;
-    REQUIRE_FALSE(rInfo.Has("local_var_int"));
-
-    rInfo.Set<int>("local_var_int", local_var);
-}
-
-}
-
-TEST_CASE("test_info_basics")
+TEST_CASE("test_info_int")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("Some_value_non_existant"));
+    REQUIRE_FALSE(info.Has("echo_level"));
 
     info.Set<int>("echo_level", 1);
 
     REQUIRE(info.Has("echo_level"));
 
-    std::cout << info.Get<int>("echo_level") << std::endl << std::endl;
-
-    REQUIRE(info.Get<int>("echo_level") == 1); // not working
+    REQUIRE(info.Get<int>("echo_level") == 1);
 }
 
-TEST_CASE("test_info_local_vars")
+TEST_CASE("test_info_double")
 {
     Info info;
 
-    AddLocalInt(info);
+    REQUIRE_FALSE(info.Has("tolerance"));
 
-    REQUIRE(info.Has("local_var_int"));
+    info.Set<double>("tolerance", 1.5);
 
-    REQUIRE(info.Get<int>("local_var_int") == 15); // not working
+    REQUIRE(info.Has("tolerance"));
+
+    REQUIRE(info.Get<double>("tolerance") == Approx(1.5));
+}
+
+TEST_CASE("test_info_bool")
+{
+    Info info;
+
+    REQUIRE_FALSE(info.Has("print_sth"));
+
+    info.Set<bool>("print_sth", false);
+
+    REQUIRE(info.Has("print_sth"));
+
+    REQUIRE(info.Get<bool>("print_sth") == false);
+}
+
+TEST_CASE("test_info_string")
+{
+    Info info;
+
+    REQUIRE_FALSE(info.Has("identifier"));
+
+    info.Set<std::string>("identifier", "pressure");
+
+    REQUIRE(info.Has("identifier"));
+
+    REQUIRE(info.Get<std::string>("identifier") == "pressure");
+}
+
+TEST_CASE("test_info_many_values")
+{
+    Info info;
+
+    REQUIRE_FALSE(info.Has("identifier"));
+    REQUIRE_FALSE(info.Has("is_converged"));
+    REQUIRE_FALSE(info.Has("tol"));
+    REQUIRE_FALSE(info.Has("echo_level"));
+
+    info.Set<std::string>("identifier", "velocity_interface");
+    info.Set<bool>("is_converged", true);
+    info.Set<double>("tol", 0.008);
+    info.Set<int>("echo_level", 2);
+
+    REQUIRE(info.Has("identifier"));
+    REQUIRE(info.Has("is_converged"));
+    REQUIRE(info.Has("tol"));
+    REQUIRE(info.Has("echo_level"));
+
+    REQUIRE(info.Get<std::string>("identifier") == "velocity_interface");
+    REQUIRE(info.Get<bool>("is_converged") == true);
+    REQUIRE(info.Get<double>("tol") == Approx(0.008));
+    REQUIRE(info.Get<int>("echo_level") == 2);
 }
 
 } // namespace CoSimIO
