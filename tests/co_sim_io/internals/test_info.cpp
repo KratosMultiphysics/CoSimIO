@@ -16,7 +16,7 @@
 
 namespace CoSimIO {
 
-TEST_CASE("test_info_int")
+TEST_CASE("test_info_basics_int")
 {
     Info info;
 
@@ -29,7 +29,7 @@ TEST_CASE("test_info_int")
     REQUIRE(info.Get<int>("echo_level") == 1);
 }
 
-TEST_CASE("test_info_double")
+TEST_CASE("test_info_basics_double")
 {
     Info info;
 
@@ -42,7 +42,7 @@ TEST_CASE("test_info_double")
     REQUIRE(info.Get<double>("tolerance") == Approx(1.5));
 }
 
-TEST_CASE("test_info_bool")
+TEST_CASE("test_info_basics_bool")
 {
     Info info;
 
@@ -55,7 +55,7 @@ TEST_CASE("test_info_bool")
     REQUIRE(info.Get<bool>("print_sth") == false);
 }
 
-TEST_CASE("test_info_string")
+TEST_CASE("test_info_basics_string")
 {
     Info info;
 
@@ -66,6 +66,18 @@ TEST_CASE("test_info_string")
     REQUIRE(info.Has("identifier"));
 
     REQUIRE(info.Get<std::string>("identifier") == "pressure");
+}
+
+TEST_CASE("test_info_wrong_type")
+{
+    Info info;
+
+    REQUIRE_FALSE(info.Has("identifier"));
+
+    info.Set<std::string>("identifier", "pressure");
+
+    REQUIRE(info.Has("identifier"));
+    REQUIRE_THROWS_WITH(info.Get<int>("identifier"), "std::exception"); // TODO find a better way of testing this
 }
 
 TEST_CASE("test_info_many_values")
@@ -91,6 +103,85 @@ TEST_CASE("test_info_many_values")
     REQUIRE(info.Get<bool>("is_converged") == true);
     REQUIRE(info.Get<double>("tol") == Approx(0.008));
     REQUIRE(info.Get<int>("echo_level") == 2);
+}
+
+TEST_CASE("test_info_set_alreay_existing")
+{
+    Info info;
+
+    REQUIRE_FALSE(info.Has("identifier"));
+    info.Set<std::string>("identifier", "velocity_interface");
+    REQUIRE(info.Has("identifier"));
+    REQUIRE(info.Get<std::string>("identifier") == "velocity_interface");
+
+    // now overwriting the already existing value
+    info.Set<std::string>("identifier", "pressure");
+    REQUIRE(info.Get<std::string>("identifier") == "pressure");
+}
+
+TEST_CASE("test_info_set_alreay_existing_different_data_type")
+{
+    Info info;
+
+    REQUIRE_FALSE(info.Has("identifier"));
+    info.Set<std::string>("identifier", "velocity_interface");
+    REQUIRE(info.Has("identifier"));
+    REQUIRE(info.Get<std::string>("identifier") == "velocity_interface");
+
+    // now overwriting the already existing value with a different type
+    info.Set<int>("identifier", 15);
+    REQUIRE(info.Get<int>("identifier") == 15);
+}
+
+TEST_CASE("test_info_size")
+{
+    Info info;
+    REQUIRE(info.Size() == 0);
+
+    info.Set<std::string>("identifier", "velocity_interface");
+    info.Set<bool>("is_converged", true);
+    info.Set<double>("tol", 0.008);
+    info.Set<int>("echo_level", 2);
+
+    REQUIRE(info.Size() == 4);
+    info.Set<int>("echo_level", 6);
+    REQUIRE(info.Size() == 4);
+}
+
+TEST_CASE("test_info_clear")
+{
+    Info info;
+    REQUIRE(info.Size() == 0);
+
+    info.Set<std::string>("identifier", "velocity_interface");
+    info.Set<bool>("is_converged", true);
+    info.Set<double>("tol", 0.008);
+    info.Set<int>("echo_level", 2);
+
+    REQUIRE(info.Size() == 4);
+    info.Set<int>("echo_level", 6);
+    REQUIRE(info.Size() == 4);
+
+    info.Clear();
+    REQUIRE(info.Size() == 0);
+}
+
+TEST_CASE("test_info_erase")
+{
+    Info info;
+    REQUIRE(info.Size() == 0);
+
+    info.Set<std::string>("identifier", "velocity_interface");
+    REQUIRE(info.Has("identifier"));
+    REQUIRE(info.Size() == 1);
+
+    info.Erase("identifier");
+    REQUIRE_FALSE(info.Has("identifier"));
+    REQUIRE(info.Size() == 0);
+
+    // erasing non-existing keys does not throw
+    REQUIRE_NOTHROW(info.Erase("identifier"));
+    REQUIRE_NOTHROW(info.Erase("whatever"));
 }
 
 } // namespace CoSimIO
