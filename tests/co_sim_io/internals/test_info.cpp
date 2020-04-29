@@ -206,7 +206,7 @@ TEST_CASE("info_load")
 {
     std::stringstream test_stream;
 
-    test_stream << "5\nkeyword\nInfoData_string\nawesome\nis_converged\nInfoData_bool\n1\n\\tol\nInfoData_double\n1.225\necho_level\nInfoData_int\n2\nchecking\nInfoData_int\n22\n";
+    test_stream << "5\nkeyword\nInfoData_string\nawesome\nis_converged\nInfoData_bool\n1\ntol\nInfoData_double\n1.225\necho_level\nInfoData_int\n2\nchecking\nInfoData_int\n22\n";
 
     Info info;
     info.Load(test_stream);
@@ -216,7 +216,8 @@ TEST_CASE("info_load")
     REQUIRE(info.Get<int>("echo_level") == 2);
     REQUIRE(info.Get<std::string>("keyword") == "awesome");
     REQUIRE(info.Get<bool>("is_converged") == true);
-    REQUIRE(info.Get<double>("tol") == Approx(0.008));
+    std::cout << "info.Get<double>(tol) : " << info.Get<double>("tol") << std::endl;
+    REQUIRE(info.Get<double>("tol") == Approx(1.225));
 }
 
 TEST_CASE("info_save_load")
