@@ -186,41 +186,61 @@ TEST_CASE("info_erase")
 
 TEST_CASE("info_save")
 {
-    std::cout << std::endl<< std::endl;
     Info info;
     info.Set<bool>("is_converged", true);
     info.Set<std::string>("keyword", "awesome");
+    info.Set<double>("tol", 0.008);
+    info.Set<int>("echo_level", 2);
+    info.Set<int>("checking", 22);
 
+    std::stringstream test_stream;
 
-    std::stringstream mystream;
-    std::ofstream myfstream("ddddd.json");
+    info.Save(test_stream);
 
-    mystream << "dbf";
+    const std::string exp_string = "5\necho_level\nInfoData_int\n2\nchecking\nInfoData_int\n22\ntol\nInfoData_double\n0.008\nis_converged\nInfoData_bool\n1\nkeyword\nInfoData_string\nawesome\n";
 
-    info.Save(mystream);
-    info.Save(myfstream);
-
-    std::cout << mystream.str();
-
-    std::cout << std::endl<< std::endl<< std::endl;
+    REQUIRE(test_stream.str() == exp_string);
 }
 
 TEST_CASE("info_load")
 {
-    std::cout << std::endl<< std::endl;
+    std::stringstream test_stream;
 
-    std::stringstream mystream;
-
-    mystream << "3\nkeyword\nInfoData_string\nawesome\nis_converged\nInfoData_bool\n1\n\\tol\nInfoData_double\n1.225";
+    test_stream << "5\nkeyword\nInfoData_string\nawesome\nis_converged\nInfoData_bool\n1\n\\tol\nInfoData_double\n1.225\necho_level\nInfoData_int\n2\nchecking\nInfoData_int\n22\n";
 
     Info info;
+    info.Load(test_stream);
 
-    info.Load(mystream);
-
-
-    std::cout << std::endl<< std::endl<< std::endl;
+    REQUIRE(info.Size() == 5);
+    REQUIRE(info.Get<int>("checking") == 22);
+    REQUIRE(info.Get<int>("echo_level") == 2);
+    REQUIRE(info.Get<std::string>("keyword") == "awesome");
+    REQUIRE(info.Get<bool>("is_converged") == true);
+    REQUIRE(info.Get<double>("tol") == Approx(0.008));
 }
 
+TEST_CASE("info_save_load")
+{
+    Info info;
+    info.Set<bool>("is_converged", true);
+    info.Set<std::string>("keyword", "awesome");
+    info.Set<double>("tol", 0.008);
+    info.Set<int>("echo_level", 2);
+    info.Set<int>("checking", 22);
 
+    std::stringstream test_stream;
+
+    info.Save(test_stream);
+
+    Info another_info;
+    another_info.Load(test_stream);
+
+    REQUIRE(another_info.Size() == 5);
+    REQUIRE(another_info.Get<int>("checking") == 22);
+    REQUIRE(another_info.Get<int>("echo_level") == 2);
+    REQUIRE(another_info.Get<std::string>("keyword") == "awesome");
+    REQUIRE(another_info.Get<bool>("is_converged") == true);
+    REQUIRE(another_info.Get<double>("tol") == Approx(0.008));
+}
 
 } // namespace CoSimIO
