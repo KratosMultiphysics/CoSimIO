@@ -18,6 +18,10 @@
 #include <unordered_map>
 #include <utility>
 #include <memory>
+#include <type_traits>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 #ifdef CO_SIM_IO_USING_MPI
 #include "mpi.h"
@@ -40,16 +44,17 @@ public:
     virtual ~InfoDataBase() = default;
     virtual const void* GetData() const = 0;
     virtual std::string GetDataTypeName() const = 0;
+    virtual std::shared_ptr<InfoDataBase> Clone() const = 0;
     // virtual void Print(const void* pSource, std::ostream& rOStream) const;
-    // virtual void Save(Serializer& rSerializer, void* pData) const;
-    // virtual void Load(Serializer& rSerializer, void* pData) const;
+    virtual void Save(std::ostream& out) const = 0;
+    virtual void Load(std::istream& in) = 0;
 };
 
 template<class TDataType>
 class InfoData : public InfoDataBase
 {
 public:
-    InfoData(const TDataType Source) : mData(Source) {}
+    explicit InfoData(const TDataType Source) : mData(Source) {}
 
     std::string GetDataTypeName() const override {return Internals::Name(TDataType());}
 
@@ -63,15 +68,21 @@ public:
     //     rOStream << Name() << " : " << *static_cast<const TDataType* >(pSource) ;
     // }
 
-    // void Save(Serializer& rSerializer, void* pData) const override
-    // {
-    //     // I'm saving by the value, it can be done by the pointer to detect shared data. Pooyan.
-    //     rSerializer.save("Data",*static_cast<TDataType* >(pData));
-    // }
-    // void Load(Serializer& rSerializer, void* pData) const override
-    // {
-    //     rSerializer.load("Data",*static_cast<TDataType* >(pData));
-    // }
+    std::shared_ptr<InfoDataBase> Clone() const override
+    {
+        return std::make_shared<InfoData<TDataType>>(TDataType());
+    }
+
+    void Save(std::ostream& out) const override
+    {
+        out << mData;
+    }
+    void Load(std::istream& in) override
+    {
+        in >> mData;
+
+        std::cout << "Data after loading: " << mData << std::endl;
+    }
 
 private:
     TDataType mData;
@@ -130,6 +141,66 @@ public:
     std::size_t Size() const
     {
         return mOptions.size();
+    }
+
+    void Save(std::ostream& out) const
+    {
+        static std::unordered_map<std::string, std::string> s_registerd_objects_name {
+            {typeid(Internals::InfoData<int>).name(),         "InfoData_int"},
+            {typeid(Internals::InfoData<double>).name(),      "InfoData_double"},
+            {typeid(Internals::InfoData<bool>).name(),        "InfoData_bool"},
+            {typeid(Internals::InfoData<std::string>).name(), "InfoData_string"}
+        };
+        // """
+        // {
+        //     'size' : 3,
+        //     'data' : [
+        //         {'name' : 'InfoData_int',    'value':55},
+        //         {'name' : 'InfoData_bool',   'value':true},
+        //         {'name' : 'InfoData_string', 'value':'maybe'}
+        //     ]
+        // }
+        // """
+
+        out << Size() << "\n";
+        for (const auto& r_pair: mOptions) {
+            auto it = s_registerd_objects_name.find(typeid(*(r_pair.second)).name());
+            out << r_pair.first << "\n";
+            out << it->second << "\n";
+            r_pair.second->Save(out);
+            out << "\n";
+        }
+    }
+    void Load(std::istream& in)
+    {
+        static std::unordered_map<std::string, std::shared_ptr<Internals::InfoDataBase>> s_registerd_objects_name {
+            {"InfoData_int"    , std::make_shared<Internals::InfoData<int>>(1)},
+            {"InfoData_double" , std::make_shared<Internals::InfoData<double>>(1)},
+            {"InfoData_bool"   , std::make_shared<Internals::InfoData<bool>>(1)},
+            {"InfoData_string" , std::make_shared<Internals::InfoData<std::string>>("")}
+        };
+
+        std::string key, registered_name;
+
+        int size;
+        in >> size;
+        std::cout << "Size read: " << size << std::endl;
+
+        in.ignore(10, '\n'); // skipping to end of line
+
+        for (int i=0; i<size; ++i) {
+            std::getline(in, key);
+            std::cout << "Current line: " << i << " | key: " << key << std::endl;
+            std::getline(in, registered_name);
+            std::cout << "Current line: " << i << " | registered_name: " << registered_name << std::endl;
+            auto it_prototype = s_registerd_objects_name.find(registered_name);
+
+            auto p = it_prototype->second->Clone();
+
+            p->Load(in);
+
+            in.ignore(10, '\n'); // skipping to end of line
+        }
     }
 
 private:

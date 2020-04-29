@@ -184,4 +184,43 @@ TEST_CASE("info_erase")
     REQUIRE_NOTHROW(info.Erase("whatever"));
 }
 
+TEST_CASE("info_save")
+{
+    std::cout << std::endl<< std::endl;
+    Info info;
+    info.Set<bool>("is_converged", true);
+    info.Set<std::string>("keyword", "awesome");
+
+
+    std::stringstream mystream;
+    std::ofstream myfstream("ddddd.json");
+
+    mystream << "dbf";
+
+    info.Save(mystream);
+    info.Save(myfstream);
+
+    std::cout << mystream.str();
+
+    std::cout << std::endl<< std::endl<< std::endl;
+}
+
+TEST_CASE("info_load")
+{
+    std::cout << std::endl<< std::endl;
+
+    std::stringstream mystream;
+
+    mystream << "3\nkeyword\nInfoData_string\nawesome\nis_converged\nInfoData_bool\n1\n\\tol\nInfoData_double\n1.225";
+
+    Info info;
+
+    info.Load(mystream);
+
+
+    std::cout << std::endl<< std::endl<< std::endl;
+}
+
+
+
 } // namespace CoSimIO
