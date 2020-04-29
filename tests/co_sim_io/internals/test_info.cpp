@@ -10,7 +10,13 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
+// System includes
+#include <sstream>
+
+// External includes
 #include "catch2/catch.hpp"
+
+// Project includes
 #include "impl/info.hpp"
 
 
@@ -216,7 +222,6 @@ TEST_CASE("info_load")
     REQUIRE(info.Get<int>("echo_level") == 2);
     REQUIRE(info.Get<std::string>("keyword") == "awesome");
     REQUIRE(info.Get<bool>("is_converged") == true);
-    std::cout << "info.Get<double>(tol) : " << info.Get<double>("tol") << std::endl;
     REQUIRE(info.Get<double>("tol") == Approx(1.225));
 }
 
