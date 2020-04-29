@@ -193,17 +193,13 @@ TEST_CASE("info_erase")
 TEST_CASE("info_save")
 {
     Info info;
-    info.Set<bool>("is_converged", true);
     info.Set<std::string>("keyword", "awesome");
-    info.Set<double>("tol", 0.008);
-    info.Set<int>("echo_level", 2);
-    info.Set<int>("checking", 22);
 
     std::stringstream test_stream;
 
     info.Save(test_stream);
 
-    const std::string exp_string = "5\necho_level\nInfoData_int\n2\nchecking\nInfoData_int\n22\ntol\nInfoData_double\n0.008\nis_converged\nInfoData_bool\n1\nkeyword\nInfoData_string\nawesome\n";
+    const std::string exp_string = "1\nkeyword\nInfoData_string\nawesome\n";
 
     REQUIRE(test_stream.str() == exp_string);
 }
