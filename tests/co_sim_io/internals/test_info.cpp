@@ -10,7 +10,13 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
+// System includes
+#include <sstream>
+
+// External includes
 #include "catch2/catch.hpp"
+
+// Project includes
 #include "impl/info.hpp"
 
 
@@ -182,6 +188,61 @@ TEST_CASE("info_erase")
     // erasing non-existing keys does not throw
     REQUIRE_NOTHROW(info.Erase("identifier"));
     REQUIRE_NOTHROW(info.Erase("whatever"));
+}
+
+TEST_CASE("info_save")
+{
+    Info info;
+    info.Set<std::string>("keyword", "awesome");
+
+    std::stringstream test_stream;
+
+    info.Save(test_stream);
+
+    const std::string exp_string = "1\nkeyword\nInfoData_string\nawesome\n";
+
+    REQUIRE(test_stream.str() == exp_string);
+}
+
+TEST_CASE("info_load")
+{
+    std::stringstream test_stream;
+
+    test_stream << "5\nkeyword\nInfoData_string\nawesome\nis_converged\nInfoData_bool\n1\ntol\nInfoData_double\n1.225\necho_level\nInfoData_int\n2\nchecking\nInfoData_int\n22\n";
+
+    Info info;
+    info.Load(test_stream);
+
+    REQUIRE(info.Size() == 5);
+    REQUIRE(info.Get<int>("checking") == 22);
+    REQUIRE(info.Get<int>("echo_level") == 2);
+    REQUIRE(info.Get<std::string>("keyword") == "awesome");
+    REQUIRE(info.Get<bool>("is_converged") == true);
+    REQUIRE(info.Get<double>("tol") == Approx(1.225));
+}
+
+TEST_CASE("info_save_load")
+{
+    Info info;
+    info.Set<bool>("is_converged", true);
+    info.Set<std::string>("keyword", "awesome");
+    info.Set<double>("tol", 0.008);
+    info.Set<int>("echo_level", 2);
+    info.Set<int>("checking", 22);
+
+    std::stringstream test_stream;
+
+    info.Save(test_stream);
+
+    Info another_info;
+    another_info.Load(test_stream);
+
+    REQUIRE(another_info.Size() == 5);
+    REQUIRE(another_info.Get<int>("checking") == 22);
+    REQUIRE(another_info.Get<int>("echo_level") == 2);
+    REQUIRE(another_info.Get<std::string>("keyword") == "awesome");
+    REQUIRE(another_info.Get<bool>("is_converged") == true);
+    REQUIRE(another_info.Get<double>("tol") == Approx(0.008));
 }
 
 } // namespace CoSimIO
