@@ -43,8 +43,8 @@ public:
     virtual std::string GetDataTypeName() const = 0;
     virtual std::shared_ptr<InfoDataBase> Clone() const = 0;
     // virtual void Print(const void* pSource, std::ostream& rOStream) const;
-    virtual void Save(std::ostream& out) const = 0;
-    virtual void Load(std::istream& in) = 0;
+    virtual void Save(std::ostream& O_OutStream) const = 0;
+    virtual void Load(std::istream& I_InStream) = 0;
 };
 
 template<class TDataType>
@@ -70,13 +70,13 @@ public:
         return std::make_shared<InfoData<TDataType>>(TDataType());
     }
 
-    void Save(std::ostream& out) const override
+    void Save(std::ostream& O_OutStream) const override
     {
-        out << mData;
+        O_OutStream << mData;
     }
-    void Load(std::istream& in) override
+    void Load(std::istream& I_InStream) override
     {
-        in >> mData;
+        I_InStream >> mData;
     }
 
 private:
@@ -138,7 +138,7 @@ public:
         return mOptions.size();
     }
 
-    void Save(std::ostream& out) const
+    void Save(std::ostream& O_OutStream) const
     {
         static std::unordered_map<std::string, std::string> s_registered_object_names {
             {typeid(Internals::InfoData<int>).name(),         "InfoData_int"},
@@ -147,17 +147,17 @@ public:
             {typeid(Internals::InfoData<std::string>).name(), "InfoData_string"}
         };
 
-        out << Size() << "\n";
+        O_OutStream << Size() << "\n";
         for (const auto& r_pair: mOptions) {
             auto it_obj = s_registered_object_names.find(typeid(*(r_pair.second)).name());
             CO_SIM_IO_ERROR_IF(it_obj == s_registered_object_names.end()) << "No name registered" << std::endl;
-            out << r_pair.first << "\n";
-            out << it_obj->second << "\n";
-            r_pair.second->Save(out);
-            out << "\n";
+            O_OutStream << r_pair.first << "\n";
+            O_OutStream << it_obj->second << "\n";
+            r_pair.second->Save(O_OutStream);
+            O_OutStream << "\n";
         }
     }
-    void Load(std::istream& in)
+    void Load(std::istream& I_InStream)
     {
         static std::unordered_map<std::string, std::shared_ptr<Internals::InfoDataBase>> s_registered_object_prototypes {
             {"InfoData_int"    , std::make_shared<Internals::InfoData<int>>(1)},
@@ -169,16 +169,16 @@ public:
         std::string key, registered_name;
 
         int size;
-        in >> size;
+        I_InStream >> size;
 
         for (int i=0; i<size; ++i) {
-            in >> key;
-            in >> registered_name;
+            I_InStream >> key;
+            I_InStream >> registered_name;
             auto it_prototype = s_registered_object_prototypes.find(registered_name);
             CO_SIM_IO_ERROR_IF(it_prototype == s_registered_object_prototypes.end()) << "No prototype registered for " << registered_name << std::endl;
 
             auto p_clone = it_prototype->second->Clone();
-            p_clone->Load(in);
+            p_clone->Load(I_InStream);
             mOptions[key] = p_clone;
         }
     }
