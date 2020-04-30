@@ -172,9 +172,8 @@ public:
         in >> size;
 
         for (int i=0; i<size; ++i) {
-            in.ignore(10, '\n'); // skipping to end of line
-            std::getline(in, key);
-            std::getline(in, registered_name);
+            in >> key;
+            in >> registered_name;
             auto it_prototype = s_registered_object_prototypes.find(registered_name);
             CO_SIM_IO_ERROR_IF(it_prototype == s_registered_object_prototypes.end()) << "No prototype registered for " << registered_name << std::endl;
 
