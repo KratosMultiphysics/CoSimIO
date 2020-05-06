@@ -1,6 +1,6 @@
 # Tutorial for integrating the _CoSimIO_ using CPP interface
 
-This tutorial helps you through to integrate the _CoSimIO_ into a solver using the CPP interface. 
+This tutorial helps you through to integrate the _CoSimIO_ into a solver using the CPP interface.
 
 ## What you need
 - Downloading the _CosimIO_ from the repository:
@@ -13,9 +13,9 @@ git clone https://github.com/KratosMultiphysics/CoSimIO.git
 
 
 ## Tutorial 1: Building
-The CPP version of CosimIO is header only and for building you may only include the  [co_sim_io.h](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp) in your project file and compile it with your code:
+The CPP version of CosimIO is header only and for building you may only include the [co_sim_io.h](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp) in your project file and compile it with your code:
 
-```C++
+```c++
 // CoSimulation includes
 #include "co_sim_io.hpp"
 
@@ -34,7 +34,7 @@ After integrating the _CoSimIO_ in your code now it's time to say hello
 auto info = CoSimIO::Hello();
 ```
 
-Please note that this method like other methods in _CoSimIO_ returns an Info object. This object is a versatile container holding important information about the operation that has been done. In this case, it contains the version of the _CoSimIO_ library which can be queried:
+Please note that this method like other methods in _CoSimIO_ returns a `ReturnInfo` object. This object is a versatile container holding important information about the operation that has been done. In this case, it contains the version of the _CoSimIO_ library which can be queried:
 
 ```c++
 std::cout << info << std::endl;
@@ -49,9 +49,25 @@ std::string patch_version = info.Get<std::string>("patch_version");
 ```
 
 ## Tutorial 3: Connecting and Disconnecting
-The first step to establishing a connection to Kratos CoSimulation is to use the `connect()` method:
+The first step to establishing a connection to Kratos CoSimulation is to use the `Connect()` method:
 
 ```c++
+// CoSimulation includes
+#include "co_sim_io.hpp"
+
+int main(){
+    const std::string connection_name = "external_solver"; // this is different for every solver
+    ConnectionSettings settings;
+    settings.Set("echo_level", 1);
+    settings.Set("solver_version", "1.25");
+
+    auto info = CoSimIO::Connect(connection_name, );
 
 
+    // ...
+
+
+    auto info = CoSimIO::Disconnect(connection_name);
+    return 0;
+}
 ```
