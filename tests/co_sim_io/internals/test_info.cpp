@@ -250,4 +250,23 @@ TEST_CASE("info_save_load")
     REQUIRE(another_info.Get<double>("tol") == Approx(0.008));
 }
 
+TEST_CASE("info_ostream")
+{
+    Info info;
+    info.Set<std::string>("keyword", "awesome");
+    info.Set<bool>("is_converged", true);
+    info.Set<std::string>("keyword", "awesome");
+    info.Set<double>("tol", 0.008);
+    info.Set<int>("echo_level", 2);
+    info.Set<int>("checking", 22);
+
+    std::stringstream test_stream;
+
+    test_stream << info;
+
+    const std::string exp_string = "Info; containing 5 entries\n  name: checking | value: 22 | type: int\n  name: echo_level | value: 2 | type: int\n  name: is_converged | value: 1 | type: bool\n  name: keyword | value: awesome | type: string\n  name: tol | value: 0.008 | type: double\n";
+
+    REQUIRE(test_stream.str() == exp_string);
+}
+
 } // namespace CoSimIO
