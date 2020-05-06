@@ -63,6 +63,8 @@ inline ReturnInfo Hello()
     std::cout << "For more information please visit \"https://github.com/KratosMultiphysics/CoSimIO\"" << std::endl;
 
     // TODO return version and other things in ReturnInfo
+
+    return ReturnInfo(); // TODO use this
 }
 
 
