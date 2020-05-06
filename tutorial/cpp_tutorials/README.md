@@ -57,17 +57,17 @@ The first step to establishing a connection to Kratos CoSimulation is to use the
 
 int main(){
     const std::string connection_name = "external_solver"; // this is different for every solver
-    ConnectionSettings settings;
+    CoSimIO::ConnectionSettings settings;
     settings.Set("echo_level", 1);
     settings.Set("solver_version", "1.25");
 
-    auto info = CoSimIO::Connect(connection_name, );
+    auto info = CoSimIO::Connect(connection_name, settings);
 
 
     // ...
 
 
-    auto info = CoSimIO::Disconnect(connection_name);
+    auto info = CoSimIO::Disconnect(connection_name); // disconnect afterwards
     return 0;
 }
 ```
