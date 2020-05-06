@@ -202,13 +202,12 @@ public:
 
     virtual void Print(std::ostream& rOStream) const
     {
-        rOStream << "Info; containing " << Size() << " entries\n";
+        rOStream << "CoSimIO-Info; containing " << Size() << " entries\n";
 
         // TODO maybe make this to loop alphabetically (otherwise order is random)
         for (const auto& r_pair: mOptions) {
-            rOStream << "  name: " << r_pair.first << " | " << *(r_pair.second) << "\n";
+            rOStream << "  name: " << r_pair.first << " | " << *(r_pair.second) << std::endl;
         }
-        rOStream << std::endl;
     }
 
 private:
