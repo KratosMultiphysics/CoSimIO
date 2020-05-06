@@ -15,7 +15,7 @@
 
 // System includes
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <memory>
 #include <type_traits>
 #include <iostream>
@@ -45,7 +45,18 @@ public:
     // virtual void Print(const void* pSource, std::ostream& rOStream) const;
     virtual void Save(std::ostream& O_OutStream) const = 0;
     virtual void Load(std::istream& I_InStream) = 0;
+    virtual void Print(std::ostream& rOStream) const = 0;
 };
+
+/// output stream function
+inline std::ostream & operator <<(
+    std::ostream& rOStream,
+    const InfoDataBase& rThis)
+{
+    rThis.Print(rOStream);
+
+    return rOStream;
+}
 
 template<class TDataType>
 class InfoData : public InfoDataBase
@@ -78,6 +89,12 @@ public:
     {
         I_InStream >> mData;
     }
+
+    void Print(std::ostream& rOStream) const override
+    {
+        rOStream << "value: " << mData << " | type: " << GetDataTypeName();
+    }
+
 
 private:
     TDataType mData;
@@ -140,7 +157,7 @@ public:
 
     void Save(std::ostream& O_OutStream) const
     {
-        static std::unordered_map<std::string, std::string> s_registered_object_names {
+        static std::map<std::string, std::string> s_registered_object_names {
             {typeid(Internals::InfoData<int>).name(),         "InfoData_int"},
             {typeid(Internals::InfoData<double>).name(),      "InfoData_double"},
             {typeid(Internals::InfoData<bool>).name(),        "InfoData_bool"},
@@ -159,7 +176,7 @@ public:
     }
     void Load(std::istream& I_InStream)
     {
-        static std::unordered_map<std::string, std::shared_ptr<Internals::InfoDataBase>> s_registered_object_prototypes {
+        static std::map<std::string, std::shared_ptr<Internals::InfoDataBase>> s_registered_object_prototypes {
             {"InfoData_int"    , std::make_shared<Internals::InfoData<int>>(1)},
             {"InfoData_double" , std::make_shared<Internals::InfoData<double>>(1)},
             {"InfoData_bool"   , std::make_shared<Internals::InfoData<bool>>(1)},
@@ -183,11 +200,29 @@ public:
         }
     }
 
+    virtual void Print(std::ostream& rOStream) const
+    {
+        rOStream << "CoSimIO-Info; containing " << Size() << " entries\n";
+
+        // TODO maybe make this to loop alphabetically (otherwise order is random)
+        for (const auto& r_pair: mOptions) {
+            rOStream << "  name: " << r_pair.first << " | " << *(r_pair.second) << std::endl;
+        }
+    }
+
 private:
-    std::unordered_map<std::string, std::shared_ptr<Internals::InfoDataBase>> mOptions;
+    std::map<std::string, std::shared_ptr<Internals::InfoDataBase>> mOptions;
 };
 
-// TODO add ofstream operator
+/// output stream function
+inline std::ostream & operator <<(
+    std::ostream& rOStream,
+    const Info& rThis)
+{
+    rThis.Print(rOStream);
+
+    return rOStream;
+}
 
 
 class ConnectionSettings : public Info
