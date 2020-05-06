@@ -37,11 +37,21 @@ auto info = CoSimIO::Hello();
 Please note that this method like other methods in _CoSimIO_ returns an Info object. This object is a versatile container holding important information about the operation that has been done. In this case, it contains the version of the _CoSimIO_ library which can be queried:
 
 ```c++
-
+std::cout << info << std::endl;
 ```
+
+Info class also provides get method for retriving a certain value knowing its type:
+
+```c++
+std::cout << "The major version is:" << info.Get<int>("major_version") << std::endl;
+std::cout << "The minor version is:" << info.Get<int>("minor_version") << std::endl;
+std::cout << "The patch version is:" << info.Get<std::string>("patch_version") << std::endl;
+```
+
 ## Tutorial 3: Connecting and Disconnecting
 The first step to establishing a connection to Kratos CoSimulation is to use the `connect()` method:
 
 ```c++
+
 
 ```
