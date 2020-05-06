@@ -45,7 +45,18 @@ public:
     // virtual void Print(const void* pSource, std::ostream& rOStream) const;
     virtual void Save(std::ostream& O_OutStream) const = 0;
     virtual void Load(std::istream& I_InStream) = 0;
+    virtual void Print(std::ostream& rOStream) const = 0;
 };
+
+/// output stream function
+inline std::ostream & operator <<(
+    std::ostream& rOStream,
+    const InfoDataBase& rThis)
+{
+    rThis.Print(rOStream);
+
+    return rOStream;
+}
 
 template<class TDataType>
 class InfoData : public InfoDataBase
@@ -78,6 +89,12 @@ public:
     {
         I_InStream >> mData;
     }
+
+    void Print(std::ostream& rOStream) const override
+    {
+        rOStream << "value: " << mData << " | type: " << GetDataTypeName();
+    }
+
 
 private:
     TDataType mData;
@@ -183,11 +200,30 @@ public:
         }
     }
 
+    virtual void Print(std::ostream& rOStream) const
+    {
+        rOStream << "Info; containing " << Size() << " entries\n";
+
+        // TODO maybe make this to loop alphabetically (otherwise order is random)
+        for (const auto& r_pair: mOptions) {
+            rOStream << "  name: " << r_pair.first << " | " << *(r_pair.second) << "\n";
+        }
+        rOStream << std::endl;
+    }
+
 private:
     std::unordered_map<std::string, std::shared_ptr<Internals::InfoDataBase>> mOptions;
 };
 
-// TODO add ofstream operator
+/// output stream function
+inline std::ostream & operator <<(
+    std::ostream& rOStream,
+    const Info& rThis)
+{
+    rThis.Print(rOStream);
+
+    return rOStream;
+}
 
 
 class ConnectionSettings : public Info
