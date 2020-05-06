@@ -16,8 +16,9 @@
 // System includes
 #include <string>
 #include <unordered_map>
-#include <utility>
 #include <memory>
+#include <type_traits>
+#include <iostream>
 
 #ifdef CO_SIM_IO_USING_MPI
 #include "mpi.h"
@@ -40,16 +41,17 @@ public:
     virtual ~InfoDataBase() = default;
     virtual const void* GetData() const = 0;
     virtual std::string GetDataTypeName() const = 0;
+    virtual std::shared_ptr<InfoDataBase> Clone() const = 0;
     // virtual void Print(const void* pSource, std::ostream& rOStream) const;
-    // virtual void Save(Serializer& rSerializer, void* pData) const;
-    // virtual void Load(Serializer& rSerializer, void* pData) const;
+    virtual void Save(std::ostream& O_OutStream) const = 0;
+    virtual void Load(std::istream& I_InStream) = 0;
 };
 
 template<class TDataType>
 class InfoData : public InfoDataBase
 {
 public:
-    InfoData(const TDataType Source) : mData(Source) {}
+    explicit InfoData(const TDataType Source) : mData(Source) {}
 
     std::string GetDataTypeName() const override {return Internals::Name(TDataType());}
 
@@ -63,15 +65,19 @@ public:
     //     rOStream << Name() << " : " << *static_cast<const TDataType* >(pSource) ;
     // }
 
-    // void Save(Serializer& rSerializer, void* pData) const override
-    // {
-    //     // I'm saving by the value, it can be done by the pointer to detect shared data. Pooyan.
-    //     rSerializer.save("Data",*static_cast<TDataType* >(pData));
-    // }
-    // void Load(Serializer& rSerializer, void* pData) const override
-    // {
-    //     rSerializer.load("Data",*static_cast<TDataType* >(pData));
-    // }
+    std::shared_ptr<InfoDataBase> Clone() const override
+    {
+        return std::make_shared<InfoData<TDataType>>(TDataType());
+    }
+
+    void Save(std::ostream& O_OutStream) const override
+    {
+        O_OutStream << mData;
+    }
+    void Load(std::istream& I_InStream) override
+    {
+        I_InStream >> mData;
+    }
 
 private:
     TDataType mData;
@@ -130,6 +136,51 @@ public:
     std::size_t Size() const
     {
         return mOptions.size();
+    }
+
+    void Save(std::ostream& O_OutStream) const
+    {
+        static std::unordered_map<std::string, std::string> s_registered_object_names {
+            {typeid(Internals::InfoData<int>).name(),         "InfoData_int"},
+            {typeid(Internals::InfoData<double>).name(),      "InfoData_double"},
+            {typeid(Internals::InfoData<bool>).name(),        "InfoData_bool"},
+            {typeid(Internals::InfoData<std::string>).name(), "InfoData_string"}
+        };
+
+        O_OutStream << Size() << "\n";
+        for (const auto& r_pair: mOptions) {
+            auto it_obj = s_registered_object_names.find(typeid(*(r_pair.second)).name());
+            CO_SIM_IO_ERROR_IF(it_obj == s_registered_object_names.end()) << "No name registered" << std::endl;
+            O_OutStream << r_pair.first << "\n";
+            O_OutStream << it_obj->second << "\n";
+            r_pair.second->Save(O_OutStream);
+            O_OutStream << "\n";
+        }
+    }
+    void Load(std::istream& I_InStream)
+    {
+        static std::unordered_map<std::string, std::shared_ptr<Internals::InfoDataBase>> s_registered_object_prototypes {
+            {"InfoData_int"    , std::make_shared<Internals::InfoData<int>>(1)},
+            {"InfoData_double" , std::make_shared<Internals::InfoData<double>>(1)},
+            {"InfoData_bool"   , std::make_shared<Internals::InfoData<bool>>(1)},
+            {"InfoData_string" , std::make_shared<Internals::InfoData<std::string>>("")}
+        };
+
+        std::string key, registered_name;
+
+        int size;
+        I_InStream >> size;
+
+        for (int i=0; i<size; ++i) {
+            I_InStream >> key;
+            I_InStream >> registered_name;
+            auto it_prototype = s_registered_object_prototypes.find(registered_name);
+            CO_SIM_IO_ERROR_IF(it_prototype == s_registered_object_prototypes.end()) << "No prototype registered for " << registered_name << std::endl;
+
+            auto p_clone = it_prototype->second->Clone();
+            p_clone->Load(I_InStream);
+            mOptions[key] = p_clone;
+        }
     }
 
 private:
