@@ -40,6 +40,9 @@ Note that this introduces dependencies such as e.g. boost (header-only version) 
 
 namespace CoSimIO {
 
+inline ReturnInfo Hello();
+
+
 inline ReturnInfo Connect(const std::string& rConnectionName, CoSimIO::SettingsType Settings);
 inline ReturnInfo Connect(const std::string& rConnectionName, const std::string& rSettingsFileName);
 
