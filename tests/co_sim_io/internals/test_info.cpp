@@ -194,12 +194,17 @@ TEST_CASE("info_save")
 {
     Info info;
     info.Set<std::string>("keyword", "awesome");
+    info.Set<bool>("is_converged", true);
+    info.Set<std::string>("keyword", "awesome");
+    info.Set<double>("tol", 0.008);
+    info.Set<int>("echo_level", 2);
+    info.Set<int>("checking", 22);
 
     std::stringstream test_stream;
 
     info.Save(test_stream);
 
-    const std::string exp_string = "1\nkeyword\nInfoData_string\nawesome\n";
+    const std::string exp_string = "5\nchecking\nInfoData_int\n22\necho_level\nInfoData_int\n2\nis_converged\nInfoData_bool\n1\nkeyword\nInfoData_string\nawesome\ntol\nInfoData_double\n0.008\n";
 
     REQUIRE(test_stream.str() == exp_string);
 }
@@ -243,6 +248,25 @@ TEST_CASE("info_save_load")
     REQUIRE(another_info.Get<std::string>("keyword") == "awesome");
     REQUIRE(another_info.Get<bool>("is_converged") == true);
     REQUIRE(another_info.Get<double>("tol") == Approx(0.008));
+}
+
+TEST_CASE("info_ostream")
+{
+    Info info;
+    info.Set<std::string>("keyword", "awesome");
+    info.Set<bool>("is_converged", true);
+    info.Set<std::string>("keyword", "awesome");
+    info.Set<double>("tol", 0.008);
+    info.Set<int>("echo_level", 2);
+    info.Set<int>("checking", 22);
+
+    std::stringstream test_stream;
+
+    test_stream << info;
+
+    const std::string exp_string = "CoSimIO-Info; containing 5 entries\n  name: checking | value: 22 | type: int\n  name: echo_level | value: 2 | type: int\n  name: is_converged | value: 1 | type: bool\n  name: keyword | value: awesome | type: string\n  name: tol | value: 0.008 | type: double\n";
+
+    REQUIRE(test_stream.str() == exp_string);
 }
 
 } // namespace CoSimIO
