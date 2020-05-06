@@ -23,6 +23,7 @@ This file contains the implementation of the functions defined in "co_sim_io.hpp
 
 // Project includes
 #include "connection.hpp"
+#include "version.hpp"
 
 namespace CoSimIO {
 
@@ -57,14 +58,18 @@ inline ReturnInfo Hello()
     std::cout << "The detached interface for coupled simulations together with the\n";
     std::cout << "CoSimulationApplication of KratosMultiphysics\n\"https://github.com/KratosMultiphysics/Kratos/tree/master/applications/CoSimulationApplication\"\n";
     std::cout << "Version:\n";
-    std::cout << "    Major: " << 1 << "\n";
-    std::cout << "    Minor: " << 0 << "\n";
-    std::cout << "    Patch: " << "xxx\n";
+    std::cout << "    Major: " << Internals::GetMajorVersion() << "\n";
+    std::cout << "    Minor: " << Internals::GetMinorVersion() << "\n";
+    std::cout << "    Patch: " << Internals::GetPatchVersion() << "\n";
     std::cout << "For more information please visit \"https://github.com/KratosMultiphysics/CoSimIO\"" << std::endl;
 
-    // TODO return version and other things in ReturnInfo
+    ReturnInfo ret_info;
+    ret_info.Set("major_version", Internals::GetMajorVersion());
+    ret_info.Set("minor_version", Internals::GetMinorVersion());
+    ret_info.Set("minor_version", Internals::GetPatchVersion());
+    // TODO maybe add more things too here
 
-    return ReturnInfo(); // TODO use this
+    return ret_info;
 }
 
 
