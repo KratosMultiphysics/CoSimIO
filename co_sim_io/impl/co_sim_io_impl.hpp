@@ -51,6 +51,21 @@ inline void SendControlSignal(
 
 } // namespace Internals
 
+inline ReturnInfo Hello()
+{
+    std::cout << "Hello, this is the CoSimIO\n";
+    std::cout << "The detached interface for coupled simulations together with the\n";
+    std::cout << "CoSimulationApplication of KratosMultiphysics\n\"https://github.com/KratosMultiphysics/Kratos/tree/master/applications/CoSimulationApplication\"\n";
+    std::cout << "Version:\n";
+    std::cout << "    Major: " << 1 << "\n";
+    std::cout << "    Minor: " << 0 << "\n";
+    std::cout << "    Patch: " << "xxx\n";
+    std::cout << "For more information please visit \"https://github.com/KratosMultiphysics/CoSimIO\"" << std::endl;
+
+    // TODO return version and other things in ReturnInfo
+}
+
+
 inline ReturnInfo Connect(const std::string& rConnectionName, CoSimIO::SettingsType Settings)
 {
     using namespace Internals;
