@@ -15,7 +15,7 @@
 
 // System includes
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <memory>
 #include <type_traits>
 #include <iostream>
@@ -157,7 +157,7 @@ public:
 
     void Save(std::ostream& O_OutStream) const
     {
-        static std::unordered_map<std::string, std::string> s_registered_object_names {
+        static std::map<std::string, std::string> s_registered_object_names {
             {typeid(Internals::InfoData<int>).name(),         "InfoData_int"},
             {typeid(Internals::InfoData<double>).name(),      "InfoData_double"},
             {typeid(Internals::InfoData<bool>).name(),        "InfoData_bool"},
@@ -176,7 +176,7 @@ public:
     }
     void Load(std::istream& I_InStream)
     {
-        static std::unordered_map<std::string, std::shared_ptr<Internals::InfoDataBase>> s_registered_object_prototypes {
+        static std::map<std::string, std::shared_ptr<Internals::InfoDataBase>> s_registered_object_prototypes {
             {"InfoData_int"    , std::make_shared<Internals::InfoData<int>>(1)},
             {"InfoData_double" , std::make_shared<Internals::InfoData<double>>(1)},
             {"InfoData_bool"   , std::make_shared<Internals::InfoData<bool>>(1)},
@@ -212,7 +212,7 @@ public:
     }
 
 private:
-    std::unordered_map<std::string, std::shared_ptr<Internals::InfoDataBase>> mOptions;
+    std::map<std::string, std::shared_ptr<Internals::InfoDataBase>> mOptions;
 };
 
 /// output stream function
