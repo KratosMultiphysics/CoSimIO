@@ -210,7 +210,8 @@ inline ReturnInfo ExportInfo(
 inline ReturnInfo IsConverged(const Info& I_Info)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    return Internals::GetConnection(connection_name).IsConverged();
+    const bool is_converged = Internals::GetConnection(connection_name).IsConverged();
+    return ReturnInfo(); // TODO use this
 }
 
 inline ReturnInfo Run(const Info& I_Info)
@@ -234,7 +235,8 @@ inline ReturnInfo Register(
     };
 
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    // Internals::GetConnection(connection_name).Register(rFunctionName, fct_callback);
+    const std::string function_name = I_Info.Get<std::string>("function_name");
+    // Internals::GetConnection(connection_name).Register(function_name, fct_callback);
 
     return ReturnInfo(); // TODO use this
 }
@@ -253,7 +255,8 @@ inline ReturnInfo Register(
     };
 
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    // Internals::GetConnection(connection_name).Register(rFunctionName, fct_callback);
+    const std::string function_name = I_Info.Get<std::string>("function_name");
+    // Internals::GetConnection(connection_name).Register(function_name, fct_callback);
 
     return ReturnInfo(); // TODO use this
 }
