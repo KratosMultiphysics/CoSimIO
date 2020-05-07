@@ -47,27 +47,72 @@ int major_version = info.Get<int>("major_version");
 int minor_version = info.Get<int>("minor_version");
 std::string patch_version = info.Get<std::string>("patch_version");
 ```
+You may find this example in hello.cpp file in the `solver_integration/cpp` folder
+
 
 ## Tutorial 3: Connecting and Disconnecting
 The first step to establishing a connection to Kratos CoSimulation is to use the `Connect()` method:
+```c++
+// The connect should be called before any CosimIO method called
+auto info = CoSimIO::Connect(connection_name, settings);
+}
+```
+
+First of all, you may notice that `Connect()` method takes a `ConnectionSettings` as its arguments. This contianer has the interface like the Info described in the previous section and can be used to pass additional information about the solver or connection settings to the CoSimIO:
+
+```c++
+CoSimIO::ConnectionSettings settings; // 
+settings.Set("echo_level", 1);
+settings.Set("connection_type", "file");
+settings.Set("solver_version", "1.25");
+}
+```
+This method returns a `ReturnInfo` object containing information about the connection which can be queried using Get method:
+
+```c++
+int connection_status = info.Get<int>("connection_status");
+```
+
+Now putting together everything:
 
 ```c++
 // CoSimulation includes
 #include "co_sim_io.hpp"
 
 int main(){
-    const std::string connection_name = "external_solver"; // this is different for every solver
-    CoSimIO::ConnectionSettings settings;
+    const std::string connection_name = "my_solver"; // this is different for every solver
+    CoSimIO::ConnectionSettings settings; // 
     settings.Set("echo_level", 1);
     settings.Set("solver_version", "1.25");
 
+    // The connect should be called before any CosimIO method called
     auto info = CoSimIO::Connect(connection_name, settings);
-
+    int connection_status = info.Get<int>("connection_status");
+    if(connection_status != CoSimIO::Connected){
+        return 1;
+    }
+    // Now you may call any CoSimIO methods like ImportData, ExportData, etc.
 
     // ...
-
-
+    
     auto info = CoSimIO::Disconnect(connection_name); // disconnect afterwards
+    // Here you may use the return info but cannot call any CoSimIO method anymore
     return 0;
 }
 ```
+
+You may find this example in connect_disconect.cpp file in the `solver_integration/cpp` folder
+
+## Tutorial 4: Data Exchange
+
+
+## Tutorial 5: Mesh Exchange
+
+
+## Tutorial 6: Building the Kratos CoSimApplication
+
+
+## Tutorial 7: Connecting to Kratos CoSimApplication
+
+
+
