@@ -58,15 +58,15 @@ inline ReturnInfo Hello()
     std::cout << "The detached interface for coupled simulations together with the\n";
     std::cout << "CoSimulationApplication of KratosMultiphysics\n\"https://github.com/KratosMultiphysics/Kratos/tree/master/applications/CoSimulationApplication\"\n";
     std::cout << "Version:\n";
-    std::cout << "    Major: " << Internals::GetMajorVersion() << "\n";
-    std::cout << "    Minor: " << Internals::GetMinorVersion() << "\n";
-    std::cout << "    Patch: " << Internals::GetPatchVersion() << "\n";
+    std::cout << "    Major: " << GetMajorVersion() << "\n";
+    std::cout << "    Minor: " << GetMinorVersion() << "\n";
+    std::cout << "    Patch: " << GetPatchVersion() << "\n";
     std::cout << "For more information please visit \"https://github.com/KratosMultiphysics/CoSimIO\"" << std::endl;
 
     ReturnInfo ret_info;
-    ret_info.Set("major_version", Internals::GetMajorVersion());
-    ret_info.Set("minor_version", Internals::GetMinorVersion());
-    ret_info.Set("patch_version", Internals::GetPatchVersion());
+    ret_info.Set("major_version", GetMajorVersion());
+    ret_info.Set("minor_version", GetMinorVersion());
+    ret_info.Set("patch_version", GetPatchVersion());
     // TODO maybe add more things too here
 
     return ret_info;
