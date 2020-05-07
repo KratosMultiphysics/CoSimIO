@@ -43,59 +43,51 @@ namespace CoSimIO {
 inline ReturnInfo Hello();
 
 
-inline ReturnInfo Connect(const std::string& rConnectionName, const ConnectionSettings Settings);
-inline ReturnInfo Connect(const std::string& rConnectionName, const std::string& rSettingsFileName);
+inline ReturnInfo Connect(const ConnectionSettings& I_Settings);
 
-inline ReturnInfo Disconnect(const std::string& rConnectionName);
+inline ReturnInfo Disconnect(const Info& I_Info);
 
 
 template<class TContainerType>
 inline ReturnInfo ImportData(
-    const std::string& rConnectionName,
-    const Info& IO_Info,
+    const Info& I_Info,
     TContainerType& rData);
 
 template<class TContainerType>
 inline ReturnInfo ExportData(
-    const std::string& rConnectionName,
-    const Info& IO_Info,
+    const Info& I_Info,
     const TContainerType& rData);
 
 
 template<class TDoubleContainerType, class TIntContainerType>
 inline ReturnInfo ImportMesh(
-    const std::string& rConnectionName,
-    const Info& IO_Info,
+    const Info& I_Info,
     TDoubleContainerType& rNodalCoordinates,
     TIntContainerType& rElementConnectivities,
     TIntContainerType& rElementTypes);
 
 template<class TDoubleContainerType, class TIntContainerType>
 inline ReturnInfo ExportMesh(
-    const std::string& rConnectionName,
-    const Info& IO_Info,
+    const Info& I_Info,
     const TDoubleContainerType& rNodalCoordinates,
     const TIntContainerType& rElementConnectivities,
     const TIntContainerType& rElementTypes);
 
 
 inline ReturnInfo ImportInfo(
-    const std::string& rConnectionName,
-    const Info& rSolutionInfo);
+    const Info& I_Info);
 
 inline ReturnInfo ExportInfo(
-    const std::string& rConnectionName,
-    const Info& rSolutionInfo);
+    const Info& I_Info);
 
 
-inline int IsConverged(const std::string& rConnectionName);
+inline ReturnInfo IsConverged(const Info& I_Info);
 
-inline ReturnInfo Run(const std::string& rConnectionName);
+inline ReturnInfo Run(const Info& I_Info);
 
 template<typename TFunctionType>
 inline ReturnInfo Register(
-    const std::string& rConnectionName,
-    const std::string& rFunctionName,
+    const Info& I_Info,
     TFunctionType rFunction);
 
 } // namespace CoSimIO
