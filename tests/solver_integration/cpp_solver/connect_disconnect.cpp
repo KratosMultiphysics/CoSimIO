@@ -15,7 +15,7 @@ int main(){
     // settings.Set("solver_version", "1.25");
 
     // auto info = CoSimIO::Connect(connection_name, settings);
-    // COSIMIO_CHECK_EQUAL(info.Get<bool>("is_connected"), true);
+    // COSIMIO_CHECK_EQUAL(info.Get<bool>("connection_status"), CoSimIO::Connected);
 
     // auto info = CoSimIO::Disconnect(connection_name); // disconnect afterwards
     // COSIMIO_CHECK_EQUAL(info.Get<bool>("is_connected"), false);
