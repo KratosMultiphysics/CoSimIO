@@ -17,7 +17,6 @@
 #include <string>
 
 namespace CoSimIO {
-namespace Internals {
 
 constexpr int GetMajorVersion() {
     return 1;
@@ -31,7 +30,6 @@ std::string GetPatchVersion() {
     return "xxx";
 }
 
-} // namespace Internals
 } // namespace CoSimIO
 
 #endif // CO_SIM_IO_VERSION_H_INCLUDED
