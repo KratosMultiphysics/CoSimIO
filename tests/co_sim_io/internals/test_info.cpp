@@ -74,6 +74,21 @@ TEST_CASE("info_basics_string")
     REQUIRE(info.Get<std::string>("identifier") == "pressure");
 }
 
+TEST_CASE("info_basics_char")
+{
+    Info info;
+
+    REQUIRE_FALSE(info.Has("identifier"));
+
+    std::string val = "pressure";
+
+    info.Set<std::string>("identifier", val.c_str());
+
+    REQUIRE(info.Has("identifier"));
+
+    REQUIRE(info.Get<std::string>("identifier") == "pressure"); // char* will be turned into string
+}
+
 TEST_CASE("info_wrong_type")
 {
     Info info;
