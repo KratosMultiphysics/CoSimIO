@@ -17,6 +17,8 @@ message("    BUILD_PYTHON:   " ${BUILD_PYTHON})
 message("    BUILD_FORTRAN:  " ${BUILD_FORTRAN})
 message("")
 
+enable_testing()
+
 if(MSVC)
     # required such that "__cplusplus" is set to the correct value
     # see https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/

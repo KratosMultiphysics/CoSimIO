@@ -26,6 +26,21 @@ set_target_properties(test_runner_cpp PROPERTIES
     CXX_EXTENSIONS NO
 )
 
+function(add_cpp_test TEST_SOURCE_FILE)
+    get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
+    string(REGEX REPLACE ".cpp" "_cpp_test" TEST_NAME ${TEST_FILENAME})
+    message(STATUS  "adding ${TEST_NAME} ")
+    add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
+    add_test(${TEST_NAME} ${TEST_NAME})
+    install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin")
+endfunction()
+
+file(GLOB cpp_test_files "solver_integration/cpp_solver/*.cpp")
+
+foreach(cpp_test_file ${cpp_test_files})
+  add_cpp_test(${cpp_test_file})
+endforeach(cpp_test_file)
+
 
 ### C tests ###
 if(BUILD_C)
