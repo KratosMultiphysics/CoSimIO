@@ -66,7 +66,7 @@ inline ReturnInfo Hello()
     ReturnInfo ret_info;
     ret_info.Set("major_version", Internals::GetMajorVersion());
     ret_info.Set("minor_version", Internals::GetMinorVersion());
-    ret_info.Set("minor_version", Internals::GetPatchVersion());
+    ret_info.Set("patch_version", Internals::GetPatchVersion());
     // TODO maybe add more things too here
 
     return ret_info;
