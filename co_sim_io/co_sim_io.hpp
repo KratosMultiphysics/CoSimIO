@@ -52,20 +52,20 @@ inline ReturnInfo Disconnect(const std::string& rConnectionName);
 template<class TContainerType>
 inline ReturnInfo ImportData(
     const std::string& rConnectionName,
-    const std::string& rIdentifier,
+    Info& IO_Info,
     TContainerType& rData);
 
 template<class TContainerType>
 inline ReturnInfo ExportData(
     const std::string& rConnectionName,
-    const std::string& rIdentifier,
+    Info& IO_Info,
     const TContainerType& rData);
 
 
 template<class TDoubleContainerType, class TIntContainerType>
 inline ReturnInfo ImportMesh(
     const std::string& rConnectionName,
-    const std::string& rIdentifier,
+    Info& IO_Info,
     TDoubleContainerType& rNodalCoordinates,
     TIntContainerType& rElementConnectivities,
     TIntContainerType& rElementTypes);
@@ -73,7 +73,7 @@ inline ReturnInfo ImportMesh(
 template<class TDoubleContainerType, class TIntContainerType>
 inline ReturnInfo ExportMesh(
     const std::string& rConnectionName,
-    const std::string& rIdentifier,
+    Info& IO_Info,
     const TDoubleContainerType& rNodalCoordinates,
     const TIntContainerType& rElementConnectivities,
     const TIntContainerType& rElementTypes);
