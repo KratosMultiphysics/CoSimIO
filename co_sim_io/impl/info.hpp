@@ -255,42 +255,6 @@ private:
 // for now this points to the same object, but this might change in the future
 using ReturnInfo = Info;
 
-
-// struct TransferInfoC
-// {
-//     TransferInfoC(const char* rIdentifier) : Identifier(rIdentifier) {}
-
-//     std::string Identifier;
-// };
-
-// struct TransferInfo
-// {
-//     // TransferInfo(const std::string& rIdentifier) : Identifier(rIdentifier) {}
-
-//     // std::string Identifier;
-// };
-
-// // struct MeshInfo
-// // {
-
-// // };
-
-
-
-// class SolutionInfo
-// {
-// public:
-//     SolutionInfo() {}
-
-//     double CurrentTime;
-//     double NewTime;
-//     bool IsConverged=true;
-
-//     std::unordered_map<std::string, int> MeshStates; // 0=Unchanged // 1=NodesMoved // 2=FullRemesh
-
-// };
-
-
 // struct ReturnInfo : public Info
 // {
 //     // int ReturnCode() const { return Get<int>("return_code"); }
