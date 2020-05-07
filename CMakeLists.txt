@@ -17,13 +17,15 @@ message("    BUILD_PYTHON:   " ${BUILD_PYTHON})
 message("    BUILD_FORTRAN:  " ${BUILD_FORTRAN})
 message("")
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
 enable_testing()
 
 if(MSVC)
     # required such that "__cplusplus" is set to the correct value
     # see https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
     # Note: min value is c++14 => 201402L (c++11 does not exist, will also output 201402L)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus ") # /WX
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus") # /WX
 endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")

@@ -248,6 +248,8 @@ private:
     #ifdef CO_SIM_IO_USING_MPI
     MPI_Comm mMpiComm = nullptr;
     #endif // CO_SIM_IO_USING_MPI
+
+    // TODO add version of Solver
 };
 
 
