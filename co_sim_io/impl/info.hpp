@@ -30,10 +30,11 @@
 namespace CoSimIO {
 
 namespace Internals {
-    std::string Name(int dummy)         {return "int";}
-    std::string Name(double dummy)      {return "double";}
-    std::string Name(bool dummy)        {return "bool";}
-    std::string Name(std::string dummy) {return "string";}
+
+inline std::string Name(int dummy)         {return "int";}
+inline std::string Name(double dummy)      {return "double";}
+inline std::string Name(bool dummy)        {return "bool";}
+inline std::string Name(std::string dummy) {return "string";}
 
 class InfoDataBase
 {
