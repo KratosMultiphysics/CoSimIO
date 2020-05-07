@@ -250,6 +250,9 @@ private:
     #endif // CO_SIM_IO_USING_MPI
 };
 
+// for now this points to the same object, but this might change in the future
+using ReturnInfo = Info;
+
 
 // struct TransferInfoC
 // {
@@ -286,10 +289,10 @@ private:
 // };
 
 
-struct ReturnInfo : public Info
-{
-    int ReturnCode() const { return Get<int>("return_code"); }
-};
+// struct ReturnInfo : public Info
+// {
+//     // int ReturnCode() const { return Get<int>("return_code"); }
+// };
 
 } // namespace CoSimIO
 
