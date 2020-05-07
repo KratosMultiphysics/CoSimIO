@@ -17,9 +17,9 @@ message("    BUILD_PYTHON:   " ${BUILD_PYTHON})
 message("    BUILD_FORTRAN:  " ${BUILD_FORTRAN})
 message("")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
 enable_testing()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 if(MSVC)
     # required such that "__cplusplus" is set to the correct value
