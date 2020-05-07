@@ -24,16 +24,14 @@ namespace Internals {
 class Communication
 {
 public:
-    explicit Communication(const std::string& rName, SettingsType& rSettings, const bool IsConnectionMaster) : mrSettings(rSettings),mConnectionName(rName), mIsConnectionMaster(IsConnectionMaster)
+    explicit Communication(const std::string& rName, const ConnectionSettings& I_Settings, const bool IsConnectionMaster) : mConnectionName(rName), mIsConnectionMaster(IsConnectionMaster)
     {
-        const SettingsType default_settings {
-            {"echo_level",   "1"},
-            {"print_timing", "0"}
-        };
-        Internals::AddMissingSettings(default_settings, mrSettings);
-
-        mEchoLevel = std::stoi(mrSettings.at("echo_level"));
-        mPrintTiming = (mrSettings.at("print_timing") == "1");
+        if (I_Settings.Has("echo_level")) {
+            mEchoLevel = I_Settings.Get<int>("echo_level");
+        }
+        if (I_Settings.Has("print_timing")) {
+            mPrintTiming = I_Settings.Get<bool>("print_timing");
+        }
     }
 
     virtual ~Communication() = default; // impl of disconnect has to be in derived class due to order of class destruction
@@ -119,8 +117,6 @@ public:
     }
 
 protected:
-    SettingsType& mrSettings;
-
     std::string GetConnectionName() const {return mConnectionName;}
     int GetEchoLevel() const              {return mEchoLevel;}
     bool GetIsConnectionMaster() const    {return mIsConnectionMaster;}
