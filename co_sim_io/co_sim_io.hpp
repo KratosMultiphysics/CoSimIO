@@ -43,7 +43,7 @@ namespace CoSimIO {
 inline ReturnInfo Hello();
 
 
-inline ReturnInfo Connect(const std::string& rConnectionName, CoSimIO::SettingsType Settings);
+inline ReturnInfo Connect(const std::string& rConnectionName, const ConnectionSettings Settings);
 inline ReturnInfo Connect(const std::string& rConnectionName, const std::string& rSettingsFileName);
 
 inline ReturnInfo Disconnect(const std::string& rConnectionName);
@@ -52,20 +52,20 @@ inline ReturnInfo Disconnect(const std::string& rConnectionName);
 template<class TContainerType>
 inline ReturnInfo ImportData(
     const std::string& rConnectionName,
-    Info& IO_Info,
+    const Info& IO_Info,
     TContainerType& rData);
 
 template<class TContainerType>
 inline ReturnInfo ExportData(
     const std::string& rConnectionName,
-    Info& IO_Info,
+    const Info& IO_Info,
     const TContainerType& rData);
 
 
 template<class TDoubleContainerType, class TIntContainerType>
 inline ReturnInfo ImportMesh(
     const std::string& rConnectionName,
-    Info& IO_Info,
+    const Info& IO_Info,
     TDoubleContainerType& rNodalCoordinates,
     TIntContainerType& rElementConnectivities,
     TIntContainerType& rElementTypes);
@@ -73,7 +73,7 @@ inline ReturnInfo ImportMesh(
 template<class TDoubleContainerType, class TIntContainerType>
 inline ReturnInfo ExportMesh(
     const std::string& rConnectionName,
-    Info& IO_Info,
+    const Info& IO_Info,
     const TDoubleContainerType& rNodalCoordinates,
     const TIntContainerType& rElementConnectivities,
     const TIntContainerType& rElementTypes);
@@ -81,7 +81,7 @@ inline ReturnInfo ExportMesh(
 
 inline ReturnInfo ImportInfo(
     const std::string& rConnectionName,
-    Info& rSolutionInfo);
+    const Info& rSolutionInfo);
 
 inline ReturnInfo ExportInfo(
     const std::string& rConnectionName,
