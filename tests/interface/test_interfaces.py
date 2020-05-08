@@ -58,11 +58,11 @@ class TestInterfaces_Python(TestInterfaces.BaseTests):
         return SubprocessWrapper(cmd='python3', args=["interface_tests.py", test_name], cwd=os.path.dirname(os.path.abspath(__file__)))
 
 
-@unittest.skipUnless(IsOptionEnabled("BUILD_C"), "This test can only be executed if CoSimIO for C is built")
-@unittest.skipUnless(IsOptionEnabled("BUILD_TESTS"), "This test can only be executed if the tests are built")
-class TestInterfaces_C(TestInterfaces.BaseTests):
-    def _RunTestWithName(self, test_name):
-        return RunTestRunner(cmd='test_runner_c', args=[test_name])
+# @unittest.skipUnless(IsOptionEnabled("BUILD_C"), "This test can only be executed if CoSimIO for C is built")
+# @unittest.skipUnless(IsOptionEnabled("BUILD_TESTS"), "This test can only be executed if the tests are built")
+# class TestInterfaces_C(TestInterfaces.BaseTests):
+#     def _RunTestWithName(self, test_name):
+#         return RunTestRunner(cmd='test_runner_c', args=[test_name])
 
 
 @unittest.skipUnless(IsOptionEnabled("BUILD_FORTRAN"), "This test can only be executed if CoSimIO for Fortran is built")
