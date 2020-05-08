@@ -63,7 +63,7 @@ First of all, you may notice that `Connect()` method takes a `ConnectionSettings
 ```c++
 CoSimIO::ConnectionSettings settings; // 
 settings.Set("echo_level", 1);
-settings.Set("connection_type", "file");
+settings.Set("communication_format", "file");
 settings.Set("solver_version", "1.25");
 }
 ```
@@ -104,9 +104,30 @@ int main(){
 You may find this example in connect_disconect.cpp file in the `solver_integration/cpp` folder
 
 ## Tutorial 4: Data Exchange
+One of the important missions of the CoSimIO is to send and recieve data between processes. The `ExportData()` method can be used to send data to the Kratos or directly to another solver:
+
+```c++
+std::vector<double> data_to_send(4,3.14);
+info.Set("identifier", "vector_of_pi");
+info.Set("connection_name", "solver_2");
+auto return_info = ExportData(info, data_to_send);
+```
+In this example we are sending an std::vector<double>. However, the operation is valid for any container with resize and index operator and any data type which has streaming `<<` and `>>` oprators defined. (like int, bool, )
+
+The `ImportData()` should be used on the other side to recieve data:
+
+```c++
+std::vector<double> data_to_receive;
+info.Set("identifier", "vector_of_pi");
+info.Set("connection_name", "solver_1");
+auto return_info = ImportData(info, data_to_receive);
+```
+
+It is important to mention that the `ImportData()` will clear and resize the vector if needed.
 
 
 ## Tutorial 5: Mesh Exchange
+
 
 
 ## Tutorial 6: Building the Kratos CoSimApplication
