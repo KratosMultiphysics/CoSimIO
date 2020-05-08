@@ -111,14 +111,10 @@ public:
     template<typename TDataType>
     TDataType Get(const std::string& I_Key) const
     {
-        const bool key_exists = Has(I_Key);
-        if (key_exists) {
-            const auto& r_val = mOptions.at(I_Key);
-            CO_SIM_IO_ERROR_IF(r_val->GetDataTypeName() != Internals::Name(TDataType())) << "Wrong DataType! Trying to get \"" << I_Key << "\" which is of type \"" << r_val->GetDataTypeName() << "\" with \"" << Internals::Name(TDataType()) << "\"!" << std::endl;
-            return *static_cast<const TDataType*>(r_val->GetData());
-        } else {
-            return TDataType();
-        }
+        CO_SIM_IO_ERROR_IF_NOT(Has(I_Key)) << "Trying to get \"" << I_Key << "\" which does not exist!" << std::endl;
+        const auto& r_val = mOptions.at(I_Key);
+        CO_SIM_IO_ERROR_IF(r_val->GetDataTypeName() != Internals::Name(TDataType())) << "Wrong DataType! Trying to get \"" << I_Key << "\" which is of type \"" << r_val->GetDataTypeName() << "\" with \"" << Internals::Name(TDataType()) << "\"!" << std::endl;
+        return *static_cast<const TDataType*>(r_val->GetData());
     }
 
     bool Has(const std::string& I_Key) const
