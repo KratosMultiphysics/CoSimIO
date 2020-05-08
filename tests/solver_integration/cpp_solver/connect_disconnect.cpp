@@ -16,10 +16,11 @@ int main(){
     settings.Set("solver_version", "1.25");
 
     auto return_info = CoSimIO::Connect(settings);
-    COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), 1);
+    COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), 1); // TODO: substitue 1 with CoSimIO::Connected
 
     return_info = CoSimIO::Disconnect(settings); // disconnect afterwards
-    COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), 0);
+    COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), 0); // TODO: substitue 1 with CoSimIO::Disconnected
+
     
     return 0;
 }
