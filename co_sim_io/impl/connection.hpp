@@ -43,14 +43,11 @@ class Connection
 
 public:
 
-    using FunctionPointerType = std::function<void(Info&)>;
+    using FunctionPointerType = std::function<ReturnInfo(const Info&)>;
 
-    explicit Connection(const std::string& rName, const std::string& rSettingsFileName)
-    : Connection(rName, Internals::ReadSettingsFile(rSettingsFileName)) { } // forwarding constructor call
-
-    explicit Connection(const std::string& rName, SettingsType Settings) : mConnectionName(rName)
+    explicit Connection(const std::string& rName, const ConnectionSettings& I_Settings) : mConnectionName(rName)
     {
-        Initialize(Settings);
+        Initialize(I_Settings);
     }
 
     ReturnInfo Connect()
@@ -179,30 +176,30 @@ private:
 
     std::unordered_map<std::string, FunctionPointerType> mRegisteredFunctions;
 
-    void Initialize(SettingsType& rSettings)
+    void Initialize(const ConnectionSettings& I_Settings)
     {
-        std::string comm_format("file"); // default is file-communication
-        if (rSettings.count("communication_format") != 0) { // communication format has been specified
-            comm_format = rSettings.at("communication_format");
+        std::string comm_format = "file"; // default is file-communication
+        if (I_Settings.Has("communication_format")) { // communication format has been specified
+            comm_format = I_Settings.Get<std::string>("communication_format");
         }
 
-        if (rSettings.count("is_connection_master") != 0) { // is_connection_master has been specified
-            mIsConnectionMaster = (rSettings.at("is_connection_master") == "1");
+        if (I_Settings.Has("is_connection_master")) { // is_connection_master has been specified
+            mIsConnectionMaster = I_Settings.Get<bool>("is_connection_master");
         }
 
         CO_SIM_IO_INFO("CoSimIO") << "CoSimIO for \"" << mConnectionName << "\" uses communication format: " << comm_format << std::endl;
 
         if (comm_format == "file") {
-            mpComm = std::unique_ptr<Communication>(new FileCommunication(mConnectionName, rSettings, mIsConnectionMaster));
+            mpComm = std::unique_ptr<Communication>(new FileCommunication(mConnectionName, I_Settings, mIsConnectionMaster));
         } else if (comm_format == "sockets") {
             #ifdef CO_SIM_IO_USING_SOCKETS
-            mpComm = std::unique_ptr<Communication>(new SocketsCommunication(mConnectionName, rSettings, mIsConnectionMaster));
+            mpComm = std::unique_ptr<Communication>(new SocketsCommunication(mConnectionName, I_Settings, mIsConnectionMaster));
             #else
             CO_SIM_IO_ERROR << "Support for Sockets was not compiled!" << std::endl;
             #endif // CO_SIM_IO_USING_SOCKETS
         } else if (comm_format == "mpi") {
             #ifdef CO_SIM_IO_USING_MPI
-            mpComm = std::unique_ptr<Communication>(new MPICommunication(mConnectionName, rSettings, mIsConnectionMaster));
+            mpComm = std::unique_ptr<Communication>(new MPICommunication(mConnectionName, I_Settings, mIsConnectionMaster));
             #else
             CO_SIM_IO_ERROR << "Support for MPI was not compiled!" << std::endl;
             #endif // CO_SIM_IO_USING_MPI
