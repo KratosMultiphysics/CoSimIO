@@ -11,6 +11,7 @@
 int main(){
     CoSimIO::ConnectionSettings settings;
     settings.Set("connection_name", "test_connection"); // This should be unique for each connection between two solvers
+    settings.Set("solver_name", "my_solver"); // Not to be confused with the connection name. 
     settings.Set("echo_level", 1);
     settings.Set("solver_version", "1.25");
 
