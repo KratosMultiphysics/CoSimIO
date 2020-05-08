@@ -43,9 +43,11 @@ namespace CoSimIO {
 inline ReturnInfo Hello();
 
 
-inline ReturnInfo Connect(const ConnectionSettings& I_Settings);
+inline ReturnInfo Connect(
+    const ConnectionSettings& I_Settings);
 
-inline ReturnInfo Disconnect(const Info& I_Info);
+inline ReturnInfo Disconnect(
+    const Info& I_Info);
 
 
 template<class TContainerType>
