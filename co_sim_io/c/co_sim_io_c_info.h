@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_C_INFO_H_INCLUDED
-#define CO_SIM_IO_C_INFO_H_INCLUDED
+#ifndef CO_SIM_IO_C_INFO_INCLUDED
+#define CO_SIM_IO_C_INFO_INCLUDED
 
 // System includes
 
@@ -30,5 +30,15 @@ typedef struct CoSimIO_Info
     void* PtrCppInfo;
 } CoSimIO_Info;
 
+typedef struct CoSimIO_ReturnInfo
+{
+    void* PtrCppInfo;
+} CoSimIO_ReturnInfo;
 
-#endif // CO_SIM_IO_C_INFO_H_INCLUDED
+typedef struct CoSimIO_ConnectionSettings
+{
+    void* PtrCppInfo;
+} CoSimIO_ConnectionSettings;
+
+
+#endif // CO_SIM_IO_C_INFO_INCLUDED
