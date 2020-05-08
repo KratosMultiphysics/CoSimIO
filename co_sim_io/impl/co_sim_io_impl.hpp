@@ -102,9 +102,11 @@ inline ReturnInfo ImportData(
     std::vector<double>& rData)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
+    const std::string identifier = I_Info.Get<std::string>("identifier");
     using namespace CoSimIO::Internals;
     std::unique_ptr<DataContainer<double>> p_container(new DataContainerStdVector<double>(rData));
-    // return GetConnection(connection_name).ImportData(I_Info, *p_container);
+    // TODO maybe pass the Info into the function (only changes under the hood necessary)
+    return GetConnection(connection_name).ImportData(identifier, *p_container);
 }
 
 // Version for C and fortran, there we already get a container
@@ -114,7 +116,9 @@ inline ReturnInfo ImportData(
     CoSimIO::Internals::DataContainer<double>& rData)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    // return Internals::GetConnection(connection_name).ImportData(I_Info, rData);
+    const std::string identifier = I_Info.Get<std::string>("identifier");
+    // TODO maybe pass the Info into the function (only changes under the hood necessary)
+    return Internals::GetConnection(connection_name).ImportData(identifier, rData);
 }
 
 // Version for C++, there this input is a std::vector, which we have to wrap before passing it on
@@ -124,9 +128,11 @@ inline ReturnInfo ExportData(
     const std::vector<double>& rData)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
+    const std::string identifier = I_Info.Get<std::string>("identifier");
     using namespace CoSimIO::Internals;
     std::unique_ptr<DataContainer<double>> p_container(new DataContainerStdVectorReadOnly<double>(rData));
-    // return GetConnection(connection_name).ExportData(I_Info, *p_container);
+    // TODO maybe pass the Info into the function (only changes under the hood necessary)
+    return GetConnection(connection_name).ExportData(identifier, *p_container);
 }
 
 // Version for C and fortran, there we already get a container
@@ -136,7 +142,9 @@ inline ReturnInfo ExportData(
     const CoSimIO::Internals::DataContainer<double>& rData)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    // return Internals::GetConnection(connection_name).ExportData(I_Info, rData);
+    const std::string identifier = I_Info.Get<std::string>("identifier");
+    // TODO maybe pass the Info into the function (only changes under the hood necessary)
+    return Internals::GetConnection(connection_name).ExportData(identifier, rData);
 }
 
 template<>
@@ -147,11 +155,13 @@ inline ReturnInfo ImportMesh(
     std::vector<int>& rElementTypes)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
+    const std::string identifier = I_Info.Get<std::string>("identifier");
     using namespace CoSimIO::Internals;
     std::unique_ptr<DataContainer<double>> p_container_coords(new DataContainerStdVector<double>(rNodalCoordinates));
     std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerStdVector<int>(rElementConnectivities));
     std::unique_ptr<DataContainer<int>> p_container_types(new DataContainerStdVector<int>(rElementTypes));
-    // return Internals::GetConnection(connection_name).ImportMesh(I_Info, *p_container_coords, *p_container_conn, *p_container_types);
+    // TODO maybe pass the Info into the function (only changes under the hood necessary)
+    return Internals::GetConnection(connection_name).ImportMesh(identifier, *p_container_coords, *p_container_conn, *p_container_types);
 }
 
 template<>
@@ -162,7 +172,9 @@ inline ReturnInfo ImportMesh(
     CoSimIO::Internals::DataContainer<int>& rElementTypes)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    // return Internals::GetConnection(connection_name).ImportMesh(I_Info, rNodalCoordinates, rElementConnectivities, rElementTypes);
+    const std::string identifier = I_Info.Get<std::string>("identifier");
+    // TODO maybe pass the Info into the function (only changes under the hood necessary)
+    return Internals::GetConnection(connection_name).ImportMesh(identifier, rNodalCoordinates, rElementConnectivities, rElementTypes);
 }
 
 template<>
@@ -173,11 +185,13 @@ inline ReturnInfo ExportMesh(
     const std::vector<int>& rElementTypes)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
+    const std::string identifier = I_Info.Get<std::string>("identifier");
     using namespace CoSimIO::Internals;
     std::unique_ptr<DataContainer<double>> p_container_coords(new DataContainerStdVectorReadOnly<double>(rNodalCoordinates));
     std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerStdVectorReadOnly<int>(rElementConnectivities));
     std::unique_ptr<DataContainer<int>> p_container_types(new DataContainerStdVectorReadOnly<int>(rElementTypes));
-    // return Internals::GetConnection(connection_name).ExportMesh(I_Info, *p_container_coords, *p_container_conn, *p_container_types);
+    // TODO maybe pass the Info into the function (only changes under the hood necessary)
+    return Internals::GetConnection(connection_name).ExportMesh(identifier, *p_container_coords, *p_container_conn, *p_container_types);
 }
 
 template<>
@@ -188,7 +202,9 @@ inline ReturnInfo ExportMesh(
     const CoSimIO::Internals::DataContainer<int>& rElementTypes)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    // return Internals::GetConnection(connection_name).ExportMesh(I_Info, rNodalCoordinates, rElementConnectivities, rElementTypes);
+    const std::string identifier = I_Info.Get<std::string>("identifier");
+    // TODO maybe pass the Info into the function (only changes under the hood necessary)
+    return Internals::GetConnection(connection_name).ExportMesh(identifier, rNodalCoordinates, rElementConnectivities, rElementTypes);
 }
 
 inline ReturnInfo ImportInfo(
@@ -236,7 +252,7 @@ inline ReturnInfo Register(
 
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
     const std::string function_name = I_Info.Get<std::string>("function_name");
-    // Internals::GetConnection(connection_name).Register(function_name, fct_callback);
+    Internals::GetConnection(connection_name).Register(function_name, fct_callback);
 
     return ReturnInfo(); // TODO use this
 }
@@ -248,7 +264,7 @@ inline ReturnInfo Register(
 {
     using namespace CoSimIO::Internals;
 
-    auto fct_callback = [I_FunctionPointer](Info& I_Info)
+    auto fct_callback = [I_FunctionPointer](const Info& I_Info)
     {
         ReturnInfo ret_info = I_FunctionPointer(I_Info);
         return ret_info;
@@ -256,7 +272,7 @@ inline ReturnInfo Register(
 
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
     const std::string function_name = I_Info.Get<std::string>("function_name");
-    // Internals::GetConnection(connection_name).Register(function_name, fct_callback);
+    Internals::GetConnection(connection_name).Register(function_name, fct_callback);
 
     return ReturnInfo(); // TODO use this
 }
