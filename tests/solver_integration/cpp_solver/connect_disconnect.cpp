@@ -9,17 +9,16 @@
     }
 
 int main(){
-    // const std::string connection_name = "my_solver"; // this is different for every solver
-    // CoSimIO::ConnectionSettings settings;
-    // settings.Set("echo_level", 1);
-    // settings.Set("solver_version", "1.25");
+    CoSimIO::ConnectionSettings settings;
+    settings.Set("connection_name", "test_connection"); // This should be unique for each connection between two solvers
+    settings.Set("echo_level", 1);
+    settings.Set("solver_version", "1.25");
 
-    // auto info = CoSimIO::Connect(connection_name, settings);
-    // COSIMIO_CHECK_EQUAL(info.Get<bool>("connection_status"), CoSimIO::Connected);
+    auto return_info = CoSimIO::Connect(settings);
+    COSIMIO_CHECK_EQUAL(return_info.Get<bool>("connection_status"), true);
 
-    // auto info = CoSimIO::Disconnect(connection_name); // disconnect afterwards
-    // COSIMIO_CHECK_EQUAL(info.Get<bool>("is_connected"), false);
-
+    return_info = CoSimIO::Disconnect(settings); // disconnect afterwards
+    COSIMIO_CHECK_EQUAL(return_info.Get<bool>("is_connected"), false);
     
     return 0;
 }
