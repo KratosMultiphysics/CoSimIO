@@ -108,24 +108,26 @@ One of the important missions of the CoSimIO is to send and recieve data between
 
 ```c++
 std::vector<double> data_to_send(4,3.14);
+CoSimIO::Info info;
 info.Set("identifier", "vector_of_pi");
-info.Set("connection_name", "solver_2");
-auto return_info = ExportData(info, data_to_send);
+info.Set("connection_name", "test_connection");
+return_info = CoSimIO::ExportData(info, data_to_send);
 ```
 The `ImportData()` should be used on the other side to recieve data:
 
 ```c++
-std::vector<double> data_to_receive;
+std::vector<double> receive_data;
+CoSimIO::Info info;
 info.Set("identifier", "vector_of_pi");
-info.Set("connection_name", "solver_1");
-auto return_info = ImportData(info, data_to_receive);
+info.Set("connection_name", "test_connection");
+return_info = CoSimIO::ImportData(info, receive_data);
 ```
 
 It is important to mention that the `ImportData()` will clear and resize the vector if needed.
 
 
 ## Tutorial 5: Mesh Exchange
-In the previous tutorial we have seen how to export and import data a
+After seeing how we transfer raw data between solvers, it is time to see how we can export and import meshes. 
 
 
 ## Tutorial 6: Building the Kratos CoSimApplication
