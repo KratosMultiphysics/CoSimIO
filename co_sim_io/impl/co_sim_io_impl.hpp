@@ -84,9 +84,7 @@ inline ReturnInfo Connect(const std::string& rConnectionName, CoSimIO::SettingsT
 
 inline ReturnInfo Connect(const std::string& rConnectionName, const std::string& rSettingsFileName)
 {
-    Connect(rConnectionName, Internals::ReadSettingsFile(rSettingsFileName)); // forward call to funciton above
-
-    return ReturnInfo(); // TODO use this
+    return Connect(rConnectionName, Internals::ReadSettingsFile(rSettingsFileName)); // forward call to funciton above
 }
 
 inline ReturnInfo Disconnect(const std::string& rConnectionName)
@@ -94,10 +92,10 @@ inline ReturnInfo Disconnect(const std::string& rConnectionName)
     using namespace Internals;
     CO_SIM_IO_ERROR_IF_NOT(HasIO(rConnectionName)) << "Trying to disconnect connection \"" << rConnectionName << "\" which does not exist!" << std::endl;
 
-    auto info = GetConnection(rConnectionName).Disconnect();
+    auto ret_info = GetConnection(rConnectionName).Disconnect();
     s_co_sim_connections.erase(rConnectionName);
 
-    return ReturnInfo(); // TODO use this
+    return ret_info;
 }
 
 // Version for C++, there this input is a std::vector, which we have to wrap before passing it on
