@@ -61,9 +61,10 @@ auto info = CoSimIO::Connect(connection_name, settings);
 First of all, you may notice that `Connect()` method takes a `ConnectionSettings` as its arguments. This contianer has the interface like the Info described in the previous section and can be used to pass additional information about the solver or connection settings to the CoSimIO:
 
 ```c++
-CoSimIO::ConnectionSettings settings; // 
+CoSimIO::ConnectionSettings settings;
+settings.Set("connection_name", "test_connection"); // This should be unique for each connection between two solvers
+settings.Set("solver_name", "my_solver"); // Not to be confused with the connection name. 
 settings.Set("echo_level", 1);
-settings.Set("communication_format", "file");
 settings.Set("solver_version", "1.25");
 }
 ```
@@ -78,25 +79,24 @@ Now putting together everything:
 ```c++
 // CoSimulation includes
 #include "co_sim_io.hpp"
-
 int main(){
-    const std::string connection_name = "my_solver"; // this is different for every solver
-    CoSimIO::ConnectionSettings settings; // 
+    CoSimIO::ConnectionSettings settings;
+    settings.Set("connection_name", "test_connection"); // This should be unique for each connection between two solvers
+    settings.Set("solver_name", "my_solver"); // Not to be confused with the connection name. 
     settings.Set("echo_level", 1);
     settings.Set("solver_version", "1.25");
 
-    // The connect should be called before any CosimIO method called
-    auto info = CoSimIO::Connect(connection_name, settings);
-    int connection_status = info.Get<int>("connection_status");
-    if(connection_status != CoSimIO::Connected){
+    auto return_info = CoSimIO::Connect(settings);
+    if(return_info.Get<int>("connection_status") != CoSimIO::Connected) 
         return 1;
-    }
     // Now you may call any CoSimIO methods like ImportData, ExportData, etc.
 
     // ...
+    return_info = CoSimIO::Disconnect(settings); // disconnect afterwards
+    // Here you may use the return_info but cannot call any CoSimIO method anymore
+    if(return_info.Get<int>("connection_status") != 0) 
+        return 1;
     
-    auto info = CoSimIO::Disconnect(connection_name); // disconnect afterwards
-    // Here you may use the return info but cannot call any CoSimIO method anymore
     return 0;
 }
 ```
@@ -112,8 +112,6 @@ info.Set("identifier", "vector_of_pi");
 info.Set("connection_name", "solver_2");
 auto return_info = ExportData(info, data_to_send);
 ```
-In this example we are sending an std::vector<double>. However, the operation is valid for any container with resize and index operator and any data type which has streaming `<<` and `>>` oprators defined. (like int, bool, )
-
 The `ImportData()` should be used on the other side to recieve data:
 
 ```c++
@@ -127,7 +125,7 @@ It is important to mention that the `ImportData()` will clear and resize the vec
 
 
 ## Tutorial 5: Mesh Exchange
-
+In the previous tutorial we have seen how to export and import data a
 
 
 ## Tutorial 6: Building the Kratos CoSimApplication
