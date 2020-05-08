@@ -55,14 +55,18 @@ public:
 
     ReturnInfo Connect()
     {
-        mpComm->Connect();
-        return ReturnInfo(); // TODO use this, should put a return code based on the bool that comes back from mpComm->Connect()
+        const bool is_connected = mpComm->Connect();
+        ReturnInfo ret_info;
+        ret_info.Set<bool>("connection_status", is_connected);
+        return ret_info;
     }
 
     ReturnInfo Disconnect()
     {
-        mpComm->Disconnect();
-        return ReturnInfo(); // TODO use this
+        const bool is_disconnected = mpComm->Disconnect();
+        ReturnInfo ret_info;
+        ret_info.Set<bool>("connection_status", is_disconnected!=true);
+        return ret_info;
     }
 
     ReturnInfo SendControlSignal(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal)
