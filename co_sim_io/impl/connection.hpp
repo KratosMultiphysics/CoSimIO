@@ -57,7 +57,7 @@ public:
     {
         const bool is_connected = mpComm->Connect();
         ReturnInfo ret_info;
-        ret_info.Set<bool>("connection_status", is_connected);
+        ret_info.Set<int>("connection_status", is_connected);
         return ret_info;
     }
 
@@ -65,7 +65,7 @@ public:
     {
         const bool is_disconnected = mpComm->Disconnect();
         ReturnInfo ret_info;
-        ret_info.Set<bool>("connection_status", is_disconnected!=true);
+        ret_info.Set<int>("connection_status", is_disconnected!=true);
         return ret_info;
     }
 
