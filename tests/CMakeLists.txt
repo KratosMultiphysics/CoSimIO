@@ -44,12 +44,21 @@ endforeach(cpp_test_file)
 
 ### C tests ###
 if(BUILD_C)
-    link_directories( ${CMAKE_SOURCE_DIR}/bin )
+    function(add_c_test TEST_SOURCE_FILE)
+        get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
+        string(REGEX REPLACE "[.]c" "_c_test" TEST_NAME ${TEST_FILENAME})
+        message(STATUS  "adding ${TEST_NAME} ")
+        add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
+        target_link_libraries(${TEST_NAME} co_sim_io_c)
+        add_test(${TEST_NAME} ${TEST_NAME})
+        install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests")
+    endfunction()
 
-    add_executable ( test_runner_c test_runners/test_runner.c)
-    target_link_libraries(test_runner_c co_sim_io_c)
+    file(GLOB c_test_files "interface/c/*.c")
 
-    install( TARGETS test_runner_c DESTINATION ${CMAKE_SOURCE_DIR}/bin )
+    foreach(c_test_file ${c_test_files})
+    add_c_test(${c_test_file})
+    endforeach(c_test_file)
 endif()
 
 
