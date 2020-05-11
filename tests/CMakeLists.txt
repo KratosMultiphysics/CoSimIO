@@ -45,7 +45,8 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run.sh  $1 & $2)
 
 add_test(hello_cpp_test hello_cpp_test)
 add_test(NAME connect_disconnect_cpp_test COMMAND connect_disconnect_cpp_test & connect_disconnect_cpp_test)
-add_test(NAME import_export_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_data_cpp_test>  $<TARGET_FILE:import_data_cpp_test>)
+add_test(NAME import_export_data_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_data_cpp_test>  $<TARGET_FILE:import_data_cpp_test>)
+add_test(NAME import_export_mesh_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_mesh_cpp_test>  $<TARGET_FILE:import_mesh_cpp_test>)
 
 ### C tests ###
 if(BUILD_C)
