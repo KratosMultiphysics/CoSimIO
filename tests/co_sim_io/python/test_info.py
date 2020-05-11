@@ -21,7 +21,7 @@ class CoSimIO_Info_Tests(unittest.TestCase):
     def test_basics_int(self):
         info = CoSimIO.Info()
 
-        self.asserFalse(info.Has("echo_level"))
+        self.assertFalse(info.Has("echo_level"))
 
         info.SetInt("echo_level", 1)
 
@@ -32,7 +32,7 @@ class CoSimIO_Info_Tests(unittest.TestCase):
     def test_basics_double(self):
         info = CoSimIO.Info()
 
-        self.asserFalse(info.Has("tolerance"))
+        self.assertFalse(info.Has("tolerance"))
 
         info.SetDouble("tolerance", 1.5)
 
@@ -43,7 +43,7 @@ class CoSimIO_Info_Tests(unittest.TestCase):
     def test_basics_bool(self):
         info = CoSimIO.Info()
 
-        self.asserFalse(info.Has("print_sth"))
+        self.assertFalse(info.Has("print_sth"))
 
         info.SetBool("print_sth", False)
 
@@ -54,7 +54,7 @@ class CoSimIO_Info_Tests(unittest.TestCase):
     def test_basics_string(self):
         info = CoSimIO.Info()
 
-        self.asserFalse(info.Has("identifier"))
+        self.assertFalse(info.Has("identifier"))
 
         info.SetString("identifier", "pressure")
 
