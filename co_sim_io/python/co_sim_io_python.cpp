@@ -92,6 +92,8 @@ void ExportData(
 
 PYBIND11_MODULE(CoSimIO, m)
 {
+    namespace py = pybind11;
+
     CoSimIO::ReturnInfo (*ConnectWithSettingsFileName)(const std::string&, const std::string&) = &CoSimIO::Connect;
     CoSimIO::ReturnInfo (*ConnectWithSettings)(const std::string&, CoSimIO::SettingsType) = &CoSimIO::Connect;
 
@@ -116,4 +118,18 @@ PYBIND11_MODULE(CoSimIO, m)
         const std::string& rFunctionName,
         std::function<void(CoSimIO::Info&)> FunctionPointer)
         { CoSimIO::Register(rConnectionName, rFunctionName, FunctionPointer); } );
+
+
+    py::class_<CoSimIO::Info>(m,"Info")
+        .def(py::init<>())
+        .def("Has",&CoSimIO::Info::Has)
+        .def("GetInt",    &CoSimIO::Info::Get<int>)
+        .def("GetDouble", &CoSimIO::Info::Get<double>)
+        .def("GetBool",   &CoSimIO::Info::Get<bool>)
+        .def("GetString", &CoSimIO::Info::Get<std::string>)
+        .def("SetInt",    &CoSimIO::Info::Set<int>)
+        .def("SetDouble", &CoSimIO::Info::Set<double>)
+        .def("SetBool",   &CoSimIO::Info::Set<bool>)
+        .def("SetString", &CoSimIO::Info::Set<std::string>)
+        ;
 }
