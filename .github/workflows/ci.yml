@@ -43,3 +43,10 @@ jobs:
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly?
         python run_all_tests.py
+
+    - name: Running tests (Ctest)
+      shell: bash
+      run: |
+        export PYTHONPATH=${GITHUB_WORKSPACE}/bin
+        cd build
+        ctest
