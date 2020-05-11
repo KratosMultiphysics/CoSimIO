@@ -43,10 +43,10 @@ if(BUILD_C)
         add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
         target_link_libraries(${TEST_NAME} co_sim_io_c)
         add_test(${TEST_NAME} ${TEST_NAME})
-        install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests")
+        install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_c")
     endfunction()
 
-    file(GLOB c_test_files "interface/c/*.c")
+    file(GLOB c_test_files "co_sim_io/c/*.c")
 
     foreach(c_test_file ${c_test_files})
     add_c_test(${c_test_file})
