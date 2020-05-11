@@ -127,13 +127,42 @@ It is important to mention that the `ImportData()` will clear and resize the vec
 
 
 ## Tutorial 5: Mesh Exchange
-After seeing how we transfer raw data between solvers, it is time to see how we can export and import meshes. 
+After seeing how we transfer raw data between solvers, it is time to see how we can export and import meshes. For exporting the mesh one may use the `ExportMesh()` method:
 
 
-## Tutorial 6: Building the Kratos CoSimApplication
+```c++
+CoSimIO::Info info;
+info.Set("identifier", "fluid_mesh");
+info.Set("connection_name", "test_connection");
+return_info = CoSimIO::ExportMesh(info,nodal_coordinates, elements_connectivities, elements_types);
+```
 
+The arguments are:
 
-## Tutorial 7: Connecting to Kratos CoSimApplication
+* `nodal_coordinates`: A vector of doubles of 3D coordinates of each node in x1,y1,z1,x2,y2,z2,... format:
+```c++
+std::vector<double> nodal_coordinates{
+    0.0, 2.5, 1.0,  /*0*/
+    2.0, 0.0, 1.5,  /*1*/
+    2.0, 2.5, 1.5,  /*2*/
+    4.0, 2.5, 1.7,  /*3*/
+    4.0, 0.0, 1.7,  /*4*/
+    6.0, 0.0, 1.8   /*5*/
+    };
+```
+* `elements_connectivities`: A vector of int containing the zero based index of each node in e1_1,e1_2,...,e2_1, e2_2,... format:
+```c++
+std::vector<double> element_connectivities = {
+    0, 1, 2, /*1*/
+    1, 3, 2, /*2*/
+    1, 4, 3, /*3*/
+    3, 4, 5, /*4*/
+};
+```
 
+* `elements_types`: A vector of int containing the type of the element according to paraview element types:
+```c++
+std::vector<double> element_connectivities = { 5,5,5,5};
+```
 
 
