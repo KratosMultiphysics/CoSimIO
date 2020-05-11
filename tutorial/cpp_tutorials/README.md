@@ -152,7 +152,7 @@ std::vector<double> nodal_coordinates{
 ```
 * `elements_connectivities`: A vector of int containing the zero based index of each node in e1_1,e1_2,...,e2_1, e2_2,... format:
 ```c++
-std::vector<double> elements_connectivities = {
+std::vector<int> elements_connectivities = {
     0, 1, 2, /*1*/
     1, 3, 2, /*2*/
     1, 4, 3, /*3*/
@@ -162,7 +162,7 @@ std::vector<double> elements_connectivities = {
 
 * `elements_types`: A vector of int containing the type of the element according to paraview element types:
 ```c++
-std::vector<double> elements_types = { 5,5,5,5}; // VTK_TRIANGLE
+std::vector<int> elements_types = { 5,5,5,5}; // VTK_TRIANGLE
 ```
 
 
