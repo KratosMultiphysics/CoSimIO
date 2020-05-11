@@ -216,7 +216,6 @@ inline std::ostream & operator <<(
     const Info& rThis)
 {
     rThis.Print(rOStream);
-
     return rOStream;
 }
 
