@@ -30,10 +30,11 @@
 namespace CoSimIO {
 
 namespace Internals {
-    std::string Name(int dummy)         {return "int";}
-    std::string Name(double dummy)      {return "double";}
-    std::string Name(bool dummy)        {return "bool";}
-    std::string Name(std::string dummy) {return "string";}
+
+inline std::string Name(int dummy)         {return "int";}
+inline std::string Name(double dummy)      {return "double";}
+inline std::string Name(bool dummy)        {return "bool";}
+inline std::string Name(std::string dummy) {return "string";}
 
 class InfoDataBase
 {
@@ -247,46 +248,13 @@ private:
     // TODO add version of Solver
 };
 
+// for now this points to the same object, but this might change in the future
+using ReturnInfo = Info;
 
-// struct TransferInfoC
+// struct ReturnInfo : public Info
 // {
-//     TransferInfoC(const char* rIdentifier) : Identifier(rIdentifier) {}
-
-//     std::string Identifier;
+//     // int ReturnCode() const { return Get<int>("return_code"); }
 // };
-
-// struct TransferInfo
-// {
-//     // TransferInfo(const std::string& rIdentifier) : Identifier(rIdentifier) {}
-
-//     // std::string Identifier;
-// };
-
-// // struct MeshInfo
-// // {
-
-// // };
-
-
-
-// class SolutionInfo
-// {
-// public:
-//     SolutionInfo() {}
-
-//     double CurrentTime;
-//     double NewTime;
-//     bool IsConverged=true;
-
-//     std::unordered_map<std::string, int> MeshStates; // 0=Unchanged // 1=NodesMoved // 2=FullRemesh
-
-// };
-
-
-struct ReturnInfo : public Info
-{
-    int ReturnCode() const { return Get<int>("return_code"); }
-};
 
 } // namespace CoSimIO
 
