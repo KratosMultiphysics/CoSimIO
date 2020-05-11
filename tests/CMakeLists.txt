@@ -16,6 +16,8 @@ set_target_properties(test_runner_co_sim_io_tests PROPERTIES
     CXX_EXTENSIONS NO
 )
 
+add_test(co_sim_io_tests test_runner_co_sim_io_tests)
+
 
 ### C++ tests ###
 function(add_cpp_test TEST_SOURCE_FILE)
