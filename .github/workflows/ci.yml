@@ -47,6 +47,5 @@ jobs:
     - name: Running tests (Ctest)
       shell: bash
       run: |
-        export PYTHONPATH=${GITHUB_WORKSPACE}/bin
         cd build
         ctest
