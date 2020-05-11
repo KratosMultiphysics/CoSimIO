@@ -87,6 +87,19 @@ void ExportData(
         rValues);
 }
 
+// This function is used to print the ofstream-operator
+// i.e. printing an object will give the same result in Python as in C++
+// To be defined as the "__str__" function
+// e.g. ".def("__str__", PrintObject<ProcessInfo>)"
+// It replicates the function "self_ns::str(self))" of boost-python
+template< class T>
+std::string PrintObject(const T& rObject)
+{
+    std::stringstream ss;
+    ss << rObject;
+    return ss.str();
+}
+
 } // namespace CoSimIO_Py_Wrappers
 
 
@@ -122,7 +135,7 @@ PYBIND11_MODULE(CoSimIO, m)
 
     py::class_<CoSimIO::Info>(m,"Info")
         .def(py::init<>())
-        .def("Has",&CoSimIO::Info::Has)
+        .def("Has",       &CoSimIO::Info::Has)
         .def("GetInt",    &CoSimIO::Info::Get<int>)
         .def("GetDouble", &CoSimIO::Info::Get<double>)
         .def("GetBool",   &CoSimIO::Info::Get<bool>)
@@ -131,5 +144,9 @@ PYBIND11_MODULE(CoSimIO, m)
         .def("SetDouble", &CoSimIO::Info::Set<double>)
         .def("SetBool",   &CoSimIO::Info::Set<bool>)
         .def("SetString", &CoSimIO::Info::Set<std::string>)
+        .def("Erase",     &CoSimIO::Info::Erase)
+        .def("Clear",     &CoSimIO::Info::Clear)
+        .def("Size",      &CoSimIO::Info::Size)
+        .def("__str__",   CoSimIO_Py_Wrappers::PrintObject<CoSimIO::Info>);
         ;
 }
