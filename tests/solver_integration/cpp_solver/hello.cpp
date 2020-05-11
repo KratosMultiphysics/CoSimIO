@@ -13,11 +13,10 @@
 // CoSimulation includes
 #include "co_sim_io.hpp"
 
-// move this macro to a checks.hpp in tests folder?
 #define COSIMIO_CHECK_EQUAL(a, b)                                \
     if (a != b) {                                                \
-        std::cout << "in line " << __LINE__ << " : " << a   \
-                  << " is not equal to " << b << std::endl; \
+        std::cout << "in line " << __LINE__ << " : " << a        \
+                  << " is not equal to " << b << std::endl;      \
         return 1;                                                \
     }
 
