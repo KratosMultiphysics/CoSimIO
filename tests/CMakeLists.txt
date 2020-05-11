@@ -18,14 +18,6 @@ set_target_properties(test_runner_co_sim_io_tests PROPERTIES
 
 
 ### C++ tests ###
-add_executable ( test_runner_cpp test_runners/test_runner.cpp)
-install( TARGETS test_runner_cpp DESTINATION ${CMAKE_SOURCE_DIR}/bin )
-set_target_properties(test_runner_cpp PROPERTIES
-    CXX_STANDARD 11
-    CXX_STANDARD_REQUIRED YES
-    CXX_EXTENSIONS NO
-)
-
 function(add_cpp_test TEST_SOURCE_FILE)
     get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
     string(REGEX REPLACE ".cpp" "_cpp_test" TEST_NAME ${TEST_FILENAME})
@@ -68,9 +60,9 @@ if(BUILD_FORTRAN)
     include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io/fortran )
     link_directories( ${CMAKE_SOURCE_DIR}/bin )
 
-    file( GLOB_RECURSE FORTRAN_TEST_FILES *.f90)
-    add_executable ( test_runner_fortran test_runners/test_runner.f90 ${FORTRAN_TEST_FILES})
-    target_link_libraries(test_runner_fortran co_sim_io_c)
+    # file( GLOB_RECURSE FORTRAN_TEST_FILES *.f90)
+    # add_executable ( test_runner_fortran test_runners/test_runner.f90 ${FORTRAN_TEST_FILES})
+    # target_link_libraries(test_runner_fortran co_sim_io_c)
 
-    install( TARGETS test_runner_fortran DESTINATION ${CMAKE_SOURCE_DIR}/bin )
+    # install( TARGETS test_runner_fortran DESTINATION ${CMAKE_SOURCE_DIR}/bin )
 endif()
