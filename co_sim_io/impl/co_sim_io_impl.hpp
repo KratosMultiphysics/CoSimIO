@@ -92,7 +92,7 @@ inline ReturnInfo Disconnect(const Info& I_Info)
     auto info = GetConnection(connection_name).Disconnect();
     s_co_sim_connections.erase(connection_name);
 
-    return ReturnInfo(); // TODO use this
+    return ret_info;
 }
 
 // Version for C++, there this input is a std::vector, which we have to wrap before passing it on

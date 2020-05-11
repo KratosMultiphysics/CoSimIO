@@ -16,16 +16,10 @@ set_target_properties(test_runner_co_sim_io_tests PROPERTIES
     CXX_EXTENSIONS NO
 )
 
+add_test(co_sim_io_tests test_runner_co_sim_io_tests)
+
 
 ### C++ tests ###
-add_executable ( test_runner_cpp test_runners/test_runner.cpp)
-install( TARGETS test_runner_cpp DESTINATION ${CMAKE_SOURCE_DIR}/bin )
-set_target_properties(test_runner_cpp PROPERTIES
-    CXX_STANDARD 11
-    CXX_STANDARD_REQUIRED YES
-    CXX_EXTENSIONS NO
-)
-
 function(add_cpp_test TEST_SOURCE_FILE)
     get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
     string(REGEX REPLACE ".cpp" "_cpp_test" TEST_NAME ${TEST_FILENAME})
@@ -44,12 +38,21 @@ endforeach(cpp_test_file)
 
 ### C tests ###
 if(BUILD_C)
-    link_directories( ${CMAKE_SOURCE_DIR}/bin )
+    function(add_c_test TEST_SOURCE_FILE)
+        get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
+        string(REGEX REPLACE "[.]c" "_c_test" TEST_NAME ${TEST_FILENAME})
+        message(STATUS  "adding ${TEST_NAME} ")
+        add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
+        target_link_libraries(${TEST_NAME} co_sim_io_c)
+        add_test(${TEST_NAME} ${TEST_NAME})
+        install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_c")
+    endfunction()
 
-    add_executable ( test_runner_c test_runners/test_runner.c)
-    target_link_libraries(test_runner_c co_sim_io_c)
+    file(GLOB c_test_files "co_sim_io/c/*.c")
 
-    install( TARGETS test_runner_c DESTINATION ${CMAKE_SOURCE_DIR}/bin )
+    foreach(c_test_file ${c_test_files})
+    add_c_test(${c_test_file})
+    endforeach(c_test_file)
 endif()
 
 
@@ -59,9 +62,9 @@ if(BUILD_FORTRAN)
     include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io/fortran )
     link_directories( ${CMAKE_SOURCE_DIR}/bin )
 
-    file( GLOB_RECURSE FORTRAN_TEST_FILES *.f90)
-    add_executable ( test_runner_fortran test_runners/test_runner.f90 ${FORTRAN_TEST_FILES})
-    target_link_libraries(test_runner_fortran co_sim_io_c)
+    # file( GLOB_RECURSE FORTRAN_TEST_FILES *.f90)
+    # add_executable ( test_runner_fortran test_runners/test_runner.f90 ${FORTRAN_TEST_FILES})
+    # target_link_libraries(test_runner_fortran co_sim_io_c)
 
-    install( TARGETS test_runner_fortran DESTINATION ${CMAKE_SOURCE_DIR}/bin )
+    # install( TARGETS test_runner_fortran DESTINATION ${CMAKE_SOURCE_DIR}/bin )
 endif()
