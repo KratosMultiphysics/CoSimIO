@@ -40,9 +40,12 @@ foreach(cpp_test_file ${cpp_test_files})
 add_cpp_executable(${cpp_test_file})
 endforeach(cpp_test_file)
 
+# Todo: to be changed with python to be corssplatform
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run.sh  $1 & $2)
+
 add_test(hello_cpp_test hello_cpp_test)
 add_test(NAME connect_disconnect_cpp_test COMMAND connect_disconnect_cpp_test & connect_disconnect_cpp_test)
-#add_test(NAME import_export_cpp_test COMMAND $<TARGET_FILE:export_cpp_test> "& $<TARGET_FILE:import_cpp_test>")
+add_test(NAME import_export_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_cpp_test>  $<TARGET_FILE:import_cpp_test>)
 
 ### C tests ###
 if(BUILD_C)
