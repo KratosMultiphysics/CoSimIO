@@ -58,7 +58,7 @@ First of all, you may notice that `Connect()` method takes a `ConnectionSettings
 
 ```python
 settings = CoSimIO.ConnectionSettings()
-settings.SetString("connection_name", "test_connection") # This should be unique for each connection between two solvers
+settings.SetString("connection_name", "test_connection") # This must be unique for each connection between two solvers
 settings.SetString("solver_name", "my_solver") # Not to be confused with the connection name. 
 settings.SetInt("echo_level", 1)
 settings.SetString("solver_version", "1.25")
@@ -81,13 +81,12 @@ settings.SetInt("echo_level", 1)
 settings.SetString("solver_version", "1.25")
 
 return_info = CoSimIO.Connect(settings)
-if return_info.GetInt("connection_status") == 1:
+if return_info.GetInt("connection_status") == CoSimIO.ConnectionStatus.Connected:
     print("Connected!")
 
 return_info = CoSimIO.Disconnect(settings)
-if return_info.GetInt("connection_status") == 0:
+if return_info.GetInt("connection_status") == CoSimIO.ConnectionStatus.Disconnected:
     print("Disconnected!")
-}
 ```
 
 You may find this example in connect_disconect.cpp file in the `solver_integration/cpp` folder
