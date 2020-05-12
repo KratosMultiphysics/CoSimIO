@@ -91,6 +91,26 @@ if return_info.GetInt("connection_status") == CoSimIO.ConnectionStatus.Disconnec
 
 You may find this example in connect_disconect.cpp file in the `solver_integration/cpp` folder
 
+## Tutorial 4: Data Exchange
+One of the important missions of the _CoSimIO_ is to send and recieve data between processes. The `ExportData()` method can be used to send data to the Kratos or directly to another solver:
+
+```python
+info = CoSimIO.Info()
+info.SetString("identifier", "vector_of_pi")
+info.SetString("connection_name", "test_connection")
+return_info = CoSimIO.ExportData(info, data_to_be_send)
+```
+The `ImportData()` should be used on the other side to recieve data:
+
+```python
+info = CoSimIO.Info()
+info.SetString("identifier", "vector_of_pi")
+info.SetString("connection_name", "test_connection")
+return_info, received_data = CoSimIO.ImportData(info)
+```
+It is important to mention that the `ImportData()` will clear and resize the vector if needed.
+
+
 
 
 
