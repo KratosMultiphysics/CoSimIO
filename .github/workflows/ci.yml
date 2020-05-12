@@ -34,8 +34,7 @@ jobs:
         if [ ${{ matrix.os }} == windows-latest ]; then # MSVC
           CMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} /WX"
         elif [ ${{ matrix.os }} = ubuntu-latest ]; then # GCC
-          cmake_flags="${cmake_flags} -DBUILD_FORTRAN=OFF"
-          CMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror"
+          cmake_flags="${cmake_flags} -DBUILD_FORTRAN=OFF -DCMAKE_CXX_FLAGS=-Werror"
         elif [ ${{ matrix.os }} = macOS-latest ]; then # CLANG
           cmake_flags="${cmake_flags} -DBUILD_FORTRAN=OFF"
           CMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror"
