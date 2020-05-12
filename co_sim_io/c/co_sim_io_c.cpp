@@ -206,39 +206,3 @@ void CoSimIO_Info_SetString(CoSimIO_Info I_Info, const char* I_Key, const char* 
 {
     static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Set<std::string>(I_Key, I_Value);
 }
-
-
-
-
-
-
-
-
-
-
-void _AllocateMemoryInt(const int* pSize, int** ppData)
-{
-    free(*ppData); // making sure that potenetially allocated memory is freed. This is ok also if nothing is allocated aka NULL
-    *ppData = (int *)malloc((*pSize)*sizeof(int));
-
-    if (!(*ppData)) {
-        printf("ERROR, memory allocation (int) failed!");
-        exit(0);
-    }
-}
-
-void _AllocateMemoryDouble(const int Size, double** ppData)
-{
-    free(*ppData); // making sure that potenetially allocated memory is freed. This is ok also if nothing is allocated aka NULL
-    *ppData = (double *)malloc((Size)*sizeof(double));
-
-    if (!(*ppData)) {
-        printf("ERROR, memory allocation (double) failed!");
-        exit(0);
-    }
-}
-
-void _FreeMemory(void** ppData)
-{
-    free(*ppData);
-}

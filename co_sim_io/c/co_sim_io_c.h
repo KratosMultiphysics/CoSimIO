@@ -69,25 +69,6 @@ CoSimIO_Info CoSimIO_Run(const CoSimIO_Info I_Info);
 
 CoSimIO_Info CoSimIO_IsConverged(const CoSimIO_Info I_Info);
 
-
-
-
-
-
-
-
-
-
-
-
-
-// TODO refactor and move these functions to separate file, since they are only used in the fortran interface
-// The following functions are intended to only be used from Fortran
-// This is because memory used in the CoSimIO should be allocated and freed in C
-void _AllocateMemoryInt(const int Size, int** ppData);
-void _AllocateMemoryDouble(const int Size, double** ppData);
-void _FreeMemory(void** ppData);
-
 #ifdef __cplusplus
 }
 #endif
