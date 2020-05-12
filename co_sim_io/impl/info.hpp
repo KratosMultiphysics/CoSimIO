@@ -17,7 +17,6 @@
 #include <string>
 #include <map>
 #include <memory>
-#include <type_traits>
 #include <iostream>
 
 #ifdef CO_SIM_IO_USING_MPI
@@ -107,6 +106,15 @@ private:
 class Info
 {
 public:
+    Info() : mOptions(){}
+
+    Info(const Info& Other) : mOptions(Other.mOptions){}
+
+    Info& operator=(const Info& Other){
+        mOptions = Other.mOptions;
+        return *this;
+    }
+
     virtual ~Info() = default;
 
     template<typename TDataType>
@@ -248,13 +256,8 @@ private:
     // TODO add version of Solver
 };
 
-// for now this points to the same object, but this might change in the future
-using ReturnInfo = Info;
-
-// struct ReturnInfo : public Info
-// {
-//     // int ReturnCode() const { return Get<int>("return_code"); }
-// };
+class ReturnInfo : public Info
+{ };
 
 } // namespace CoSimIO
 
