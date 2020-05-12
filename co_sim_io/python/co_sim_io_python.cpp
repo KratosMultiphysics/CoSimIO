@@ -29,52 +29,61 @@
 
 namespace CoSimIO_Py_Wrappers {
 
-std::tuple<std::vector<double>, std::vector<int>, std::vector<int>> ImportMesh(
-    const CoSimIO::Info& I_Info)
+using ImportMeshReturnType = std::tuple<
+    CoSimIO::ReturnInfo,
+    std::vector<double>,
+    std::vector<int>,
+    std::vector<int>>;
+
+using ImportDataReturnType = std::tuple<
+    CoSimIO::ReturnInfo,
+    std::vector<double>>;
+
+ImportMeshReturnType ImportMesh(const CoSimIO::Info& I_Info)
 {
     std::vector<double> nodal_coordinates;
     std::vector<int> element_connectivities;
     std::vector<int> element_types;
 
-    CoSimIO::ImportMesh(
+    auto ret_info = CoSimIO::ImportMesh(
         I_Info,
         nodal_coordinates,
         element_connectivities,
         element_types);
 
-    return std::make_tuple(nodal_coordinates, element_connectivities, element_types);
+    return std::make_tuple(ret_info, nodal_coordinates, element_connectivities, element_types);
 }
 
-void ExportMesh(
+CoSimIO::ReturnInfo ExportMesh(
     const CoSimIO::Info& I_Info,
     std::vector<double>& rNodalCoordinates,
     std::vector<int>& rElementConnectivities,
     std::vector<int>& rElementTypes)
 {
-    CoSimIO::ExportMesh(
+    return CoSimIO::ExportMesh(
         I_Info,
         rNodalCoordinates,
         rElementConnectivities,
         rElementTypes);
 }
 
-std::vector<double> ImportData(
+ImportDataReturnType ImportData(
     const CoSimIO::Info& I_Info)
 {
     std::vector<double> values;
 
-    CoSimIO::ImportData(
+    auto ret_info = CoSimIO::ImportData(
         I_Info,
         values);
 
-    return values;
+    return std::make_tuple(ret_info, values);
 }
 
-void ExportData(
+CoSimIO::ReturnInfo ExportData(
     const CoSimIO::Info& I_Info,
     std::vector<double>& rValues)
 {
-    CoSimIO::ExportData(
+    return CoSimIO::ExportData(
         I_Info,
         rValues);
 }
@@ -142,5 +151,4 @@ PYBIND11_MODULE(CoSimIO, m)
         const CoSimIO::Info& I_Info,
         std::function<CoSimIO::ReturnInfo(const CoSimIO::Info&)> FunctionPointer)
         { return CoSimIO::Register(I_Info, FunctionPointer); } );
-
 }
