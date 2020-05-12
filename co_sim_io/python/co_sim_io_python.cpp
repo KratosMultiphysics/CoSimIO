@@ -30,16 +30,14 @@
 namespace CoSimIO_Py_Wrappers {
 
 std::tuple<std::vector<double>, std::vector<int>, std::vector<int>> ImportMesh(
-    const std::string& rConnectionName,
-    const std::string& rIdentifier)
+    const CoSimIO::Info& I_Info)
 {
     std::vector<double> nodal_coordinates;
     std::vector<int> element_connectivities;
     std::vector<int> element_types;
 
     CoSimIO::ImportMesh(
-        rConnectionName,
-        rIdentifier,
+        I_Info,
         nodal_coordinates,
         element_connectivities,
         element_types);
@@ -48,42 +46,36 @@ std::tuple<std::vector<double>, std::vector<int>, std::vector<int>> ImportMesh(
 }
 
 void ExportMesh(
-    const std::string& rConnectionName,
-    const std::string& rIdentifier,
+    const CoSimIO::Info& I_Info,
     std::vector<double>& rNodalCoordinates,
     std::vector<int>& rElementConnectivities,
     std::vector<int>& rElementTypes)
 {
     CoSimIO::ExportMesh(
-        rConnectionName,
-        rIdentifier,
+        I_Info,
         rNodalCoordinates,
         rElementConnectivities,
         rElementTypes);
 }
 
 std::vector<double> ImportData(
-    const std::string& rConnectionName,
-    const std::string& rIdentifier)
+    const CoSimIO::Info& I_Info)
 {
     std::vector<double> values;
 
     CoSimIO::ImportData(
-        rConnectionName,
-        rIdentifier,
+        I_Info,
         values);
 
     return values;
 }
 
 void ExportData(
-    const std::string& rConnectionName,
-    const std::string& rIdentifier,
+    const CoSimIO::Info& I_Info,
     std::vector<double>& rValues)
 {
     CoSimIO::ExportData(
-        rConnectionName,
-        rIdentifier,
+        I_Info,
         rValues);
 }
 
@@ -131,12 +123,8 @@ PYBIND11_MODULE(CoSimIO, m)
         .def(py::init<>());
 
 
-    CoSimIO::ReturnInfo (*ConnectWithSettingsFileName)(const std::string&, const std::string&) = &CoSimIO::Connect;
-    CoSimIO::ReturnInfo (*ConnectWithSettings)(const std::string&, CoSimIO::SettingsType) = &CoSimIO::Connect;
 
-    m.def("Connect", ConnectWithSettingsFileName);
-    m.def("Connect", ConnectWithSettings);
-
+    m.def("Connect", &CoSimIO::Connect);
     m.def("Disconnect", &CoSimIO::Disconnect);
 
     m.def("IsConverged", &CoSimIO::IsConverged);
@@ -151,9 +139,8 @@ PYBIND11_MODULE(CoSimIO, m)
     m.def("Run", &CoSimIO::Run);
 
     m.def("Register", [](
-        const std::string& rConnectionName,
-        const std::string& rFunctionName,
-        std::function<void(CoSimIO::Info&)> FunctionPointer)
-        { CoSimIO::Register(rConnectionName, rFunctionName, FunctionPointer); } );
+        const CoSimIO::Info& I_Info,
+        std::function<CoSimIO::ReturnInfo(const CoSimIO::Info&)> FunctionPointer)
+        { return CoSimIO::Register(I_Info, FunctionPointer); } );
 
 }
