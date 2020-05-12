@@ -23,6 +23,32 @@ sh scripts/build_python.sh
 
 This will compile the binaries in the build folder and installs them into the bin subfolder of CoSimIO.
 
+Please don't forget to add the binaries in the bin folder to your `PYTHONPATH`.
+
+## Tutorial 2: Hello CosimIO
+After integrating the _CoSimIO_ in your code now it's time to say hello
+
+```python
+import CoSimIO
+return_info = CoSimIO.Hello()
+```
+Please note that this method like other methods in _CoSimIO_ returns a `ReturnInfo` object. This object is a versatile container holding important information about the operation that has been done. In this case, it contains the version of the _CoSimIO_ library which can be queried:
+
+```python
+print(return_info)
+```
+
+Info class also provides get method for retriving a certain value knowing its type:
+
+```python
+major_version = return_info.GetInt("major_version")
+minor_version = return_info.GetInt("minor_version")
+patch_version = return_info.GetString("patch_version")
+```
+You may find this example in hello.py file in the `solver_integration/python_solver` folder
+
+
+
 
 
 
