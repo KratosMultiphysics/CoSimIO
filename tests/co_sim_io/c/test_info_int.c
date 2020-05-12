@@ -18,16 +18,21 @@
 int main()
 {
     CoSimIO_Info info = CoSimIO_CreateInfo();
-
+    printf("111");
     COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "echo_level"));
+    printf("222");
 
     CoSimIO_Info_SetInt(info, "echo_level", 6);
+    printf("333");
 
     COSIMIO_CHECK_TRUE(CoSimIO_Info_Has(info, "echo_level"));
+    printf("444");
 
     COSIMIO_CHECK_INT_EQUAL(CoSimIO_Info_GetInt(info, "echo_level"), 6);
+    printf("555");
 
     CoSimIO_FreeInfo(info);
+    printf("666");
 
     return 0;
 }
