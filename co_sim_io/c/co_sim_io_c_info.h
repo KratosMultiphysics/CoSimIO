@@ -31,6 +31,9 @@ CoSimIO_Info CoSimIO_CreateInfo();
 int CoSimIO_FreeInfo(CoSimIO_Info I_Info);
 
 int CoSimIO_Info_Has(const CoSimIO_Info I_Info, const char* I_Key);
+void CoSimIO_Info_Erase(const CoSimIO_Info I_Info, const char* I_Key);
+void CoSimIO_Info_Clear(const CoSimIO_Info I_Info);
+int CoSimIO_Info_Size(const CoSimIO_Info I_Info);
 
 int CoSimIO_Info_GetInt(const CoSimIO_Info I_Info, const char* I_Key);
 double CoSimIO_Info_GetDouble(const CoSimIO_Info I_Info, const char* I_Key);

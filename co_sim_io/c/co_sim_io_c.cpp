@@ -166,6 +166,21 @@ int CoSimIO_Info_Has(const CoSimIO_Info I_Info, const char* I_Key)
     return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Has(I_Key);
 }
 
+void CoSimIO_Info_Erase(const CoSimIO_Info I_Info, const char* I_Key)
+{
+    static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Erase(I_Key);
+}
+
+void CoSimIO_Info_Clear(const CoSimIO_Info I_Info)
+{
+    static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Clear();
+}
+int CoSimIO_Info_Size(const CoSimIO_Info I_Info)
+{
+    return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Size();
+}
+
+
 int CoSimIO_Info_GetInt(const CoSimIO_Info I_Info, const char* I_Key)
 {
     return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Get<int>(I_Key);
