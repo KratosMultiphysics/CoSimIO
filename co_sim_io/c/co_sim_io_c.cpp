@@ -166,13 +166,6 @@ int CoSimIO_Info_Has(const CoSimIO_Info I_Info, const char* I_Key)
     return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Has(I_Key);
 }
 
-
-
-// char* CoSimIO_Info_GetString(const CoSimIO_Info I_Info, const char* I_Key)
-// {
-//     return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Get<std::string>(I_Key).c_str();
-// }
-
 int CoSimIO_Info_GetInt(const CoSimIO_Info I_Info, const char* I_Key)
 {
     return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Get<int>(I_Key);
@@ -186,6 +179,11 @@ double CoSimIO_Info_GetDouble(const CoSimIO_Info I_Info, const char* I_Key)
 int CoSimIO_Info_GetBool(const CoSimIO_Info I_Info, const char* I_Key)
 {
     return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Get<bool>(I_Key);
+}
+
+const char* CoSimIO_Info_GetString(const CoSimIO_Info I_Info, const char* I_Key)
+{
+    return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Get<std::string>(I_Key).c_str();
 }
 
 
@@ -202,6 +200,11 @@ void CoSimIO_Info_SetDouble(CoSimIO_Info I_Info, const char* I_Key, const double
 void CoSimIO_Info_SetBool(CoSimIO_Info I_Info, const char* I_Key, const int I_Value)
 {
     static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Set<bool>(I_Key, I_Value);
+}
+
+void CoSimIO_Info_SetString(CoSimIO_Info I_Info, const char* I_Key, const char* I_Value)
+{
+    static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Set<std::string>(I_Key, I_Value);
 }
 
 
