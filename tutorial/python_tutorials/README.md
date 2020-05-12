@@ -47,6 +47,51 @@ patch_version = return_info.GetString("patch_version")
 ```
 You may find this example in hello.py file in the `solver_integration/python_solver` folder
 
+## Tutorial 3: Connecting and Disconnecting
+The first step to establishing a connection to Kratos CoSimulation is to use the `Connect()` method:
+```python
+# The connect should be called before any CosimIO method called
+return_info = CoSimIO.Connect(settings)
+```
+
+First of all, you may notice that `Connect()` method takes a `ConnectionSettings` as its arguments. This contianer has the interface like the Info described in the previous section and can be used to pass additional information about the solver or connection settings to the CoSimIO:
+
+```python
+settings = CoSimIO.ConnectionSettings()
+settings.SetString("connection_name", "test_connection") # This should be unique for each connection between two solvers
+settings.SetString("solver_name", "my_solver") # Not to be confused with the connection name. 
+settings.SetInt("echo_level", 1)
+settings.SetString("solver_version", "1.25")
+```
+This method returns a `ReturnInfo` object containing information about the connection which can be queried using Get method:
+
+```python
+return_info.GetInt("connection_status")
+```
+
+Now putting together everything:
+
+```python
+import CoSimIO
+
+settings = CoSimIO.ConnectionSettings()
+settings.SetString("connection_name", "test_connection") # This should be unique for each connection between two solvers
+settings.SetString("solver_name", "my_solver") # Not to be confused with the connection name. 
+settings.SetInt("echo_level", 1)
+settings.SetString("solver_version", "1.25")
+
+return_info = CoSimIO.Connect(settings)
+if return_info.GetInt("connection_status") == 1:
+    print("Connected!")
+
+return_info = CoSimIO.Disconnect(settings)
+if return_info.GetInt("connection_status") == 0:
+    print("Disconnected!")
+}
+```
+
+You may find this example in connect_disconect.cpp file in the `solver_integration/cpp` folder
+
 
 
 
