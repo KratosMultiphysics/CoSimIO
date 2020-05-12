@@ -34,7 +34,7 @@ After integrating the _CoSimIO_ in your code now it's time to say hello
 auto info = CoSimIO::Hello();
 ```
 
-Please note that this method like other methods in _CoSimIO_ returns a `ReturnInfo` object. This object is a versatile container holding important information about the operation that has been done. In this case, it contains the version of the _CoSimIO_ library which can be queried:
+Please note that this method like other methods in _CoSimIO_ returns an `Info` object. This object is a versatile container holding important information about the operation that has been done. In this case, it contains the version of the _CoSimIO_ library which can be queried:
 
 ```c++
 std::cout << info << std::endl;
@@ -58,17 +58,17 @@ auto info = CoSimIO::Connect(connection_name, settings);
 }
 ```
 
-First of all, you may notice that `Connect()` method takes a `ConnectionSettings` as its arguments. This contaisner has the interface like the `Info` described in the previous section and can be used to pass additional information about the solver or connection settings to the CoSimIO:
+First of all, you may notice that `Connect()` method takes an `Info` as its arguments. This container can be used to pass additional information about the solver or connection settings to the CoSimIO:
 
 ```c++
-CoSimIO::ConnectionSettings settings;
+CoSimIO::Info settings;
 settings.Set("connection_name", "test_connection"); // This must be unique for each connection between two solvers
 settings.Set("solver_name", "my_solver"); // Not to be confused with the connection name.
 settings.Set("echo_level", 1);
 settings.Set("solver_version", "1.25");
 }
 ```
-This method returns a `ReturnInfo` object containing information about the connection which can be queried using Get method:
+This method returns a `Info` object containing information about the connection which can be queried using Get method:
 
 ```c++
 int connection_status = info.Get<int>("connection_status");
@@ -80,21 +80,21 @@ Now putting together everything:
 // CoSimulation includes
 #include "co_sim_io.hpp"
 int main(){
-    CoSimIO::ConnectionSettings settings;
+    CoSimIO::Info settings;
     settings.Set("connection_name", "test_connection"); // This must be unique for each connection between two solvers
     settings.Set("solver_name", "my_solver"); // Not to be confused with the connection name.
     settings.Set("echo_level", 1);
     settings.Set("solver_version", "1.25");
 
-    auto return_info = CoSimIO::Connect(settings);
-    if(return_info.Get<int>("connection_status") != CoSimIO::ConnectionStatus::Connected)
+    auto info = CoSimIO::Connect(settings);
+    if(info.Get<int>("connection_status") != CoSimIO::ConnectionStatus::Connected)
         return 1;
     // Now you may call any CoSimIO methods like ImportData, ExportData, etc.
 
     // ...
-    return_info = CoSimIO::Disconnect(settings); // disconnect afterwards
-    // Here you may use the return_info but cannot call any CoSimIO method anymore
-    if(return_info.Get<int>("connection_status") != CoSimIO::ConnectionStatus::Disconnected)
+    info = CoSimIO::Disconnect(settings); // disconnect afterwards
+    // Here you may use the info but cannot call any CoSimIO method anymore
+    if(info.Get<int>("connection_status") != CoSimIO::ConnectionStatus::Disconnected)
         return 1;
 
     return 0;
@@ -111,7 +111,7 @@ std::vector<double> data_to_send(4,3.14);
 CoSimIO::Info info;
 info.Set("identifier", "vector_of_pi");
 info.Set("connection_name", "test_connection");
-return_info = CoSimIO::ExportData(info, data_to_send);
+info = CoSimIO::ExportData(info, data_to_send);
 ```
 The `ImportData()` should be used on the other side to recieve data:
 
@@ -120,7 +120,7 @@ std::vector<double> receive_data;
 CoSimIO::Info info;
 info.Set("identifier", "vector_of_pi");
 info.Set("connection_name", "test_connection");
-return_info = CoSimIO::ImportData(info, receive_data);
+info = CoSimIO::ImportData(info, receive_data);
 ```
 
 It is important to mention that the `ImportData()` will clear and resize the vector if needed.
@@ -134,7 +134,7 @@ After seeing how we transfer raw data between solvers, it is time to see how we 
 CoSimIO::Info info;
 info.Set("identifier", "fluid_mesh");
 info.Set("connection_name", "test_connection");
-return_info = CoSimIO::ExportMesh(info,nodal_coordinates, elements_connectivities, elements_types);
+info = CoSimIO::ExportMesh(info,nodal_coordinates, elements_connectivities, elements_types);
 ```
 
 The arguments are:
