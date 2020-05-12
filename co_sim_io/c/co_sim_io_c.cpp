@@ -38,6 +38,7 @@ namespace {
         // return static_cast<CoSimIO::SolutionInfo>(CInfo.cpp_info_ptr).GetValue<int>(Key);
         return 0;
     }
+
 }
 
 
@@ -151,6 +152,76 @@ int CoSimIO_IsConverged(const char* pConnectionName)
 {
     return CoSimIO::IsConverged(pConnectionName);
 }
+
+
+CoSimIO_Info CoSimIO_CreateInfo()
+{
+    CoSimIO_Info info;
+    info.PtrCppInfo = new CoSimIO::Info(); // TODO is this correct?
+    return info;
+}
+
+CoSimIO_ReturnInfo CoSimIO_CreateReturnInfo()
+{
+
+}
+
+CoSimIO_ConnectionSettings CoSimIO_CreateConnectionSettings()
+{
+
+}
+
+int CoSimIO_FreeInfo(void* I_Info)
+{
+    // this is not fully working
+    // also do we need seperate fct for the different INFOs?
+    delete static_cast<CoSimIO_Info*>(I_Info)->PtrCppInfo;
+}
+
+int CoSimIO_Info_Has(const CoSimIO_Info I_Info, const char* I_Key)
+{
+    return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Has(I_Key);
+}
+
+
+
+int CoSimIO_Info_GetInt(const CoSimIO_Info I_Info, const char* I_Key)
+{
+    return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Get<int>(I_Key);
+}
+
+double CoSimIO_Info_GetDouble(const CoSimIO_Info I_Info, const char* I_Key)
+{
+    return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Get<int>(I_Key);
+}
+
+int CoSimIO_Info_GetBool(const CoSimIO_Info I_Info, const char* I_Key)
+{
+    return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Get<bool>(I_Key);
+}
+
+
+void CoSimIO_Info_SetInt(const CoSimIO_Info I_Info, const char* I_Key, const int I_Value)
+{
+    static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Set<int>(I_Key, I_Value);
+}
+
+void CoSimIO_Info_SetDouble(const CoSimIO_Info I_Info, const char* I_Key, const double I_Value)
+{
+    static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Set<double>(I_Key, I_Value);
+}
+
+void CoSimIO_Info_SetBool(const CoSimIO_Info I_Info, const char* I_Key, const int I_Value)
+{
+    static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Set<bool>(I_Key, I_Value);
+}
+
+
+
+
+
+
+
 
 
 
