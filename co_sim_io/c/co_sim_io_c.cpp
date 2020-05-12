@@ -180,6 +180,8 @@ int CoSimIO_FreeInfo(void* I_Info)
     // this is not fully working
     // also do we need seperate fct for the different INFOs?
     delete static_cast<CoSimIO_Info*>(I_Info)->PtrCppInfo;
+    
+    return 0;
 }
 
 int CoSimIO_Info_Has(const CoSimIO_Info I_Info, const char* I_Key)
