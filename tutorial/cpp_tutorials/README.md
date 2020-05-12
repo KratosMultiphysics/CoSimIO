@@ -165,4 +165,16 @@ std::vector<int> elements_connectivities = {
 std::vector<int> elements_types = {5,5,5,5}; // VTK_TRIANGLE
 ```
 
+On the other side one can use the `ImportMesh()` method to get the mesh sent by the export:
 
+```c++
+info.Clear();
+info.Set("identifier", "vector_of_pi");
+info.Set("connection_name", "test_connection");
+
+std::vector<double> nodal_coordinates;
+std::vector<int> elements_connectivities;
+std::vector<int> elements_types;
+
+info = CoSimIO::ImportMesh(info,nodal_coordinates, elements_connectivities, elements_types);
+```
