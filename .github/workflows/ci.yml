@@ -44,8 +44,8 @@ jobs:
         
         echo ${cmake_flags}
 
-        cmake -G "Visual Studio 16 2019" -A x64 -H"." -B"build" ${cmake_flags}
-        cmake --build "build" --target install
+        cmake -G "Visual Studio 16 2019" -H"." -B"build" ${cmake_flags}
+        cmake --build "build" --target install /p:Platform=x64
 
     - name: Running tests (Ctest)
       shell: bash
