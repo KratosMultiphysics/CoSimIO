@@ -1,7 +1,7 @@
 {
     "ENABLE_SOCKETS" : "@ENABLE_SOCKETS@",
     "ENABLE_MPI"     : "@ENABLE_MPI@",
-    "BUILD_TESTS"    : "@BUILD_TESTS@",
+    "BUILD_TESTING"  : "@BUILD_TESTING@",
     "BUILD_C"        : "@BUILD_C@",
     "BUILD_PYTHON"   : "@BUILD_PYTHON@",
     "BUILD_FORTRAN"  : "@BUILD_FORTRAN@"

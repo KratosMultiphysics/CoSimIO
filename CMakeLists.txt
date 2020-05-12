@@ -1,9 +1,10 @@
 project(CoSimIOTesting CXX)
 cmake_minimum_required (VERSION 2.8.6)
 
+include(CTest)
+
 OPTION ( ENABLE_SOCKETS "Enable sockets communication"              OFF )
 OPTION ( ENABLE_MPI     "Enable MPI communication and MPI examples" OFF )
-OPTION ( BUILD_TESTS    "Building the tests and examples"           ON )
 OPTION ( BUILD_C        "Building the CoSimIO for C"                OFF )
 OPTION ( BUILD_PYTHON   "Building the CoSimIO for Python"           OFF )
 OPTION ( BUILD_FORTRAN  "Building the CoSimIO for Fortran"          OFF )
@@ -11,13 +12,11 @@ OPTION ( BUILD_FORTRAN  "Building the CoSimIO for Fortran"          OFF )
 message("\nUsing the following configuration:")
 message("    ENABLE_SOCKETS: " ${ENABLE_SOCKETS})
 message("    ENABLE_MPI:     " ${ENABLE_MPI})
-message("    BUILD_TESTS:    " ${BUILD_TESTS})
+message("    BUILD_TESTING:  " ${BUILD_TESTING})
 message("    BUILD_C:        " ${BUILD_C})
 message("    BUILD_PYTHON:   " ${BUILD_PYTHON})
 message("    BUILD_FORTRAN:  " ${BUILD_FORTRAN})
 message("")
-
-enable_testing()
 
 if(MSVC)
     # required such that "__cplusplus" is set to the correct value
@@ -52,7 +51,7 @@ endif()
 
 add_subdirectory(examples)
 
-if (BUILD_TESTS)
+if (BUILD_TESTING)
     add_subdirectory(tests)
 endif()
 
