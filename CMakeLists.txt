@@ -51,8 +51,6 @@ if (BUILD_FORTRAN)
     add_subdirectory(co_sim_io/fortran)
 endif()
 
-add_subdirectory(examples)
-
 if (BUILD_TESTING)
     add_subdirectory(tests)
 endif()
