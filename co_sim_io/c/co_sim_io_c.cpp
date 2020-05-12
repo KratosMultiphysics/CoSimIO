@@ -150,15 +150,13 @@ CoSimIO_Info CoSimIO_IsConverged(const CoSimIO_Info* I_Info)
 CoSimIO_Info CoSimIO_CreateInfo()
 {
     CoSimIO_Info info;
-    info.PtrCppInfo = new CoSimIO::Info(); // TODO is this correct?
+    info.PtrCppInfo = new CoSimIO::Info();
     return info;
 }
 
 int CoSimIO_FreeInfo(CoSimIO_Info I_Info)
 {
-    // this is not fully working
-    // also do we need seperate fct for the different INFOs?
-    delete I_Info.PtrCppInfo;
+    delete static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo);
 
     return 0;
 }
