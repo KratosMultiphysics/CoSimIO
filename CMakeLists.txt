@@ -1,4 +1,4 @@
-project(CoSimIOTesting CXX)
+project(CoSimIOTesting CXX C)
 cmake_minimum_required (VERSION 2.8.6)
 
 include(CTest)
