@@ -55,7 +55,6 @@ The first step to establishing a connection to Kratos CoSimulation is to use the
 ```c++
 // The connect must be called before any CosimIO method called
 auto info = CoSimIO::Connect(connection_name, settings);
-}
 ```
 
 First of all, you may notice that `Connect()` method takes an `Info` as its arguments. This container can be used to pass additional information about the solver or connection settings to the CoSimIO:
@@ -66,7 +65,6 @@ settings.Set("connection_name", "test_connection"); // This must be unique for e
 settings.Set("solver_name", "my_solver"); // Not to be confused with the connection name.
 settings.Set("echo_level", 1);
 settings.Set("solver_version", "1.25");
-}
 ```
 This method returns a `Info` object containing information about the connection which can be queried using Get method:
 
@@ -165,4 +163,16 @@ std::vector<int> elements_connectivities = {
 std::vector<int> elements_types = {5,5,5,5}; // VTK_TRIANGLE
 ```
 
+On the other side one can use the `ImportMesh()` method to get the mesh sent by the export:
 
+```c++
+info.Clear();
+info.Set("identifier", "vector_of_pi");
+info.Set("connection_name", "test_connection");
+
+std::vector<double> nodal_coordinates;
+std::vector<int> elements_connectivities;
+std::vector<int> elements_types;
+
+info = CoSimIO::ImportMesh(info,nodal_coordinates, elements_connectivities, elements_types);
+```
