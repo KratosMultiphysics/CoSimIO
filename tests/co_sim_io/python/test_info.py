@@ -204,6 +204,13 @@ class CoSimIO_Test_Info(CoSimIO_Info_BaseTests.BaseTests):
     def _CreateInfo(self):
         return CoSimIO.Info()
 
+class CoSimIO_Test_ReturnInfo(CoSimIO_Info_BaseTests.BaseTests):
+    def _CreateInfo(self):
+        return CoSimIO.ReturnInfo()
+
+class CoSimIO_Test_ConnectionSettings(CoSimIO_Info_BaseTests.BaseTests):
+    def _CreateInfo(self):
+        return CoSimIO.ConnectionSettings()
 
 
 if __name__ == '__main__':
