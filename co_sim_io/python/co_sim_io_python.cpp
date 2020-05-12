@@ -125,6 +125,7 @@ PYBIND11_MODULE(CoSimIO, m)
         .def("__str__",   CoSimIO_Py_Wrappers::PrintObject<CoSimIO::Info>);
         ;
 
+    m.def("Hello", & CoSimIO::Hello);
 
     m.def("Connect", &CoSimIO::Connect);
     m.def("Disconnect", &CoSimIO::Disconnect);
