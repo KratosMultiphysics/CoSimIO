@@ -38,6 +38,7 @@ endif()
 file(REMOVE_RECURSE bin)
 
 if (BUILD_C)
+    message( FATAL_ERROR "The CoSimIO is currently not working for C")
     add_subdirectory(co_sim_io/c)
 endif()
 
@@ -46,6 +47,8 @@ if (BUILD_PYTHON)
 endif()
 
 if (BUILD_FORTRAN)
+    # TODO since fortran relies on C, a check is needed
+    message( FATAL_ERROR "The CoSimIO is currently not working for Fortran")
     add_subdirectory(co_sim_io/fortran)
 endif()
 
