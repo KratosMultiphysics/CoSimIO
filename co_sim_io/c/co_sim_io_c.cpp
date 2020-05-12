@@ -166,7 +166,7 @@ void CoSimIO_Info_Clear(const CoSimIO_Info I_Info)
 }
 int CoSimIO_Info_Size(const CoSimIO_Info I_Info)
 {
-    return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Size();
+    return static_cast<int>(static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Size());
 }
 
 
