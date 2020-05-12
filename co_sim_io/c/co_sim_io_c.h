@@ -23,13 +23,13 @@ extern "C" { // Define extern C if C++ compiler is used
 #endif
 
 CoSimIO_Info CoSimIO_Connect(
-    const CoSimIO_Info* I_Settings);
+    const CoSimIO_Info I_Settings);
 
 CoSimIO_Info CoSimIO_Disconnect(
-    const CoSimIO_Info* I_Info);
+    const CoSimIO_Info I_Info);
 
 CoSimIO_Info CoSimIO_ImportData(
-    const CoSimIO_Info* I_Info,
+    const CoSimIO_Info I_Info,
     int* pSize,
     double** ppData);
 
@@ -39,7 +39,7 @@ CoSimIO_Info CoSimIO_ExportData(
     const double** pData);
 
 CoSimIO_Info CoSimIO_ImportMesh(
-    const CoSimIO_Info* I_Info,
+    const CoSimIO_Info I_Info,
     int* pNumberOfNodes,
     int* pNumberOfElements,
     double** O_NodalCoordinates,
@@ -47,7 +47,7 @@ CoSimIO_Info CoSimIO_ImportMesh(
     int** ppElementTypes);
 
 CoSimIO_Info CoSimIO_ExportMesh(
-    const CoSimIO_Info* I_Info,
+    const CoSimIO_Info I_Info,
     const int NumberOfNodes,
     const int NumberOfElements,
     const double** pNodalCoordinates,
@@ -56,18 +56,18 @@ CoSimIO_Info CoSimIO_ExportMesh(
 
 
 CoSimIO_Info CoSimIO_ImportInfo(
-    const CoSimIO_Info* I_Info);
+    const CoSimIO_Info I_Info);
 
 CoSimIO_Info CoSimIO_ExportInfo(
-    const CoSimIO_Info* I_Info);
+    const CoSimIO_Info I_Info);
 
 CoSimIO_Info CoSimIO_Register(
-    const CoSimIO_Info* I_Info,
+    const CoSimIO_Info I_Info,
     CoSimIO_Info (*FunctionPointer)(const CoSimIO_Info*));
 
-CoSimIO_Info CoSimIO_Run(const CoSimIO_Info* I_Info);
+CoSimIO_Info CoSimIO_Run(const CoSimIO_Info I_Info);
 
-CoSimIO_Info CoSimIO_IsConverged(const CoSimIO_Info* I_Info);
+CoSimIO_Info CoSimIO_IsConverged(const CoSimIO_Info I_Info);
 
 
 

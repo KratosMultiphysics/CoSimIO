@@ -42,18 +42,18 @@ namespace {
 }
 
 
-CoSimIO_Info CoSimIO_Connect(const CoSimIO_Info* I_Settings)
+CoSimIO_Info CoSimIO_Connect(const CoSimIO_Info I_Settings)
 {
     // return ConvertInfo(CoSimIO::Connect(pConnectionName, pSettingsFileName));
 }
 
-CoSimIO_Info CoSimIO_Disconnect(const CoSimIO_Info* I_Info)
+CoSimIO_Info CoSimIO_Disconnect(const CoSimIO_Info I_Info)
 {
     // return ConvertInfo(CoSimIO::Disconnect(pConnectionName));
 }
 
 CoSimIO_Info CoSimIO_ImportData(
-    const CoSimIO_Info* I_Info,
+    const CoSimIO_Info I_Info,
     int* O_Size,
     double** O_Data)
 {
@@ -65,7 +65,7 @@ CoSimIO_Info CoSimIO_ImportData(
 }
 
 CoSimIO_Info CoSimIO_ExportData(
-    const CoSimIO_Info* I_Info,
+    const CoSimIO_Info I_Info,
     const int I_Size,
     const double** I_Data)
 {
@@ -75,7 +75,7 @@ CoSimIO_Info CoSimIO_ExportData(
 }
 
 CoSimIO_Info CoSimIO_ImportMesh(
-    const CoSimIO_Info* I_Info,
+    const CoSimIO_Info I_Info,
     int* I_NumberOfNodes,
     int* I_NumberOfElements,
     double** I_NodalCoordinates,
@@ -93,7 +93,7 @@ CoSimIO_Info CoSimIO_ImportMesh(
 }
 
 CoSimIO_Info CoSimIO_ExportMesh(
-    const CoSimIO_Info* I_Info,
+    const CoSimIO_Info I_Info,
     const int O_NumberOfNodes,
     const int O_NumberOfElements,
     const double** O_NodalCoordinates,
@@ -108,7 +108,7 @@ CoSimIO_Info CoSimIO_ExportMesh(
 }
 
 CoSimIO_Info CoSimIO_ImportInfo(
-    const CoSimIO_Info* I_Info)
+    const CoSimIO_Info I_Info)
 {
     // // TODO: check if the conversions are working
     // CoSimIO::SolutionInfo tmp_info = ConvertInfo(rSolutionInfo);
@@ -119,7 +119,7 @@ CoSimIO_Info CoSimIO_ImportInfo(
 }
 
 CoSimIO_Info CoSimIO_ExportInfo(
-    const CoSimIO_Info* I_Info)
+    const CoSimIO_Info I_Info)
 {
     // CoSimIO::ExportInfo(pConnectionName, ConvertInfo(SolutionInfo));
     CoSimIO_Info aaa;
@@ -127,8 +127,8 @@ CoSimIO_Info CoSimIO_ExportInfo(
 }
 
 CoSimIO_Info CoSimIO_Register(
-    const CoSimIO_Info* I_Info,
-    CoSimIO_Info (*FunctionPointer)(const CoSimIO_Info* I_Info))
+    const CoSimIO_Info I_Info,
+    CoSimIO_Info (*FunctionPointer)(const CoSimIO_Info I_Info))
 {
     // TODO use lambdas to do conversion of types, like done in other places!
     // return ConvertInfo(CoSimIO::Register(I_ConnectionName, I_FunctionName, pFunctionPointer));
@@ -136,12 +136,12 @@ CoSimIO_Info CoSimIO_Register(
     return aaa;
 }
 
-CoSimIO_Info CoSimIO_Run(const CoSimIO_Info* I_Info)
+CoSimIO_Info CoSimIO_Run(const CoSimIO_Info I_Info)
 {
     // return ConvertInfo(CoSimIO::Run(pConnectionName));
 }
 
-CoSimIO_Info CoSimIO_IsConverged(const CoSimIO_Info* I_Info)
+CoSimIO_Info CoSimIO_IsConverged(const CoSimIO_Info I_Info)
 {
     // return CoSimIO::IsConverged(pConnectionName);
 }
