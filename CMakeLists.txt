@@ -9,7 +9,7 @@ OPTION ( BUILD_C        "Building the CoSimIO for C"                OFF )
 OPTION ( BUILD_PYTHON   "Building the CoSimIO for Python"           OFF )
 OPTION ( BUILD_FORTRAN  "Building the CoSimIO for Fortran"          OFF )
 
-message("\nUsing the following configuration:")
+message("Building the CoSimIO with the following configuration:")
 message("    ENABLE_SOCKETS: " ${ENABLE_SOCKETS})
 message("    ENABLE_MPI:     " ${ENABLE_MPI})
 message("    BUILD_TESTING:  " ${BUILD_TESTING})
