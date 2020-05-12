@@ -22,14 +22,14 @@
 
 int main()
 {
-    CoSimIO::ConnectionSettings settings;
+    CoSimIO::Info settings;
     settings.Set("connection_name", "test_connection"); // This must be unique for each connection between two solvers
     settings.Set("solver_name", "solver_1"); // Not to be confused with the connection name.
     settings.Set("echo_level", 1);
     settings.Set("solver_version", "1.25");
 
-    auto return_info = CoSimIO::Connect(settings);
-    COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
+    auto info = CoSimIO::Connect(settings);
+    COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
 
     std::vector<double> nodal_coordinates{
         0.0, 2.5, 1.0, /*0*/
@@ -48,14 +48,14 @@ int main()
     };
 
     std::vector<int> elements_types = {5,5,5,5}; // VTK_TRIANGLE
-    CoSimIO::Info info;
+    info.Clear();
     info.Set("identifier", "vector_of_pi");
     info.Set("connection_name", "test_connection");
 
-    return_info = CoSimIO::ExportMesh(info,nodal_coordinates, elements_connectivities, elements_types);
+    info = CoSimIO::ExportMesh(info,nodal_coordinates, elements_connectivities, elements_types);
 
-    return_info = CoSimIO::Disconnect(settings); // disconnect afterwards
-    COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Disconnected);
+    info = CoSimIO::Disconnect(settings); // disconnect afterwards
+    COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Disconnected);
 
     return 0;
 }
