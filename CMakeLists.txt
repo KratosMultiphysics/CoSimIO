@@ -38,9 +38,6 @@ endif()
 # clean the bin directory
 file(REMOVE_RECURSE bin)
 
-# always build the C++ simple solver
-add_subdirectory(examples/simple_solver/cpp)
-
 if (BUILD_C)
     add_subdirectory(co_sim_io/c)
 endif()
@@ -49,8 +46,13 @@ if (BUILD_PYTHON)
     add_subdirectory(co_sim_io/python)
 endif()
 
+if (BUILD_FORTRAN)
+    add_subdirectory(co_sim_io/fortran)
+endif()
+
+add_subdirectory(examples)
+
 if (BUILD_TESTS)
-    add_subdirectory(examples)
     add_subdirectory(tests)
 endif()
 

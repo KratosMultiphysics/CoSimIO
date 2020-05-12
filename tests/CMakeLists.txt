@@ -1,10 +1,5 @@
-project(CoSimIOTesting C CXX)
-cmake_minimum_required (VERSION 2.8.6)
-
 include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io )
 include_directories( ${CMAKE_SOURCE_DIR}/external_libraries )
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
-
 
 ### Test runner for tests of CoSimIO
 file( GLOB_RECURSE CO_SIM_IO_TEST_FILES co_sim_io/*.cpp)
