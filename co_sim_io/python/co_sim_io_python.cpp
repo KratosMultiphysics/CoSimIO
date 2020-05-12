@@ -132,7 +132,7 @@ PYBIND11_MODULE(CoSimIO, m)
         .def(py::init<>());
 
 
-
+    m.def("Hello", & CoSimIO::Hello);
     m.def("Connect", &CoSimIO::Connect);
     m.def("Disconnect", &CoSimIO::Disconnect);
 
