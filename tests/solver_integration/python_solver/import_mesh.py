@@ -16,7 +16,7 @@ cosimio_check_equal(return_info.GetInt("connection_status"), CoSimIO.ConnectionS
 
 
 
-# Exporting mesh
+# Importing mesh
 info = CoSimIO.Info()
 info.SetString("identifier", "fluid_mesh")
 info.SetString("connection_name", "test_connection")
