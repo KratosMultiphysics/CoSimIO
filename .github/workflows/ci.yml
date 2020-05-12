@@ -51,7 +51,7 @@ jobs:
       shell: bash
       run: |
         cd build
-        ctest -C Debug
+        ctest -C Debug --verbose
 
     - name: Run tests
       shell: bash
