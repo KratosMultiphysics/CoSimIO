@@ -32,7 +32,7 @@ jobs:
         cmake_flags="-DBUILD_C=ON -DBUILD_PYTHON=ON"
 
         if [ ${{ matrix.os }} == windows-latest ]; then # MSVC
-          cmake_flags="${cmake_flags}"
+          cmake_flags="${cmake_flags} -DCMAKE_GENERATOR_PLATFORM=x64"
         elif [ ${{ matrix.os }} = ubuntu-latest ]; then # GCC
           cmake_flags="${cmake_flags} -DBUILD_FORTRAN=OFF -DCMAKE_CXX_FLAGS=-Werror"
         elif [ ${{ matrix.os }} = macOS-latest ]; then # CLANG
@@ -44,7 +44,7 @@ jobs:
         
         echo ${cmake_flags}
 
-        cmake -H"." -B"build" ${cmake_flags} -A "x64"
+        cmake -H"." -B"build" ${cmake_flags}
         cmake --build "build" --target install
 
     - name: Running tests (Ctest)
