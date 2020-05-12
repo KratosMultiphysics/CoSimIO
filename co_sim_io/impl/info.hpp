@@ -106,6 +106,15 @@ private:
 class Info
 {
 public:
+    Info() : mOptions(){}
+
+    Info(const Info& Other) : mOptions(Other.mOptions){}
+
+    Info& operator=(const Info& Other){
+        mOptions = Other.mOptions;
+        return *this;
+    }
+
     virtual ~Info() = default;
 
     template<typename TDataType>

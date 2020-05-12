@@ -293,4 +293,43 @@ TEST_CASE("info_ostream")
     REQUIRE(test_stream.str() == exp_string);
 }
 
+TEST_CASE("info_copy_constructor")
+{
+    Info info;
+    info.Set<bool>("is_converged", true);
+    info.Set<std::string>("keyword", "awesome");
+    info.Set<double>("tol", 0.008);
+    info.Set<int>("echo_level", 2);
+    info.Set<int>("checking", 22);
+
+    Info another_info(info);
+
+    REQUIRE(another_info.Size() == 5);
+    REQUIRE(another_info.Get<int>("checking") == 22);
+    REQUIRE(another_info.Get<int>("echo_level") == 2);
+    REQUIRE(another_info.Get<std::string>("keyword") == "awesome");
+    REQUIRE(another_info.Get<bool>("is_converged") == true);
+    REQUIRE(another_info.Get<double>("tol") == Approx(0.008));
+}
+
+TEST_CASE("info_assignment")
+{
+    Info info;
+    info.Set<bool>("is_converged", true);
+    info.Set<std::string>("keyword", "awesome");
+    info.Set<double>("tol", 0.008);
+    info.Set<int>("echo_level", 2);
+    info.Set<int>("checking", 22);
+
+    Info another_info;
+    another_info = info;
+
+    REQUIRE(another_info.Size() == 5);
+    REQUIRE(another_info.Get<int>("checking") == 22);
+    REQUIRE(another_info.Get<int>("echo_level") == 2);
+    REQUIRE(another_info.Get<std::string>("keyword") == "awesome");
+    REQUIRE(another_info.Get<bool>("is_converged") == true);
+    REQUIRE(another_info.Get<double>("tol") == Approx(0.008));
+}
+
 } // namespace CoSimIO
