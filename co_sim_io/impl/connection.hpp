@@ -43,37 +43,37 @@ class Connection
 
 public:
 
-    using FunctionPointerType = std::function<ReturnInfo(const Info&)>;
+    using FunctionPointerType = std::function<Info(const Info&)>;
 
-    explicit Connection(const std::string& rName, const ConnectionSettings& I_Settings) : mConnectionName(rName)
+    explicit Connection(const std::string& rName, const Info& I_Settings) : mConnectionName(rName)
     {
         Initialize(I_Settings);
     }
 
-    ReturnInfo Connect()
+    Info Connect()
     {
         const bool is_connected = mpComm->Connect();
-        ReturnInfo ret_info; // TODO in the future probably it makes more sense that the mpComm can directly return the ReturnInfo to potentionally populate it e.g. with error codes
+        Info ret_info; // TODO in the future probably it makes more sense that the mpComm can directly return the Info to potentionally populate it e.g. with error codes
         ret_info.Set<int>("connection_status", ConnectionStatus::Connected);
         return ret_info;
     }
 
-    ReturnInfo Disconnect()
+    Info Disconnect()
     {
         const bool is_disconnected = mpComm->Disconnect();
-        ReturnInfo ret_info; // TODO in the future probably it makes more sense that the mpComm can directly return the ReturnInfo to potentionally populate it e.g. with error codes
+        Info ret_info; // TODO in the future probably it makes more sense that the mpComm can directly return the Info to potentionally populate it e.g. with error codes
         ret_info.Set<int>("connection_status", ConnectionStatus::Disconnected);
         return ret_info;
     }
 
-    ReturnInfo SendControlSignal(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal)
+    Info SendControlSignal(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal)
     {
         CO_SIM_IO_ERROR_IF_NOT(mIsConnectionMaster) << "This function can only be called as the Connection-Master!" << std::endl;
         mpComm->SendControlSignal(rIdentifier, Signal);
-        return ReturnInfo(); // TODO use this
+        return Info(); // TODO use this
     }
 
-    ReturnInfo Register(
+    Info Register(
         const std::string& rFunctionName,
         FunctionPointerType FunctionPointer)
     {
@@ -86,10 +86,10 @@ public:
         CO_SIM_IO_ERROR_IF((mRegisteredFunctions.count(rFunctionName)>0)) << "A function was already registered for " << rFunctionName << "!" << std::endl;
 
         mRegisteredFunctions[rFunctionName] = FunctionPointer;
-        return ReturnInfo(); // TODO use this
+        return Info(); // TODO use this
     }
 
-    ReturnInfo Run()
+    Info Run()
     {
         CO_SIM_IO_ERROR_IF(mIsConnectionMaster) << "This function can only be called as the Connection-Slave!" << std::endl;
 
@@ -107,7 +107,7 @@ public:
                 mRegisteredFunctions.at(function_name)(info);
             }
         }
-        return ReturnInfo(); // TODO use this
+        return Info(); // TODO use this
     }
 
     bool IsConverged()
@@ -118,53 +118,53 @@ public:
 
 
     template<class... Args>
-    ReturnInfo ImportData(Args&&... args)
+    Info ImportData(Args&&... args)
     {
         mpComm->ImportData(std::forward<Args>(args)...);
 
-        return ReturnInfo(); // TODO use this
+        return Info(); // TODO use this
     }
 
     template<class... Args>
-    ReturnInfo ExportData(Args&&... args)
+    Info ExportData(Args&&... args)
     {
         mpComm->ExportData(std::forward<Args>(args)...);
 
-        return ReturnInfo(); // TODO use this
+        return Info(); // TODO use this
     }
 
     template<class... Args>
-    ReturnInfo ImportMesh(Args&&... args)
+    Info ImportMesh(Args&&... args)
     {
         mpComm->ImportMesh(std::forward<Args>(args)...);
 
-        return ReturnInfo(); // TODO use this
+        return Info(); // TODO use this
     }
 
     template<class... Args>
-    ReturnInfo ExportMesh(Args&&... args)
+    Info ExportMesh(Args&&... args)
     {
         mpComm->ExportMesh(std::forward<Args>(args)...);
 
-        return ReturnInfo(); // TODO use this
+        return Info(); // TODO use this
     }
 
     template<class... Args>
-    ReturnInfo ImportGeometry(Args&&... args)
+    Info ImportGeometry(Args&&... args)
     {
         CO_SIM_IO_ERROR << "Importing of Geometry is not yet implemented!" << std::endl;
         mpComm->ImportGeometry(std::forward<Args>(args)...);
 
-        return ReturnInfo(); // TODO use this
+        return Info(); // TODO use this
     }
 
     template<class... Args>
-    ReturnInfo ExportGeometry(Args&&... args)
+    Info ExportGeometry(Args&&... args)
     {
         CO_SIM_IO_ERROR << "Exporting of Geometry is not yet implemented!" << std::endl;
         mpComm->ExportGeometry(std::forward<Args>(args)...);
 
-        return ReturnInfo(); // TODO use this
+        return Info(); // TODO use this
     }
 
 private:
@@ -176,7 +176,7 @@ private:
 
     std::unordered_map<std::string, FunctionPointerType> mRegisteredFunctions;
 
-    void Initialize(const ConnectionSettings& I_Settings)
+    void Initialize(const Info& I_Settings)
     {
         std::string comm_format = "file"; // default is file-communication
         if (I_Settings.Has("communication_format")) { // communication format has been specified

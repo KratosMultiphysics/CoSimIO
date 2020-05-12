@@ -25,7 +25,7 @@ namespace Internals {
 class Communication
 {
 public:
-    explicit Communication(const std::string& rName, const ConnectionSettings& I_Settings, const bool IsConnectionMaster) : mConnectionName(rName), mIsConnectionMaster(IsConnectionMaster)
+    explicit Communication(const std::string& rName, const Info& I_Settings, const bool IsConnectionMaster) : mConnectionName(rName), mIsConnectionMaster(IsConnectionMaster)
     {
         if (I_Settings.Has("echo_level")) {
             mEchoLevel = I_Settings.Get<int>("echo_level");
