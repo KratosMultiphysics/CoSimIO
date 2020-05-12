@@ -29,7 +29,7 @@ jobs:
     - name: Build CoSimIO
       shell: bash
       run: |
-        cmake_flags="-DBUILD_C=OFF -DBUILD_PYTHON=OFF"
+        cmake_flags="-DBUILD_C=OFF -DBUILD_PYTHON=ON"
         if [ ${{ matrix.os }} != windows-latest ]; then
           cmake_flags="${cmake_flags} -DBUILD_FORTRAN=OFF"
         fi
