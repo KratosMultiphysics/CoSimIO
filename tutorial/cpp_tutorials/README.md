@@ -53,17 +53,17 @@ You may find this example in hello.cpp file in the `solver_integration/cpp` fold
 ## Tutorial 3: Connecting and Disconnecting
 The first step to establishing a connection to Kratos CoSimulation is to use the `Connect()` method:
 ```c++
-// The connect should be called before any CosimIO method called
+// The connect must be called before any CosimIO method called
 auto info = CoSimIO::Connect(connection_name, settings);
 }
 ```
 
-First of all, you may notice that `Connect()` method takes a `ConnectionSettings` as its arguments. This contianer has the interface like the Info described in the previous section and can be used to pass additional information about the solver or connection settings to the CoSimIO:
+First of all, you may notice that `Connect()` method takes a `ConnectionSettings` as its arguments. This contaisner has the interface like the `Info` described in the previous section and can be used to pass additional information about the solver or connection settings to the CoSimIO:
 
 ```c++
 CoSimIO::ConnectionSettings settings;
-settings.Set("connection_name", "test_connection"); // This should be unique for each connection between two solvers
-settings.Set("solver_name", "my_solver"); // Not to be confused with the connection name. 
+settings.Set("connection_name", "test_connection"); // This must be unique for each connection between two solvers
+settings.Set("solver_name", "my_solver"); // Not to be confused with the connection name.
 settings.Set("echo_level", 1);
 settings.Set("solver_version", "1.25");
 }
@@ -81,22 +81,22 @@ Now putting together everything:
 #include "co_sim_io.hpp"
 int main(){
     CoSimIO::ConnectionSettings settings;
-    settings.Set("connection_name", "test_connection"); // This should be unique for each connection between two solvers
-    settings.Set("solver_name", "my_solver"); // Not to be confused with the connection name. 
+    settings.Set("connection_name", "test_connection"); // This must be unique for each connection between two solvers
+    settings.Set("solver_name", "my_solver"); // Not to be confused with the connection name.
     settings.Set("echo_level", 1);
     settings.Set("solver_version", "1.25");
 
     auto return_info = CoSimIO::Connect(settings);
-    if(return_info.Get<int>("connection_status") != CoSimIO::Connected) 
+    if(return_info.Get<int>("connection_status") != CoSimIO::ConnectionStatus::Connected)
         return 1;
     // Now you may call any CoSimIO methods like ImportData, ExportData, etc.
 
     // ...
     return_info = CoSimIO::Disconnect(settings); // disconnect afterwards
     // Here you may use the return_info but cannot call any CoSimIO method anymore
-    if(return_info.Get<int>("connection_status") != 0) 
+    if(return_info.Get<int>("connection_status") != CoSimIO::ConnectionStatus::Disconnected)
         return 1;
-    
+
     return 0;
 }
 ```
@@ -142,12 +142,12 @@ The arguments are:
 * `nodal_coordinates`: A vector of doubles of 3D coordinates of each node in x1,y1,z1,x2,y2,z2,... format:
 ```c++
 std::vector<double> nodal_coordinates{
-    0.0, 2.5, 1.0,  /*0*/
-    2.0, 0.0, 1.5,  /*1*/
-    2.0, 2.5, 1.5,  /*2*/
-    4.0, 2.5, 1.7,  /*3*/
-    4.0, 0.0, 1.7,  /*4*/
-    6.0, 0.0, 1.8   /*5*/
+    0.0, 2.5, 1.0, /*0*/
+    2.0, 0.0, 1.5, /*1*/
+    2.0, 2.5, 1.5, /*2*/
+    4.0, 2.5, 1.7, /*3*/
+    4.0, 0.0, 1.7, /*4*/
+    6.0, 0.0, 1.8  /*5*/
     };
 ```
 * `elements_connectivities`: A vector of int containing the zero based index of each node in e1_1,e1_2,...,e2_1, e2_2,... format:
@@ -160,9 +160,9 @@ std::vector<int> elements_connectivities = {
 };
 ```
 
-* `elements_types`: A vector of int containing the type of the element according to paraview element types:
+* `elements_types`: A vector of int containing the type of the elements. They are according to the vtk cell types, see [this link](https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf), page 9 & 10.
 ```c++
-std::vector<int> elements_types = { 5,5,5,5}; // VTK_TRIANGLE
+std::vector<int> elements_types = {5,5,5,5}; // VTK_TRIANGLE
 ```
 
 
