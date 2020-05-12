@@ -37,7 +37,6 @@ int main()
     info.Set("connection_name", "test_connection");
     return_info = CoSimIO::ExportData(info, data_to_send);
 
-
     return_info = CoSimIO::Disconnect(settings); // disconnect afterwards
     COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Disconnected);
 

@@ -32,12 +32,12 @@ int main()
     COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
 
     std::vector<double> nodal_coordinates{
-        0.0, 2.5, 1.0,  /*0*/
-        2.0, 0.0, 1.5,  /*1*/
-        2.0, 2.5, 1.5,  /*2*/
-        4.0, 2.5, 1.7,  /*3*/
-        4.0, 0.0, 1.7,  /*4*/
-        6.0, 0.0, 1.8   /*5*/
+        0.0, 2.5, 1.0, /*0*/
+        2.0, 0.0, 1.5, /*1*/
+        2.0, 2.5, 1.5, /*2*/
+        4.0, 2.5, 1.7, /*3*/
+        4.0, 0.0, 1.7, /*4*/
+        6.0, 0.0, 1.8  /*5*/
     };
 
     std::vector<int> elements_connectivities = {
@@ -47,13 +47,12 @@ int main()
         3, 4, 5, /*4*/
     };
 
-    std::vector<int> elements_types = { 5,5,5,5}; // VTK_TRIANGLE
+    std::vector<int> elements_types = {5,5,5,5}; // VTK_TRIANGLE
     CoSimIO::Info info;
     info.Set("identifier", "vector_of_pi");
     info.Set("connection_name", "test_connection");
 
     return_info = CoSimIO::ExportMesh(info,nodal_coordinates, elements_connectivities, elements_types);
-
 
     return_info = CoSimIO::Disconnect(settings); // disconnect afterwards
     COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Disconnected);

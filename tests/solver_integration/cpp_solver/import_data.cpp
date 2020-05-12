@@ -40,7 +40,6 @@ int main()
     for(auto& value : receive_data)
         COSIMIO_CHECK_EQUAL(value, 3.14);
 
-
     return_info = CoSimIO::Disconnect(settings); // disconnect afterwards
     COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Disconnected);
 
