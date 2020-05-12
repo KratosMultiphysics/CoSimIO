@@ -25,7 +25,9 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus")
 
     set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
-else()
+elseif(${CMAKE_COMPILER_IS_GNUCXX})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wsuggest-override -Wignored-qualifiers")
+else() # assumed to be CLANG
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
