@@ -89,6 +89,15 @@ TEST_CASE("info_basics_char")
     REQUIRE(info.Get<std::string>("identifier") == "pressure"); // char* will be turned into string
 }
 
+TEST_CASE("info_non_existing_key")
+{
+    Info info;
+
+    REQUIRE_FALSE(info.Has("identifier"));
+
+    REQUIRE_THROWS_WITH(info.Get<int>("identifier"), "Error: "); // TODO find a better way of testing this
+}
+
 TEST_CASE("info_wrong_type")
 {
     Info info;
