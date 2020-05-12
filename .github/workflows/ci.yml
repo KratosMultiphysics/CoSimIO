@@ -41,11 +41,11 @@ jobs:
           echo 'Unsupported OS: ${{ matrix.os }}'
           exit 1
         fi
-        
+
         echo ${cmake_flags}
 
         cmake -G "Visual Studio 16 2019" -H"." -B"build" ${cmake_flags}
-        cmake --build "build" --target install /p:Platform=x64
+        cmake --build "build" --target install
 
     - name: Running tests (Ctest)
       shell: bash
