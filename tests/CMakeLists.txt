@@ -29,7 +29,6 @@ foreach(cpp_test_file ${cpp_test_files})
 add_cpp_executable(${cpp_test_file})
 endforeach(cpp_test_file)
 
-# Todo: to be changed with python to be corssplatform
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run.sh  $1 & $2)
 
 add_test(hello_cpp_test hello_cpp_test)
