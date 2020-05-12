@@ -31,7 +31,7 @@ jobs:
       run: |
         cmake_flags="-DBUILD_C=OFF -DBUILD_PYTHON=ON"
         if [ ${{ matrix.os }} != windows-latest ]; then
-          cmake_flags="${cmake_flags} -DBUILD_FORTRAN=OFF"
+          cmake_flags="${cmake_flags} -DBUILD_FORTRAN=OFF -Werror"
         fi
         cmake -H"." -B"build" ${cmake_flags}
         cmake --build "build" --target install
