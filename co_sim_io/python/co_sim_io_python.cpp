@@ -151,4 +151,12 @@ PYBIND11_MODULE(CoSimIO, m)
         const CoSimIO::Info& I_Info,
         std::function<CoSimIO::ReturnInfo(const CoSimIO::Info&)> FunctionPointer)
         { return CoSimIO::Register(I_Info, FunctionPointer); } );
+
+    py::enum_<CoSimIO::ConnectionStatus>(m,"ConnectionStatus")
+        .value("NotConnected",CoSimIO::ConnectionStatus::NotConnected)
+        .value("Connected",CoSimIO::ConnectionStatus::Connected)
+        .value("Disconnected", CoSimIO::ConnectionStatus::Disconnected)
+        .value("ConnectionError", CoSimIO::ConnectionStatus::ConnectionError)
+        .value("DisconnectionError", CoSimIO::ConnectionStatus::DisconnectionError)
+        ;
 }
