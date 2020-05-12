@@ -247,13 +247,8 @@ private:
     // TODO add version of Solver
 };
 
-// for now this points to the same object, but this might change in the future
-using ReturnInfo = Info;
-
-// struct ReturnInfo : public Info
-// {
-//     // int ReturnCode() const { return Get<int>("return_code"); }
-// };
+class ReturnInfo : public Info
+{ };
 
 } // namespace CoSimIO
 

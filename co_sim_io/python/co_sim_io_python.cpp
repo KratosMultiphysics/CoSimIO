@@ -124,23 +124,8 @@ PYBIND11_MODULE(CoSimIO, m)
         .def("__str__",   CoSimIO_Py_Wrappers::PrintObject<CoSimIO::Info>);
         ;
 
-
-    // py::class_<CoSimIO::ReturnInfo>(m,"ReturnInfo") // TODO derive it from Info once this is a separate opject
-    //     .def(py::init<>())
-    //     .def("Has",       &CoSimIO::Info::Has)
-    //     .def("GetInt",    &CoSimIO::Info::Get<int>)
-    //     .def("GetDouble", &CoSimIO::Info::Get<double>)
-    //     .def("GetBool",   &CoSimIO::Info::Get<bool>)
-    //     .def("GetString", &CoSimIO::Info::Get<std::string>)
-    //     .def("SetInt",    &CoSimIO::Info::Set<int>)
-    //     .def("SetDouble", &CoSimIO::Info::Set<double>)
-    //     .def("SetBool",   &CoSimIO::Info::Set<bool>)
-    //     .def("SetString", &CoSimIO::Info::Set<std::string>)
-    //     .def("Erase",     &CoSimIO::Info::Erase)
-    //     .def("Clear",     &CoSimIO::Info::Clear)
-    //     .def("Size",      &CoSimIO::Info::Size)
-    //     .def("__str__",   CoSimIO_Py_Wrappers::PrintObject<CoSimIO::Info>);
-    //     ;
+    py::class_<CoSimIO::ReturnInfo, CoSimIO::Info>(m,"ReturnInfo")
+        .def(py::init<>());
 
     py::class_<CoSimIO::ConnectionSettings, CoSimIO::Info>(m,"ConnectionSettings")
         .def(py::init<>());
