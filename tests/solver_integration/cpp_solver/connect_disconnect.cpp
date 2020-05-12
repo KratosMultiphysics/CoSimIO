@@ -22,17 +22,17 @@
 
 int main()
 {
-    CoSimIO::ConnectionSettings settings;
+    CoSimIO::Info settings;
     settings.Set("connection_name", "test_connection"); // This must be unique for each connection between two solvers
     settings.Set("solver_name", "my_solver"); // Not to be confused with the connection name.
     settings.Set("echo_level", 1);
     settings.Set("solver_version", "1.25");
 
-    auto return_info = CoSimIO::Connect(settings);
-    COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
+    auto info = CoSimIO::Connect(settings);
+    COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
 
-    return_info = CoSimIO::Disconnect(settings); // disconnect afterwards
-    COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Disconnected);
+    info = CoSimIO::Disconnect(settings); // disconnect afterwards
+    COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Disconnected);
 
     return 0;
 }
