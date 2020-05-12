@@ -4,7 +4,7 @@ def cosimio_check_equal(a, b):
     assert a == b
 
 # Connection Settings
-settings = CoSimIO.ConnectionSettings()
+settings = CoSimIO.Info()
 settings.SetString("connection_name", "test_connection") # This must be unique for each connection between two solvers
 settings.SetString("solver_name", "my_solver") # Not to be confused with the connection name. 
 settings.SetInt("echo_level", 1)
