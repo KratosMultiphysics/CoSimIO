@@ -112,6 +112,49 @@ It is important to mention that the `ImportData()` will clear and resize the vec
 
 
 
+## Tutorial 5: Mesh Exchange
+After seeing how we transfer raw data between solvers, it is time to see how we can export and import meshes. For exporting the mesh one may use the `ExportMesh()` method:
+
+
+```Python
+info = CoSimIO.Info()
+info.SetString("identifier", "fluid_mesh")
+info.SetString("connection_name", "test_connection")
+return_info = CoSimIO.ExportMesh(info, nodal_coords, element_connectivities, element_types)
+```
+
+The arguments are:
+
+* `nodal_coordinates`: A vector of doubles of 3D coordinates of each node in x1,y1,z1,x2,y2,z2,... format:
+```python
+nodal_coords = [
+    0.0, 2.5, 1.0, # 0
+    2.0, 0.0, 1.5, # 1
+    2.0, 2.5, 1.5, # 2
+    4.0, 2.5, 1.7, # 3
+    4.0, 0.0, 1.7, # 4
+    6.0, 0.0, 1.8  # 5
+]
+```
+* `elements_connectivities`: A vector of int containing the zero based index of each node in e1_1,e1_2,...,e2_1, e2_2,... format:
+```python
+element_connectivities = [
+    0, 1, 2, # 1
+    1, 3, 2, # 2
+    1, 4, 3, # 3
+    3, 4, 5, # 4
+]
+```
+
+* `elements_types`: A vector of int containing the type of the elements. They are according to the vtk cell types, see [this link](https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf), page 9 & 10.
+```python
+element_types = [
+    5,5,5,5 # VTK_TRIANGLE
+]
+```
+
+
+
 
 
 
