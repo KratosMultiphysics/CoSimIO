@@ -41,6 +41,8 @@ jobs:
           echo 'Unsupported OS: ${{ matrix.os }}'
           exit 1
         fi
+        
+        echo ${cmake_flags}
 
         cmake -H"." -B"build" ${cmake_flags}
         cmake --build "build" --target install
