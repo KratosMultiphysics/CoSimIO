@@ -40,55 +40,55 @@ Note that this introduces dependencies such as e.g. boost (header-only version) 
 
 namespace CoSimIO {
 
-inline ReturnInfo Hello();
+inline Info Hello();
 
 
-inline ReturnInfo Connect(
-    const ConnectionSettings& I_Settings);
+inline Info Connect(
+    const Info& I_Settings);
 
-inline ReturnInfo Disconnect(
+inline Info Disconnect(
     const Info& I_Info);
 
 
 template<class TContainerType>
-inline ReturnInfo ImportData(
+inline Info ImportData(
     const Info& I_Info,
     TContainerType& rData);
 
 template<class TContainerType>
-inline ReturnInfo ExportData(
+inline Info ExportData(
     const Info& I_Info,
     const TContainerType& rData);
 
 
 template<class TDoubleContainerType, class TIntContainerType>
-inline ReturnInfo ImportMesh(
+inline Info ImportMesh(
     const Info& I_Info,
     TDoubleContainerType& rNodalCoordinates,
     TIntContainerType& rElementConnectivities,
     TIntContainerType& rElementTypes);
 
 template<class TDoubleContainerType, class TIntContainerType>
-inline ReturnInfo ExportMesh(
+inline Info ExportMesh(
     const Info& I_Info,
     const TDoubleContainerType& rNodalCoordinates,
     const TIntContainerType& rElementConnectivities,
     const TIntContainerType& rElementTypes);
 
 
-inline ReturnInfo ImportInfo(
+inline Info ImportInfo(
     const Info& I_Info);
 
-inline ReturnInfo ExportInfo(
+inline Info ExportInfo(
     const Info& I_Info);
 
 
-inline ReturnInfo IsConverged(const Info& I_Info);
+inline Info IsConverged(const Info& I_Info);
 
-inline ReturnInfo Run(const Info& I_Info);
+inline Info Run(const Info& I_Info);
 
 template<typename TFunctionType>
-inline ReturnInfo Register(
+inline Info Register(
     const Info& I_Info,
     TFunctionType rFunction);
 

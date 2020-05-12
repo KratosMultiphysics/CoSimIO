@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_INFO_H_INCLUDED
-#define CO_SIM_IO_INFO_H_INCLUDED
+#ifndef CO_SIM_IO_INFO_INCLUDED
+#define CO_SIM_IO_INFO_INCLUDED
 
 // System includes
 #include <string>
@@ -19,15 +19,10 @@
 #include <memory>
 #include <iostream>
 
-#ifdef CO_SIM_IO_USING_MPI
-#include "mpi.h"
-#endif // CO_SIM_IO_USING_MPI
-
 // Project includes
 #include "macros.hpp"
 
 namespace CoSimIO {
-
 namespace Internals {
 
 inline std::string Name(int dummy)         {return "int";}
@@ -71,11 +66,6 @@ public:
         return &mData;
     }
 
-    // void Print(const void* pSource, std::ostream& rOStream) const override
-    // {
-    //     rOStream << Name() << " : " << *static_cast<const TDataType* >(pSource) ;
-    // }
-
     std::shared_ptr<InfoDataBase> Clone() const override
     {
         return std::make_shared<InfoData<TDataType>>(TDataType());
@@ -118,7 +108,7 @@ public:
     virtual ~Info() = default;
 
     template<typename TDataType>
-    TDataType Get(const std::string& I_Key) const
+    const TDataType& Get(const std::string& I_Key) const
     {
         CO_SIM_IO_ERROR_IF_NOT(Has(I_Key)) << "Trying to get \"" << I_Key << "\" which does not exist!" << std::endl;
         const auto& r_val = mOptions.at(I_Key);
@@ -214,7 +204,6 @@ public:
     {
         rOStream << "CoSimIO-Info; containing " << Size() << " entries\n";
 
-        // TODO maybe make this to loop alphabetically (otherwise order is random)
         for (const auto& r_pair: mOptions) {
             rOStream << "  name: " << r_pair.first << " | " << *(r_pair.second) << std::endl;
         }
@@ -233,37 +222,6 @@ inline std::ostream & operator <<(
     return rOStream;
 }
 
-
-class ConnectionSettings : public Info
-{
-public:
-    // TODO set defaults in constructor
-
-    // int GetEchoLevel() const {return mEchoLevel;}
-    // void SetEchoLevel(const int EchoLevel) {mEchoLevel = EchoLevel;}
-
-    // int GetNumberOfProcessors() const {return mNumberOfProcessors;}
-    // void SetNumberOfProcessors(const int NumberOfProcessors) {mNumberOfProcessors = NumberOfProcessors;}
-
-    #ifdef CO_SIM_IO_USING_MPI
-    MPI_Comm GetMpiComm() const {return mMpiComm;}
-    void SetMpiComm(const MPI_Comm MpiComm) {mMpiComm = MpiComm;}
-    #endif // CO_SIM_IO_USING_MPI
-
-private:
-    // int mEchoLevel = 0;
-    // int mNumberOfProcessors = 1;
-
-    #ifdef CO_SIM_IO_USING_MPI
-    MPI_Comm mMpiComm = nullptr;
-    #endif // CO_SIM_IO_USING_MPI
-
-    // TODO add version of Solver
-};
-
-class ReturnInfo : public Info
-{ };
-
 } // namespace CoSimIO
 
-#endif // CO_SIM_IO_INFO_H_INCLUDED
+#endif // CO_SIM_IO_INFO_INCLUDED

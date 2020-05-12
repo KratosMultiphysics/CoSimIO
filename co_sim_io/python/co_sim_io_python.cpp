@@ -30,13 +30,13 @@
 namespace CoSimIO_Py_Wrappers {
 
 using ImportMeshReturnType = std::tuple<
-    CoSimIO::ReturnInfo,
+    CoSimIO::Info,
     std::vector<double>,
     std::vector<int>,
     std::vector<int>>;
 
 using ImportDataReturnType = std::tuple<
-    CoSimIO::ReturnInfo,
+    CoSimIO::Info,
     std::vector<double>>;
 
 ImportMeshReturnType ImportMesh(const CoSimIO::Info& I_Info)
@@ -45,16 +45,16 @@ ImportMeshReturnType ImportMesh(const CoSimIO::Info& I_Info)
     std::vector<int> element_connectivities;
     std::vector<int> element_types;
 
-    auto ret_info = CoSimIO::ImportMesh(
+    auto info = CoSimIO::ImportMesh(
         I_Info,
         nodal_coordinates,
         element_connectivities,
         element_types);
 
-    return std::make_tuple(ret_info, nodal_coordinates, element_connectivities, element_types);
+    return std::make_tuple(info, nodal_coordinates, element_connectivities, element_types);
 }
 
-CoSimIO::ReturnInfo ExportMesh(
+CoSimIO::Info ExportMesh(
     const CoSimIO::Info& I_Info,
     std::vector<double>& rNodalCoordinates,
     std::vector<int>& rElementConnectivities,
@@ -72,14 +72,14 @@ ImportDataReturnType ImportData(
 {
     std::vector<double> values;
 
-    auto ret_info = CoSimIO::ImportData(
+    auto info = CoSimIO::ImportData(
         I_Info,
         values);
 
-    return std::make_tuple(ret_info, values);
+    return std::make_tuple(info, values);
 }
 
-CoSimIO::ReturnInfo ExportData(
+CoSimIO::Info ExportData(
     const CoSimIO::Info& I_Info,
     std::vector<double>& rValues)
 {
@@ -125,13 +125,6 @@ PYBIND11_MODULE(CoSimIO, m)
         .def("__str__",   CoSimIO_Py_Wrappers::PrintObject<CoSimIO::Info>);
         ;
 
-    py::class_<CoSimIO::ReturnInfo, CoSimIO::Info>(m,"ReturnInfo")
-        .def(py::init<>());
-
-    py::class_<CoSimIO::ConnectionSettings, CoSimIO::Info>(m,"ConnectionSettings")
-        .def(py::init<>());
-
-
 
     m.def("Connect", &CoSimIO::Connect);
     m.def("Disconnect", &CoSimIO::Disconnect);
@@ -149,7 +142,7 @@ PYBIND11_MODULE(CoSimIO, m)
 
     m.def("Register", [](
         const CoSimIO::Info& I_Info,
-        std::function<CoSimIO::ReturnInfo(const CoSimIO::Info&)> FunctionPointer)
+        std::function<CoSimIO::Info(const CoSimIO::Info&)> FunctionPointer)
         { return CoSimIO::Register(I_Info, FunctionPointer); } );
 
     py::enum_<CoSimIO::ConnectionStatus>(m,"ConnectionStatus")
