@@ -42,6 +42,15 @@ enum class ControlSignal
     ExportData,
 };
 
+enum ConnectionStatus
+{
+    NotConnected,
+    Connected,
+    Disconnected,
+    ConnectionError,
+    DisconnectionError
+};
+
 } //namespace CoSimIO
 
 #endif // CO_SIM_IO_DEFINE_H_INCLUDED

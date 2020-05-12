@@ -13,7 +13,12 @@
 # python imports
 import unittest, sys, os
 
+from testing_utilities import IsOptionEnabled
+
 if __name__ == '__main__':
+    if not IsOptionEnabled("BUILD_PYTHON"):
+        sys.exit(0)
+
     verbosity = 0
     if len(sys.argv) == 2: # verbosity lvl was passed
         verbosity = int(sys.argv[1])

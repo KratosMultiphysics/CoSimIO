@@ -1,10 +1,5 @@
-project(CoSimIOTesting C CXX)
-cmake_minimum_required (VERSION 2.8.6)
-
 include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io )
 include_directories( ${CMAKE_SOURCE_DIR}/external_libraries )
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
-
 
 ### Test runner for tests of CoSimIO
 file( GLOB_RECURSE CO_SIM_IO_TEST_FILES co_sim_io/*.cpp)
@@ -20,21 +15,27 @@ add_test(co_sim_io_tests test_runner_co_sim_io_tests)
 
 
 ### C++ tests ###
-function(add_cpp_test TEST_SOURCE_FILE)
+function(add_cpp_executable TEST_SOURCE_FILE)
     get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
     string(REGEX REPLACE ".cpp" "_cpp_test" TEST_NAME ${TEST_FILENAME})
     message(STATUS  "adding ${TEST_NAME} ")
     add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
-    add_test(${TEST_NAME} ${TEST_NAME})
-    install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin")
+    install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_cpp")
 endfunction()
 
 file(GLOB cpp_test_files "solver_integration/cpp_solver/*.cpp")
 
 foreach(cpp_test_file ${cpp_test_files})
-  add_cpp_test(${cpp_test_file})
+add_cpp_executable(${cpp_test_file})
 endforeach(cpp_test_file)
 
+# Todo: to be changed with python to be corssplatform
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run.sh  $1 & $2)
+
+add_test(hello_cpp_test hello_cpp_test)
+add_test(NAME connect_disconnect_cpp_test COMMAND connect_disconnect_cpp_test & connect_disconnect_cpp_test)
+add_test(NAME import_export_data_cpp_test COMMAND bash run.sh $<TARGET_FILE:export_data_cpp_test>  $<TARGET_FILE:import_data_cpp_test>)
+add_test(NAME import_export_mesh_cpp_test COMMAND bash run.sh $<TARGET_FILE:export_mesh_cpp_test>  $<TARGET_FILE:import_mesh_cpp_test>)
 
 ### C tests ###
 if(BUILD_C)

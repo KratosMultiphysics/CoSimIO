@@ -25,6 +25,10 @@ typedef struct CoSimIO_Info
     void* PtrCppInfo;
 } CoSimIO_Info;
 
+typedef struct CoSimIO_ReturnInfo
+{
+    void* PtrCppInfo;
+} CoSimIO_ReturnInfo;
 
 typedef struct CoSimIO_ReturnInfo
 {
