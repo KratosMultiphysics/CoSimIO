@@ -19,13 +19,15 @@ message("")
 
 enable_testing()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
 if(MSVC)
     # required such that "__cplusplus" is set to the correct value
     # see https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
     # Note: min value is c++14 => 201402L (c++11 does not exist, will also output 201402L)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus") # /WX
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /WX ")
+
+    set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -36,9 +38,6 @@ endif()
 # clean the bin directory
 file(REMOVE_RECURSE bin)
 
-# always build the C++ simple solver
-add_subdirectory(examples/simple_solver/cpp)
-
 if (BUILD_C)
     add_subdirectory(co_sim_io/c)
 endif()
@@ -47,8 +46,13 @@ if (BUILD_PYTHON)
     add_subdirectory(co_sim_io/python)
 endif()
 
+if (BUILD_FORTRAN)
+    add_subdirectory(co_sim_io/fortran)
+endif()
+
+add_subdirectory(examples)
+
 if (BUILD_TESTS)
-    add_subdirectory(examples)
     add_subdirectory(tests)
 endif()
 

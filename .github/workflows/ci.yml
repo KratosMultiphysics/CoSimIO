@@ -36,16 +36,16 @@ jobs:
         cmake -H"." -B"build" ${cmake_flags}
         cmake --build "build" --target install
 
-    - name: Run tests
-      shell: bash
-      run: |
-        export PYTHONPATH=${GITHUB_WORKSPACE}/bin
-        cd tests
-        # TODO delete build dir to make sure the linking etc works correctly?
-        python run_all_tests.py
-
     - name: Running tests (Ctest)
       shell: bash
       run: |
         cd build
         ctest -C Debug
+
+    - name: Run tests
+      shell: bash
+      run: |
+        export PYTHONPATH=${GITHUB_WORKSPACE}/bin
+        cd tests
+        # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
+        python run_all_tests.py
