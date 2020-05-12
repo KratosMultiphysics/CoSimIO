@@ -111,7 +111,38 @@ void FinalizeSolutionStep()
     solver_print(2) << "FinalizeSolutionStep" << std::endl;
 }
 
-void ImportMesh(const std::string& rCommName, const std::string& rIdentifier)
+
+CoSimIO::ReturnInfo AdvanceInTime_CoSimIO(const CoSimIO::Info& I_Info)
+{
+    const double current_time = I_Info.Get<double>("current_time");
+    const double new_time = AdvanceInTime(current_time);
+
+    CoSimIO::ReturnInfo ret_info;
+    ret_info.Set<double>("new_time", new_time);
+
+    return ret_info;
+}
+
+CoSimIO::ReturnInfo InitializeSolutionStep_CoSimIO(const CoSimIO::Info& I_Info)
+{
+    InitializeSolutionStep();
+    return CoSimIO::ReturnInfo();
+}
+
+CoSimIO::ReturnInfo SolveSolutionStep_CoSimIO(const CoSimIO::Info& I_Info)
+{
+    SolveSolutionStep();
+    return CoSimIO::ReturnInfo();
+}
+
+CoSimIO::ReturnInfo FinalizeSolutionStep_CoSimIO(const CoSimIO::Info& I_Info)
+{
+    FinalizeSolutionStep();
+    return CoSimIO::ReturnInfo();
+}
+
+
+CoSimIO::ReturnInfo ImportMesh_CoSimIO(const CoSimIO::Info& I_Info)
 {
     // importing the mesh, but doing nothing with it to not overcomplicate this example
     std::vector<double> incoming_nodal_coords;
@@ -119,44 +150,81 @@ void ImportMesh(const std::string& rCommName, const std::string& rIdentifier)
     std::vector<int> incoming_elem_types;
 
     solver_print(3) << "\tBefore Importing Mesh from CoSim" << std::endl;
-    CoSimIO::ImportMesh(rCommName, rIdentifier, incoming_nodal_coords, incoming_elem_connectivities, incoming_elem_types);
+    CoSimIO::ImportMesh(I_Info, incoming_nodal_coords, incoming_elem_connectivities, incoming_elem_types);
     solver_print(3) << "\tAfter Importing Mesh from CoSim" << std::endl;
 
     // Now copy the imported mesh to the solver-internal data structure to use it ...
     // "rIdentifier" is used to identify which mesh was imported
+    return CoSimIO::ReturnInfo();
 }
 
-void ExportMesh(const std::string& rCommName, const std::string& rIdentifier)
+CoSimIO::ReturnInfo ExportMesh_CoSimIO(const CoSimIO::Info& I_Info)
 {
     // usually use "rIdentifier" to select which mesh to export
     // (and then copy from solver-specific data structure to buffer which is passed to the IO)
     // in this example this is not necessary since we only export one mesh
     solver_print(3) << "\tBefore Exporting Mesh from CoSim" << std::endl;
-    CoSimIO::ExportMesh(rCommName, rIdentifier, sNodalCoords, sElementConnectivities, sElementTypes);
+    CoSimIO::ExportMesh(I_Info, sNodalCoords, sElementConnectivities, sElementTypes);
     solver_print(3) << "\tAfter Exporting Mesh from CoSim" << std::endl;
+    return CoSimIO::ReturnInfo();
 }
 
-void ImportDataFromCoSim(const std::string& rCommName, const std::string& rIdentifier)
+CoSimIO::ReturnInfo ImportData_CoSimIO(const CoSimIO::Info& I_Info)
 {
     // usually use "rIdentifier" to select which data to import
     // (and then copy from solver-specific data structure to buffer which is passed to the IO)
     // in this example this is not necessary since we always import "field_pressure"
 
     solver_print(3) << "\tBefore Importing Data from CoSim" << std::endl;
-    CoSimIO::ImportData(rCommName, rIdentifier, sFieldPressure);
+    CoSimIO::ImportData(I_Info, sFieldPressure);
     solver_print(3) << "\tAfter Importing Data from CoSim" << std::endl;
+    return CoSimIO::ReturnInfo();
 }
 
-void ExportDataToCoSim(const std::string& rCommName, const std::string& rIdentifier)
+CoSimIO::ReturnInfo ExportData_CoSimIO(const CoSimIO::Info& I_Info)
 {
     // usually use "rIdentifier" to select which data to export
     // (and then copy from solver-specific data structure to buffer which is passed to the IO)
     // in this example this is not necessary since we always export "field_velocity"
 
     solver_print(3) << "\tBefore Importing Data from CoSim" << std::endl;
-    CoSimIO::ExportData(rCommName, rIdentifier, sFieldVelocity);
+    CoSimIO::ExportData(I_Info, sFieldVelocity);
     solver_print(3) << "\tAfter Importing Data from CoSim" << std::endl;
+    return CoSimIO::ReturnInfo();
 }
+
+void ImportMesh(const std::string& rCommName, const std::string& rIdentifier)
+{
+    CoSimIO::Info info;
+    info.Set("identifier", rIdentifier);
+    info.Set("connection_name", rCommName);
+    ImportMesh_CoSimIO(info);
+}
+
+void ExportMesh(const std::string& rCommName, const std::string& rIdentifier)
+{
+    CoSimIO::Info info;
+    info.Set("identifier", rIdentifier);
+    info.Set("connection_name", rCommName);
+    ExportMesh_CoSimIO(info);
+}
+
+void ImportData(const std::string& rCommName, const std::string& rIdentifier)
+{
+    CoSimIO::Info info;
+    info.Set("identifier", rIdentifier);
+    info.Set("connection_name", rCommName);
+    ImportData_CoSimIO(info);
+}
+
+void ExportData(const std::string& rCommName, const std::string& rIdentifier)
+{
+    CoSimIO::Info info;
+    info.Set("identifier", rIdentifier);
+    info.Set("connection_name", rCommName);
+    ExportData_CoSimIO(info);
+}
+
 
 void RunSolutionLoop()
 {
@@ -174,37 +242,47 @@ void RunSolutionLoopWithWeakCoupling()
 {
     // Note the following only works with one coupling interface, requires more effort to make it work with multiple coupling interfaces.
 
-    const std::string comm_name("external_simple_solver");
+    const std::string conn_name("external_simple_solver");
 
-    CoSimIO::Connect(comm_name, "unspecified");
+    CoSimIO::ConnectionSettings conn_settings;
+    conn_settings.Set<std::string>("connection_name", conn_name);
 
-    // ImportMesh(comm_name, "interface_mesh_quads");
-    ExportMesh(comm_name, "interface_mesh_tri");
+    CoSimIO::Connect(conn_settings);
+
+    // ImportMesh(conn_name, "interface_mesh_quads");
+    ExportMesh(conn_name, "interface_mesh_tri");
 
     double current_time = 0.0;
     while (current_time < sEndTime) {
         current_time = AdvanceInTime(current_time);
         InitializeSolutionStep();
 
-        ImportDataFromCoSim(comm_name, "field_pressure");
+        ImportData(conn_name, "field_pressure");
         SolveSolutionStep();
-        ExportDataToCoSim(comm_name, "field_velocity");
+        ExportData(conn_name, "field_velocity");
 
         FinalizeSolutionStep();
         std::cout << std::endl;
     }
 
-    CoSimIO::Disconnect(comm_name);
+    CoSimIO::Info info;
+    info.Set<std::string>("connection_name", conn_name);
+    CoSimIO::Disconnect(info);
 }
 
 void RunSolutionLoopWithStrongCoupling()
 {
-    const std::string comm_name("external_simple_solver");
+    const std::string conn_name("external_simple_solver");
 
-    CoSimIO::Connect(comm_name, "unspecified");
+    CoSimIO::Info info;
+    info.Set<std::string>("connection_name", conn_name);
+    CoSimIO::ConnectionSettings conn_settings;
+    conn_settings.Set<std::string>("connection_name", conn_name);
 
-    // ImportMesh(comm_name, "interface_mesh_quads");
-    ExportMesh(comm_name, "interface_mesh_tri");
+    CoSimIO::Connect(conn_settings);
+
+    // ImportMesh(conn_name, "interface_mesh_quads");
+    ExportMesh(conn_name, "interface_mesh_tri");
 
     double current_time = 0.0;
     while (current_time < sEndTime) {
@@ -212,45 +290,60 @@ void RunSolutionLoopWithStrongCoupling()
         InitializeSolutionStep();
 
         while(true) {
-            ImportDataFromCoSim(comm_name, "field_pressure");
+            ImportData(conn_name, "field_pressure");
             SolveSolutionStep();
-            ExportDataToCoSim(comm_name, "field_velocity");
+            ExportData(conn_name, "field_velocity");
 
-            if (CoSimIO::IsConverged(comm_name)) {break;}
+            auto ret_info = CoSimIO::IsConverged(info);
+            if (ret_info.Get<bool>("is_converged")) {break;}
         }
 
         FinalizeSolutionStep();
         std::cout << std::endl;
     }
 
-    CoSimIO::Disconnect(comm_name);
-}
-
-void FctWithCorrectSignature(CoSimIO::Info& rInfo)
-{
-
+    CoSimIO::Disconnect(info);
 }
 
 void RunSolutionCoSimulationOrchestrated()
 {
-    const std::string comm_name("external_simple_solver");
+    const std::string conn_name("external_simple_solver");
 
-    CoSimIO::Connect(comm_name, "unspecified");
+    CoSimIO::ConnectionSettings conn_settings;
+    conn_settings.Set<std::string>("connection_name", conn_name);
 
-    CoSimIO::Register(comm_name, "AdvanceInTime",          &FctWithCorrectSignature);
-    // CoSimIO::Register(comm_name, "AdvanceInTime",          &AdvanceInTime);
-    // CoSimIO::Register(comm_name, "InitializeSolutionStep", &InitializeSolutionStep);
-    // CoSimIO::Register(comm_name, "SolveSolutionStep",      &SolveSolutionStep);
-    // CoSimIO::Register(comm_name, "FinalizeSolutionStep",   &FinalizeSolutionStep);
+    CoSimIO::Connect(conn_settings);
 
-    // CoSimIO::Register(comm_name, "ImportData",     &ImportDataFromCoSim);
-    // CoSimIO::Register(comm_name, "ExportData",     &ExportDataToCoSim);
-    // CoSimIO::Register(comm_name, "ImportMesh",     &ImportMesh);
-    // CoSimIO::Register(comm_name, "ExportMesh",     &ExportMesh);
+    CoSimIO::Info info;
+    info.Set<std::string>("connection_name", conn_name);
 
-    CoSimIO::Run(comm_name);
+    info.Set<std::string>("function_name", "AdvanceInTime");
+    CoSimIO::Register(info, &AdvanceInTime_CoSimIO);
 
-    CoSimIO::Disconnect(comm_name);
+    info.Set<std::string>("function_name", "InitializeSolutionStep");
+    CoSimIO::Register(info, &InitializeSolutionStep_CoSimIO);
+
+    info.Set<std::string>("function_name", "SolveSolutionStep");
+    CoSimIO::Register(info, &SolveSolutionStep_CoSimIO);
+
+    info.Set<std::string>("function_name", "FinalizeSolutionStep");
+    CoSimIO::Register(info, &FinalizeSolutionStep_CoSimIO);
+
+    info.Set<std::string>("function_name", "ImportData");
+    CoSimIO::Register(info, &ImportData_CoSimIO);
+
+    info.Set<std::string>("function_name", "ExportData");
+    CoSimIO::Register(info, &ExportData_CoSimIO);
+
+    info.Set<std::string>("function_name", "ImportMesh");
+    CoSimIO::Register(info, &ImportMesh_CoSimIO);
+
+    info.Set<std::string>("function_name", "ExportMesh");
+    CoSimIO::Register(info, &ExportMesh_CoSimIO);
+
+    CoSimIO::Run(info);
+
+    CoSimIO::Disconnect(info);
 }
 
 } // helpers namespace

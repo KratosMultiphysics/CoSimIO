@@ -97,16 +97,14 @@ static int GetNumNodesForVtkCellType(const int VtkCellType)
 class FileCommunication : public Communication
 {
 public:
-    explicit FileCommunication(const std::string& rName, SettingsType& rSettings, const bool IsConnectionMaster)
-        : Communication(rName, rSettings, IsConnectionMaster)
+    explicit FileCommunication(const std::string& rName, const ConnectionSettings& I_Settings, const bool IsConnectionMaster)
+        : Communication(rName, I_Settings, IsConnectionMaster)
     {
-        const SettingsType default_settings {
-            {"use_folder_for_communication" , "0"}
-        };
-        Internals::AddMissingSettings(default_settings, mrSettings);
+        if (I_Settings.Has("use_folder_for_communication")) {
+            mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication");
+        }
 
         mCommFolder = ".CoSimIOFileComm_"+rName;
-        mCommInFolder = (mrSettings.at("use_folder_for_communication") == "1");
 
         #ifndef CO_SIM_IO_FILESYSTEM_AVAILABLE
         CO_SIM_IO_ERROR_IF(mCommInFolder) << "Communication is a folder can only be used if std::filesystem (C++17) is available" << std::endl;

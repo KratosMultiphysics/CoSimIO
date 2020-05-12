@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_C_H_INCLUDED
-#define CO_SIM_IO_C_H_INCLUDED
+#ifndef CO_SIM_IO_C_INCLUDED
+#define CO_SIM_IO_C_INCLUDED
 
 // C Interface for CoSimulation
 // see "co_sim_io.hpp"
@@ -22,37 +22,32 @@
 extern "C" { // Define extern C if C++ compiler is used
 #endif
 
-CoSimIO_Info CoSimIO_Connect(
-    const char* pConnectionName,
-    const char* pSettingsFileName);
+CoSimIO_ReturnInfo CoSimIO_Connect(
+    const CoSimIO_ConnectionSettings* I_Settings);
 
-CoSimIO_Info CoSimIO_Disconnect(
-    const char* pConnectionName);
+CoSimIO_ReturnInfo CoSimIO_Disconnect(
+    const CoSimIO_Info* I_Info);
 
-CoSimIO_Info CoSimIO_ImportData(
-    const char* pConnectionName,
-    const char* pIdentifier,
+CoSimIO_ReturnInfo CoSimIO_ImportData(
+    const CoSimIO_Info* I_Info,
     int* pSize,
     double** ppData);
 
-CoSimIO_Info CoSimIO_ExportData(
-    const char* pConnectionName,
-    const char* pIdentifier,
+CoSimIO_ReturnInfo CoSimIO_ExportData(
+    const CoSimIO_Info* I_Info,
     const int I_Size,
     const double** pData);
 
-CoSimIO_Info CoSimIO_ImportMesh(
-    const char* I_ConnectionName,
-    const char* pIdentifier,
+CoSimIO_ReturnInfo CoSimIO_ImportMesh(
+    const CoSimIO_Info* I_Info,
     int* pNumberOfNodes,
     int* pNumberOfElements,
     double** O_NodalCoordinates,
     int** ppElementConnectivities,
     int** ppElementTypes);
 
-CoSimIO_Info CoSimIO_ExportMesh(
-    const char* pConnectionName,
-    const char* pIdentifier,
+CoSimIO_ReturnInfo CoSimIO_ExportMesh(
+    const CoSimIO_Info* I_Info,
     const int NumberOfNodes,
     const int NumberOfElements,
     const double** pNodalCoordinates,
@@ -60,22 +55,31 @@ CoSimIO_Info CoSimIO_ExportMesh(
     const int** pElementTypes);
 
 
-CoSimIO_Info CoSimIO_ImportInfo(
-    const char* pConnectionName,
-    CoSimIO_Info* pSolutionInfo);
+CoSimIO_ReturnInfo CoSimIO_ImportInfo(
+    const CoSimIO_Info* I_Info);
 
-CoSimIO_Info CoSimIO_ExportInfo(
-    const char* pConnectionName,
-    const CoSimIO_Info SolutionInfo);
+CoSimIO_ReturnInfo CoSimIO_ExportInfo(
+    const CoSimIO_Info* I_Info);
 
-CoSimIO_Info CoSimIO_Register(
-    const char* I_ConnectionName,
-    const char* I_FunctionName,
-    double (*FunctionPointer)(CoSimIO_Info*));
+CoSimIO_ReturnInfo CoSimIO_Register(
+    const CoSimIO_Info* I_Info,
+    CoSimIO_ReturnInfo (*FunctionPointer)(const CoSimIO_Info*));
 
-CoSimIO_Info CoSimIO_Run(const char* I_ConnectionName);
+CoSimIO_ReturnInfo CoSimIO_Run(const CoSimIO_Info* I_Info);
 
-int CoSimIO_IsConverged(const char* I_ConnectionName);
+CoSimIO_ReturnInfo CoSimIO_IsConverged(const CoSimIO_Info* I_Info);
+
+
+
+
+
+
+
+
+
+
+
+
 
 // TODO refactor and move these functions to separate file, since they are only used in the fortran interface
 // The following functions are intended to only be used from Fortran
@@ -88,4 +92,4 @@ void _FreeMemory(void** ppData);
 }
 #endif
 
-#endif // CO_SIM_IO_C_H_INCLUDED
+#endif // CO_SIM_IO_C_INCLUDED
