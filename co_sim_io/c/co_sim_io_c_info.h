@@ -25,28 +25,10 @@ typedef struct CoSimIO_Info
     void* PtrCppInfo;
 } CoSimIO_Info;
 
-typedef struct CoSimIO_ReturnInfo
-{
-    void* PtrCppInfo;
-} CoSimIO_ReturnInfo;
-
-typedef struct CoSimIO_ReturnInfo
-{
-    void* PtrCppInfo;
-} CoSimIO_ReturnInfo;
-
-
-typedef struct CoSimIO_ConnectionSettings
-{
-    void* PtrCppInfo;
-} CoSimIO_ConnectionSettings;
-
 
 CoSimIO_Info CoSimIO_CreateInfo();
-CoSimIO_ReturnInfo CoSimIO_CreateReturnInfo();
-CoSimIO_ConnectionSettings CoSimIO_CreateConnectionSettings();
 
-int CoSimIO_FreeInfo(void* I_Info);
+int CoSimIO_FreeInfo(CoSimIO_Info I_Info);
 
 int CoSimIO_Info_Has(const CoSimIO_Info I_Info, const char* I_Key);
 
