@@ -163,12 +163,16 @@ CoSimIO_Info CoSimIO_CreateInfo()
 
 CoSimIO_ReturnInfo CoSimIO_CreateReturnInfo()
 {
-
+    CoSimIO_ReturnInfo info;
+    info.PtrCppInfo = new CoSimIO::ReturnInfo(); // TODO is this correct?
+    return info;
 }
 
 CoSimIO_ConnectionSettings CoSimIO_CreateConnectionSettings()
 {
-
+    CoSimIO_ConnectionSettings info;
+    info.PtrCppInfo = new CoSimIO::ConnectionSettings(); // TODO is this correct?
+    return info;
 }
 
 int CoSimIO_FreeInfo(void* I_Info)
