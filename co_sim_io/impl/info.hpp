@@ -108,7 +108,7 @@ public:
     virtual ~Info() = default;
 
     template<typename TDataType>
-    TDataType Get(const std::string& I_Key) const
+    const TDataType& Get(const std::string& I_Key) const
     {
         CO_SIM_IO_ERROR_IF_NOT(Has(I_Key)) << "Trying to get \"" << I_Key << "\" which does not exist!" << std::endl;
         const auto& r_val = mOptions.at(I_Key);
