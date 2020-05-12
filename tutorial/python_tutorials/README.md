@@ -13,7 +13,7 @@ git clone https://github.com/KratosMultiphysics/CoSimIO.git
 
 
 ## Tutorial 1: Building
-The Python interface is located in [co_sim_io/python](https://github.com/KratosMultiphysics/CoSimIO/tree/master/co_sim_io/python) folder of the repository. It depends to the pybind11 library which is provided in the [expternal_libraries/pybind11](https://github.com/KratosMultiphysics/CoSimIO/tree/master/external_libraries/pybind11) folder of the repo.
+The Python interface is located in [co_sim_io/python](https://github.com/KratosMultiphysics/CoSimIO/tree/master/co_sim_io/python) folder of the repository. It depends to the [pybind11 library](https://github.com/pybind/pybind11) which is provided in the [expternal_libraries/pybind11](https://github.com/KratosMultiphysics/CoSimIO/tree/master/external_libraries/pybind11) folder of this repo.
 
 Using cmake the compilation is straightforward. Just calling the following command from the CoSimIO root:
 
@@ -59,7 +59,7 @@ First of all, you may notice that `Connect()` method takes an `Info` as its argu
 ```python
 settings = CoSimIO.Info()
 settings.SetString("connection_name", "test_connection") # This must be unique for each connection between two solvers
-settings.SetString("solver_name", "my_solver") # Not to be confused with the connection name. 
+settings.SetString("solver_name", "my_solver") # Not to be confused with the connection name.
 settings.SetInt("echo_level", 1)
 settings.SetString("solver_version", "1.25")
 ```
@@ -76,7 +76,7 @@ import CoSimIO
 
 settings = CoSimIO.Info()
 settings.SetString("connection_name", "test_connection") # This should be unique for each connection between two solvers
-settings.SetString("solver_name", "my_solver") # Not to be confused with the connection name. 
+settings.SetString("solver_name", "my_solver") # Not to be confused with the connection name.
 settings.SetInt("echo_level", 1)
 settings.SetString("solver_version", "1.25")
 
