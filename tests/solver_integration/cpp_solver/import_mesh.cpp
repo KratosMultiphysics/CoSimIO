@@ -15,15 +15,16 @@
 
 #define COSIMIO_CHECK_EQUAL(a, b)                                \
     if (a != b) {                                                \
-        std::cout << "in line " << __LINE__ << " : " << a   \
-                  << " is not equal to " << b << std::endl; \
+        std::cout << "in line " << __LINE__ << " : " << a        \
+                  << " is not equal to " << b << std::endl;      \
         return 1;                                                \
     }
 
-int main(){
+int main()
+{
     CoSimIO::ConnectionSettings settings;
     settings.Set("connection_name", "test_connection"); // This should be unique for each connection between two solvers
-    settings.Set("solver_name", "solver_1"); // Not to be confused with the connection name. 
+    settings.Set("solver_name", "solver_1"); // Not to be confused with the connection name.
     settings.Set("echo_level", 1);
     settings.Set("solver_version", "1.25");
 
@@ -38,7 +39,7 @@ int main(){
         4.0, 0.0, 1.7,  /*4*/
         6.0, 0.0, 1.8   /*5*/
     };
-    
+
     std::vector<int> expected_elements_connectivities = {
         0, 1, 2, /*1*/
         1, 3, 2, /*2*/
@@ -55,7 +56,7 @@ int main(){
     std::vector<double> nodal_coordinates;
     std::vector<int> elements_connectivities;
     std::vector<int> elements_types;
-    
+
     return_info = CoSimIO::ImportMesh(info,nodal_coordinates, elements_connectivities, elements_types);
 
     COSIMIO_CHECK_EQUAL(nodal_coordinates.size(), expected_nodal_coordinates.size());
@@ -71,6 +72,6 @@ int main(){
 
     return_info = CoSimIO::Disconnect(settings); // disconnect afterwards
     COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), 0);
-    
+
     return 0;
 }
