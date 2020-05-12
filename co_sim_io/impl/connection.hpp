@@ -53,17 +53,17 @@ public:
     Info Connect()
     {
         const bool is_connected = mpComm->Connect();
-        Info ret_info; // TODO in the future probably it makes more sense that the mpComm can directly return the Info to potentionally populate it e.g. with error codes
-        ret_info.Set<int>("connection_status", ConnectionStatus::Connected);
-        return ret_info;
+        Info info; // TODO in the future probably it makes more sense that the mpComm can directly return the Info to potentionally populate it e.g. with error codes
+        info.Set<int>("connection_status", ConnectionStatus::Connected);
+        return info;
     }
 
     Info Disconnect()
     {
         const bool is_disconnected = mpComm->Disconnect();
-        Info ret_info; // TODO in the future probably it makes more sense that the mpComm can directly return the Info to potentionally populate it e.g. with error codes
-        ret_info.Set<int>("connection_status", ConnectionStatus::Disconnected);
-        return ret_info;
+        Info info; // TODO in the future probably it makes more sense that the mpComm can directly return the Info to potentionally populate it e.g. with error codes
+        info.Set<int>("connection_status", ConnectionStatus::Disconnected);
+        return info;
     }
 
     Info SendControlSignal(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal)

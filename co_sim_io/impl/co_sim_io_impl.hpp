@@ -63,13 +63,13 @@ inline Info Hello()
     std::cout << "    Patch: " << GetPatchVersion() << "\n";
     std::cout << "For more information please visit \"https://github.com/KratosMultiphysics/CoSimIO\"" << std::endl;
 
-    Info ret_info;
-    ret_info.Set("major_version", GetMajorVersion());
-    ret_info.Set("minor_version", GetMinorVersion());
-    ret_info.Set("patch_version", GetPatchVersion());
+    Info info;
+    info.Set("major_version", GetMajorVersion());
+    info.Set("minor_version", GetMinorVersion());
+    info.Set("patch_version", GetPatchVersion());
     // TODO maybe add more things too here
 
-    return ret_info;
+    return info;
 }
 
 
@@ -89,10 +89,10 @@ inline Info Disconnect(const Info& I_Info)
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
     CO_SIM_IO_ERROR_IF_NOT(HasIO(connection_name)) << "Trying to disconnect connection \"" << connection_name << "\" which does not exist!" << std::endl;
 
-    auto ret_info = GetConnection(connection_name).Disconnect();
+    auto info = GetConnection(connection_name).Disconnect();
     s_co_sim_connections.erase(connection_name);
 
-    return ret_info; // TODO use this
+    return info; // TODO use this
 }
 
 // Version for C++, there this input is a std::vector, which we have to wrap before passing it on
@@ -246,8 +246,8 @@ inline Info Register(
 
     auto fct_callback = [I_FunctionPointer](const Info& I_Info)
     {
-        Info ret_info = I_FunctionPointer(I_Info);
-        return ret_info;
+        Info info = I_FunctionPointer(I_Info);
+        return info;
     };
 
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
@@ -266,8 +266,8 @@ inline Info Register(
 
     auto fct_callback = [I_FunctionPointer](const Info& I_Info)
     {
-        Info ret_info = I_FunctionPointer(I_Info);
-        return ret_info;
+        Info info = I_FunctionPointer(I_Info);
+        return info;
     };
 
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
