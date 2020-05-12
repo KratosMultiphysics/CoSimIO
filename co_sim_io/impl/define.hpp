@@ -39,10 +39,10 @@ enum class ControlSignal
     ImportMesh,
     ExportMesh,
     ImportData,
-    ExportData
+    ExportData,
 };
 
-enum class ConnectionStatus
+enum ConnectionStatus
 {
     NotConnected,
     Connected,
