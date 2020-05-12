@@ -182,7 +182,7 @@ int CoSimIO_Info_GetInt(const CoSimIO_Info I_Info, const char* I_Key)
 
 double CoSimIO_Info_GetDouble(const CoSimIO_Info I_Info, const char* I_Key)
 {
-    return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Get<int>(I_Key);
+    return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Get<double>(I_Key);
 }
 
 int CoSimIO_Info_GetBool(const CoSimIO_Info I_Info, const char* I_Key)
