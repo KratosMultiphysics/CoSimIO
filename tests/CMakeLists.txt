@@ -20,7 +20,7 @@ add_test(co_sim_io_tests test_runner_co_sim_io_tests)
 
 
 ### C++ tests ###
-function(add_cpp_test TEST_SOURCE_FILE)
+function(add_cpp_executable TEST_SOURCE_FILE)
     get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
     string(REGEX REPLACE ".cpp" "_cpp_test" TEST_NAME ${TEST_FILENAME})
     message(STATUS  "adding ${TEST_NAME} ")
