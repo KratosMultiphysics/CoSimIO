@@ -28,7 +28,7 @@ if(MSVC)
 elseif(${CMAKE_COMPILER_IS_GNUCXX})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wsuggest-override -Wignored-qualifiers")
 else() # assumed to be CLANG
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 endif()
 
 message("CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
