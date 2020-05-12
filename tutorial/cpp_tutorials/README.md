@@ -1,6 +1,6 @@
-# Tutorial for integrating the _CoSimIO_ using CPP interface
+# Tutorial for integrating the _CoSimIO_ using C++ interface
 
-This tutorial helps you through to integrate the _CoSimIO_ into a solver using the CPP interface.
+This tutorial helps you through to integrate the _CoSimIO_ into a solver using the C++ interface.
 
 ## What you need
 - Downloading the _CosimIO_ from the repository:
