@@ -153,4 +153,11 @@ PYBIND11_MODULE(CoSimIO, m)
         .value("ConnectionError", CoSimIO::ConnectionStatus::ConnectionError)
         .value("DisconnectionError", CoSimIO::ConnectionStatus::DisconnectionError)
         ;
+
+
+    std::stringstream version_stream;
+    version_stream << CoSimIO::GetMajorVersion() << "."
+                   << CoSimIO::GetMinorVersion() << "."
+                   << CoSimIO::GetPatchVersion();
+    m.attr("__version__") = version_stream.str();
 }
