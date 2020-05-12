@@ -18,6 +18,7 @@
 #include <map>
 #include <memory>
 #include <iostream>
+#include <type_traits>
 
 // Project includes
 #include "macros.hpp"
