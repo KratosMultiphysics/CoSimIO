@@ -39,7 +39,16 @@ enum class ControlSignal
     ImportMesh,
     ExportMesh,
     ImportData,
-    ExportData,
+    ExportData
+};
+
+enum class ConnectionStatus
+{
+    NotConnected,
+    Connected,
+    Disconnected,
+    ConnectionError,
+    DisconnectionError
 };
 
 } //namespace CoSimIO
