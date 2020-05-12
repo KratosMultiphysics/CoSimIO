@@ -145,6 +145,11 @@ public:
         mOptions[I_Key] = std::make_shared<Internals::InfoData<TDataType>>(I_Value);
     }
 
+    void Set(const std::string& I_Key, const char * I_Value)
+    {
+       Set(I_Key, std::string(I_Value));
+    }
+
     void Erase(const std::string& I_Key)
     {
         mOptions.erase(I_Key);
