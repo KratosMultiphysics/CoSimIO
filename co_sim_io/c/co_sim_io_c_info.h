@@ -14,12 +14,6 @@
 #define CO_SIM_IO_C_INFO_INCLUDED
 
 
-// #define CreateNewGetValue(type) \
-// type ##type,  const char* Key)
-
-// #define DefineNewGetValue(type) \
-// type GetValue##type(char* label, CoSimIO_TransferInfo);
-
 typedef struct CoSimIO_Info
 {
     void* PtrCppInfo;
