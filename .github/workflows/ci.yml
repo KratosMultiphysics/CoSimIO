@@ -32,7 +32,7 @@ jobs:
         cmake_flags="-DBUILD_C=ON -DBUILD_PYTHON=ON"
 
         if [ ${{ matrix.os }} == windows-latest ]; then # MSVC
-          cmake_flags="${cmake_flags} -DCMAKE_CXX_FLAGS=/WX"
+          cmake_flags="${cmake_flags}"
         elif [ ${{ matrix.os }} = ubuntu-latest ]; then # GCC
           cmake_flags="${cmake_flags} -DBUILD_FORTRAN=OFF -DCMAKE_CXX_FLAGS=-Werror"
         elif [ ${{ matrix.os }} = macOS-latest ]; then # CLANG
@@ -41,6 +41,8 @@ jobs:
           echo 'Unsupported OS: ${{ matrix.os }}'
           exit 1
         fi
+        
+        echo ${cmake_flags}
 
         cmake -H"." -B"build" ${cmake_flags}
         cmake --build "build" --target install
