@@ -16,29 +16,18 @@ extern "C" {
 }
 #include "../co_sim_io.hpp"
 
-// #define CreateGetValueInt(CoSimIO_Info CInfo, const char* Key)
-// {
-//     return static_cast<CoSimIO::SolutionInfo>(CInfo.cpp_info_ptr).GetValue<int>(Key);
-// }
-
-
 namespace {
-    CoSimIO_Info ConvertInfo(CoSimIO::Info yyy) {
-        CoSimIO_Info nnn;
-        return nnn;
+    // get C Info from C++ Info
+    CoSimIO_Info ConvertInfo(CoSimIO::Info I_Info) {
+        CoSimIO_Info info;
+        info.PtrCppInfo = new CoSimIO::Info(I_Info);
+        return info;
     }
 
-    CoSimIO::Info ConvertInfo(CoSimIO_Info yyy) {
-        CoSimIO::Info nnn;
-        return nnn;
+    // get C++ Info from C Info
+    CoSimIO::Info ConvertInfo(CoSimIO_Info I_Info) {
+        return CoSimIO::Info(*(static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)));
     }
-
-    int GetValueInt(CoSimIO_Info CInfo, const char* Key)
-    {
-        // return static_cast<CoSimIO::SolutionInfo>(CInfo.cpp_info_ptr).GetValue<int>(Key);
-        return 0;
-    }
-
 }
 
 
@@ -138,12 +127,12 @@ CoSimIO_Info CoSimIO_Register(
 
 CoSimIO_Info CoSimIO_Run(const CoSimIO_Info I_Info)
 {
-    // return ConvertInfo(CoSimIO::Run(pConnectionName));
+    return ConvertInfo(CoSimIO::Run(ConvertInfo(I_Info)));
 }
 
 CoSimIO_Info CoSimIO_IsConverged(const CoSimIO_Info I_Info)
 {
-    // return CoSimIO::IsConverged(pConnectionName);
+    return ConvertInfo(CoSimIO::IsConverged(ConvertInfo(I_Info)));
 }
 
 
