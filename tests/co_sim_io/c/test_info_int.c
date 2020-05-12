@@ -17,6 +17,7 @@
 
 int main()
 {
+    printf("000");
     CoSimIO_Info info = CoSimIO_CreateInfo();
     printf("111");
     COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "echo_level"));
