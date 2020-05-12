@@ -1,10 +1,5 @@
-project(CoSimIOTesting C CXX)
-cmake_minimum_required (VERSION 2.8.6)
-
 include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io )
 include_directories( ${CMAKE_SOURCE_DIR}/external_libraries )
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
-
 
 ### Test runner for tests of CoSimIO
 file( GLOB_RECURSE CO_SIM_IO_TEST_FILES co_sim_io/*.cpp)
@@ -25,7 +20,7 @@ function(add_cpp_executable TEST_SOURCE_FILE)
     string(REGEX REPLACE ".cpp" "_cpp_test" TEST_NAME ${TEST_FILENAME})
     message(STATUS  "adding ${TEST_NAME} ")
     add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
-    install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin")
+    install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_cpp")
 endfunction()
 
 file(GLOB cpp_test_files "solver_integration/cpp_solver/*.cpp")
