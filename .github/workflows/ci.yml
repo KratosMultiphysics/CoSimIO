@@ -44,7 +44,7 @@ jobs:
         
         echo ${cmake_flags}
 
-        cmake -H"." -B"build" ${cmake_flags}
+        cmake -H"." -B"build" ${cmake_flags} -A "x64"
         cmake --build "build" --target install
 
     - name: Running tests (Ctest)
