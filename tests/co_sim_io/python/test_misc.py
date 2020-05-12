@@ -22,6 +22,7 @@ class CoSimIO_Misc(unittest.TestCase):
 
     def test_version(self):
         self.assertTrue(hasattr(CoSimIO, "__version__"))
+        self.assertNotEqual(CoSimIO.__version__, "")
 
 
 if __name__ == '__main__':
