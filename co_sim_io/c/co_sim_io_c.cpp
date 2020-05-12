@@ -38,20 +38,21 @@ namespace {
         // return static_cast<CoSimIO::SolutionInfo>(CInfo.cpp_info_ptr).GetValue<int>(Key);
         return 0;
     }
+
 }
 
 
-CoSimIO_ReturnInfo CoSimIO_Connect(const CoSimIO_ConnectionSettings* I_Settings)
+CoSimIO_Info CoSimIO_Connect(const CoSimIO_Info* I_Settings)
 {
     // return ConvertInfo(CoSimIO::Connect(pConnectionName, pSettingsFileName));
 }
 
-CoSimIO_ReturnInfo CoSimIO_Disconnect(const CoSimIO_Info* I_Info)
+CoSimIO_Info CoSimIO_Disconnect(const CoSimIO_Info* I_Info)
 {
     // return ConvertInfo(CoSimIO::Disconnect(pConnectionName));
 }
 
-CoSimIO_ReturnInfo CoSimIO_ImportData(
+CoSimIO_Info CoSimIO_ImportData(
     const CoSimIO_Info* I_Info,
     int* O_Size,
     double** O_Data)
@@ -63,7 +64,7 @@ CoSimIO_ReturnInfo CoSimIO_ImportData(
     // return info;
 }
 
-CoSimIO_ReturnInfo CoSimIO_ExportData(
+CoSimIO_Info CoSimIO_ExportData(
     const CoSimIO_Info* I_Info,
     const int I_Size,
     const double** I_Data)
@@ -73,7 +74,7 @@ CoSimIO_ReturnInfo CoSimIO_ExportData(
     // return ConvertInfo(CoSimIO::ExportData(pConnectionName, pIdentifier, *p_container));
 }
 
-CoSimIO_ReturnInfo CoSimIO_ImportMesh(
+CoSimIO_Info CoSimIO_ImportMesh(
     const CoSimIO_Info* I_Info,
     int* I_NumberOfNodes,
     int* I_NumberOfElements,
@@ -91,7 +92,7 @@ CoSimIO_ReturnInfo CoSimIO_ImportMesh(
     // return info;
 }
 
-CoSimIO_ReturnInfo CoSimIO_ExportMesh(
+CoSimIO_Info CoSimIO_ExportMesh(
     const CoSimIO_Info* I_Info,
     const int O_NumberOfNodes,
     const int O_NumberOfElements,
@@ -106,44 +107,111 @@ CoSimIO_ReturnInfo CoSimIO_ExportMesh(
     // return ConvertInfo(CoSimIO::ExportMesh(pConnectionName, pIdentifier, *p_container_coords, *p_container_conn, *p_container_types));
 }
 
-CoSimIO_ReturnInfo CoSimIO_ImportInfo(
+CoSimIO_Info CoSimIO_ImportInfo(
     const CoSimIO_Info* I_Info)
 {
     // // TODO: check if the conversions are working
     // CoSimIO::SolutionInfo tmp_info = ConvertInfo(rSolutionInfo);
     // CoSimIO::ImportSolutionInfo(pConnectionName, tmp_info);
     // rSolutionInfo = ConvertInfo(tmp_info);
-    CoSimIO_ReturnInfo aaa;
+    CoSimIO_Info aaa;
     return aaa;
 }
 
-CoSimIO_ReturnInfo CoSimIO_ExportInfo(
+CoSimIO_Info CoSimIO_ExportInfo(
     const CoSimIO_Info* I_Info)
 {
     // CoSimIO::ExportInfo(pConnectionName, ConvertInfo(SolutionInfo));
-    CoSimIO_ReturnInfo aaa;
+    CoSimIO_Info aaa;
     return aaa;
 }
 
-CoSimIO_ReturnInfo CoSimIO_Register(
+CoSimIO_Info CoSimIO_Register(
     const CoSimIO_Info* I_Info,
-    CoSimIO_ReturnInfo (*FunctionPointer)(const CoSimIO_Info* I_Info))
+    CoSimIO_Info (*FunctionPointer)(const CoSimIO_Info* I_Info))
 {
     // TODO use lambdas to do conversion of types, like done in other places!
     // return ConvertInfo(CoSimIO::Register(I_ConnectionName, I_FunctionName, pFunctionPointer));
-    CoSimIO_ReturnInfo aaa;
+    CoSimIO_Info aaa;
     return aaa;
 }
 
-CoSimIO_ReturnInfo CoSimIO_Run(const CoSimIO_Info* I_Info)
+CoSimIO_Info CoSimIO_Run(const CoSimIO_Info* I_Info)
 {
     // return ConvertInfo(CoSimIO::Run(pConnectionName));
 }
 
-CoSimIO_ReturnInfo CoSimIO_IsConverged(const CoSimIO_Info* I_Info)
+CoSimIO_Info CoSimIO_IsConverged(const CoSimIO_Info* I_Info)
 {
     // return CoSimIO::IsConverged(pConnectionName);
 }
+
+
+CoSimIO_Info CoSimIO_CreateInfo()
+{
+    CoSimIO_Info info;
+    info.PtrCppInfo = new CoSimIO::Info(); // TODO is this correct?
+    return info;
+}
+
+int CoSimIO_FreeInfo(CoSimIO_Info I_Info)
+{
+    // this is not fully working
+    // also do we need seperate fct for the different INFOs?
+    delete I_Info.PtrCppInfo;
+
+    return 0;
+}
+
+int CoSimIO_Info_Has(const CoSimIO_Info I_Info, const char* I_Key)
+{
+    return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Has(I_Key);
+}
+
+
+
+// char* CoSimIO_Info_GetString(const CoSimIO_Info I_Info, const char* I_Key)
+// {
+//     return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Get<std::string>(I_Key).c_str();
+// }
+
+int CoSimIO_Info_GetInt(const CoSimIO_Info I_Info, const char* I_Key)
+{
+    return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Get<int>(I_Key);
+}
+
+double CoSimIO_Info_GetDouble(const CoSimIO_Info I_Info, const char* I_Key)
+{
+    return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Get<int>(I_Key);
+}
+
+int CoSimIO_Info_GetBool(const CoSimIO_Info I_Info, const char* I_Key)
+{
+    return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Get<bool>(I_Key);
+}
+
+
+void CoSimIO_Info_SetInt(const CoSimIO_Info I_Info, const char* I_Key, const int I_Value)
+{
+    static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Set<int>(I_Key, I_Value);
+}
+
+void CoSimIO_Info_SetDouble(const CoSimIO_Info I_Info, const char* I_Key, const double I_Value)
+{
+    static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Set<double>(I_Key, I_Value);
+}
+
+void CoSimIO_Info_SetBool(const CoSimIO_Info I_Info, const char* I_Key, const int I_Value)
+{
+    static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Set<bool>(I_Key, I_Value);
+}
+
+
+
+
+
+
+
 
 
 

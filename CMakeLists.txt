@@ -38,7 +38,6 @@ endif()
 file(REMOVE_RECURSE bin)
 
 if (BUILD_C)
-    message( FATAL_ERROR "The CoSimIO is currently not working for C")
     add_subdirectory(co_sim_io/c)
 endif()
 
