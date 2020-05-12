@@ -26,7 +26,7 @@ if(MSVC)
 
     set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Werror")
 endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
