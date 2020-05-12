@@ -63,7 +63,7 @@ CoSimIO_Info CoSimIO_ExportInfo(
 
 CoSimIO_Info CoSimIO_Register(
     const CoSimIO_Info I_Info,
-    CoSimIO_Info (*FunctionPointer)(const CoSimIO_Info*));
+    CoSimIO_Info (*I_FunctionPointer)(const CoSimIO_Info I_Info));
 
 CoSimIO_Info CoSimIO_Run(const CoSimIO_Info I_Info);
 

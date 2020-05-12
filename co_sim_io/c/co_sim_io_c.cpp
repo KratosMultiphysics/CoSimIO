@@ -33,12 +33,12 @@ namespace {
 
 CoSimIO_Info CoSimIO_Connect(const CoSimIO_Info I_Settings)
 {
-    // return ConvertInfo(CoSimIO::Connect(pConnectionName, pSettingsFileName));
+    return ConvertInfo(CoSimIO::Connect(ConvertInfo(I_Settings)));
 }
 
 CoSimIO_Info CoSimIO_Disconnect(const CoSimIO_Info I_Info)
 {
-    // return ConvertInfo(CoSimIO::Disconnect(pConnectionName));
+    return ConvertInfo(CoSimIO::Disconnect(ConvertInfo(I_Info)));
 }
 
 CoSimIO_Info CoSimIO_ImportData(
@@ -48,9 +48,9 @@ CoSimIO_Info CoSimIO_ImportData(
 {
     using namespace CoSimIO::Internals;
     std::unique_ptr<DataContainer<double>> p_container(new DataContainerRawMemory<double>(O_Data, *O_Size));
-    // auto info = ConvertInfo(CoSimIO::ImportData(pConnectionName, pIdentifier, *p_container));
+    auto info = ConvertInfo(CoSimIO::ImportData(ConvertInfo(I_Info), *p_container));
     *O_Size = static_cast<int>(p_container->size());
-    // return info;
+    return info;
 }
 
 CoSimIO_Info CoSimIO_ExportData(
@@ -60,7 +60,7 @@ CoSimIO_Info CoSimIO_ExportData(
 {
     using namespace CoSimIO::Internals;
     std::unique_ptr<DataContainer<double>> p_container(new DataContainerRawMemoryReadOnly<double>(I_Data, I_Size));
-    // return ConvertInfo(CoSimIO::ExportData(pConnectionName, pIdentifier, *p_container));
+    return ConvertInfo(CoSimIO::ExportData(ConvertInfo(I_Info), *p_container));
 }
 
 CoSimIO_Info CoSimIO_ImportMesh(
@@ -75,10 +75,10 @@ CoSimIO_Info CoSimIO_ImportMesh(
     std::unique_ptr<DataContainer<double>> p_container_coords(new DataContainerRawMemory<double>(I_NodalCoordinates, *I_NumberOfNodes));
     std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerRawMemory<int>(I_ElementConnectivities, *I_NumberOfElements)); // using "NumberOfElements" here is wrong! => has to be computed! Or sth like this ... (maybe even has to be passed...)
     std::unique_ptr<DataContainer<int>> p_container_types(new DataContainerRawMemory<int>(I_ElementTypes, *I_NumberOfElements));
-    // auto info = ConvertInfo(CoSimIO::ImportMesh(pConnectionName, pIdentifier, *p_container_coords, *p_container_conn, *p_container_types));
+    auto info = ConvertInfo(CoSimIO::ImportMesh(ConvertInfo(I_Info), *p_container_coords, *p_container_conn, *p_container_types));
     *I_NumberOfNodes = static_cast<int>(p_container_coords->size());
     *I_NumberOfElements = static_cast<int>(p_container_types->size());
-    // return info;
+    return info;
 }
 
 CoSimIO_Info CoSimIO_ExportMesh(
@@ -93,37 +93,36 @@ CoSimIO_Info CoSimIO_ExportMesh(
     std::unique_ptr<DataContainer<double>> p_container_coords(new DataContainerRawMemoryReadOnly<double>(O_NodalCoordinates, O_NumberOfNodes));
     std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerRawMemoryReadOnly<int>(O_ElementConnectivities, O_NumberOfElements)); // using "NumberOfElements" here is wrong! => has to be computed! Or sth like this ... (maybe even has to be passed...)
     std::unique_ptr<DataContainer<int>> p_container_types(new DataContainerRawMemoryReadOnly<int>(O_ElementTypes, O_NumberOfElements));
-    // return ConvertInfo(CoSimIO::ExportMesh(pConnectionName, pIdentifier, *p_container_coords, *p_container_conn, *p_container_types));
+    return ConvertInfo(CoSimIO::ExportMesh(ConvertInfo(I_Info), *p_container_coords, *p_container_conn, *p_container_types));
 }
 
 CoSimIO_Info CoSimIO_ImportInfo(
     const CoSimIO_Info I_Info)
 {
-    // // TODO: check if the conversions are working
-    // CoSimIO::SolutionInfo tmp_info = ConvertInfo(rSolutionInfo);
-    // CoSimIO::ImportSolutionInfo(pConnectionName, tmp_info);
-    // rSolutionInfo = ConvertInfo(tmp_info);
-    CoSimIO_Info aaa;
-    return aaa;
+    return ConvertInfo(CoSimIO::ImportInfo(ConvertInfo(I_Info)));
 }
 
 CoSimIO_Info CoSimIO_ExportInfo(
     const CoSimIO_Info I_Info)
 {
-    // CoSimIO::ExportInfo(pConnectionName, ConvertInfo(SolutionInfo));
-    CoSimIO_Info aaa;
-    return aaa;
+    return ConvertInfo(CoSimIO::ExportInfo(ConvertInfo(I_Info)));
 }
 
 CoSimIO_Info CoSimIO_Register(
     const CoSimIO_Info I_Info,
-    CoSimIO_Info (*FunctionPointer)(const CoSimIO_Info I_Info))
+    CoSimIO_Info (*I_FunctionPointer)(const CoSimIO_Info I_Info))
 {
-    // TODO use lambdas to do conversion of types, like done in other places!
-    // return ConvertInfo(CoSimIO::Register(I_ConnectionName, I_FunctionName, pFunctionPointer));
-    CoSimIO_Info aaa;
-    return aaa;
+    using FunctionPointerType = CoSimIO::Internals::Connection::FunctionPointerType;
+
+    // auto return does not work here!
+    FunctionPointerType fct_callback = [I_FunctionPointer](const CoSimIO::Info& I_Info)
+    {
+        return ConvertInfo(I_FunctionPointer(ConvertInfo(I_Info)));
+    };
+
+    return ConvertInfo(CoSimIO::Register(ConvertInfo(I_Info), fct_callback));
 }
+
 
 CoSimIO_Info CoSimIO_Run(const CoSimIO_Info I_Info)
 {
