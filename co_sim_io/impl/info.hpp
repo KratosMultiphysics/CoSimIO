@@ -17,7 +17,6 @@
 #include <string>
 #include <map>
 #include <memory>
-#include <type_traits>
 #include <iostream>
 
 #ifdef CO_SIM_IO_USING_MPI
