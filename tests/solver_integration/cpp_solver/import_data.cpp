@@ -29,7 +29,7 @@ int main()
     settings.Set("solver_version", "1.25");
 
     auto return_info = CoSimIO::Connect(settings);
-    COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), 1);
+    COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
 
     std::vector<double> receive_data;
     CoSimIO::Info info;
@@ -42,7 +42,7 @@ int main()
 
 
     return_info = CoSimIO::Disconnect(settings); // disconnect afterwards
-    COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), 0);
+    COSIMIO_CHECK_EQUAL(return_info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Disconnected);
 
     return 0;
 }
