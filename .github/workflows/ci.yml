@@ -48,4 +48,4 @@ jobs:
       shell: bash
       run: |
         cd build
-        ctest
+        ctest -C Release
