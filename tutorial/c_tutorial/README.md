@@ -9,22 +9,17 @@ This tutorial helps you through to integrate the _CoSimIO_ into a solver using t
 git clone https://github.com/KratosMultiphysics/CoSimIO.git
 ```
 
-- A C++11 compatible compiler. This includes most of the major CPP compilers in Windows, Linux, and Mac. You may find a detailed list of C++11 compatible compilers in https://en.cppreference.com/w/cpp/compiler_support#cpp11
+- A C++11 compatible compiler because the library by itself is in CPP and only a small C wrapper provides its C interface. most of the major CPP compilers in Windows, Linux, and Mac are C++11 compatible. You may find a detailed list of C++11 compatible compilers in https://en.cppreference.com/w/cpp/compiler_support#cpp11 
 
 
 ## Tutorial 1: Building
-The CPP version of CosimIO is header only and for building you may only include the [co_sim_io.h](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp) in your project file and compile it with your code:
+The C version of CosimIO is implemented in the [co_sim_io_c.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/c/co_sim_io_c.cpp). You may include it directly into your project or compiling it as a library. One may use the [build_c.sh]() script from the CoSimIO root folder to create a shared library of the C interface:
 
-```c++
-// CoSimulation includes
-#include "co_sim_io.hpp"
-
-int main(){
-    return 0;
-}
+```bash
+$ bash scripts/build_c.sh 
 ```
 
-Please don't forget to add the CoSimIO folder to your include path.
+The shared library will be installed in `bin/` folder.
 
 
 ## Tutorial 2: Hello CosimIO
