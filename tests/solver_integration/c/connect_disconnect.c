@@ -11,7 +11,7 @@
 //
 
 // CoSimulation includes
-#include "co_sim_io_c.h"
+#include "c/co_sim_io_c.h"
 
 #define COSIMIO_CHECK_EQUAL(a, b)                                \
     if (a != b) {                                                \
