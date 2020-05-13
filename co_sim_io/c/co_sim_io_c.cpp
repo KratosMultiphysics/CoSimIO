@@ -31,6 +31,11 @@ namespace {
 }
 
 
+CoSimIO_Info CoSimIO_Hello()
+{
+    return ConvertInfo(CoSimIO::Hello());
+}
+
 CoSimIO_Info CoSimIO_Connect(const CoSimIO_Info I_Settings)
 {
     return ConvertInfo(CoSimIO::Connect(ConvertInfo(I_Settings)));

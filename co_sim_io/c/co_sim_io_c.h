@@ -22,6 +22,8 @@
 extern "C" { // Define extern C if C++ compiler is used
 #endif
 
+CoSimIO_Info CoSimIO_Hello();
+
 CoSimIO_Info CoSimIO_Connect(
     const CoSimIO_Info I_Settings);
 
