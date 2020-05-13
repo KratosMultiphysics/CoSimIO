@@ -93,6 +93,7 @@ jobs:
     - name: Running tests (Ctest)
       shell: cmd
       run: |
+        set PATH=%PATH%;%GITHUB_WORKSPACE%/bin
         cd build
         ctest -C Debug
 
