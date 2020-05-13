@@ -77,6 +77,8 @@ jobs:
           -G"Visual Studio 16 2019"   ^
           -H"."                       ^
           -B"build"                   ^
+          -DBUILD_C=ON                ^
+          -DBUILD_PYTHON=ON           ^
           -DCMAKE_CXX_FLAGS="/WX"     || goto :error
 
         cmake --build "build" --target install -- /p:Platform=x64 || goto :error
@@ -87,11 +89,11 @@ jobs:
         echo Failed with error #%errorlevel%.
         exit /b %errorlevel%
 
-    - name: Running tests (Ctest)
-      shell: cmd
-      run: |
-        cd build
-        ctest -C Debug
+    # - name: Running tests (Ctest)
+    #   shell: cmd
+    #   run: |
+    #     cd build
+    #     ctest -C Debug
 
     - name: Run tests
       shell: cmd
