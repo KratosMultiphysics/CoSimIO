@@ -16,6 +16,8 @@
 // C Interface for CoSimulation
 // see "co_sim_io.hpp"
 
+#include <stdio.h>
+
 #include "co_sim_io_c_info.h"
 
 #ifdef __cplusplus
@@ -56,6 +58,9 @@ CoSimIO_Info CoSimIO_ExportMesh(
     const int** pElementConnectivities,
     const int** pElementTypes);
 
+
+void CoSimIO_PrintInfo(FILE *Stream, 
+    const CoSimIO_Info I_Info);
 
 CoSimIO_Info CoSimIO_ImportInfo(
     const CoSimIO_Info I_Info);

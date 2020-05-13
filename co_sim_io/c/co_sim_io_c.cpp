@@ -101,6 +101,14 @@ CoSimIO_Info CoSimIO_ExportMesh(
     return ConvertInfo(CoSimIO::ExportMesh(ConvertInfo(I_Info), *p_container_coords, *p_container_conn, *p_container_types));
 }
 
+void CoSimIO_PrintInfo(FILE *Stream,
+    const CoSimIO_Info I_Info)
+{
+    std::stringstream buffer;
+    buffer << *static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo) << std::endl;
+    fprintf(Stream, "%s", buffer.str().c_str());
+}
+
 CoSimIO_Info CoSimIO_ImportInfo(
     const CoSimIO_Info I_Info)
 {
