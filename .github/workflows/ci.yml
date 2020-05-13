@@ -78,7 +78,7 @@ jobs:
           -H"."                       ^
           -B"build"                   ^
           -DBUILD_PYTHON=ON           ^
-          -DCMAKE_CXX_FLAGS=""        || goto :error
+          -DCMAKE_CXX_FLAGS="/WX"     || goto :error
 
         cmake --build "build" --target install -- /p:Platform=x64 || goto :error
 
