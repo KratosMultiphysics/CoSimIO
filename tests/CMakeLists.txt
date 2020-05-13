@@ -63,7 +63,7 @@ if(BUILD_C)
     add_c_test(${c_test_file})
     endforeach(c_test_file)
 
-    file(GLOB c_integration_test_files "solver_integration/cpp_solver/*.cpp")
+    file(GLOB c_integration_test_files "solver_integration/c_solver/*.c")
 
     foreach(c_integration_test_file ${c_integration_test_files})
     add_c_executable(${c_integration_test_file})
