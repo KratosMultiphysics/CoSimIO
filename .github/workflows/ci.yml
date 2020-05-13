@@ -8,7 +8,7 @@ on:
     - cron:  '0 1 * * *'
 
 jobs:
-  build:
+  Unix:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -27,36 +27,76 @@ jobs:
         python-version: 3.7
 
     - name: Build CoSimIO
-      shell: bash
       run: |
-        cmake_flags="-DBUILD_C=ON -DBUILD_PYTHON=ON"
+        cmake -H"." -B"build"  \
+          -DBUILD_C=OFF        \
+          -DBUILD_PYTHON=ON    \
+          -DBUILD_FORTRAN=OFF  \
+          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror"
 
-        if [ ${{ matrix.os }} == windows-latest ]; then # MSVC
-          cmake_flags="${cmake_flags} -A x64"
-        elif [ ${{ matrix.os }} == ubuntu-latest ]; then # GCC
-          cmake_flags="${cmake_flags} -DBUILD_FORTRAN=OFF -DCMAKE_CXX_FLAGS=-Werror"
-        elif [ ${{ matrix.os }} == macOS-latest ]; then # CLANG
-          cmake_flags="${cmake_flags} -DBUILD_FORTRAN=OFF -DCMAKE_CXX_FLAGS=-Werror"
-        else
-          echo 'Unsupported OS: ${{ matrix.os }}'
-          exit 1
-        fi
-
-        echo ${cmake_flags}
-
-        cmake -H"." -B"build" ${cmake_flags}
         cmake --build "build" --target install
 
     - name: Running tests (Ctest)
       shell: bash
       run: |
         cd build
-        ctest -C Debug --verbose
+        ctest -C Debug
 
     - name: Run tests
       shell: bash
       run: |
-        export PYTHONPATH=${GITHUB_WORKSPACE}/bin
+        export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
+        cd tests
+        # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
+        python run_all_tests.py
+
+
+  Windows:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+    timeout-minutes: 5
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+
+    - name: Build CoSimIO
+      shell: cmd
+      run: |
+        call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64 || goto :error
+
+        set CC=cl.exe
+        set CXX=cl.exe
+
+        cmake                         ^
+          -G"Visual Studio 16 2019"   ^
+          -H"."                       ^
+          -B"build"                   ^
+          -DCMAKE_CXX_FLAGS="/WX"     || goto :error
+
+        cmake --build "build" --target install -- /p:Platform=x64 || goto :error
+
+        goto :EOF
+
+        :error
+        echo Failed with error #%errorlevel%.
+        exit /b %errorlevel%
+
+    - name: Running tests (Ctest)
+      shell: cmd
+      run: |
+        cd build
+        ctest -C Debug
+
+    - name: Run tests
+      shell: cmd
+      run: |
+        set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%/bin
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
         python run_all_tests.py
