@@ -13,7 +13,7 @@ git clone https://github.com/KratosMultiphysics/CoSimIO.git
 
 
 ## Tutorial 1: Building
-The CPP version of CosimIO is header only and for building you may only include the [co_sim_io.h](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp) in your project file and compile it with your code:
+The CPP version of CosimIO is header only and for building you may only include the [co_sim_io.hpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp) in your project file and compile it with your code:
 
 ```c++
 // CoSimulation includes
@@ -54,7 +54,7 @@ You may find this example in hello.cpp file in the `solver_integration/cpp` fold
 The first step to establishing a connection to Kratos CoSimulation is to use the `Connect()` method:
 ```c++
 // The connect must be called before any CosimIO method called
-auto info = CoSimIO::Connect(connection_name, settings);
+auto info = CoSimIO::Connect(settings);
 ```
 
 First of all, you may notice that `Connect()` method takes an `Info` as its arguments. This container can be used to pass additional information about the solver or connection settings to the CoSimIO:
