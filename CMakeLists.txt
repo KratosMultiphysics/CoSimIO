@@ -56,6 +56,8 @@ if (BUILD_FORTRAN)
 endif()
 
 if (BUILD_TESTING)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "external_libraries/catch2")
+    include(Catch)
     add_subdirectory(tests)
 endif()
 
