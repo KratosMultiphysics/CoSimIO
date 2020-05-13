@@ -29,7 +29,7 @@ jobs:
     - name: Build CoSimIO
       run: |
         cmake -H"." -B"build"  \
-          -DBUILD_C=OFF        \
+          -DBUILD_C=ON         \
           -DBUILD_PYTHON=ON    \
           -DBUILD_FORTRAN=OFF  \
           -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror"
