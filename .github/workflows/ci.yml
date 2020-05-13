@@ -77,6 +77,7 @@ jobs:
           -G"Visual Studio 16 2019"   ^
           -H"."                       ^
           -B"build"                   ^
+          -DBUILD_C=ON                ^
           -DBUILD_PYTHON=ON           ^
           -DCMAKE_CXX_FLAGS="/WX"     || goto :error
 
