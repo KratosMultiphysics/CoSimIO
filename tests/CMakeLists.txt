@@ -44,7 +44,7 @@ if(BUILD_C)
         message(STATUS  "adding ${TEST_NAME} ")
         add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
         target_link_libraries(${TEST_NAME} co_sim_io_c)
-        add_test(${TEST_NAME} ${TEST_NAME})
+        add_test(${TEST_NAME} ${TEST_NAME} WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
         install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_c")
     endfunction()
 
