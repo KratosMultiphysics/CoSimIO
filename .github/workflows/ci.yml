@@ -33,9 +33,9 @@ jobs:
 
         if [ ${{ matrix.os }} == windows-latest ]; then # MSVC
           cmake_flags="${cmake_flags}"
-        elif [ ${{ matrix.os }} = ubuntu-latest ]; then # GCC
+        elif [ ${{ matrix.os }} == ubuntu-latest ]; then # GCC
           cmake_flags="${cmake_flags} -DBUILD_FORTRAN=OFF -DCMAKE_CXX_FLAGS=-Werror"
-        elif [ ${{ matrix.os }} = macOS-latest ]; then # CLANG
+        elif [ ${{ matrix.os }} == macOS-latest ]; then # CLANG
           cmake_flags="${cmake_flags} -DBUILD_FORTRAN=OFF -DCMAKE_CXX_FLAGS=-Werror"
         else
           echo 'Unsupported OS: ${{ matrix.os }}'
