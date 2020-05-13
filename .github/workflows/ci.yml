@@ -89,11 +89,11 @@ jobs:
         echo Failed with error #%errorlevel%.
         exit /b %errorlevel%
 
-    # - name: Running tests (Ctest)
-    #   shell: cmd
-    #   run: |
-    #     cd build
-    #     ctest -C Debug
+    - name: Running tests (Ctest)
+      shell: cmd
+      run: |
+        cd build
+        ctest -C Debug
 
     - name: Run tests
       shell: cmd
