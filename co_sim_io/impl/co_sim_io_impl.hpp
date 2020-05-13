@@ -227,7 +227,9 @@ inline Info IsConverged(const Info& I_Info)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
     const bool is_converged = Internals::GetConnection(connection_name).IsConverged();
-    return Info(); // TODO use this
+    Info info;
+    info.Set<bool>("is_converged", is_converged);
+    return info;
 }
 
 inline Info Run(const Info& I_Info)

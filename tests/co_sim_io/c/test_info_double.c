@@ -10,17 +10,24 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-
-// System includes
-
 // Project includes
 #include "c/co_sim_io_c.h"
 
+#include "checks.h"
+
 int main()
 {
-    // create an info object
+    CoSimIO_Info info = CoSimIO_CreateInfo();
 
-    // do some checks with it ...
+    COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "tolerance"));
+
+    CoSimIO_Info_SetDouble(info, "tolerance", 0.0086);
+
+    COSIMIO_CHECK_TRUE(CoSimIO_Info_Has(info, "tolerance"));
+
+    COSIMIO_CHECK_DOUBLE_EQUAL(CoSimIO_Info_GetDouble(info, "tolerance"), 0.0086);
+
+    CoSimIO_FreeInfo(info);
 
     return 0;
 }

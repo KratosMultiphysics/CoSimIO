@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ubuntu-latest, macOS-latest]
     timeout-minutes: 5
     env:
       FC: gfortran-9
@@ -29,10 +29,21 @@ jobs:
     - name: Build CoSimIO
       shell: bash
       run: |
-        cmake_flags="-DBUILD_C=OFF -DBUILD_PYTHON=ON"
-        if [ ${{ matrix.os }} != windows-latest ]; then
-          cmake_flags="${cmake_flags} -DBUILD_FORTRAN=OFF -Werror"
+        cmake_flags="-DBUILD_C=ON -DBUILD_PYTHON=ON"
+
+        if [ ${{ matrix.os }} == windows-latest ]; then # MSVC
+          cmake_flags="${cmake_flags} -A x64"
+        elif [ ${{ matrix.os }} == ubuntu-latest ]; then # GCC
+          cmake_flags="${cmake_flags} -DBUILD_FORTRAN=OFF -DCMAKE_CXX_FLAGS=-Werror"
+        elif [ ${{ matrix.os }} == macOS-latest ]; then # CLANG
+          cmake_flags="${cmake_flags} -DBUILD_FORTRAN=OFF -DCMAKE_CXX_FLAGS=-Werror"
+        else
+          echo 'Unsupported OS: ${{ matrix.os }}'
+          exit 1
         fi
+
+        echo ${cmake_flags}
+
         cmake -H"." -B"build" ${cmake_flags}
         cmake --build "build" --target install
 
@@ -40,7 +51,7 @@ jobs:
       shell: bash
       run: |
         cd build
-        ctest -C Debug
+        ctest -C Debug --verbose
 
     - name: Run tests
       shell: bash

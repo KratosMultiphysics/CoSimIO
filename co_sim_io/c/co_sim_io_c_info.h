@@ -13,32 +13,30 @@
 #ifndef CO_SIM_IO_C_INFO_INCLUDED
 #define CO_SIM_IO_C_INFO_INCLUDED
 
-// System includes
-
-#ifdef CO_SIM_IO_USING_MPI
-#include "mpi.h"
-#endif // CO_SIM_IO_USING_MPI
-
-// #define CreateNewGetValue(type) \
-// type ##type,  const char* Key)
-
-// #define DefineNewGetValue(type) \
-// type GetValue##type(char* label, CoSimIO_TransferInfo);
 
 typedef struct CoSimIO_Info
 {
     void* PtrCppInfo;
 } CoSimIO_Info;
 
-typedef struct CoSimIO_ReturnInfo
-{
-    void* PtrCppInfo;
-} CoSimIO_ReturnInfo;
 
-typedef struct CoSimIO_ConnectionSettings
-{
-    void* PtrCppInfo;
-} CoSimIO_ConnectionSettings;
+CoSimIO_Info CoSimIO_CreateInfo();
 
+int CoSimIO_FreeInfo(CoSimIO_Info I_Info);
+
+int CoSimIO_Info_Has(const CoSimIO_Info I_Info, const char* I_Key);
+void CoSimIO_Info_Erase(const CoSimIO_Info I_Info, const char* I_Key);
+void CoSimIO_Info_Clear(const CoSimIO_Info I_Info);
+int CoSimIO_Info_Size(const CoSimIO_Info I_Info);
+
+int CoSimIO_Info_GetInt(const CoSimIO_Info I_Info, const char* I_Key);
+double CoSimIO_Info_GetDouble(const CoSimIO_Info I_Info, const char* I_Key);
+int CoSimIO_Info_GetBool(const CoSimIO_Info I_Info, const char* I_Key);
+const char* CoSimIO_Info_GetString(const CoSimIO_Info I_Info, const char* I_Key);
+
+void CoSimIO_Info_SetInt(CoSimIO_Info I_Info, const char* I_Key, const int I_Value);
+void CoSimIO_Info_SetDouble(CoSimIO_Info I_Info, const char* I_Key, const double I_Value);
+void CoSimIO_Info_SetBool(CoSimIO_Info I_Info, const char* I_Key, const int I_Value);
+void CoSimIO_Info_SetString(CoSimIO_Info I_Info, const char* I_Key, const char* I_Value);
 
 #endif // CO_SIM_IO_C_INFO_INCLUDED

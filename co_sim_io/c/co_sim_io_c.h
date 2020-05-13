@@ -22,32 +22,32 @@
 extern "C" { // Define extern C if C++ compiler is used
 #endif
 
-CoSimIO_ReturnInfo CoSimIO_Connect(
-    const CoSimIO_ConnectionSettings* I_Settings);
+CoSimIO_Info CoSimIO_Connect(
+    const CoSimIO_Info I_Settings);
 
-CoSimIO_ReturnInfo CoSimIO_Disconnect(
-    const CoSimIO_Info* I_Info);
+CoSimIO_Info CoSimIO_Disconnect(
+    const CoSimIO_Info I_Info);
 
-CoSimIO_ReturnInfo CoSimIO_ImportData(
-    const CoSimIO_Info* I_Info,
+CoSimIO_Info CoSimIO_ImportData(
+    const CoSimIO_Info I_Info,
     int* pSize,
     double** ppData);
 
-CoSimIO_ReturnInfo CoSimIO_ExportData(
+CoSimIO_Info CoSimIO_ExportData(
     const CoSimIO_Info* I_Info,
     const int I_Size,
     const double** pData);
 
-CoSimIO_ReturnInfo CoSimIO_ImportMesh(
-    const CoSimIO_Info* I_Info,
+CoSimIO_Info CoSimIO_ImportMesh(
+    const CoSimIO_Info I_Info,
     int* pNumberOfNodes,
     int* pNumberOfElements,
     double** O_NodalCoordinates,
     int** ppElementConnectivities,
     int** ppElementTypes);
 
-CoSimIO_ReturnInfo CoSimIO_ExportMesh(
-    const CoSimIO_Info* I_Info,
+CoSimIO_Info CoSimIO_ExportMesh(
+    const CoSimIO_Info I_Info,
     const int NumberOfNodes,
     const int NumberOfElements,
     const double** pNodalCoordinates,
@@ -55,38 +55,19 @@ CoSimIO_ReturnInfo CoSimIO_ExportMesh(
     const int** pElementTypes);
 
 
-CoSimIO_ReturnInfo CoSimIO_ImportInfo(
-    const CoSimIO_Info* I_Info);
+CoSimIO_Info CoSimIO_ImportInfo(
+    const CoSimIO_Info I_Info);
 
-CoSimIO_ReturnInfo CoSimIO_ExportInfo(
-    const CoSimIO_Info* I_Info);
+CoSimIO_Info CoSimIO_ExportInfo(
+    const CoSimIO_Info I_Info);
 
-CoSimIO_ReturnInfo CoSimIO_Register(
-    const CoSimIO_Info* I_Info,
-    CoSimIO_ReturnInfo (*FunctionPointer)(const CoSimIO_Info*));
+CoSimIO_Info CoSimIO_Register(
+    const CoSimIO_Info I_Info,
+    CoSimIO_Info (*I_FunctionPointer)(const CoSimIO_Info I_Info));
 
-CoSimIO_ReturnInfo CoSimIO_Run(const CoSimIO_Info* I_Info);
+CoSimIO_Info CoSimIO_Run(const CoSimIO_Info I_Info);
 
-CoSimIO_ReturnInfo CoSimIO_IsConverged(const CoSimIO_Info* I_Info);
-
-
-
-
-
-
-
-
-
-
-
-
-
-// TODO refactor and move these functions to separate file, since they are only used in the fortran interface
-// The following functions are intended to only be used from Fortran
-// This is because memory used in the CoSimIO should be allocated and freed in C
-void _AllocateMemoryInt(const int Size, int** ppData);
-void _AllocateMemoryDouble(const int Size, double** ppData);
-void _FreeMemory(void** ppData);
+CoSimIO_Info CoSimIO_IsConverged(const CoSimIO_Info I_Info);
 
 #ifdef __cplusplus
 }
