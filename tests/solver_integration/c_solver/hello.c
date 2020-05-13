@@ -15,8 +15,7 @@
 
 #define COSIMIO_CHECK_EQUAL(a, b)                                \
     if (a != b) {                                                \
-        std::cout << "in line " << __LINE__ << " : " << a        \
-                  << " is not equal to " << b << std::endl;      \
+        printf("in line %d : %d is not equalt to %d\n", __LINE__ , a, b); \
         return 1;                                                \
     }
 
@@ -24,14 +23,14 @@ int main()
 {
     CoSimIO_Info info = CoSimIO_Hello();
 
-    // std::cout << info << std::endl;
+    CoSimIO_PrintInfo(stdout, info);
 
-    // int major_version = info.Get<int>("major_version");
-    // int minor_version = info.Get<int>("minor_version");
-    // std::string patch_version = info.Get<std::string>("patch_version");
+    int major_version = CoSimIO_Info_GetInt(info, "major_version");
+    int minor_version = CoSimIO_Info_GetInt(info, "minor_version");
+    const char* patch_version = CoSimIO_Info_GetString(info, "patch_version");
 
-    // COSIMIO_CHECK_EQUAL(major_version, 1);
-    // COSIMIO_CHECK_EQUAL(minor_version, 0);
+    COSIMIO_CHECK_EQUAL(major_version, 1);
+    COSIMIO_CHECK_EQUAL(minor_version, 0);
 
     return 0;
 }
