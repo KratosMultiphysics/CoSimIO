@@ -52,7 +52,7 @@ public:
 
     Info Connect()
     {
-        const bool is_connected = mpComm->Connect();
+        /*const bool is_connected = */mpComm->Connect();
         Info info; // TODO in the future probably it makes more sense that the mpComm can directly return the Info to potentionally populate it e.g. with error codes
         info.Set<int>("connection_status", ConnectionStatus::Connected);
         return info;
@@ -60,7 +60,7 @@ public:
 
     Info Disconnect()
     {
-        const bool is_disconnected = mpComm->Disconnect();
+        /*const bool is_disconnected = */mpComm->Disconnect();
         Info info; // TODO in the future probably it makes more sense that the mpComm can directly return the Info to potentionally populate it e.g. with error codes
         info.Set<int>("connection_status", ConnectionStatus::Disconnected);
         return info;

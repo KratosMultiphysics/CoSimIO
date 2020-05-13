@@ -1,4 +1,4 @@
-project(CoSimIOTesting CXX)
+project(CoSimIO CXX C)
 cmake_minimum_required (VERSION 2.8.6)
 
 include(CTest)
@@ -22,12 +22,16 @@ if(MSVC)
     # required such that "__cplusplus" is set to the correct value
     # see https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
     # Note: min value is c++14 => 201402L (c++11 does not exist, will also output 201402L)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /WX ")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /W3 /WX")
 
     set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
-else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+elseif(${CMAKE_COMPILER_IS_GNUCXX})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wsuggest-override -Wignored-qualifiers")
+else() # assumed to be CLANG
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 endif()
+
+message("CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # to suppress warning "MACOSX_RPATH is not specified for the following targets"

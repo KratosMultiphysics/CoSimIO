@@ -18,6 +18,7 @@
 #include <map>
 #include <memory>
 #include <iostream>
+#include <type_traits>
 
 // Project includes
 #include "macros.hpp"
@@ -166,7 +167,8 @@ public:
 
         O_OutStream << Size() << "\n";
         for (const auto& r_pair: mOptions) {
-            auto it_obj = s_registered_object_names.find(typeid(*(r_pair.second)).name());
+            const auto& r_val = *(r_pair.second);
+            auto it_obj = s_registered_object_names.find(typeid(r_val).name());
             CO_SIM_IO_ERROR_IF(it_obj == s_registered_object_names.end()) << "No name registered" << std::endl;
             O_OutStream << r_pair.first << "\n";
             O_OutStream << it_obj->second << "\n";

@@ -367,7 +367,7 @@ private:
 
         // write cell types
         output_file << "CELL_TYPES " << num_elems << "\n";
-        for (int i=0; i<num_elems; ++i) {
+        for (std::size_t i=0; i<num_elems; ++i) {
             output_file << rElementTypes[i] << "\n";
         }
 
