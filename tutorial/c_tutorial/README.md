@@ -19,30 +19,40 @@ The C version of CosimIO is implemented in the [co_sim_io_c.cpp](https://github.
 $ bash scripts/build_c.sh 
 ```
 
-The shared library will be installed in `bin/` folder.
+The shared library will be installed in `bin/` folder. After building and linking it to your project, you may use the interface defined in `co_sim_io_c.h`:
 
+```c
+// CoSimulation includes
+#include "co_sim_io_c.h"
+
+int main(){
+    return 0;
+}
+```
+
+Please don't forget to add the CoSimIO folder to your include path.
 
 ## Tutorial 2: Hello CosimIO
 After integrating the _CoSimIO_ in your code now it's time to say hello
 
-```c++
-auto info = CoSimIO::Hello();
+```c
+CoSimIO_Info info = CoSimIO_Hello();
 ```
 
-Please note that this method like other methods in _CoSimIO_ returns an `Info` object. This object is a versatile container holding important information about the operation that has been done. In this case, it contains the version of the _CoSimIO_ library which can be queried:
+Please note that this method like other methods in _CoSimIO_ returns an `Info` object. This object is a versatile container holding important information about the operation that has been done. In this case, it contains the version of the _CoSimIO_ library which can be printed using `CoSimIO_PrintInfo()` function:
 
-```c++
-std::cout << info << std::endl;
+```c
+CoSimIO_PrintInfo(stdout, info);
 ```
 
-Info class also provides get method for retriving a certain value knowing its type:
+You may retriving a certain value from the info object using provided functions for each value type:
 
-```c++
-int major_version = info.Get<int>("major_version");
-int minor_version = info.Get<int>("minor_version");
-std::string patch_version = info.Get<std::string>("patch_version");
+```c
+int major_version = CoSimIO_Info_GetInt(info, "major_version");
+int minor_version = CoSimIO_Info_GetInt(info, "minor_version");
+const char* patch_version = CoSimIO_Info_GetString(info, "patch_version");
 ```
-You may find this example in hello.cpp file in the `solver_integration/cpp` folder
+You may find this example in hello.c file in the `solver_integration/c` folder
 
 
 ## Tutorial 3: Connecting and Disconnecting
