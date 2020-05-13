@@ -70,6 +70,7 @@ if(BUILD_C)
     endforeach(c_integration_test_file)
 
     add_test(hello_c_test hello_c_test)
+    add_test(NAME connect_disconnect_c_test COMMAND bash run.sh $<TARGET_FILE:connect_disconnect_c_test>  $<TARGET_FILE:connect_disconnect_c_test>)
 endif()
 
 
