@@ -39,7 +39,7 @@ After integrating the _CoSimIO_ in your code now it's time to say hello
 CoSimIO_Info info = CoSimIO_Hello();
 ```
 
-Please note that this method like other methods in _CoSimIO_ returns an `Info` object. This object is a versatile container holding important information about the operation that has been done. In this case, it contains the version of the _CoSimIO_ library which can be printed using `CoSimIO_PrintInfo()` function:
+Please note that this function like other functions in _CoSimIO_ returns an `Info` object. This object is a versatile container holding important information about the operation that has been done. In this case, it contains the version of the _CoSimIO_ library which can be printed using `CoSimIO_PrintInfo()` function:
 
 ```c
 CoSimIO_PrintInfo(stdout, info);
@@ -56,57 +56,72 @@ You may find this example in hello.c file in the `solver_integration/c` folder
 
 
 ## Tutorial 3: Connecting and Disconnecting
-The first step to establishing a connection to Kratos CoSimulation is to use the `Connect()` method:
-```c++
-// The connect must be called before any CosimIO method called
-auto info = CoSimIO::Connect(connection_name, settings);
-}
+The first step to establishing a connection to Kratos CoSimulation is to use the `CoSimIO_Connect()` function:
+```c
+// The connect must be called before any CosimIO function called
+CoSimIO_Info info = CoSimIO_Connect(settings);
 ```
 
-First of all, you may notice that `Connect()` method takes an `Info` as its arguments. This container can be used to pass additional information about the solver or connection settings to the CoSimIO:
+First of all, you may notice that `Connect()` function takes an `Info` as its arguments. So first you should create it using `CoSimIO_CreateInfo()` function:
 
-```c++
-CoSimIO::Info settings;
-settings.Set("connection_name", "test_connection"); // This must be unique for each connection between two solvers
-settings.Set("solver_name", "my_solver"); // Not to be confused with the connection name.
-settings.Set("echo_level", 1);
-settings.Set("solver_version", "1.25");
-}
+```c
+CoSimIO_Info settings=CoSimIO_CreateInfo();
 ```
-This method returns a `Info` object containing information about the connection which can be queried using Get method:
 
-```c++
-int connection_status = info.Get<int>("connection_status");
+It is important to mention that the `CoSimIO_Info` is a pointer to the cpp info class which is allocated by the `CoSimIO_CreateInfo()`. This container can be used to pass additional information about the solver or connection settings to the CoSimIO:
+
+```c
+CoSimIO_Info_SetString(settings, "connection_name", "test_connection"); // The connection name must be unique for each connection between two solvers
+CoSimIO_Info_SetString(settings, "solver_name", "my_solver"); // Not to be confused with the connection name.
+CoSimIO_Info_SetInt(settings, "echo_level", 1);
+CoSimIO_Info_SetString(settings, "solver_version", "1.25");
+```
+This function returns a `Info` object containing information about the connection which can be queried using `CoSimIO_Info_GetInt` function:
+
+```c
+CoSimIO_Info_GetInt(info, "connection_status");
 ```
 
 Now putting together everything:
 
-```c++
+```c
 // CoSimulation includes
-#include "co_sim_io.hpp"
-int main(){
-    CoSimIO::Info settings;
-    settings.Set("connection_name", "test_connection"); // This must be unique for each connection between two solvers
-    settings.Set("solver_name", "my_solver"); // Not to be confused with the connection name.
-    settings.Set("echo_level", 1);
-    settings.Set("solver_version", "1.25");
+#include "co_sim_io_c.h"
 
-    auto info = CoSimIO::Connect(settings);
-    if(info.Get<int>("connection_status") != CoSimIO::ConnectionStatus::Connected)
+int main()
+{
+    CoSimIO_Info settings=CoSimIO_CreateInfo();
+    CoSimIO_Info_SetString(settings, "connection_name", "test_connection"); // The connection name must be unique for each connection between two solvers
+    CoSimIO_Info_SetString(settings, "solver_name", "my_solver"); // Not to be confused with the connection name.
+    CoSimIO_Info_SetInt(settings, "echo_level", 1);
+    CoSimIO_Info_SetString(settings, "solver_version", "1.25");
+
+    // The connect must be called before any CosimIO function called
+    CoSimIO_Info info = CoSimIO_Connect(settings);
+
+    if(CoSimIO_Info_GetInt(info, "connection_status") != CoSimIO_Connected)
         return 1;
-    // Now you may call any CoSimIO methods like ImportData, ExportData, etc.
+
+    // Now you may call any CoSimIO functions 
 
     // ...
-    info = CoSimIO::Disconnect(settings); // disconnect afterwards
-    // Here you may use the info but cannot call any CoSimIO method anymore
-    if(info.Get<int>("connection_status") != CoSimIO::ConnectionStatus::Disconnected)
+
+    // Here you may use the info but cannot call any CoSimIO function anymore
+    CoSimIO_FreeInfo(info);
+    info = CoSimIO_Disconnect(settings); // disconnect afterwards
+    if(CoSimIO_Info_GetInt(info, "connection_status") != CoSimIO_Disconnected)
         return 1;
+
+    // Don't forget to release the settings and info
+    CoSimIO_FreeInfo(settings);
+    CoSimIO_FreeInfo(info);
 
     return 0;
 }
 ```
+It is important to point out the use of `CoSimIO_FreeInfo` function to free the internal data of Info before reusing it for `CoSimIO_Disconnect` or at the end of the process.
 
-You may find this example in connect_disconect.cpp file in the `solver_integration/cpp` folder
+You may find this example in `connect_disconect.cpp` file in the `solver_integration/c` folder
 
 ## Tutorial 4: Data Exchange
 One of the important missions of the CoSimIO is to send and recieve data between processes. The `ExportData()` method can be used to send data to the Kratos or directly to another solver:
