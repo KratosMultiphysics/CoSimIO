@@ -47,7 +47,7 @@ CoSimIO_Info CoSimIO_ImportData(
     double** ppData);
 
 CoSimIO_Info CoSimIO_ExportData(
-    const CoSimIO_Info* I_Info,
+    const CoSimIO_Info I_Info,
     const int I_Size,
     const double** pData);
 
