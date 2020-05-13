@@ -24,6 +24,15 @@
 extern "C" { // Define extern C if C++ compiler is used
 #endif
 
+enum CoSimIO_ConnectionStatus
+{
+    CoSimIO_NotConnected,
+    CoSimIO_Connected,
+    CoSimIO_Disconnected,
+    CoSimIO_ConnectionError,
+    CoSimIO_DisconnectionError
+};
+
 CoSimIO_Info CoSimIO_Hello();
 
 CoSimIO_Info CoSimIO_Connect(
