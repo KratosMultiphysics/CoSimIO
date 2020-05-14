@@ -26,24 +26,32 @@ jobs:
       with:
         python-version: 3.7
 
+    - name: Install Valgrind
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+      run: |
+        sudo apt-get install valgrind
+
     - name: Build CoSimIO
       run: |
-        cmake -H"." -B"build"  \
-          -DBUILD_C=ON         \
-          -DBUILD_PYTHON=ON    \
-          -DBUILD_FORTRAN=OFF  \
+        cmake -H"." -B"build"        \
+          -DCMAKE_BUILD_TYPE="Debug" \
+          -DBUILD_C=ON               \
+          -DBUILD_PYTHON=ON          \
+          -DBUILD_FORTRAN=OFF        \
           -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror"
 
         cmake --build "build" --target install
 
     - name: Running tests (Ctest)
-      shell: bash
       run: |
         cd build
-        ctest -C Debug
+        if [ ${{ matrix.os }} == ubuntu-latest ]; then
+          ctest -T memcheck
+        else
+          ctest
+        fi
 
     - name: Run tests
-      shell: bash
       run: |
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
         cd tests

@@ -1,6 +1,9 @@
 project(CoSimIO CXX C)
 cmake_minimum_required (VERSION 2.8.6)
 
+# this has to be specified BEFORE including CTest!
+set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track-origins=yes --tool=memcheck --error-exitcode=1")
+
 include(CTest)
 
 OPTION ( ENABLE_SOCKETS "Enable sockets communication"              OFF )
@@ -9,14 +12,20 @@ OPTION ( BUILD_C        "Building the CoSimIO for C"                OFF )
 OPTION ( BUILD_PYTHON   "Building the CoSimIO for Python"           OFF )
 OPTION ( BUILD_FORTRAN  "Building the CoSimIO for Fortran"          OFF )
 
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
 message("Building the CoSimIO with the following configuration:")
-message("    ENABLE_SOCKETS: " ${ENABLE_SOCKETS})
-message("    ENABLE_MPI:     " ${ENABLE_MPI})
-message("    BUILD_TESTING:  " ${BUILD_TESTING})
-message("    BUILD_C:        " ${BUILD_C})
-message("    BUILD_PYTHON:   " ${BUILD_PYTHON})
-message("    BUILD_FORTRAN:  " ${BUILD_FORTRAN})
+message("    CMAKE_BUILD_TYPE: " ${CMAKE_BUILD_TYPE})
+message("    ENABLE_SOCKETS:   " ${ENABLE_SOCKETS})
+message("    ENABLE_MPI:       " ${ENABLE_MPI})
+message("    BUILD_TESTING:    " ${BUILD_TESTING})
+message("    BUILD_C:          " ${BUILD_C})
+message("    BUILD_PYTHON:     " ${BUILD_PYTHON})
+message("    BUILD_FORTRAN:    " ${BUILD_FORTRAN})
 message("")
+
 
 if(MSVC)
     # required such that "__cplusplus" is set to the correct value
@@ -31,7 +40,7 @@ else() # assumed to be CLANG
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 endif()
 
-message("CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
+message("CMAKE_CXX_FLAGS:" ${CMAKE_CXX_FLAGS})
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # to suppress warning "MACOSX_RPATH is not specified for the following targets"
@@ -56,6 +65,8 @@ if (BUILD_FORTRAN)
 endif()
 
 if (BUILD_TESTING)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "external_libraries/catch2")
+    include(Catch)
     add_subdirectory(tests)
 endif()
 

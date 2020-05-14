@@ -43,29 +43,31 @@ CoSimIO_Info CoSimIO_Disconnect(
 
 CoSimIO_Info CoSimIO_ImportData(
     const CoSimIO_Info I_Info,
-    int* pSize,
-    double** ppData);
+    int* O_Size,
+    double** O_Data);
 
 CoSimIO_Info CoSimIO_ExportData(
     const CoSimIO_Info I_Info,
     const int I_Size,
-    const double** pData);
+    const double* I_Data);
 
 CoSimIO_Info CoSimIO_ImportMesh(
     const CoSimIO_Info I_Info,
-    int* pNumberOfNodes,
-    int* pNumberOfElements,
-    double** O_NodalCoordinates,
-    int** ppElementConnectivities,
-    int** ppElementTypes);
+    int* I_NumberOfNodes,
+    int* I_NumberOfElements,
+    int* I_NumberOfElementConnectivities,
+    double** I_NodalCoordinates,
+    int** I_ElementConnectivities,
+    int** I_ElementTypes);
 
 CoSimIO_Info CoSimIO_ExportMesh(
     const CoSimIO_Info I_Info,
-    const int NumberOfNodes,
-    const int NumberOfElements,
-    const double** pNodalCoordinates,
-    const int** pElementConnectivities,
-    const int** pElementTypes);
+    const int O_NumberOfNodes,
+    const int O_NumberOfElements,
+    const int O_NumberOfElementConnectivities,
+    const double* O_NodalCoordinates,
+    const int* O_ElementConnectivities,
+    const int* O_ElementTypes);
 
 
 void CoSimIO_PrintInfo(FILE *Stream, 

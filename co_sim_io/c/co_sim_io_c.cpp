@@ -61,7 +61,7 @@ CoSimIO_Info CoSimIO_ImportData(
 CoSimIO_Info CoSimIO_ExportData(
     const CoSimIO_Info I_Info,
     const int I_Size,
-    const double** I_Data)
+    const double* I_Data)
 {
     using namespace CoSimIO::Internals;
     std::unique_ptr<DataContainer<double>> p_container(new DataContainerRawMemoryReadOnly<double>(I_Data, I_Size));
@@ -72,13 +72,14 @@ CoSimIO_Info CoSimIO_ImportMesh(
     const CoSimIO_Info I_Info,
     int* I_NumberOfNodes,
     int* I_NumberOfElements,
+    int* I_NumberOfElementConnectivities,
     double** I_NodalCoordinates,
     int** I_ElementConnectivities,
     int** I_ElementTypes)
 {
     using namespace CoSimIO::Internals;
     std::unique_ptr<DataContainer<double>> p_container_coords(new DataContainerRawMemory<double>(I_NodalCoordinates, *I_NumberOfNodes));
-    std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerRawMemory<int>(I_ElementConnectivities, *I_NumberOfElements)); // using "NumberOfElements" here is wrong! => has to be computed! Or sth like this ... (maybe even has to be passed...)
+    std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerRawMemory<int>(I_ElementConnectivities, *I_NumberOfElementConnectivities));
     std::unique_ptr<DataContainer<int>> p_container_types(new DataContainerRawMemory<int>(I_ElementTypes, *I_NumberOfElements));
     auto info = ConvertInfo(CoSimIO::ImportMesh(ConvertInfo(I_Info), *p_container_coords, *p_container_conn, *p_container_types));
     *I_NumberOfNodes = static_cast<int>(p_container_coords->size());
@@ -90,13 +91,14 @@ CoSimIO_Info CoSimIO_ExportMesh(
     const CoSimIO_Info I_Info,
     const int O_NumberOfNodes,
     const int O_NumberOfElements,
-    const double** O_NodalCoordinates,
-    const int** O_ElementConnectivities,
-    const int** O_ElementTypes)
+    const int O_NumberOfElementConnectivities,
+    const double* O_NodalCoordinates,
+    const int* O_ElementConnectivities,
+    const int* O_ElementTypes)
 {
     using namespace CoSimIO::Internals;
     std::unique_ptr<DataContainer<double>> p_container_coords(new DataContainerRawMemoryReadOnly<double>(O_NodalCoordinates, O_NumberOfNodes));
-    std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerRawMemoryReadOnly<int>(O_ElementConnectivities, O_NumberOfElements)); // using "NumberOfElements" here is wrong! => has to be computed! Or sth like this ... (maybe even has to be passed...)
+    std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerRawMemoryReadOnly<int>(O_ElementConnectivities, O_NumberOfElementConnectivities));
     std::unique_ptr<DataContainer<int>> p_container_types(new DataContainerRawMemoryReadOnly<int>(O_ElementTypes, O_NumberOfElements));
     return ConvertInfo(CoSimIO::ExportMesh(ConvertInfo(I_Info), *p_container_coords, *p_container_conn, *p_container_types));
 }

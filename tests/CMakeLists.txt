@@ -3,15 +3,15 @@ include_directories( ${CMAKE_SOURCE_DIR}/external_libraries )
 
 ### Test runner for tests of CoSimIO
 file( GLOB_RECURSE CO_SIM_IO_TEST_FILES co_sim_io/*.cpp)
-add_executable ( test_runner_co_sim_io_tests ${CO_SIM_IO_TEST_FILES})
-install( TARGETS test_runner_co_sim_io_tests DESTINATION ${CMAKE_SOURCE_DIR}/bin )
-set_target_properties(test_runner_co_sim_io_tests PROPERTIES
+add_executable ( co_sim_io_tests ${CO_SIM_IO_TEST_FILES})
+install( TARGETS co_sim_io_tests DESTINATION ${CMAKE_SOURCE_DIR}/bin )
+set_target_properties(co_sim_io_tests PROPERTIES
     CXX_STANDARD 11
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
 )
 
-add_test(co_sim_io_tests test_runner_co_sim_io_tests)
+catch_discover_tests(co_sim_io_tests)
 
 
 ### C++ tests ###
@@ -32,9 +32,9 @@ endforeach(cpp_test_file)
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run.sh  $1 & $2)
 
 add_test(hello_cpp_test hello_cpp_test)
-add_test(NAME connect_disconnect_cpp_test COMMAND bash run.sh $<TARGET_FILE:connect_disconnect_cpp_test>  $<TARGET_FILE:connect_disconnect_cpp_test>)
-add_test(NAME import_export_data_cpp_test COMMAND bash run.sh $<TARGET_FILE:export_data_cpp_test>  $<TARGET_FILE:import_data_cpp_test>)
-add_test(NAME import_export_mesh_cpp_test COMMAND bash run.sh $<TARGET_FILE:export_mesh_cpp_test>  $<TARGET_FILE:import_mesh_cpp_test>)
+add_test(NAME connect_disconnect_cpp_test COMMAND sh run.sh $<TARGET_FILE:connect_disconnect_cpp_test>  $<TARGET_FILE:connect_disconnect_cpp_test>)
+add_test(NAME import_export_data_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_data_cpp_test>  $<TARGET_FILE:import_data_cpp_test>)
+add_test(NAME import_export_mesh_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_mesh_cpp_test>  $<TARGET_FILE:import_mesh_cpp_test>)
 
 ### C tests ###
 if(BUILD_C)
