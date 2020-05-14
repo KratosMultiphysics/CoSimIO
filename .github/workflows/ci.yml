@@ -26,6 +26,10 @@ jobs:
       with:
         python-version: 3.7
 
+    - name: Install Valgrind
+      run: |
+        sudo apt-get install valgrind
+
     - name: Build CoSimIO
       run: |
         cmake -H"." -B"build"  \
