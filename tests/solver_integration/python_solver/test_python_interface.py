@@ -13,7 +13,7 @@
 # tests for the python interface of the CoSimIO
 
 # python imports
-import unittest, sys, os
+import unittest, os
 import subprocess
 
 class PythonInterfaceTests(unittest.TestCase):
