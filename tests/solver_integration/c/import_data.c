@@ -21,26 +21,27 @@
 
 int main()
 {
-    // CoSimIO::Info settings;
-    // settings.Set("connection_name", "test_connection"); // This must be unique for each connection between two solvers
-    // settings.Set("solver_name", "solver_1"); // Not to be confused with the connection name.
-    // settings.Set("echo_level", 1);
-    // settings.Set("solver_version", "1.25");
+    CoSimIO_Info settings=CoSimIO_CreateInfo();
+    CoSimIO_Info_SetString(settings, "connection_name", "test_connection"); // The connection name must be unique for each connection between two solvers
+    CoSimIO_Info_SetString(settings, "solver_name", "my_solver"); // Not to be confused with the connection name.
+    CoSimIO_Info_SetInt(settings, "echo_level", 1);
+    CoSimIO_Info_SetString(settings, "solver_version", "1.25");
 
-    // auto info = CoSimIO::Connect(settings);
-    // COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
+    CoSimIO_Info info = CoSimIO_Connect(settings);
+    COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(info, "connection_status"), CoSimIO_Connected);
 
-    // std::vector<double> receive_data;
-    // info.Clear();
-    // info.Set("identifier", "vector_of_pi");
-    // info.Set("connection_name", "test_connection");
-    // info = CoSimIO::ImportData(info, receive_data);
+    int size = 4;
+    double* data;
+    CoSimIO_Info_Clear(info);
+    CoSimIO_Info_SetString(info, "identifier", "vector_of_pi");
+    CoSimIO_Info_SetString(info, "connection_name", "test_connection");
+    info = CoSimIO_ImportData(info, size, &data);
 
-    // for(auto& value : receive_data)
-    //     COSIMIO_CHECK_EQUAL(value, 3.14);
+    info = CoSimIO_Disconnect(settings); // disconnect afterwards
+    COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(info, "connection_status"), CoSimIO_Disconnected);
 
-    // info = CoSimIO::Disconnect(settings); // disconnect afterwards
-    // COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Disconnected);
+    CoSimIO_FreeInfo(settings);
+    CoSimIO_FreeInfo(info);
 
     return 0;
 }
