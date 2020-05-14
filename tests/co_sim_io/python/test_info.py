@@ -13,8 +13,7 @@
 # tests for the python exposure of CoSimIO::Info
 
 # python imports
-import unittest, sys, os
-from abc import ABCMeta, abstractmethod
+import unittest
 
 import CoSimIO
 

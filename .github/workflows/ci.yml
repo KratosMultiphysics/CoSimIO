@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macOS-latest]
-    timeout-minutes: 5
+    timeout-minutes: 15
     env:
       FC: gfortran-9
 
@@ -56,7 +56,7 @@ jobs:
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
-        python run_all_tests.py
+        python run_python_tests.py
 
 
   Windows:
@@ -105,9 +105,11 @@ jobs:
         ctest -C Debug
 
     - name: Run tests
+      env:
+        PYTHON_CMD: python
       shell: cmd
       run: |
         set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%/bin
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
-        python run_all_tests.py
+        python run_python_tests.py
