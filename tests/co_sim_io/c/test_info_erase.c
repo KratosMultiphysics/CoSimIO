@@ -17,17 +17,27 @@
 
 int main()
 {
-    // CoSimIO_Info info = CoSimIO_CreateInfo();
+    CoSimIO_Info info = CoSimIO_CreateInfo();
 
-    // COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "echo_level"));
+    COSIMIO_CHECK_INT_EQUAL(CoSimIO_Info_Size(info), 0);
 
-    // CoSimIO_Info_SetInt(info, "echo_level", 6);
+    CoSimIO_Info_SetInt(info, "echo_level", 6);
+    CoSimIO_Info_SetString(info, "iter", "15");
 
-    // COSIMIO_CHECK_TRUE(CoSimIO_Info_Has(info, "echo_level"));
+    COSIMIO_CHECK_INT_EQUAL(CoSimIO_Info_Size(info), 2);
 
-    // COSIMIO_CHECK_INT_EQUAL(CoSimIO_Info_GetInt(info, "echo_level"), 6);
+    CoSimIO_Info_Erase(info, "iter");
 
-    // CoSimIO_FreeInfo(info);
+    COSIMIO_CHECK_INT_EQUAL(CoSimIO_Info_Size(info), 1);
+
+    COSIMIO_CHECK_TRUE(CoSimIO_Info_Has(info, "echo_level"));
+    COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "iter"));
+
+    CoSimIO_Info_Erase(info, "non_existing"); // does not throw by design
+
+    COSIMIO_CHECK_INT_EQUAL(CoSimIO_Info_Size(info), 1);
+
+    CoSimIO_FreeInfo(info);
 
     return 0;
 }
