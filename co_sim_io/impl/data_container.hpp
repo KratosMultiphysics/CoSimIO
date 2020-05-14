@@ -137,16 +137,16 @@ template<typename TDataType>
 class DataContainerRawMemoryReadOnly : public DataContainer<TDataType>
 {
 public:
-    explicit DataContainerRawMemoryReadOnly(const TDataType** ppData, const std::size_t Size)
-        : mppData(ppData), mSize(Size) {}
+    explicit DataContainerRawMemoryReadOnly(const TDataType* pData, const std::size_t Size)
+        : mpData(pData), mSize(Size) {}
 
     std::size_t size() const override {return mSize;};
     void resize(const std::size_t NewSize) override {CO_SIM_IO_ERROR << "Using non-const member of readonly object!" << std::endl;};
-    const TDataType* data() const override {return *mppData;}
+    const TDataType* data() const override {return mpData;}
     TDataType* data() override {CO_SIM_IO_ERROR << "Using non-const member of readonly object!" << std::endl; return nullptr;}
 
 private:
-    const TDataType** mppData;
+    const TDataType* mpData;
     const std::size_t mSize;
 };
 
