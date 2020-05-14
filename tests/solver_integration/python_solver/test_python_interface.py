@@ -19,7 +19,7 @@ import subprocess
 class PythonInterfaceTests(unittest.TestCase):
     CWD = os.path.dirname(os.path.realpath(__file__))
     USE_SHELL = os.name=="nt" # using shell on win
-    PYTHON_CMD = os.environ["PYTHON_CMD"] = "python3"
+    PYTHON_CMD = os.environ["PYTHON_CMD"] = "python3" # use "python3" unless specified otherwise
 
     def setUp(self):
         # removing leftover files
