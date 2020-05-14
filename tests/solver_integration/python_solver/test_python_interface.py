@@ -19,6 +19,7 @@ import subprocess
 class PythonInterfaceTests(unittest.TestCase):
     CWD = os.path.dirname(os.path.realpath(__file__))
     USE_SHELL = os.name=="nt" # using shell on win
+    PYTHON_CMD = os.environ["PYTHON_CMD"] = "python3"
 
     def setUp(self):
         # removing leftover files
@@ -39,14 +40,14 @@ class PythonInterfaceTests(unittest.TestCase):
         self.__RunScripts("export_mesh.py", "import_mesh.py")
 
     def __RunScript(self, script_name):
-        p = subprocess.Popen(['python3', script_name], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD, shell=PythonInterfaceTests.USE_SHELL)
+        p = subprocess.Popen([PythonInterfaceTests.PYTHON_CMD, script_name], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD, shell=PythonInterfaceTests.USE_SHELL)
         p.wait(5)
         p_out = p.communicate()
         self.assertEqual(p.returncode, 0, msg=GetErrMsg(script_name, p_out))
 
     def __RunScripts(self, script_name_1, script_name_2):
-        p1 = subprocess.Popen(['python3', script_name_1], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD, shell=PythonInterfaceTests.USE_SHELL)
-        p2 = subprocess.Popen(['python3', script_name_2], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD, shell=PythonInterfaceTests.USE_SHELL)
+        p1 = subprocess.Popen([PythonInterfaceTests.PYTHON_CMD, script_name_1], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD, shell=PythonInterfaceTests.USE_SHELL)
+        p2 = subprocess.Popen([PythonInterfaceTests.PYTHON_CMD, script_name_2], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD, shell=PythonInterfaceTests.USE_SHELL)
         p1.wait(5)
         p2.wait(5)
 
