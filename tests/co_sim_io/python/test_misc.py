@@ -10,7 +10,7 @@
 #  Main authors:    Philipp Bucher (https://github.com/philbucher)
 #
 
-# miscellaneous for the CoSimIO
+# miscellaneous tests for the CoSimIO
 
 # python imports
 import unittest
