@@ -46,7 +46,7 @@ jobs:
       run: |
         cd build
         if [ ${{ matrix.os }} == ubuntu-latest ]; then
-          ctest -T memcheck
+          ctest -T memcheck; echo $?
         else
           ctest
         fi
