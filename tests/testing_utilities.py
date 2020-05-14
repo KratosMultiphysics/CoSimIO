@@ -13,9 +13,8 @@
 # This file contains functionalities used for the testing of CoSimIO
 
 # python imports
-import unittest, sys, os
+import os
 import json
-import subprocess
 
 
 def _GetFilePath(fileName):
