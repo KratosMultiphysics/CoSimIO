@@ -15,6 +15,7 @@
 // System includes
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 
 #define COSIMIO_CHECK_INT_EQUAL(a, b)                                \
     if (a != b) {                                                    \
@@ -25,6 +26,12 @@
 #define COSIMIO_CHECK_DOUBLE_EQUAL(a, b)                             \
     if (fabs(a-b)>1e-15) {                                           \
         printf("in line %d: %f is not equal to %f", __LINE__, a, b); \
+        return 1;                                                    \
+    }
+
+#define COSIMIO_CHECK_STRING_EQUAL(a, b)                             \
+    if (strcmp(a,b)) {                                               \
+        printf("in line %d: %s is not equal to %s", __LINE__, a, b); \
         return 1;                                                    \
     }
 

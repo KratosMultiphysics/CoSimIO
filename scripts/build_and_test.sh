@@ -10,4 +10,4 @@ ctest -T memcheck
 
 echo "\n>>> Running Python Tests"
 cd ../tests
-python3 run_all_tests.py
+python3 run_python_tests.py
