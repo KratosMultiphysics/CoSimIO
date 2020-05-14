@@ -45,8 +45,7 @@ jobs:
     - name: Running tests (Ctest)
       run: |
         cd build
-        if [ ${{ matrix.os }} == ubuntu-latest ] 
-        then
+        if [ ${{ matrix.os }} == ubuntu-latest ]; then
           ctest -T memcheck
         else
           ctest
