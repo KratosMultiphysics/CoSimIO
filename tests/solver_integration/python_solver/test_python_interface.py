@@ -25,7 +25,7 @@ class PythonInterfaceTests(unittest.TestCase):
         # removing leftover files
         for file_name in os.listdir(PythonInterfaceTests.CWD):
             if "CoSimIO_" in file_name:
-                os.remove(file_name)
+                os.remove(os.path.join(PythonInterfaceTests.CWD,file_name))
 
     def test_hello(self):
         self.__RunScript("hello.py")
