@@ -17,8 +17,16 @@ import unittest, sys, os
 import subprocess
 
 class PythonInterfaceTests(unittest.TestCase):
+    CWD = os.path.dirname(os.path.realpath(__file__))
+
+    def setUp(self):
+        # removing leftover files
+        for file_name in os.listdir(PythonInterfaceTests.CWD):
+            if "CoSimIO_" in file_name:
+                os.remove(file_name)
+
     def test_hello(self):
-        subprocess.run(['python3', 'hello.py'], check=True,stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=os.path.dirname(os.path.realpath(__file__)))
+        self.__RunScript("hello.py")
 
     def test_connect_disconnect(self):
         self.__RunScripts("connect_disconnect.py", "connect_disconnect.py")
@@ -29,17 +37,34 @@ class PythonInterfaceTests(unittest.TestCase):
     def test_import_export_mesh(self):
         self.__RunScripts("export_mesh.py", "import_mesh.py")
 
-    def __RunScripts(self, script_1, script_2):
-        p1 = subprocess.Popen(['python3', script_1],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=os.path.dirname(os.path.realpath(__file__)))
-        p2 = subprocess.Popen(['python3', script_2],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=os.path.dirname(os.path.realpath(__file__)))
+    def __RunScript(self, script_name):
+        p = subprocess.Popen(['python3', script_name], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD)
+        p.wait(5)
+        p_out = p.communicate()
+        self.assertEqual(p.returncode, 0, msg=GetErrMsg(script_name, p_out))
+
+    def __RunScripts(self, script_name_1, script_name_2):
+        p1 = subprocess.Popen(['python3', script_name_1], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD)
+        p2 = subprocess.Popen(['python3', script_name_2], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD)
         p1.wait(5)
         p2.wait(5)
 
-    def setUp(self):
-        # removing leftover files
-        for file_name in os.listdir(os.path.dirname(os.path.realpath(__file__))):
-            if "CoSimIO_" in file_name:
-                os.remove(file_name)
+        p1_out = p1.communicate()
+        p2_out = p2.communicate()
+
+        self.assertEqual(p1.returncode, 0, msg=GetErrMsg(script_name_1, p1_out))
+        self.assertEqual(p2.returncode, 0, msg=GetErrMsg(script_name_2, p2_out))
+
+def GetErrMsg(script_name, p_out):
+    err_msg = '\nRunning script "{}" was not successful!'.format(script_name)
+    p_stdout = p_out[0]
+    p_stderr = p_out[1]
+    if p_stdout:
+        err_msg += "\nSTDOUT:\n" + p_stdout.decode('ascii')
+    if p_stderr:
+        err_msg += "\nSTDERR:\n" + p_stderr.decode('ascii')
+
+    return err_msg
 
 
 if __name__ == '__main__':
