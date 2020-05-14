@@ -56,7 +56,7 @@ jobs:
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
-        python run_all_tests.py
+        python run_python_tests.py
 
 
   Windows:
@@ -110,4 +110,4 @@ jobs:
         set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%/bin
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
-        python run_all_tests.py
+        python run_python_tests.py
