@@ -27,7 +27,7 @@ int main()
 
     COSIMIO_CHECK_INT_EQUAL(CoSimIO_Info_GetInt(info, "echo_level"), 6);
 
-    //CoSimIO_FreeInfo(info);
+    CoSimIO_FreeInfo(info);
 
     return 0;
 }
