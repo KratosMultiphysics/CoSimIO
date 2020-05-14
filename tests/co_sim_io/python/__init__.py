@@ -1,1 +1,1 @@
-# this is needed for the unittest-discovery
+# this is needed for the python unittest discovery
