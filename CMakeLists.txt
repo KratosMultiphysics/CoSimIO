@@ -38,6 +38,8 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(CMAKE_MACOSX_RPATH 0)
 endif()
 
+set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track-origins=yes --tool=memcheck --error-exitcode=1")
+
 # clean the bin directory
 file(REMOVE_RECURSE bin)
 
