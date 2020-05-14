@@ -6,7 +6,7 @@ sh scripts/build.sh
 
 echo "\n>>> Running CTests"
 cd build
-ctest
+ctest -T memcheck
 
 echo "\n>>> Running Python Tests"
 cd ../tests
