@@ -64,8 +64,6 @@ jobs:
     strategy:
       fail-fast: false
     timeout-minutes: 5
-    env:
-      PYTHON_CMD: python # for the python-tests
 
     steps:
     - uses: actions/checkout@v2
@@ -107,6 +105,8 @@ jobs:
         ctest -C Debug
 
     - name: Run tests
+      env:
+        PYTHON_CMD: python
       shell: cmd
       run: |
         set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%/bin
