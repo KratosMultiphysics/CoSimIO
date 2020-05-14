@@ -30,16 +30,17 @@ int main()
     CoSimIO_Info info = CoSimIO_Connect(settings);
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(info, "connection_status"), CoSimIO_Connected);
 
-    int size = 4;
     double* data;
+    int data_allocated_size = 0;
     CoSimIO_Info_Clear(info);
     CoSimIO_Info_SetString(info, "identifier", "vector_of_pi");
     CoSimIO_Info_SetString(info, "connection_name", "test_connection");
-    info = CoSimIO_ImportData(info, size, &data);
+    info = CoSimIO_ImportData(info, data_allocated_size, &data);
 
     info = CoSimIO_Disconnect(settings); // disconnect afterwards
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(info, "connection_status"), CoSimIO_Disconnected);
 
+    free(data);
     CoSimIO_FreeInfo(settings);
     CoSimIO_FreeInfo(info);
 
