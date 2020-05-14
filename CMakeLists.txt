@@ -1,6 +1,9 @@
 project(CoSimIO CXX C)
 cmake_minimum_required (VERSION 2.8.6)
 
+# this has to be specified BEFORE including CTest!
+set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track-origins=yes --tool=memcheck --error-exitcode=1")
+
 include(CTest)
 
 OPTION ( ENABLE_SOCKETS "Enable sockets communication"              OFF )
@@ -43,8 +46,6 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # to suppress warning "MACOSX_RPATH is not specified for the following targets"
     set(CMAKE_MACOSX_RPATH 0)
 endif()
-
-set(CMAKE_MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track-origins=yes --tool=memcheck --error-exitcode=1")
 
 # clean the bin directory
 file(REMOVE_RECURSE bin)
