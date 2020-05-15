@@ -1,0 +1,23 @@
+name: Update version after master was modified
+
+# on:
+#   push:
+#     branches:
+#       - 'master'
+
+on: push
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create report file
+        run: |
+            echo "Trying sth"
+            echo git rev-parse origin/master
+    #   - name: Commit report
+    #     run: |
+    #       git config --global user.name 'Your Name'
+    #       git config --global user.email 'your-username@users.noreply.github.com'
+    #       git commit -am "Automated report"
+    #       git push
