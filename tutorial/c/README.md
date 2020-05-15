@@ -93,7 +93,7 @@ Now putting together everything:
 
 ```c
 // CoSimulation includes
-#include "co_sim_io_c.h"
+#include "c/co_sim_io_c.h"
 
 int main()
 {
