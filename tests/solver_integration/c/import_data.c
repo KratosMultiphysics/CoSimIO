@@ -10,6 +10,8 @@
 //  Main authors:    Pooyan Dadvand
 //
 
+#include <stdlib.h>
+
 // CoSimulation includes
 #include "c/co_sim_io_c.h"
 
@@ -35,7 +37,7 @@ int main()
     CoSimIO_Info_Clear(info);
     CoSimIO_Info_SetString(info, "identifier", "vector_of_pi");
     CoSimIO_Info_SetString(info, "connection_name", "test_connection");
-    info = CoSimIO_ImportData(info, data_allocated_size, &data);
+    info = CoSimIO_ImportData(info, &data_allocated_size, &data);
 
     info = CoSimIO_Disconnect(settings); // disconnect afterwards
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(info, "connection_status"), CoSimIO_Disconnected);
