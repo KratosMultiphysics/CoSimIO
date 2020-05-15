@@ -23,7 +23,7 @@ The shared library will be installed in `bin/` folder. After building and linkin
 
 ```c
 // CoSimulation includes
-#include "co_sim_io_c.h"
+#include "c/co_sim_io_c.h"
 
 int main(){
     return 0;
@@ -36,22 +36,29 @@ Please don't forget to add the CoSimIO folder to your include path.
 After integrating the _CoSimIO_ in your code now it's time to say hello
 
 ```c
-CoSimIO_Info info = CoSimIO_Hello();
+CoSimIO_Info hello_info = CoSimIO_Hello();
 ```
 
 Please note that this function like other functions in _CoSimIO_ returns an `Info` object. This object is a versatile container holding important information about the operation that has been done. In this case, it contains the version of the _CoSimIO_ library which can be printed using `CoSimIO_PrintInfo()` function:
 
 ```c
-CoSimIO_PrintInfo(stdout, info);
+CoSimIO_PrintInfo(stdout, hello_info);
 ```
 
 You may retriving a certain value from the info object using provided functions for each value type:
 
 ```c
-int major_version = CoSimIO_Info_GetInt(info, "major_version");
-int minor_version = CoSimIO_Info_GetInt(info, "minor_version");
-const char* patch_version = CoSimIO_Info_GetString(info, "patch_version");
+int major_version = CoSimIO_Info_GetInt(hello_info, "major_version");
+int minor_version = CoSimIO_Info_GetInt(hello_info, "minor_version");
+const char* patch_version = CoSimIO_Info_GetString(hello_info, "patch_version");
 ```
+
+Finally it is **very important** to free the info using the `CoSimIO_FreeInfo()` function:
+
+```c
+CoSimIO_FreeInfo(hello_info);
+```
+
 You may find this example in hello.c file in the `solver_integration/c` folder
 
 
