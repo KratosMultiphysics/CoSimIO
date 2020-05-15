@@ -128,7 +128,6 @@ int main()
     return 0;
 }
 ```
-It is important to point out the use of `CoSimIO_FreeInfo` function to free the internal data of Info before reusing it for `CoSimIO_Disconnect` or at the end of the process.
 
 You may find this example in `connect_disconect.cpp` file in the `solver_integration/c` folder
 
