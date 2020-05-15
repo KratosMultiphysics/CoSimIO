@@ -31,13 +31,16 @@ int main()
     CoSimIO_Info connect_info = CoSimIO_Connect(settings);
 
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
+    
+    // Don't forget to release the connect_info after getting your information
+    CoSimIO_FreeInfo(connect_info);
+
 
     // Now you may call any CoSimIO functions 
 
     // ...
 
     // You should free the info before getting a new one
-    CoSimIO_FreeInfo(connect_info);
     CoSimIO_Info disconnect_info = CoSimIO_Disconnect(settings); // disconnect afterwards
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(disconnect_info, "connection_status"), CoSimIO_Disconnected);
 
