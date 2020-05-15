@@ -87,6 +87,10 @@ CoSimIO_Info CoSimIO_Run(const CoSimIO_Info I_Info);
 
 CoSimIO_Info CoSimIO_IsConverged(const CoSimIO_Info I_Info);
 
+void* CoSimIO_Malloc(size_t size);
+
+void CoSimIO_Free (void* ptr);
+
 #ifdef __cplusplus
 }
 #endif

@@ -224,3 +224,13 @@ void CoSimIO_Info_SetString(CoSimIO_Info I_Info, const char* I_Key, const char* 
 {
     static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Set<std::string>(I_Key, I_Value);
 }
+
+void* CoSimIO_Malloc(size_t size){
+    // Todo: Add a register of allocated memory: [pointer, size]
+    return malloc(size);
+}
+
+void CoSimIO_Free (void* ptr){
+    // Removing it from registered allocated memory
+    free(ptr);
+}
