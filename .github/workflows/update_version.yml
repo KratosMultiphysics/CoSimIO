@@ -7,14 +7,14 @@ name: Update version after master was modified
 
 on: push
 jobs:
-  report:
+  update-version:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Create report file
         run: |
             echo "Trying sth"
-            echo git rev-parse origin/master
+            git rev-parse origin/master
     #   - name: Commit report
     #     run: |
     #       git config --global user.name 'Your Name'
