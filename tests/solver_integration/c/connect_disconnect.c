@@ -28,22 +28,22 @@ int main()
     CoSimIO_Info_SetString(settings, "solver_version", "1.25");
 
     // The connect must be called before any CosimIO function called
-    CoSimIO_Info info = CoSimIO_Connect(settings);
+    CoSimIO_Info connect_info = CoSimIO_Connect(settings);
 
-    COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(info, "connection_status"), CoSimIO_Connected);
+    COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
 
     // Now you may call any CoSimIO functions 
 
     // ...
 
     // You should free the info before getting a new one
-    CoSimIO_FreeInfo(info);
-    info = CoSimIO_Disconnect(settings); // disconnect afterwards
-    COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(info, "connection_status"), CoSimIO_Disconnected);
+    CoSimIO_FreeInfo(connect_info);
+    CoSimIO_Info disconnect_info = CoSimIO_Disconnect(settings); // disconnect afterwards
+    COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(disconnect_info, "connection_status"), CoSimIO_Disconnected);
 
     // Don't forget to release the settings and info
     CoSimIO_FreeInfo(settings);
-    CoSimIO_FreeInfo(info);
+    CoSimIO_FreeInfo(disconnect_info);
 
     return 0;
 }
