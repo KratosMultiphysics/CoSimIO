@@ -153,15 +153,29 @@ Please note that the `data_size` parameter is number of entitities in array. (Is
 
 The `ImportData()` should be used on the other side to recieve data:
 
-```c++
-std::vector<double> receive_data;
-CoSimIO::Info info;
-info.Set("identifier", "vector_of_pi");
-info.Set("connection_name", "test_connection");
-info = CoSimIO::ImportData(info, receive_data);
+```c
+// Importing the data
+CoSimIO_Info import_info = CoSimIO_ImportData(import_settings, &data_allocated_size, &data);
+```
+For the above example the settings and arguments are:
+
+```c
+double* data;
+int data_allocated_size = 0;
+
+// Creatint the import_settings 
+CoSimIO_Info import_settings=CoSimIO_CreateInfo();
+CoSimIO_Info_SetString(import_settings, "identifier", "vector_of_pi");
+CoSimIO_Info_SetString(import_settings, "connection_name", "test_connection");
 ```
 
-It is important to mention that the `ImportData()` will clear and resize the vector if needed.
+In this case we just pass an empty pointer and specifying to the `ImportData()` that should allocate the data by itself. So, in order to ensure the memory coherance, the `CoSimIO_Free()` function should be used instead of standard `free()` function:
+
+```c
+// Freeing the data using CoSimIO_Free. (Not the standard free())
+CoSimIO_Free(data);
+```
+You may also allocate the memory for data by `CoSimIO_Malloc()` function. If the allocated size is larger that imported data then there is no reallocation is done but if imported data is larger, then only if the data is allocated by `CoSimIO_Malloc()` function a reallocation will be done. If not, it will gives an error.
 
 
 ## Tutorial 5: Mesh Exchange
