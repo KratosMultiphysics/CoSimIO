@@ -13,9 +13,9 @@ jobs:
       - uses: actions/checkout@v2
       - name: Update Patch Version
         run: |
-            echo "Trying sth"
-            # ls -l
-            git ls-remote git://github.com/KratosMultiphysics/CoSimIO.git refs/heads/master
+          HASH=$(git ls-remote git://github.com/KratosMultiphysics/CoSimIO.git refs/heads/master | cut -f 1)
+          echo "gte hash"
+          echo "hash:" ${HASH}
     #   - name: Commit report
     #     run: |
     #       git config --global user.name 'Your Name'
