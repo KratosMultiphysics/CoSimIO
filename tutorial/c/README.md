@@ -113,7 +113,6 @@ int main()
     CoSimIO_FreeInfo(connect_info);
 
     // Now you may call any CoSimIO functions 
-
     // ...
 
     // Here you may use the info but cannot call any CoSimIO function anymore
@@ -132,15 +131,26 @@ int main()
 You may find this example in `connect_disconect.cpp` file in the `solver_integration/c` folder
 
 ## Tutorial 4: Data Exchange
-One of the important missions of the CoSimIO is to send and recieve data between processes. The `ExportData()` method can be used to send data to the Kratos or directly to another solver:
+One of the important missions of the CoSimIO is to send and recieve data between processes. The `CoSimIO_ExportData()` function can be used to send data to the Kratos or directly to another solver. For exporting the following array 4 doubles:
 
-```c++
-std::vector<double> data_to_send(4,3.14);
-CoSimIO::Info info;
-info.Set("identifier", "vector_of_pi");
-info.Set("connection_name", "test_connection");
-info = CoSimIO::ExportData(info, data_to_send);
+```c
+double data_to_send[] = {3.14, 3.14, 3.14, 3.14};
 ```
+First we should create a setting which provides an identifier (like "velocity_of_structure") and the connection name:
+
+```c
+// Creatint the export_settings 
+CoSimIO_Info export_settings=CoSimIO_CreateInfo();
+CoSimIO_Info_SetString(export_settings, "identifier", "vector_of_pi");
+CoSimIO_Info_SetString(export_settings, "connection_name", "test_connection");
+```
+And then use it to export the data:
+```c
+// Exporting the data
+CoSimIO_Info export_info = CoSimIO_ExportData(export_settings, data_size, data_to_send);
+```
+Please note that the `data_size` parameter is number of entitities in array. (Is not the size in bytes)
+
 The `ImportData()` should be used on the other side to recieve data:
 
 ```c++
