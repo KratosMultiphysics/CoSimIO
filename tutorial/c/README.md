@@ -66,7 +66,7 @@ You may find this example in hello.c file in the `solver_integration/c` folder
 The first step to establishing a connection to Kratos CoSimulation is to use the `CoSimIO_Connect()` function:
 ```c
 // The connect must be called before any CosimIO function called
-CoSimIO_Info info = CoSimIO_Connect(settings);
+CoSimIO_Info connect_info = CoSimIO_Connect(settings);
 ```
 
 First of all, you may notice that `Connect()` function takes an `Info` as its arguments. So first you should create it using `CoSimIO_CreateInfo()` function:
@@ -75,7 +75,7 @@ First of all, you may notice that `Connect()` function takes an `Info` as its ar
 CoSimIO_Info settings=CoSimIO_CreateInfo();
 ```
 
-It is important to mention that the `CoSimIO_Info` is a pointer to the cpp info class which is allocated by the `CoSimIO_CreateInfo()`. This container can be used to pass additional information about the solver or connection settings to the CoSimIO:
+It is important to mention that the `CoSimIO_Info` is a pointer to the cpp info class which is allocated by the `CoSimIO_CreateInfo()`. So it is don't forget to free it when is not needed anymore using `CoSimIO_FreeInfo()` function. This container can be used to pass additional information about the solver or connection settings to the CoSimIO:
 
 ```c
 CoSimIO_Info_SetString(settings, "connection_name", "test_connection"); // The connection name must be unique for each connection between two solvers
@@ -104,24 +104,26 @@ int main()
     CoSimIO_Info_SetString(settings, "solver_version", "1.25");
 
     // The connect must be called before any CosimIO function called
-    CoSimIO_Info info = CoSimIO_Connect(settings);
+    CoSimIO_Info connect_info = CoSimIO_Connect(settings);
 
-    if(CoSimIO_Info_GetInt(info, "connection_status") != CoSimIO_Connected)
+    if(CoSimIO_Info_GetInt(connect_info, "connection_status") != CoSimIO_Connected)
         return 1;
+    
+    // Don't forget to release the connect_info after getting your information
+    CoSimIO_FreeInfo(connect_info);
 
     // Now you may call any CoSimIO functions 
 
     // ...
 
     // Here you may use the info but cannot call any CoSimIO function anymore
-    CoSimIO_FreeInfo(info);
-    info = CoSimIO_Disconnect(settings); // disconnect afterwards
-    if(CoSimIO_Info_GetInt(info, "connection_status") != CoSimIO_Disconnected)
+    CoSimIO_Info disconnect_info = CoSimIO_Disconnect(settings); // disconnect afterwards
+    if(CoSimIO_Info_GetInt(disconnect_info, "connection_status") != CoSimIO_Disconnected)
         return 1;
 
     // Don't forget to release the settings and info
     CoSimIO_FreeInfo(settings);
-    CoSimIO_FreeInfo(info);
+    CoSimIO_FreeInfo(disconnect_info);
 
     return 0;
 }
