@@ -15,7 +15,7 @@ jobs:
         run: |
             echo "Trying sth"
             # ls -l
-            echo git ls-remote git://github.com/KratosMultiphysics/CoSimIO.git refs/heads/master | cut -f 1
+            git ls-remote git://github.com/KratosMultiphysics/CoSimIO.git refs/heads/master
     #   - name: Commit report
     #     run: |
     #       git config --global user.name 'Your Name'
