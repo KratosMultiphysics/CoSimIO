@@ -42,7 +42,7 @@ int main()
     info = CoSimIO_Disconnect(settings); // disconnect afterwards
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(info, "connection_status"), CoSimIO_Disconnected);
 
-    free(data);
+    CoSimIO_Free(data);
     CoSimIO_FreeInfo(settings);
     CoSimIO_FreeInfo(info);
 
