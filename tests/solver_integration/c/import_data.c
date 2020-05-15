@@ -52,6 +52,9 @@ int main()
     CoSimIO_Info disconnect_info = CoSimIO_Disconnect(connection_settings); // disconnect afterwards
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(disconnect_info, "connection_status"), CoSimIO_Disconnected);
 
+    // Freeing the data using CoSimIO_Free. (Not the standard free())
+    CoSimIO_Free(data);
+
     // Don't forget to release the settings and info
     CoSimIO_FreeInfo(connection_settings);
     CoSimIO_FreeInfo(disconnect_info);
