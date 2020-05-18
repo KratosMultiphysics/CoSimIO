@@ -9,25 +9,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Update Patch Version
         run: |
-          echo 1
           branch_name=${GITHUB_REF##*/}
-          echo 2
           long_hash=$(git ls-remote git://github.com/KratosMultiphysics/CoSimIO.git refs/heads/${branch_name} | cut -f 1)
-          echo 3
-          git status
-          git checkout origin/master
-          git status
-          short_hash=$(git rev-parse --short ${long_hash})
-          echo 4
-          git checkout branch_name
-          git status
-          sed -i "/AUTO-GENERATED/c\    \/*AUTO-GENERATED*\/return \"${short_hash}\";" co_sim_io/impl/version.hpp
-          echo 5
+          # short_hash=$(git rev-parse --short ${long_hash}) # does not work
+          sed -i "/AUTO-GENERATED/c\    \/*AUTO-GENERATED*\/return \"${long_hash}\";" co_sim_io/impl/version.hpp
           git config --global user.name 'Kratos Multiphysics Bot'
-          echo 6
           git config --global user.email 'kratos-multiphysics-bot@users.noreply.github.com'
-          echo 7
           git commit -am "update patch version"
-          echo 8
           git push
-          echo 9
