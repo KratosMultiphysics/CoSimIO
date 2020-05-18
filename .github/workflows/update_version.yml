@@ -27,5 +27,5 @@ jobs:
           git config --global user.email 'kratos-multiphysics-bot@users.noreply.github.com'
           git diff
           echo "END"
-          # git commit -am "update patch version"
-          # git push
+          git commit -am "update patch version"
+          git push
