@@ -18,7 +18,8 @@ jobs:
           echo "hash:" ${HASH}
           branch_name=$(${GITHUB_REF##*/})
           echo running on branch ${branch_name}
-          git rev-parse ${branch_name}
+          SHORT_HASH=$(git rev-parse --short ${HASH}
+          echo "hash:" ${SHORT_HASH}
           echo "AfterHash"
     #   - name: Commit report
     #     run: |
