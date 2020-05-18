@@ -17,6 +17,7 @@ jobs:
           echo "gte hash"
           echo "hash:" ${HASH}
           echo running on branch ${GITHUB_REF##*/}
+          git rev-parse origin/master
           echo "AfterHash"
     #   - name: Commit report
     #     run: |
