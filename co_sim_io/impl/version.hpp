@@ -27,7 +27,7 @@ constexpr int GetMinorVersion() {
 }
 
 std::string GetPatchVersion() {
-    /*AUTO-GENERATED*/return "${short_hash}";
+    /*AUTO-GENERATED*/return "71df045";
 }
 
 } // namespace CoSimIO
