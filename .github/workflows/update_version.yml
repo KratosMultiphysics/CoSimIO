@@ -14,11 +14,11 @@ jobs:
       - name: Update Patch Version
         run: |
           echo "gte hash"
-          echo "hash:" ${HASH}
           branch_name=${GITHUB_REF##*/}
           echo running on branch ${branch_name}
           
           HASH=$(git ls-remote git://github.com/KratosMultiphysics/CoSimIO.git refs/heads/${branch_name} | cut -f 1)
+          echo "hash:" ${HASH}
           SHORT_HASH=$(git rev-parse --short ${HASH})
           echo "hash:" ${SHORT_HASH}
           echo "AfterHash"
