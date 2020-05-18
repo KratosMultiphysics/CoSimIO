@@ -22,9 +22,8 @@ jobs:
           SHORT_HASH=$(git rev-parse --short ${HASH})
           echo "hash:" ${SHORT_HASH}
           echo "AfterHash"
-    #   - name: Commit report
-    #     run: |
-    #       git config --global user.name 'Your Name'
-    #       git config --global user.email 'your-username@users.noreply.github.com'
-    #       git commit -am "Automated report"
-    #       git push
+          sed -i "s/DEVELOP/${SHORT_HASH}/g" co_sim_io/impl/version.hpp
+          git config --global user.name 'Kratos Multiphysics Bot'
+          git config --global user.email 'kratos-multiphysics-bot@users.noreply.github.com'
+          # git commit -am "update patch version"
+          # git push
