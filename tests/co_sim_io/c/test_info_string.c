@@ -17,17 +17,17 @@
 
 int main()
 {
-    // CoSimIO_Info info = CoSimIO_CreateInfo();
+    CoSimIO_Info info = CoSimIO_CreateInfo();
 
-    // COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "echo_level"));
+    COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "identifier"));
 
-    // CoSimIO_Info_SetInt(info, "echo_level", 6);
+    CoSimIO_Info_SetString(info, "identifier", "field_pressure_interface");
 
-    // COSIMIO_CHECK_TRUE(CoSimIO_Info_Has(info, "echo_level"));
+    COSIMIO_CHECK_TRUE(CoSimIO_Info_Has(info, "identifier"));
 
-    // COSIMIO_CHECK_INT_EQUAL(CoSimIO_Info_GetInt(info, "echo_level"), 6);
+    COSIMIO_CHECK_STRING_EQUAL(CoSimIO_Info_GetString(info, "identifier"), "field_pressure_interface");
 
-    // CoSimIO_FreeInfo(info);
+    CoSimIO_FreeInfo(info);
 
     return 0;
 }

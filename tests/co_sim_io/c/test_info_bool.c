@@ -17,17 +17,17 @@
 
 int main()
 {
-    // CoSimIO_Info info = CoSimIO_CreateInfo();
+    CoSimIO_Info info = CoSimIO_CreateInfo();
 
-    // COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "echo_level"));
+    COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "is_converged"));
 
-    // CoSimIO_Info_SetInt(info, "echo_level", 6);
+    CoSimIO_Info_SetBool(info, "is_converged", 1);
 
-    // COSIMIO_CHECK_TRUE(CoSimIO_Info_Has(info, "echo_level"));
+    COSIMIO_CHECK_TRUE(CoSimIO_Info_Has(info, "is_converged"));
 
-    // COSIMIO_CHECK_INT_EQUAL(CoSimIO_Info_GetInt(info, "echo_level"), 6);
+    COSIMIO_CHECK_TRUE(CoSimIO_Info_GetBool(info, "is_converged"));
 
-    // CoSimIO_FreeInfo(info);
+    CoSimIO_FreeInfo(info);
 
     return 0;
 }
