@@ -61,7 +61,7 @@ int main()
     CoSimIO_Info_SetString(export_settings, "connection_name", "test_connection");
 
     // Exporting the data
-    CoSimIO_Info export_info = CoSimIO_Info CoSimIO_ExportMesh(export_settings
+    CoSimIO_Info export_info = CoSimIO_ExportMesh(export_settings
         , number_of_nodes,number_of_elements,number_of_elements_connectivities
         , nodal_coordinates, elements_connectivities, elements_types);
                                                                     
