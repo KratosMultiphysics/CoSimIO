@@ -16,8 +16,8 @@ jobs:
           HASH=$(git ls-remote git://github.com/KratosMultiphysics/CoSimIO.git refs/heads/master | cut -f 1)
           echo "gte hash"
           echo "hash:" ${HASH}
-          branch_name=$(${GITHUB_REF##*/})
-          echo running on branch ${branch_name}
+          #branch_name=$(${GITHUB_REF##*/})
+          #echo running on branch ${branch_name}
           SHORT_HASH=$(git rev-parse --short ${HASH})
           echo "hash:" ${SHORT_HASH}
           echo "AfterHash"
