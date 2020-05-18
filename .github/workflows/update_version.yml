@@ -14,6 +14,7 @@ jobs:
           echo 2
           long_hash=$(git ls-remote git://github.com/KratosMultiphysics/CoSimIO.git refs/heads/${branch_name} | cut -f 1)
           echo 3
+          git status
           short_hash=$(git rev-parse --short ${long_hash})
           echo 4
           sed -i "/AUTO-GENERATED/c\    \/*AUTO-GENERATED*\/return \"${short_hash}\";" co_sim_io/impl/version.hpp
