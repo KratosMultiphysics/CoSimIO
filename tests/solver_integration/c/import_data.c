@@ -31,13 +31,13 @@ int main()
     // Connecting using the connection settings
     CoSimIO_Info connect_info = CoSimIO_Connect(connection_settings);
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
-    CoSimIO_FreeInfo(connect_info); // Don't forget to free the connect_info 
+    CoSimIO_FreeInfo(connect_info); // Don't forget to free the connect_info
 
     // After conneting we may import the data
     double* data;
     int data_allocated_size = 0;
- 
-    // Creatint the import_settings 
+
+    // Creating the import_settings
     CoSimIO_Info import_settings=CoSimIO_CreateInfo();
     CoSimIO_Info_SetString(import_settings, "identifier", "vector_of_pi");
     CoSimIO_Info_SetString(import_settings, "connection_name", "test_connection");
@@ -45,7 +45,7 @@ int main()
     // Importing the data
     CoSimIO_Info import_info = CoSimIO_ImportData(import_settings, &data_allocated_size, &data);
     // Freeing the import_info and import_settings
-    CoSimIO_FreeInfo(import_info); 
+    CoSimIO_FreeInfo(import_info);
     CoSimIO_FreeInfo(import_settings);
 
     // Disconnecting at the end
