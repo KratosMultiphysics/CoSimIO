@@ -49,7 +49,7 @@ int main()
 
     std::vector<int> elements_types = {5,5,5,5}; // VTK_TRIANGLE
     info.Clear();
-    info.Set("identifier", "vector_of_pi");
+    info.Set("identifier", "fluid_mesh");
     info.Set("connection_name", "test_connection");
 
     info = CoSimIO::ExportMesh(info,nodal_coordinates, elements_connectivities, elements_types);

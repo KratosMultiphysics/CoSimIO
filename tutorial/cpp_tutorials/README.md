@@ -167,7 +167,7 @@ On the other side one can use the `ImportMesh()` method to get the mesh sent by 
 
 ```c++
 info.Clear();
-info.Set("identifier", "vector_of_pi");
+info.Set("identifier", "fluid_mesh");
 info.Set("connection_name", "test_connection");
 
 std::vector<double> nodal_coordinates;
