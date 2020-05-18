@@ -1,11 +1,7 @@
 name: Update version after master was modified
 
-# on:
-#   push:
-#     branches:
-#       - 'master'
+on: pull-request
 
-on: push
 jobs:
   update-version:
     runs-on: ubuntu-latest
