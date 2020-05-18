@@ -1,6 +1,6 @@
 name: Update version after master was modified
 
-on: pull-request
+on: pull_request
 
 jobs:
   update-version:
