@@ -1,6 +1,6 @@
 # Tutorial for integrating the _CoSimIO_ using the Python interface
 
-This tutorial helps you through to integrate the _CoSimIO_ into a solver using the Python interface.
+This tutorial helps you through to integrate the _CoSimIO_ into a solver/software-tool using the Python interface.
 
 ## What you need
 - Downloading the _CosimIO_ from the repository:
@@ -9,21 +9,24 @@ This tutorial helps you through to integrate the _CoSimIO_ into a solver using t
 git clone https://github.com/KratosMultiphysics/CoSimIO.git
 ```
 
-- A C++11 compatible compiler. This includes most of the major CPP compilers in Windows, Linux, and Mac. You may find a detailed list of C++11 compatible compilers [here](https://en.cppreference.com/w/cpp/compiler_support#cpp11)
+- A C++11 compatible compiler. This includes most of the major C++ compilers in Windows, Linux, and Mac. You may find a detailed list of C++11 compatible compilers [here](https://en.cppreference.com/w/cpp/compiler_support#cpp11)
+
 
 
 ## Tutorial 1: Building
-The Python interface is located in [co_sim_io/python](https://github.com/KratosMultiphysics/CoSimIO/tree/master/co_sim_io/python) folder of the repository. It depends to the [pybind11 library](https://github.com/pybind/pybind11) which is provided in the [expternal_libraries/pybind11](https://github.com/KratosMultiphysics/CoSimIO/tree/master/external_libraries/pybind11) folder of this repo.
+The Python interface is located in [co_sim_io/python](https://github.com/KratosMultiphysics/CoSimIO/tree/master/co_sim_io/python) folder of the repository. It uses the [pybind11 library](https://github.com/pybind/pybind11) for exposing the C++ code to Python. It is provided in the [expternal_libraries/pybind11](https://github.com/KratosMultiphysics/CoSimIO/tree/master/external_libraries/pybind11) folder of this repo.
 
-Using cmake the compilation is straightforward. Just calling the following command from the CoSimIO root:
+Using cmake the compilation is straightforward. Just calling the following command from the _CoSimIO_ root:
 
 ```
 sh scripts/build_python.sh
 ```
 
-This will compile the binaries in the build folder and installs them into the bin subfolder of CoSimIO.
+This will compile the binaries in the build folder and installs them into the bin subfolder of _CoSimIO_.
 
 Please don't forget to add the binaries in the bin folder to your `PYTHONPATH`.
+
+
 
 ## Tutorial 2: Hello CosimIO
 After integrating the _CoSimIO_ in your code now it's time to say hello
@@ -45,7 +48,10 @@ major_version = info.GetInt("major_version")
 minor_version = info.GetInt("minor_version")
 patch_version = info.GetString("patch_version")
 ```
-You may find this example in hello.py file in the `solver_integration/python_solver` folder
+
+This example can be found in [integration_tutorials/python/hello.py](../../tests/integration_tutorials/python/hello.py).
+
+
 
 ## Tutorial 3: Connecting and Disconnecting
 The first step to establishing a connection to Kratos CoSimulation is to use the `Connect()` method:
@@ -54,7 +60,7 @@ The first step to establishing a connection to Kratos CoSimulation is to use the
 info = CoSimIO.Connect(settings)
 ```
 
-First of all, you may notice that `Connect()` method takes an `Info` as its arguments. This contianer can be used to pass additional information about the solver or connection settings to the CoSimIO:
+First of all, you may notice that `Connect()` method takes an `Info` as its arguments. This container can be used to pass additional information about the solver/software-tool or connection settings to the _CoSimIO_:
 
 ```python
 settings = CoSimIO.Info()
@@ -89,10 +95,12 @@ if info.GetInt("connection_status") == CoSimIO.ConnectionStatus.Disconnected:
     print("Disconnected!")
 ```
 
-You may find this example in connect_disconect.cpp file in the `solver_integration/cpp` folder
+This example can be found in [integration_tutorials/python/connect_disconnect.py](../../tests/integration_tutorials/python/connect_disconnect.py).
+
+
 
 ## Tutorial 4: Data Exchange
-One of the important missions of the _CoSimIO_ is to send and recieve data between processes. The `ExportData()` method can be used to send data to the Kratos or directly to another solver:
+One of the important missions of the _CoSimIO_ is to send and recieve data between processes. The `ExportData()` method can be used to send data to the Kratos or directly to another solver/software-tool:
 
 ```python
 info = CoSimIO.Info()
@@ -110,10 +118,12 @@ return_info, received_data = CoSimIO.ImportData(info)
 ```
 It is important to mention that the `ImportData()` will clear and resize the vector if needed.
 
+This example can be found in [integration_tutorials/python/export_data.py](../../tests/integration_tutorials/python/export_data.py) and [integration_tutorials/python/import_data.py](../../tests/integration_tutorials/python/import_data.py).
+
 
 
 ## Tutorial 5: Mesh Exchange
-After seeing how we transfer raw data between solvers, it is time to see how we can export and import meshes. For exporting the mesh one may use the `ExportMesh()` method:
+After seeing how we transfer raw data between solvers/software-tools, it is time to see how we can export and import meshes. For exporting the mesh one may use the `ExportMesh()` method:
 
 
 ```Python
@@ -161,10 +171,4 @@ info.SetString("connection_name", "test_connection")
 return_info, nodal_coords, element_connectivities, element_types = CoSimIO.ImportMesh(info)
 ```
 
-
-
-
-
-
-
-
+This example can be found in [integration_tutorials/python/export_mesh.py](../../tests/integration_tutorials/python/export_mesh.py) and [integration_tutorials/python/import_mesh.py](../../tests/integration_tutorials/python/import_mesh.py).
