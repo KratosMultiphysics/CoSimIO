@@ -1,6 +1,6 @@
 # Tutorial for integrating the _CoSimIO_ using the C interface
 
-This tutorial helps you through to integrate the _CoSimIO_ into a solver using the C interface.
+This tutorial helps you through to integrate the _CoSimIO_ into a solver/software-tool using the C interface.
 
 ## What you need
 - Downloading the _CosimIO_ from the repository:
@@ -9,14 +9,14 @@ This tutorial helps you through to integrate the _CoSimIO_ into a solver using t
 git clone https://github.com/KratosMultiphysics/CoSimIO.git
 ```
 
-- A C++11 compatible compiler because the library by itself is in CPP and only a small C wrapper provides its C interface. most of the major CPP compilers in Windows, Linux, and Mac are C++11 compatible. You may find a detailed list of C++11 compatible compilers in https://en.cppreference.com/w/cpp/compiler_support#cpp11 
+- A C++11 compatible compiler because the library by itself is in C++ and only a small C wrapper provides its C interface. most of the major C++ compilers in Windows, Linux, and Mac are C++11 compatible. You may find a detailed list of C++11 compatible compilers in https://en.cppreference.com/w/cpp/compiler_support#cpp11
 
 
 ## Tutorial 1: Building
 The C version of CosimIO is implemented in the [co_sim_io_c.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/c/co_sim_io_c.cpp). You may include it directly into your project or compiling it as a library. One may use the [build_c.sh]() script from the CoSimIO root folder to create a shared library of the C interface:
 
 ```bash
-$ bash scripts/build_c.sh 
+$ bash scripts/build_c.sh
 ```
 
 The shared library will be installed in `bin/` folder. After building and linking it to your project, you may use the interface defined in `co_sim_io_c.h`:
@@ -31,6 +31,7 @@ int main(){
 ```
 
 Please don't forget to add the CoSimIO folder to your include path.
+
 
 ## Tutorial 2: Hello CosimIO
 After integrating the _CoSimIO_ in your code now it's time to say hello
@@ -59,7 +60,7 @@ Finally it is **very important** to free the info using the `CoSimIO_FreeInfo()`
 CoSimIO_FreeInfo(hello_info);
 ```
 
-You may find this example in hello.c file in the `solver_integration/c` folder
+This example can be found in [integration_tutorials/c/hello.c](../../tests/integration_tutorials/c/hello.c).
 
 
 ## Tutorial 3: Connecting and Disconnecting
@@ -72,10 +73,10 @@ CoSimIO_Info connect_info = CoSimIO_Connect(settings);
 First of all, you may notice that `Connect()` function takes an `Info` as its arguments. So first you should create it using `CoSimIO_CreateInfo()` function:
 
 ```c
-CoSimIO_Info settings=CoSimIO_CreateInfo();
+CoSimIO_Info settings = CoSimIO_CreateInfo();
 ```
 
-It is important to mention that the `CoSimIO_Info` is a pointer to the cpp info class which is allocated by the `CoSimIO_CreateInfo()`. So it is don't forget to free it when is not needed anymore using `CoSimIO_FreeInfo()` function. This container can be used to pass additional information about the solver or connection settings to the CoSimIO:
+It is important to mention that the `CoSimIO_Info` is a pointer to the cpp info class which is allocated by the `CoSimIO_CreateInfo()`. So it is don't forget to free it when is not needed anymore using `CoSimIO_FreeInfo()` function. This container can be used to pass additional information about the solver/software-tool or connection settings to the CoSimIO:
 
 ```c
 CoSimIO_Info_SetString(settings, "connection_name", "test_connection"); // The connection name must be unique for each connection between two solvers
@@ -98,7 +99,7 @@ Now putting together everything:
 int main()
 {
     CoSimIO_Info settings=CoSimIO_CreateInfo();
-    CoSimIO_Info_SetString(settings, "connection_name", "test_connection"); // The connection name must be unique for each connection between two solvers
+    CoSimIO_Info_SetString(settings, "connection_name", "test_connection"); // The connection name must be unique for each connection between two solvers/software-tools
     CoSimIO_Info_SetString(settings, "solver_name", "my_solver"); // Not to be confused with the connection name.
     CoSimIO_Info_SetInt(settings, "echo_level", 1);
     CoSimIO_Info_SetString(settings, "solver_version", "1.25");
@@ -108,11 +109,11 @@ int main()
 
     if(CoSimIO_Info_GetInt(connect_info, "connection_status") != CoSimIO_Connected)
         return 1;
-    
+
     // Don't forget to release the connect_info after getting your information
     CoSimIO_FreeInfo(connect_info);
 
-    // Now you may call any CoSimIO functions 
+    // Now you may call any CoSimIO functions
     // ...
 
     // Here you may use the info but cannot call any CoSimIO function anymore
@@ -128,10 +129,11 @@ int main()
 }
 ```
 
-You may find this example in `connect_disconect.cpp` file in the `solver_integration/c` folder
+This example can be found in [integration_tutorials/c/connect_disconnect.c](../../tests/integration_tutorials/c/connect_disconnect.c).
+
 
 ## Tutorial 4: Data Exchange
-One of the important missions of the CoSimIO is to send and recieve data between processes. The `CoSimIO_ExportData()` function can be used to send data to the Kratos or directly to another solver. For exporting the following array 4 doubles:
+One of the important missions of the CoSimIO is to send and recieve data between processes. The `CoSimIO_ExportData()` function can be used to send data to the Kratos or directly to another solver/software-tool. For exporting the following array 4 doubles:
 
 ```c
 double data_to_send[] = {3.14, 3.14, 3.14, 3.14};
@@ -139,8 +141,8 @@ double data_to_send[] = {3.14, 3.14, 3.14, 3.14};
 First we should create a setting which provides an identifier (like "velocity_of_structure") and the connection name:
 
 ```c
-// Creatint the export_settings 
-CoSimIO_Info export_settings=CoSimIO_CreateInfo();
+// Creatint the export_settings
+CoSimIO_Info export_settings = CoSimIO_CreateInfo();
 CoSimIO_Info_SetString(export_settings, "identifier", "vector_of_pi");
 CoSimIO_Info_SetString(export_settings, "connection_name", "test_connection");
 ```
@@ -163,8 +165,8 @@ For the above example the settings and arguments are:
 double* data;
 int data_allocated_size = 0;
 
-// Creatint the import_settings 
-CoSimIO_Info import_settings=CoSimIO_CreateInfo();
+// Creatint the import_settings
+CoSimIO_Info import_settings = CoSimIO_CreateInfo();
 CoSimIO_Info_SetString(import_settings, "identifier", "vector_of_pi");
 CoSimIO_Info_SetString(import_settings, "connection_name", "test_connection");
 ```
@@ -177,9 +179,11 @@ CoSimIO_Free(data);
 ```
 You may also allocate the memory for data by `CoSimIO_Malloc()` function. If the allocated size is larger that imported data then there is no reallocation is done but if imported data is larger, then only if the data is allocated by `CoSimIO_Malloc()` function a reallocation will be done. If not, it will gives an error.
 
+This example can be found in [integration_tutorials/c/export_data.c](../../tests/integration_tutorials/c/export_data.c) and [integration_tutorials/c/import_data.c](../../tests/integration_tutorials/c/import_data.c).
+
 
 ## Tutorial 5: Mesh Exchange
-After seeing how we transfer raw data between solvers, it is time to see how we can export and import meshes. For exporting the mesh one may use the `ExportMesh()` method:
+After seeing how we transfer raw data between solvers/software-tools, it is time to see how we can export and import meshes. For exporting the mesh one may use the `ExportMesh()` method:
 
 
 ```c++
@@ -217,4 +221,4 @@ std::vector<int> elements_connectivities = {
 std::vector<int> elements_types = {5,5,5,5}; // VTK_TRIANGLE
 ```
 
-
+This example can be found in [integration_tutorials/c/export_mesh.c](../../tests/integration_tutorials/c/export_mesh.c) and [integration_tutorials/c/import_mesh.c](../../tests/integration_tutorials/c/import_mesh.c).
