@@ -1,6 +1,6 @@
 # Tutorial for integrating the _CoSimIO_ using C++ interface
 
-This tutorial helps you through to integrate the _CoSimIO_ into a solver using the C++ interface.
+This tutorial helps you through to integrate the _CoSimIO_ into a solver/software-tool using the C++ interface.
 
 ## What you need
 - Downloading the _CosimIO_ from the repository:
@@ -13,7 +13,7 @@ git clone https://github.com/KratosMultiphysics/CoSimIO.git
 
 
 ## Tutorial 1: Building
-The CPP version of CosimIO is header only and for building you may only include the [co_sim_io.hpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp) in your project file and compile it with your code:
+The C++ version of CosimIO is header only and for building you may only include the [co_sim_io.hpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp) in your project file and compile it with your code:
 
 ```c++
 // CoSimulation includes
@@ -57,7 +57,7 @@ The first step to establishing a connection to Kratos CoSimulation is to use the
 auto info = CoSimIO::Connect(settings);
 ```
 
-First of all, you may notice that `Connect()` method takes an `Info` as its arguments. This container can be used to pass additional information about the solver or connection settings to the CoSimIO:
+First of all, you may notice that `Connect()` method takes an `Info` as its arguments. This container can be used to pass additional information about the solver/software-tool or connection settings to the _CoSimIO_:
 
 ```c++
 CoSimIO::Info settings;
@@ -102,7 +102,7 @@ int main(){
 You may find this example in connect_disconect.cpp file in the `solver_integration/cpp` folder
 
 ## Tutorial 4: Data Exchange
-One of the important missions of the CoSimIO is to send and recieve data between processes. The `ExportData()` method can be used to send data to the Kratos or directly to another solver:
+One of the important missions of the CoSimIO is to send and recieve data between processes. The `ExportData()` method can be used to send data to the Kratos or directly to another solver/software-tool:
 
 ```c++
 std::vector<double> data_to_send(4,3.14);
@@ -125,7 +125,7 @@ It is important to mention that the `ImportData()` will clear and resize the vec
 
 
 ## Tutorial 5: Mesh Exchange
-After seeing how we transfer raw data between solvers, it is time to see how we can export and import meshes. For exporting the mesh one may use the `ExportMesh()` method:
+After seeing how we transfer raw data between solvers/software-tools, it is time to see how we can export and import meshes. For exporting the mesh one may use the `ExportMesh()` method:
 
 
 ```c++
