@@ -23,7 +23,7 @@ function(add_cpp_executable TEST_SOURCE_FILE)
     install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_cpp")
 endfunction()
 
-file(GLOB cpp_test_files "solver_integration/cpp_solver/*.cpp")
+file(GLOB cpp_test_files "integration_tutorials/cpp/*.cpp")
 
 foreach(cpp_test_file ${cpp_test_files})
 add_cpp_executable(${cpp_test_file})
@@ -63,7 +63,7 @@ if(BUILD_C)
     add_c_test(${c_test_file})
     endforeach(c_test_file)
 
-    file(GLOB c_integration_test_files "solver_integration/c/*.c")
+    file(GLOB c_integration_test_files "integration_tutorials/c/*.c")
 
     foreach(c_integration_test_file ${c_integration_test_files})
     add_c_executable(${c_integration_test_file})
