@@ -50,7 +50,7 @@ int main()
     std::vector<int> expected_elements_types = {5,5,5,5}; // VTK_TRIANGLE
 
     info.Clear();
-    info.Set("identifier", "vector_of_pi");
+    info.Set("identifier", "fluid_mesh");
     info.Set("connection_name", "test_connection");
 
     std::vector<double> nodal_coordinates;

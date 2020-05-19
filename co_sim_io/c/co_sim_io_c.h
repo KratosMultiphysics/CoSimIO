@@ -16,11 +16,24 @@
 // C Interface for CoSimulation
 // see "co_sim_io.hpp"
 
+#include <stdio.h>
+
 #include "co_sim_io_c_info.h"
 
 #ifdef __cplusplus
 extern "C" { // Define extern C if C++ compiler is used
 #endif
+
+enum CoSimIO_ConnectionStatus
+{
+    CoSimIO_NotConnected,
+    CoSimIO_Connected,
+    CoSimIO_Disconnected,
+    CoSimIO_ConnectionError,
+    CoSimIO_DisconnectionError
+};
+
+CoSimIO_Info CoSimIO_Hello();
 
 CoSimIO_Info CoSimIO_Connect(
     const CoSimIO_Info I_Settings);
@@ -57,6 +70,9 @@ CoSimIO_Info CoSimIO_ExportMesh(
     const int* O_ElementTypes);
 
 
+void CoSimIO_PrintInfo(FILE *Stream, 
+    const CoSimIO_Info I_Info);
+
 CoSimIO_Info CoSimIO_ImportInfo(
     const CoSimIO_Info I_Info);
 
@@ -70,6 +86,10 @@ CoSimIO_Info CoSimIO_Register(
 CoSimIO_Info CoSimIO_Run(const CoSimIO_Info I_Info);
 
 CoSimIO_Info CoSimIO_IsConverged(const CoSimIO_Info I_Info);
+
+void* CoSimIO_Malloc(size_t size);
+
+void CoSimIO_Free (void* ptr);
 
 #ifdef __cplusplus
 }

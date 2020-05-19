@@ -12,22 +12,25 @@
 
 // Project includes
 #include "c/co_sim_io_c.h"
+#include <string.h>
 
 #include "checks.h"
 
 int main()
 {
-    // CoSimIO_Info info = CoSimIO_CreateInfo();
+    CoSimIO_Info info = CoSimIO_CreateInfo();
 
-    // COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "echo_level"));
+    CoSimIO_Info_SetInt(info, "echo_level", 6);
 
-    // CoSimIO_Info_SetInt(info, "echo_level", 6);
+    char buffer[BUFSIZ];
+    setbuf(stdout, buffer);
 
-    // COSIMIO_CHECK_TRUE(CoSimIO_Info_Has(info, "echo_level"));
+    // CoSimIO_PrintInfo(stdout, info);
 
-    // COSIMIO_CHECK_INT_EQUAL(CoSimIO_Info_GetInt(info, "echo_level"), 6);
+    // int comparison = strcmp(buffer, "CoSimIO-Info; containing 1 entries\n  name: echo_level | value: 6 | type: int\n\n");
+    // COSIMIO_CHECK_INT_EQUAL(comparison,0);
 
-    // CoSimIO_FreeInfo(info);
+    CoSimIO_FreeInfo(info);
 
     return 0;
 }

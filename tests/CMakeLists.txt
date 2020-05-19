@@ -48,11 +48,31 @@ if(BUILD_C)
         install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_c")
     endfunction()
 
+    function(add_c_executable TEST_SOURCE_FILE)
+        get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
+        string(REGEX REPLACE "[.]c" "_c_test" TEST_NAME ${TEST_FILENAME})
+        message(STATUS  "adding ${TEST_NAME} ")
+        add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
+        target_link_libraries(${TEST_NAME} co_sim_io_c)
+        install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_c")
+    endfunction()
+
     file(GLOB c_test_files "co_sim_io/c/*.c")
 
     foreach(c_test_file ${c_test_files})
     add_c_test(${c_test_file})
     endforeach(c_test_file)
+
+    file(GLOB c_integration_test_files "solver_integration/c/*.c")
+
+    foreach(c_integration_test_file ${c_integration_test_files})
+    add_c_executable(${c_integration_test_file})
+    endforeach(c_integration_test_file)
+
+    add_test(hello_c_test hello_c_test)
+    # add_test(NAME connect_disconnect_c_test COMMAND bash run.sh $<TARGET_FILE:connect_disconnect_c_test>  $<TARGET_FILE:connect_disconnect_c_test>)
+    # add_test(NAME import_export_data_c_test COMMAND bash run.sh $<TARGET_FILE:export_data_c_test>  $<TARGET_FILE:import_data_c_test>)
+    # add_test(NAME import_export_mesh_c_test COMMAND bash run.sh $<TARGET_FILE:export_mesh_c_test>  $<TARGET_FILE:import_mesh_c_test>)
 endif()
 
 

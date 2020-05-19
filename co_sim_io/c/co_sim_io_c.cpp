@@ -31,6 +31,11 @@ namespace {
 }
 
 
+CoSimIO_Info CoSimIO_Hello()
+{
+    return ConvertInfo(CoSimIO::Hello());
+}
+
 CoSimIO_Info CoSimIO_Connect(const CoSimIO_Info I_Settings)
 {
     return ConvertInfo(CoSimIO::Connect(ConvertInfo(I_Settings)));
@@ -96,6 +101,14 @@ CoSimIO_Info CoSimIO_ExportMesh(
     std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerRawMemoryReadOnly<int>(O_ElementConnectivities, O_NumberOfElementConnectivities));
     std::unique_ptr<DataContainer<int>> p_container_types(new DataContainerRawMemoryReadOnly<int>(O_ElementTypes, O_NumberOfElements));
     return ConvertInfo(CoSimIO::ExportMesh(ConvertInfo(I_Info), *p_container_coords, *p_container_conn, *p_container_types));
+}
+
+void CoSimIO_PrintInfo(FILE *Stream,
+    const CoSimIO_Info I_Info)
+{
+    std::stringstream buffer;
+    buffer << *static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo) << std::endl;
+    fprintf(Stream, "%s", buffer.str().c_str());
 }
 
 CoSimIO_Info CoSimIO_ImportInfo(
@@ -210,4 +223,14 @@ void CoSimIO_Info_SetBool(CoSimIO_Info I_Info, const char* I_Key, const int I_Va
 void CoSimIO_Info_SetString(CoSimIO_Info I_Info, const char* I_Key, const char* I_Value)
 {
     static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Set<std::string>(I_Key, I_Value);
+}
+
+void* CoSimIO_Malloc(size_t size){
+    // Todo: Add a register of allocated memory: [pointer, size]
+    return malloc(size);
+}
+
+void CoSimIO_Free (void* ptr){
+    // Removing it from registered allocated memory
+    free(ptr);
 }
