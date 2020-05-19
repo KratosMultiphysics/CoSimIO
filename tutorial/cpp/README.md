@@ -47,7 +47,8 @@ int major_version = info.Get<int>("major_version");
 int minor_version = info.Get<int>("minor_version");
 std::string patch_version = info.Get<std::string>("patch_version");
 ```
-You may find this example in hello.cpp file in the `solver_integration/cpp` folder
+
+This example can be found in [integration_tutorials/cpp/hello.cpp](../../tests/integration_tutorials/cpp/hello.cpp).
 
 
 ## Tutorial 3: Connecting and Disconnecting
@@ -99,7 +100,8 @@ int main(){
 }
 ```
 
-You may find this example in connect_disconect.cpp file in the `solver_integration/cpp` folder
+This example can be found in [integration_tutorials/cpp/connect_disconnect.cpp](../../tests/integration_tutorials/cpp/connect_disconnect.cpp).
+
 
 ## Tutorial 4: Data Exchange
 One of the important missions of the CoSimIO is to send and recieve data between processes. The `ExportData()` method can be used to send data to the Kratos or directly to another solver/software-tool:
@@ -122,6 +124,8 @@ info = CoSimIO::ImportData(info, receive_data);
 ```
 
 It is important to mention that the `ImportData()` will clear and resize the vector if needed.
+
+This example can be found in [integration_tutorials/cpp/export_data.cpp](../../tests/integration_tutorials/cpp/export_data.cpp) and [integration_tutorials/cpp/import_data.cpp](../../tests/integration_tutorials/cpp/import_data.cpp).
 
 
 ## Tutorial 5: Mesh Exchange
@@ -176,3 +180,5 @@ std::vector<int> elements_types;
 
 info = CoSimIO::ImportMesh(info,nodal_coordinates, elements_connectivities, elements_types);
 ```
+
+This example can be found in [integration_tutorials/cpp/export_mesh.cpp](../../tests/integration_tutorials/cpp/export_mesh.cpp) and [integration_tutorials/cpp/import_mesh.cpp](../../tests/integration_tutorials/cpp/import_mesh.cpp).
