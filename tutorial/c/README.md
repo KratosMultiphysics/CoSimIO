@@ -186,29 +186,35 @@ This example can be found in [integration_tutorials/c/export_data.c](../../tests
 After seeing how we transfer raw data between solvers/software-tools, it is time to see how we can export and import meshes. For exporting the mesh one may use the `ExportMesh()` method:
 
 
-```c++
-CoSimIO::Info info;
-info.Set("identifier", "fluid_mesh");
-info.Set("connection_name", "test_connection");
-info = CoSimIO::ExportMesh(info,nodal_coordinates, elements_connectivities, elements_types);
+```c
+CoSimIO_Info export_settings = CoSimIO_CreateInfo();
+CoSimIO_Info_SetString(export_settings, "identifier", "fluid_mesh");
+CoSimIO_Info_SetString(export_settings, "connection_name", "test_connection");
+CoSimIO_Info export_info = CoSimIO_ExportMesh(export_settings
+        , number_of_nodes,number_of_elements,number_of_elements_connectivities
+        , nodal_coordinates, elements_connectivities, elements_types);
 ```
 
 The arguments are:
 
+* `number_of_nodes`: Number of Nodes (== size(`nodal_coordinates`)/3)
+* `number_of_elements`: Number of Elements (== size(`elements_types`))
+* `number_of_elements_connectivities`: Number of Elements connectivities (== size(`elements_connectivities`))
+
 * `nodal_coordinates`: A vector of doubles of 3D coordinates of each node in x1,y1,z1,x2,y2,z2,... format:
-```c++
-std::vector<double> nodal_coordinates{
+```c
+double nodal_coordinates[] = {
     0.0, 2.5, 1.0, /*0*/
     2.0, 0.0, 1.5, /*1*/
     2.0, 2.5, 1.5, /*2*/
     4.0, 2.5, 1.7, /*3*/
     4.0, 0.0, 1.7, /*4*/
     6.0, 0.0, 1.8  /*5*/
-    };
+};
 ```
 * `elements_connectivities`: A vector of int containing the zero based index of each node in e1_1,e1_2,...,e2_1, e2_2,... format:
-```c++
-std::vector<int> elements_connectivities = {
+```c
+int elements_connectivities[] = {
     0, 1, 2, /*1*/
     1, 3, 2, /*2*/
     1, 4, 3, /*3*/
@@ -217,8 +223,20 @@ std::vector<int> elements_connectivities = {
 ```
 
 * `elements_types`: A vector of int containing the type of the elements. They are according to the vtk cell types, see [this link](https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf), page 9 & 10.
-```c++
-std::vector<int> elements_types = {5,5,5,5}; // VTK_TRIANGLE
+```c
+int elements_types[] = {5,5,5,5}; // VTK_TRIANGLE
+```
+
+On the other side one can use the `ImportMesh()` method to get the mesh sent by the export:
+
+```c
+CoSimIO_Info import_settings=CoSimIO_CreateInfo();
+CoSimIO_Info_SetString(import_settings, "identifier", "fluid_mesh");
+CoSimIO_Info_SetString(import_settings, "connection_name", "test_connection");
+
+CoSimIO_Info import_info = CoSimIO_ImportMesh(import_settings
+    , &number_of_nodes,&number_of_elements,&number_of_elements_connectivities
+    , &nodal_coordinates, &elements_connectivities, &elements_types);
 ```
 
 This example can be found in [integration_tutorials/c/export_mesh.c](../../tests/integration_tutorials/c/export_mesh.c) and [integration_tutorials/c/import_mesh.c](../../tests/integration_tutorials/c/import_mesh.c).
