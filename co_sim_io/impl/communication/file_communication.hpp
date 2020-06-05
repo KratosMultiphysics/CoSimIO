@@ -18,6 +18,7 @@
 #include <thread>
 #include <iomanip>
 #include <algorithm>
+#include <limits>
 
 // Project includes
 #include "communication.hpp"
