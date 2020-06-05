@@ -31,11 +31,13 @@ When using only C++11 the alternative implementation from
         #define NOMINMAX
         #include "../../external_libraries/ghc/filesystem.hpp"
         namespace fs = ghc::filesystem;
+        #undef NOMINMAX
     #endif
 #else // not C++17
     #define NOMINMAX
     #include "../../external_libraries/ghc/filesystem.hpp"
     namespace fs = ghc::filesystem;
+    #undef NOMINMAX
 #endif
 
 #endif // CO_SIM_IO_FILESYSTEM_INC_H_INCLUDED
