@@ -24,9 +24,6 @@ When using only C++11 the alternative implementation from
     #if __has_include(<filesystem>) // has_include is C++17
         #include <filesystem>
         namespace fs = std::filesystem;
-    #elif __has_include(<experimental/filesystem>)
-        #include <experimental/filesystem>
-        namespace fs = std::experimental::filesystem;
     #else
         #define WIN32_LEAN_AND_MEAN
         #define NOMINMAX
