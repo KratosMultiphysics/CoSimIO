@@ -28,16 +28,20 @@ When using only C++11 the alternative implementation from
         #include <experimental/filesystem>
         namespace fs = std::experimental::filesystem;
     #else
+        #define WIN32_LEAN_AND_MEAN
         #define NOMINMAX
         #include "../../external_libraries/ghc/filesystem.hpp"
         namespace fs = ghc::filesystem;
         #undef NOMINMAX
+        #undef WIN32_LEAN_AND_MEAN
     #endif
 #else // not C++17
+    #define WIN32_LEAN_AND_MEAN
     #define NOMINMAX
     #include "../../external_libraries/ghc/filesystem.hpp"
     namespace fs = ghc::filesystem;
     #undef NOMINMAX
+    #undef WIN32_LEAN_AND_MEAN
 #endif
 
 #endif // CO_SIM_IO_FILESYSTEM_INC_H_INCLUDED
