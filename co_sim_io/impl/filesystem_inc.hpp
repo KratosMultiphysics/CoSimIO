@@ -28,10 +28,12 @@ When using only C++11 the alternative implementation from
         #include <experimental/filesystem>
         namespace fs = std::experimental::filesystem;
     #else
+        #define NOMINMAX
         #include "../../external_libraries/ghc/filesystem.hpp"
         namespace fs = ghc::filesystem;
     #endif
 #else // not C++17
+    #define NOMINMAX
     #include "../../external_libraries/ghc/filesystem.hpp"
     namespace fs = ghc::filesystem;
 #endif
