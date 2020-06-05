@@ -22,23 +22,20 @@ When using only C++11 the alternative implementation from
 // To dynamically select std::filesystem where available, you could use:
 #if defined(__cplusplus) && __cplusplus >= 201703L
     #if __has_include(<filesystem>) // has_include is C++17
+        #define STD_FILESYSTEM_AVAILABLE
         #include <filesystem>
         namespace fs = std::filesystem;
-    #else
-        #define WIN32_LEAN_AND_MEAN
-        #define NOMINMAX
-        #include "../../external_libraries/ghc/filesystem.hpp"
-        namespace fs = ghc::filesystem;
-        #undef NOMINMAX
-        #undef WIN32_LEAN_AND_MEAN
     #endif
-#else // not C++17
+#endif
+#ifndef STD_FILESYSTEM_AVAILABLE
     #define WIN32_LEAN_AND_MEAN
     #define NOMINMAX
     #include "../../external_libraries/ghc/filesystem.hpp"
-    namespace fs = ghc::filesystem;
     #undef NOMINMAX
     #undef WIN32_LEAN_AND_MEAN
+    namespace fs = ghc::filesystem;
 #endif
+
+#undef STD_FILESYSTEM_AVAILABLE
 
 #endif // CO_SIM_IO_FILESYSTEM_INC_H_INCLUDED
