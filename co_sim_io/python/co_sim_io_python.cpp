@@ -24,8 +24,11 @@
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
 
-// CoSimIO include
+// CoSimIO includes
 #include "../co_sim_io.hpp"
+#include "info_to_python.hpp"
+#include "connection_status_to_python.hpp"
+#include "version_to_python.hpp"
 
 namespace CoSimIO_Py_Wrappers {
 
@@ -88,42 +91,12 @@ CoSimIO::Info ExportData(
         rValues);
 }
 
-// This function is used to print the ofstream-operator
-// i.e. printing an object will give the same result in Python as in C++
-// To be defined as the "__str__" function
-// e.g. ".def("__str__", PrintObject<ProcessInfo>)"
-// It replicates the function "self_ns::str(self))" of boost-python
-template< class T>
-std::string PrintObject(const T& rObject)
-{
-    std::stringstream ss;
-    ss << rObject;
-    return ss.str();
-}
-
 } // namespace CoSimIO_Py_Wrappers
 
 
 PYBIND11_MODULE(CoSimIO, m)
 {
     namespace py = pybind11;
-
-    py::class_<CoSimIO::Info>(m,"Info")
-        .def(py::init<>())
-        .def("Has",       &CoSimIO::Info::Has)
-        .def("GetInt",    &CoSimIO::Info::Get<int>)
-        .def("GetDouble", &CoSimIO::Info::Get<double>)
-        .def("GetBool",   &CoSimIO::Info::Get<bool>)
-        .def("GetString", &CoSimIO::Info::Get<std::string>)
-        .def("SetInt",    &CoSimIO::Info::Set<int>)
-        .def("SetDouble", &CoSimIO::Info::Set<double>)
-        .def("SetBool",   &CoSimIO::Info::Set<bool>)
-        .def("SetString", &CoSimIO::Info::Set<std::string>)
-        .def("Erase",     &CoSimIO::Info::Erase)
-        .def("Clear",     &CoSimIO::Info::Clear)
-        .def("Size",      &CoSimIO::Info::Size)
-        .def("__str__",   CoSimIO_Py_Wrappers::PrintObject<CoSimIO::Info>);
-        ;
 
     m.def("Hello", & CoSimIO::Hello);
 
@@ -146,18 +119,7 @@ PYBIND11_MODULE(CoSimIO, m)
         std::function<CoSimIO::Info(const CoSimIO::Info&)> FunctionPointer)
         { return CoSimIO::Register(I_Info, FunctionPointer); } );
 
-    py::enum_<CoSimIO::ConnectionStatus>(m,"ConnectionStatus")
-        .value("NotConnected",CoSimIO::ConnectionStatus::NotConnected)
-        .value("Connected",CoSimIO::ConnectionStatus::Connected)
-        .value("Disconnected", CoSimIO::ConnectionStatus::Disconnected)
-        .value("ConnectionError", CoSimIO::ConnectionStatus::ConnectionError)
-        .value("DisconnectionError", CoSimIO::ConnectionStatus::DisconnectionError)
-        ;
-
-
-    std::stringstream version_stream;
-    version_stream << CoSimIO::GetMajorVersion() << "."
-                   << CoSimIO::GetMinorVersion() << "."
-                   << CoSimIO::GetPatchVersion();
-    m.attr("__version__") = version_stream.str();
+    AddCoSimIOInfoToPython(m);
+    AddCoSimIOConnectionStatusToPython(m);
+    AddCoSimIOVersionToPython(m);
 }
