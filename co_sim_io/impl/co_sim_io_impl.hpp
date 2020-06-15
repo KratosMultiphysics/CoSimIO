@@ -50,6 +50,20 @@ inline void SendControlSignal(
     Internals::GetConnection(connection_name).SendControlSignal("", Signal);
 }
 
+// Create the name for the connection
+// In a function bcs maybe in the future this will
+// need to be more elaborate
+inline std::string GetConnectionName(
+    const std::string& rName,
+    const std::string& rConnectTo)
+{
+    if (rName < rConnectTo) {
+        return rName + "_" + rConnectTo;
+    } else {
+        return rConnectTo + "_" + rName;
+    }
+}
+
 } // namespace Internals
 
 inline Info Hello()
@@ -76,11 +90,20 @@ inline Info Hello()
 inline Info Connect(const Info& I_Settings)
 {
     using namespace Internals;
-    const std::string connection_name = I_Settings.Get<std::string>("connection_name");
-    CO_SIM_IO_ERROR_IF(HasIO(connection_name)) << "A connection for \"" << connection_name << "\" already exists!" << std::endl;
+    const std::string name = I_Settings.Get<std::string>("name");
+    const std::string connect_to = I_Settings.Get<std::string>("connect_to");
+    CO_SIM_IO_ERROR_IF(name == connect_to) << "Connecting to self is not allowed!" << std::endl;
+
+    const std::string connection_name = GetConnectionName(name, connect_to);
+
+    CO_SIM_IO_ERROR_IF(HasIO(connection_name)) << "A connection from \"" << name << "\" to \"" << connect_to << "\"already exists!" << std::endl;
 
     s_co_sim_connections[connection_name] = std::unique_ptr<Connection>(new Connection(connection_name, I_Settings));
-    return GetConnection(connection_name).Connect();
+
+    auto info = GetConnection(connection_name).Connect();
+    info.Set<std::string>("connection_name", connection_name);
+
+    return info;
 }
 
 inline Info Disconnect(const Info& I_Info)
