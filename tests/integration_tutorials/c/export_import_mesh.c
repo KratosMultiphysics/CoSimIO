@@ -100,7 +100,7 @@ int main()
     for(int i = 0 ; i < import_number_of_elements_connectivities ; i++)
         COSIMIO_CHECK_EQUAL(export_elements_connectivities[i], import_elements_connectivities[i]);
 
-    for(int i = 0 ; i < import_number_of_elements_connectivities ; i++)
+    for(int i = 0 ; i < import_number_of_elements ; i++)
         COSIMIO_CHECK_EQUAL(export_elements_types[i], import_elements_types[i]);
 
     // Disconnecting at the end
