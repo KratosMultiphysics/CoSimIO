@@ -90,7 +90,7 @@ int main()
     CoSimIO_FreeInfo(import_info);
     CoSimIO_FreeInfo(import_settings);
 
-    COSIMIO_CHECK_EQUAL(export_number_of_nodes*3, import_number_of_nodes);
+    COSIMIO_CHECK_EQUAL(export_number_of_nodes, import_number_of_nodes);
     COSIMIO_CHECK_EQUAL(export_number_of_elements_connectivities, import_number_of_elements_connectivities);
     COSIMIO_CHECK_EQUAL(export_number_of_elements, import_number_of_elements);
 
