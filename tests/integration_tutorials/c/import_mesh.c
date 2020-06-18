@@ -55,6 +55,42 @@ int main()
     CoSimIO_FreeInfo(import_info);
     CoSimIO_FreeInfo(import_settings);
 
+    // Checking the imported mesh
+    int expected_number_of_nodes=6;
+    double expected_nodal_coordinates[] = {
+        0.0, 2.5, 1.0, /*0*/
+        2.0, 0.0, 1.5, /*1*/
+        2.0, 2.5, 1.5, /*2*/
+        4.0, 2.5, 1.7, /*3*/
+        4.0, 0.0, 1.7, /*4*/
+        6.0, 0.0, 1.8  /*5*/
+    };
+
+    int expected_number_of_elements_connectivities = 12;
+    int expected_elements_connectivities[] = {
+        0, 1, 2, /*1*/
+        1, 3, 2, /*2*/
+        1, 4, 3, /*3*/
+        3, 4, 5, /*4*/
+    };
+
+    int expected_number_of_elements = 4;
+    int expected_elements_types[] = {5,5,5,5}; // VTK_TRIANGLE
+
+    COSIMIO_CHECK_EQUAL(expected_number_of_nodes,  number_of_nodes);
+    COSIMIO_CHECK_EQUAL(expected_number_of_elements_connectivities,  number_of_elements_connectivities);
+    COSIMIO_CHECK_EQUAL(expected_number_of_elements,  number_of_elements);
+
+    for(int i = 0 ; i <  number_of_nodes * 3 ; i++)
+        COSIMIO_CHECK_EQUAL(expected_nodal_coordinates[i],  nodal_coordinates[i]);
+
+    for(int i = 0 ; i <  number_of_elements_connectivities ; i++)
+        COSIMIO_CHECK_EQUAL(expected_elements_connectivities[i],  elements_connectivities[i]);
+
+    for(int i = 0 ; i <  number_of_elements ; i++)
+        COSIMIO_CHECK_EQUAL(expected_elements_types[i],  elements_types[i]);
+
+
     // Disconnecting at the end
     CoSimIO_Info disconnect_info = CoSimIO_Disconnect(connection_settings); // disconnect afterwards
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(disconnect_info, "connection_status"), CoSimIO_Disconnected);
