@@ -240,3 +240,15 @@ CoSimIO_Info import_info = CoSimIO_ImportMesh(import_settings
 ```
 
 This example can be found in [integration_tutorials/c/export_mesh.c](../../tests/integration_tutorials/c/export_mesh.c) and [integration_tutorials/c/import_mesh.c](../../tests/integration_tutorials/c/import_mesh.c).
+
+## Tutorial 6: Building Kratos with CoSimulation
+Before starting the connection to Kratos we should build the Kratos with the necessary applications. The easiest way to build the Kratos would be using the standard_configure files provided in the [script](https://github.com/KratosMultiphysics/Kratos/tree/master/scripts) folder. These scripts would provide the Kratos core library but not the required Cosimulatation application and (optional but useful) Mapping applications. For adding them you may copy for instance the standard_configure.sh to cosimulation_configure.sh and adding these two applications (you may keep or remove the rest):
+
+```bash
+# Set applications to compile
+export KRATOS_APPLICATIONS=
+add_app ${KRATOS_APP_DIR}/CoSimulationApplication
+add_app ${KRATOS_APP_DIR}/MappingApplication
+```
+
+For more information about the Kratos build requirements, options please check the [Kratos Compilation options](https://github.com/KratosMultiphysics/Kratos/wiki/Compilation-options)
