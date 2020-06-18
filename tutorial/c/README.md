@@ -241,7 +241,22 @@ CoSimIO_Info import_info = CoSimIO_ImportMesh(import_settings
 
 This example can be found in [integration_tutorials/c/export_mesh.c](../../tests/integration_tutorials/c/export_mesh.c) and [integration_tutorials/c/import_mesh.c](../../tests/integration_tutorials/c/import_mesh.c).
 
-## Tutorial 6: Building Kratos with CoSimulation
+
+## Tutorial 6: Kratos CoSimulation Library Overview
+Conceptually the Kratos CoSimulation consists of 3 main components:
+1. **Data Transfer**: Any co-simulation process needs several data communications between different solvers/executables and Kratos. This includes raw data (in the form of vectors), meshes, and mesh data (like nodal and elemental data) or control signals. So a flexible data transfer mechanism one of the important components of the library.
+2. **Coupling Solutions**: Coupling algorithms have many common parts like the strategy, convergence criteria, convergence accelerators, and predictors. To be seamlessly usable in Kratos such an algorithm should provide the same interface as internal solutions of Kratos. The Kratos CoSimulation provides many of these tools and algorithms generic enough to be used in different contexts. 
+3. **Mapping Between Meshes**: In many coupling problems the mesh in each domain is done considering the special requirements of that domain (like fluid, structure, etc.). This means that in those cases the meshes are not conformant between does domains and we should map our data from one to the other. Depending on the type of the coupling this may happen over some surfaces or volumes of the model. Kratos CoSimulation also provides this capability. 
+
+Base on these concepts these are the main components of the library:
+1. **CoSimIO**: This library is in charge of the data transfer between different programs.
+2. **CoSimulationApplication**: This is an application of Kratos which is located in [kratos/applications/CoSimulationApplication](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/CoSimulationApplication) folder in the Kratos repository. This application provides a generic coupled solver with several convergence criteria, convergence accelerators, and predictors.
+3. **MappingApplication**: The standard mapping application of the Kratos located in [kratos/applications/MappingApplication](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/MappingApplication) folder. This application provides the mapping of data from one mesh to another one. It supports the 1D,2D and 3D mapping with different types of mappings (like nearest node, nearest element, etc.)
+
+Kratos provides an extensive Python interface to its CoSimulation library which is used in this tutorial.
+
+
+## Tutorial 7: Building Kratos with CoSimulation
 Before starting the connection to Kratos we should build the Kratos with the necessary applications. The easiest way to build the Kratos would be using the standard_configure files provided in the [script](https://github.com/KratosMultiphysics/Kratos/tree/master/scripts) folder. These scripts would provide the Kratos core library but not the required Cosimulatation application and (optional but useful) Mapping applications. For adding them you may copy for instance the standard_configure.sh to cosimulation_configure.sh and adding these two applications (you may keep or remove the rest):
 
 ```bash
@@ -252,3 +267,7 @@ add_app ${KRATOS_APP_DIR}/MappingApplication
 ```
 
 For more information about the Kratos build requirements, options please check the [Kratos Compilation options](https://github.com/KratosMultiphysics/Kratos/wiki/Compilation-options)
+
+
+## Tutorial 8: Connecting/Disconnecting to/from Kratos
+In this tutorial we will use the Python interface of the CosimulationApplication.  
