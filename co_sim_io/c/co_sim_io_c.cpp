@@ -78,11 +78,13 @@ CoSimIO_Info CoSimIO_ImportMesh(
     int** I_ElementTypes)
 {
     using namespace CoSimIO::Internals;
+    constexpr int coordinates_per_node = 3;
     std::unique_ptr<DataContainer<double>> p_container_coords(new DataContainerRawMemory<double>(I_NodalCoordinates, *I_NumberOfNodes));
     std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerRawMemory<int>(I_ElementConnectivities, *I_NumberOfElementConnectivities));
     std::unique_ptr<DataContainer<int>> p_container_types(new DataContainerRawMemory<int>(I_ElementTypes, *I_NumberOfElements));
     auto info = ConvertInfo(CoSimIO::ImportMesh(ConvertInfo(I_Info), *p_container_coords, *p_container_conn, *p_container_types));
-    *I_NumberOfNodes = static_cast<int>(p_container_coords->size());
+    *I_NumberOfNodes = static_cast<int>(p_container_coords->size()) / coordinates_per_node;
+    *I_NumberOfElementConnectivities = static_cast<int>(p_container_conn->size());
     *I_NumberOfElements = static_cast<int>(p_container_types->size());
     return info;
 }
@@ -97,7 +99,8 @@ CoSimIO_Info CoSimIO_ExportMesh(
     const int* O_ElementTypes)
 {
     using namespace CoSimIO::Internals;
-    std::unique_ptr<DataContainer<double>> p_container_coords(new DataContainerRawMemoryReadOnly<double>(O_NodalCoordinates, O_NumberOfNodes));
+    constexpr int coordinates_per_node = 3;
+    std::unique_ptr<DataContainer<double>> p_container_coords(new DataContainerRawMemoryReadOnly<double>(O_NodalCoordinates, O_NumberOfNodes * coordinates_per_node));
     std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerRawMemoryReadOnly<int>(O_ElementConnectivities, O_NumberOfElementConnectivities));
     std::unique_ptr<DataContainer<int>> p_container_types(new DataContainerRawMemoryReadOnly<int>(O_ElementTypes, O_NumberOfElements));
     return ConvertInfo(CoSimIO::ExportMesh(ConvertInfo(I_Info), *p_container_coords, *p_container_conn, *p_container_types));
