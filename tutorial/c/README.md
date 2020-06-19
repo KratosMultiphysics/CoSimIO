@@ -270,7 +270,7 @@ For more information about the Kratos build requirements, options please check t
 
 
 ## Tutorial 8: Connecting/Disconnecting to/from Kratos
-For connecting to Kratos it is very important to have in mind that Kratos also uses *CoSimIO* for interprocess communication so its python interace reflects the CoSimIO. So we may create a python script for connect and disconnect in the same way discribed in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
+For connecting to Kratos it is very important to have in mind that Kratos also uses *CoSimIO* for interprocess communication so its python interface reflects the CoSimIO. So we may create a python script for connecting and disconnecting in the same way described in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
 
 ```Python
 from KratosMultiphysics.CoSimulationApplication import CoSimIO
@@ -297,3 +297,5 @@ Now for running the Kratos, first you should add the binary folders of Kratos to
 ```shell
 path/to/bin/tests_c/connect_disconnect_c_test & python3 path/to/connect_disconnect.py 
 ```
+
+## Tutorial 9:  Data Exchange with Kratos
