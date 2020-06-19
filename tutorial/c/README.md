@@ -270,4 +270,30 @@ For more information about the Kratos build requirements, options please check t
 
 
 ## Tutorial 8: Connecting/Disconnecting to/from Kratos
-In this tutorial we will use the Python interface of the CosimulationApplication.
+For connecting to Kratos it is very important to have in mind that Kratos also uses *CoSimIO* for interprocess communication so its python interace reflects the CoSimIO. So we may create a python script for connect and disconnect in the same way discribed in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
+
+```Python
+from KratosMultiphysics.CoSimulationApplication import CoSimIO
+
+connection_settings = CoSimIO.Info()
+connection_settings.SetString("connection_name", "c_d_test")
+connection_settings.SetInt("echo_level", 0)
+info = CoSimIO.Connect(connection_settings)
+if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Connected:
+    raise Exception("Connecting failed")
+
+disconnect_settings = CoSimIO.Info()
+disconnect_settings.SetString("connection_name", "c_d_test")
+
+info = CoSimIO.Disconnect(disconnect_settings)
+if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
+    raise Exception("Disconnecting failed")
+```
+
+Please note that the only change here is the import statement which loads the CoSimIO module which comes inside the KratosMultiphysics. You may find this python file in [Kratos/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/connect_disconnect.py](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/connect_disconnect.py)
+
+Now for running the Kratos, first you should add the binary folders of Kratos to your `PYTHONPATH` and `LD_LIBRARY_PATH` environment variables and then your executable with python of Kratos from your working directory:
+
+```shell
+path/to/bin/tests_c/connect_disconnect_c_test & python3 path/to/connect_disconnect.py 
+```
