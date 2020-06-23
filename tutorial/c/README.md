@@ -299,3 +299,71 @@ path/to/bin/tests_c/connect_disconnect_c_test & python3 path/to/connect_disconne
 ```
 
 ## Tutorial 9:  Data Exchange with Kratos
+Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one descirbed in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
+
+
+```python
+from KratosMultiphysics.CoSimulationApplication import CoSimIO
+
+connection_settings = CoSimIO.Info()
+connection_settings.SetString("connection_name", "im_exp_data")
+connection_settings.SetInt("echo_level", 0)
+info = CoSimIO.Connect(connection_settings)
+if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Connected:
+    raise Exception("Connecting failed")
+
+import_info = CoSimIO.Info()
+import_info.SetString("connection_name", "im_exp_data")
+import_info.SetString("identifier", "data_exchange_1")
+imported_values = CoSimIO.ImportData(import_info)
+
+# print(imported_values)
+
+export_info = CoSimIO.Info()
+export_info.SetString("connection_name", "im_exp_data")
+export_info.SetString("identifier", "data_exchange_2")
+CoSimIO.ExportData(export_info, imported_values)
+
+disconnect_settings = CoSimIO.Info()
+disconnect_settings.SetString("connection_name", "im_exp_data")
+
+info = CoSimIO.Disconnect(disconnect_settings)
+if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
+    raise Exception("Disconnecting failed")
+```
+
+From solver side first we recall the export data code described in tutorial 4 adjusting the connection name and data tag to the ones in our example python given above. (Please note that connecti)
+
+```c++
+    int data_size = 4;
+    double data_to_send[] = {3, .1, .14, 3.14};
+
+    // Creatint the export_settings 
+    CoSimIO_Info export_settings=CoSimIO_CreateInfo();
+    CoSimIO_Info_SetString(export_settings, "identifier", "data_exchange_1");
+    CoSimIO_Info_SetString(export_settings, "connection_name", "im_exp_data");
+
+    // Exporting the data
+    CoSimIO_Info export_info = CoSimIO_ExportData(export_settings, data_size, data_to_send);
+    // Freeing the export_info and export_settings
+    CoSimIO_FreeInfo(export_info); 
+    CoSimIO_FreeInfo(export_settings);
+
+
+    // After conneting we may import the data
+    double* data;
+    int data_allocated_size = 0;
+
+    // Creating the import_settings
+    CoSimIO_Info import_settings=CoSimIO_CreateInfo();
+    CoSimIO_Info_SetString(import_settings, "identifier", "data_exchange_2");
+    CoSimIO_Info_SetString(import_settings, "connection_name", "im_exp_data");
+
+    // Importing the data
+    CoSimIO_Info import_info = CoSimIO_ImportData(import_settings, &data_allocated_size, &data);
+    // Freeing the import_info and import_settings
+    CoSimIO_FreeInfo(import_info);
+    CoSimIO_FreeInfo(import_settings);
+```
+
+Please note that we should adjust the conncetion name and data tag in both sides to be the same. 
