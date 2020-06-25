@@ -292,7 +292,11 @@ if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
 
 Please note that the only change here is the import statement which loads the CoSimIO module which comes inside the KratosMultiphysics. You may find this python file in [Kratos/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/connect_disconnect.py](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/connect_disconnect.py)
 
-Now for running the Kratos, first you should add the binary folders of Kratos to your `PYTHONPATH` and `LD_LIBRARY_PATH` environment variables and then your executable with python of Kratos from your working directory:
+Now for running the Kratos, first you should add configure the python environment variables pointing to Kratos folder:
+* `PYTHONPATH` should point to the Kratos binaries root (`path/to/kratos`) where you can find KratosMultiphysics sub folder
+* `LD_LIBRARY_PATH` should point to the libs folder (`path/to/kratos/libs`) where you can find compiled libraries. 
+  
+Then you may run your executable with python script of Kratos from your working directory:
 
 ```shell
 path/to/bin/tests_c/connect_disconnect_c_test & python3 path/to/connect_disconnect.py 
