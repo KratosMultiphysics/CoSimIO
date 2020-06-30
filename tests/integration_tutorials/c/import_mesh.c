@@ -33,7 +33,7 @@ int main()
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
     CoSimIO_FreeInfo(connect_info); // Don't forget to free the connect_info
 
-    // After conneting we may import the data
+    // After conneting we may import the mesh
     double* nodal_coordinates;
     int number_of_nodes = 0;
     int* elements_connectivities;

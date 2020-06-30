@@ -240,3 +240,245 @@ CoSimIO_Info import_info = CoSimIO_ImportMesh(import_settings
 ```
 
 This example can be found in [integration_tutorials/c/export_mesh.c](../../tests/integration_tutorials/c/export_mesh.c) and [integration_tutorials/c/import_mesh.c](../../tests/integration_tutorials/c/import_mesh.c).
+
+
+## Tutorial 6: Kratos CoSimulation Library Overview
+The overview of the Kratos CoSimulation Library can be found [here](../README.md#kratos-cosimulation-library-overview).
+
+## Tutorial 7: Building Kratos with CoSimulation
+The building instructions for the Kratos CoSimulation Library can be found [here](../README.md#building-kratos-with-cosimulation).
+
+## Tutorial 8: Connecting/Disconnecting to/from Kratos
+For connecting to Kratos it is very important to have in mind that Kratos also uses *CoSimIO* for interprocess communication so its python interface reflects the CoSimIO. So we may create a python script for connecting and disconnecting in the same way described in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
+
+```Python
+from KratosMultiphysics.CoSimulationApplication import CoSimIO
+
+connection_settings = CoSimIO.Info()
+connection_settings.SetString("connection_name", "c_d_test")
+connection_settings.SetInt("echo_level", 0)
+info = CoSimIO.Connect(connection_settings)
+if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Connected:
+    raise Exception("Connecting failed")
+
+disconnect_settings = CoSimIO.Info()
+disconnect_settings.SetString("connection_name", "c_d_test")
+
+info = CoSimIO.Disconnect(disconnect_settings)
+if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
+    raise Exception("Disconnecting failed")
+```
+
+Please note that the only change here is the import statement which loads the CoSimIO module which comes inside the KratosMultiphysics. You may find this python file in [Kratos/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/connect_disconnect.py](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/connect_disconnect.py)
+
+Then you may run your executable with python script of Kratos from your working directory:
+
+```shell
+path/to/bin/tests_c/connect_disconnect_c_test & python3 path/to/connect_disconnect.py
+```
+
+## Tutorial 9:  Data Exchange with Kratos
+Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one descirbed in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
+
+
+```python
+from KratosMultiphysics.CoSimulationApplication import CoSimIO
+
+connection_settings = CoSimIO.Info()
+connection_settings.SetString("connection_name", "im_exp_data")
+connection_settings.SetInt("echo_level", 0)
+info = CoSimIO.Connect(connection_settings)
+if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Connected:
+    raise Exception("Connecting failed")
+
+import_info = CoSimIO.Info()
+import_info.SetString("connection_name", "im_exp_data")
+import_info.SetString("identifier", "data_exchange_1")
+imported_values = CoSimIO.ImportData(import_info)
+
+# print(imported_values)
+
+export_info = CoSimIO.Info()
+export_info.SetString("connection_name", "im_exp_data")
+export_info.SetString("identifier", "data_exchange_2")
+CoSimIO.ExportData(export_info, imported_values)
+
+disconnect_settings = CoSimIO.Info()
+disconnect_settings.SetString("connection_name", "im_exp_data")
+
+info = CoSimIO.Disconnect(disconnect_settings)
+if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
+    raise Exception("Disconnecting failed")
+```
+
+From solver side first we recall the export data code described in tutorial 4 adjusting the connection name and data tag to the ones in our example python given above.
+
+```c++
+    int data_size = 4;
+    double data_to_send[] = {3, .1, .14, 3.14};
+
+    // Creatint the export_settings
+    CoSimIO_Info export_settings=CoSimIO_CreateInfo();
+    CoSimIO_Info_SetString(export_settings, "identifier", "data_exchange_1");
+    CoSimIO_Info_SetString(export_settings, "connection_name", "im_exp_data");
+
+    // Exporting the data
+    CoSimIO_Info export_info = CoSimIO_ExportData(export_settings, data_size, data_to_send);
+    // Freeing the export_info and export_settings
+    CoSimIO_FreeInfo(export_info);
+    CoSimIO_FreeInfo(export_settings);
+
+
+    // After conneting we may import the data
+    double* data;
+    int data_allocated_size = 0;
+
+    // Creating the import_settings
+    CoSimIO_Info import_settings=CoSimIO_CreateInfo();
+    CoSimIO_Info_SetString(import_settings, "identifier", "data_exchange_2");
+    CoSimIO_Info_SetString(import_settings, "connection_name", "im_exp_data");
+
+    // Importing the data
+    CoSimIO_Info import_info = CoSimIO_ImportData(import_settings, &data_allocated_size, &data);
+    // Freeing the import_info and import_settings
+    CoSimIO_FreeInfo(import_info);
+    CoSimIO_FreeInfo(import_settings);
+```
+You may find this python file in [Kratos/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/import_export_data.py](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/import_export_data.py)
+
+Please note that we should adjust the conncetion name and data tag in both sides to be the same.
+
+Now for running the test:
+
+```shell
+path/to/bin/tests_c/export_import_data_c_test & python3 path/to/import_export_data.py
+```
+
+## Tutorial 10:  Mesh Exchange with Kratos
+In this step we send a mesh to Kratos and receive it back and we will check if they are the same. (like previous tutorial with data).
+
+Recalling from what we had in tutorial 5 we just merge the export mesh and import mesh codes into one as we did for data exchage in previous tutorial:
+
+```cpp
+// Creatint the export_settings
+CoSimIO_Info export_settings=CoSimIO_CreateInfo();
+CoSimIO_Info_SetString(export_settings, "identifier", "mesh_exchange_1");
+CoSimIO_Info_SetString(export_settings, "connection_name", "im_exp_mesh");
+
+// Exporting the data
+CoSimIO_Info export_info = CoSimIO_ExportMesh(export_settings
+    , export_number_of_nodes*3,export_number_of_elements,export_number_of_elements_connectivities
+    , export_nodal_coordinates, export_elements_connectivities, export_elements_types);
+
+// Freeing the export_info and export_settings
+CoSimIO_FreeInfo(export_info);
+CoSimIO_FreeInfo(export_settings);
+
+// Now we import back the mesh
+double* import_nodal_coordinates;
+int import_number_of_nodes = 0;
+int* import_elements_connectivities;
+int import_number_of_elements_connectivities = 0;
+int* import_elements_types;
+int import_number_of_elements = 0;
+
+// Creating the import_settings
+CoSimIO_Info import_settings=CoSimIO_CreateInfo();
+CoSimIO_Info_SetString(import_settings, "identifier", "mesh_exchange_2");
+CoSimIO_Info_SetString(import_settings, "connection_name", "im_exp_mesh");
+
+// Importing the mesh
+CoSimIO_Info import_info = CoSimIO_ImportMesh(import_settings
+    , &import_number_of_nodes,&import_number_of_elements,&import_number_of_elements_connectivities
+    , &import_nodal_coordinates, &import_elements_connectivities, &import_elements_types);
+
+// Freeing the import_info and import_settings
+CoSimIO_FreeInfo(import_info);
+CoSimIO_FreeInfo(import_settings);
+
+```
+Now lets create the python script for Kratos which gets the mesh and returns it back to us. Here again the python scritp is very similar to one of the standard CoSimIO. Except for the ImportMesh and ExportMesh methods which are adapted to work directly with Kratos data structure. This means that the work with [ModelPart](https://github.com/KratosMultiphysics/Kratos/wiki/ModelPart-and-SubModelPart) instead of raw coordinates and connectivities arrays:
+
+```Python
+CoSimIO.ImportMesh(import_info, model_part)
+CoSimIO.ExportMesh(export_info, model_part)
+```
+
+The ModelPart is the object containing mesh and its associated data. For creating the ModelPart we should first create a Model and then a ModelPart for imported mesh:
+
+```Python
+import KratosMultiphysics as KM
+from KratosMultiphysics.CoSimulationApplication import CoSimIO
+
+model = KM.Model()
+model_part = model.CreateModelPart("mp_test")
+```
+
+Then we should proceed to fill the settings and import the mesh:
+
+```Python
+import_info = CoSimIO.Info()
+import_info.SetString("connection_name", "im_exp_mesh")
+import_info.SetString("identifier", "mesh_exchange_1")
+CoSimIO.ImportMesh(import_info, model_part)
+```
+
+We may check the imported ModelPart by printing it:
+
+```Python
+print(model_part)
+```
+Same for the export mesh:
+
+```Python
+export_info = CoSimIO.Info()
+export_info.SetString("connection_name", "im_exp_mesh")
+export_info.SetString("identifier", "mesh_exchange_2")
+CoSimIO.ExportMesh(export_info, model_part)
+```
+
+Now putting everything together we have:
+
+
+```Python
+import KratosMultiphysics as KM
+from KratosMultiphysics.CoSimulationApplication import CoSimIO
+
+model = KM.Model()
+model_part = model.CreateModelPart("mp_test")
+
+connection_settings = CoSimIO.Info()
+connection_settings.SetString("connection_name", "im_exp_mesh")
+connection_settings.SetInt("echo_level", 0)
+info = CoSimIO.Connect(connection_settings)
+if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Connected:
+    raise Exception("Connecting failed")
+
+import_info = CoSimIO.Info()
+import_info.SetString("connection_name", "im_exp_mesh")
+import_info.SetString("identifier", "mesh_exchange_1")
+CoSimIO.ImportMesh(import_info, model_part)
+
+print(model_part)
+
+export_info = CoSimIO.Info()
+export_info.SetString("connection_name", "im_exp_mesh")
+export_info.SetString("identifier", "mesh_exchange_2")
+CoSimIO.ExportMesh(export_info, model_part)
+
+disconnect_settings = CoSimIO.Info()
+disconnect_settings.SetString("connection_name", "im_exp_mesh")
+
+info = CoSimIO.Disconnect(disconnect_settings)
+if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
+    raise Exception("Disconnecting failed")
+
+```
+
+You may find this python file in [Kratos/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/import_export_mesh.py](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/import_export_mesh.py)
+
+Now for running the test:
+
+```shell
+path/to/bin/tests_c/export_import_mesh_c_test & python3 path/to/import_export_mesh.py
+```
