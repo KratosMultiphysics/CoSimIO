@@ -243,31 +243,10 @@ This example can be found in [integration_tutorials/c/export_mesh.c](../../tests
 
 
 ## Tutorial 6: Kratos CoSimulation Library Overview
-Conceptually the Kratos CoSimulation consists of 3 main components:
-1. **Data Transfer**: Any co-simulation process needs several data communications between different solvers/executables and Kratos. This includes raw data (in the form of vectors), meshes, and mesh data (like nodal and elemental data) or control signals. So a flexible data transfer mechanism one of the important components of the library.
-2. **Coupling Solutions**: Coupling algorithms have many common parts like the strategy, convergence criteria, convergence accelerators, and predictors. To be seamlessly usable in Kratos such an algorithm should provide the same interface as internal solutions of Kratos. The Kratos CoSimulation provides many of these tools and algorithms generic enough to be used in different contexts.
-3. **Mapping Between Meshes**: In many coupling problems the mesh in each domain is done considering the special requirements of that domain (like fluid, structure, etc.). This means that in those cases the meshes are not conformant between does domains and we should map our data from one to the other. Depending on the type of the coupling this may happen over some surfaces or volumes of the model. Kratos CoSimulation also provides this capability.
-
-Base on these concepts these are the main components of the library:
-1. **CoSimIO**: This library is in charge of the data transfer between different programs using inter process communication.
-2. **CoSimulationApplication**: This is an application of Kratos which is located in [kratos/applications/CoSimulationApplication](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/CoSimulationApplication) folder in the Kratos repository. This application provides a generic coupled solver with several convergence criteria, convergence accelerators, and predictors. Check the link for a more detailed overview.
-3. **MappingApplication**: The standard mapping application of the Kratos located in [kratos/applications/MappingApplication](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/MappingApplication) folder. This application provides the mapping of data from one mesh to another one. It supports the 1D,2D and 3D mapping with different types of mappings (like nearest node, nearest element, etc.). Check the link for a more detailed overview.
-
-Kratos provides an extensive Python interface to its CoSimulation library which is used in this tutorial. 
-
+The overview of the Kratos CoSimulation Library can be found [here](../README.md#kratos-cosimulation-library-overview).
 
 ## Tutorial 7: Building Kratos with CoSimulation
-Before starting the connection to Kratos we should build the Kratos with the necessary applications. The easiest way to build the Kratos would be using the standard_configure files provided in the [script](https://github.com/KratosMultiphysics/Kratos/tree/master/scripts) folder. These scripts would provide the Kratos core library but not the required Cosimulatation application and (optional but useful) Mapping applications. For adding them you may copy for instance the standard_configure.sh to cosimulation_configure.sh and adding these two applications (you may keep or remove the rest):
-
-```bash
-# Set applications to compile
-export KRATOS_APPLICATIONS=
-add_app ${KRATOS_APP_DIR}/CoSimulationApplication
-add_app ${KRATOS_APP_DIR}/MappingApplication
-```
-
-For more information about the Kratos build requirements, options please check the [Kratos install guide](https://github.com/KratosMultiphysics/Kratos/blob/master/INSTALL.md)
-
+The building instructions for the Kratos CoSimulation Library can be found [here](../README.md#building-kratos-with-cosimulation).
 
 ## Tutorial 8: Connecting/Disconnecting to/from Kratos
 For connecting to Kratos it is very important to have in mind that Kratos also uses *CoSimIO* for interprocess communication so its python interface reflects the CoSimIO. So we may create a python script for connecting and disconnecting in the same way described in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
@@ -292,14 +271,10 @@ if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
 
 Please note that the only change here is the import statement which loads the CoSimIO module which comes inside the KratosMultiphysics. You may find this python file in [Kratos/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/connect_disconnect.py](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/connect_disconnect.py)
 
-Now for running the Kratos, first you should add configure the python environment variables pointing to Kratos folder:
-* `PYTHONPATH` should point to the Kratos binaries root (`path/to/kratos`) where you can find KratosMultiphysics sub folder
-* `LD_LIBRARY_PATH` should point to the libs folder (`path/to/kratos/libs`) where you can find compiled libraries. 
-  
 Then you may run your executable with python script of Kratos from your working directory:
 
 ```shell
-path/to/bin/tests_c/connect_disconnect_c_test & python3 path/to/connect_disconnect.py 
+path/to/bin/tests_c/connect_disconnect_c_test & python3 path/to/connect_disconnect.py
 ```
 
 ## Tutorial 9:  Data Exchange with Kratos
@@ -342,7 +317,7 @@ From solver side first we recall the export data code described in tutorial 4 ad
     int data_size = 4;
     double data_to_send[] = {3, .1, .14, 3.14};
 
-    // Creatint the export_settings 
+    // Creatint the export_settings
     CoSimIO_Info export_settings=CoSimIO_CreateInfo();
     CoSimIO_Info_SetString(export_settings, "identifier", "data_exchange_1");
     CoSimIO_Info_SetString(export_settings, "connection_name", "im_exp_data");
@@ -350,7 +325,7 @@ From solver side first we recall the export data code described in tutorial 4 ad
     // Exporting the data
     CoSimIO_Info export_info = CoSimIO_ExportData(export_settings, data_size, data_to_send);
     // Freeing the export_info and export_settings
-    CoSimIO_FreeInfo(export_info); 
+    CoSimIO_FreeInfo(export_info);
     CoSimIO_FreeInfo(export_settings);
 
 
@@ -371,16 +346,16 @@ From solver side first we recall the export data code described in tutorial 4 ad
 ```
 You may find this python file in [Kratos/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/import_export_data.py](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/import_export_data.py)
 
-Please note that we should adjust the conncetion name and data tag in both sides to be the same. 
+Please note that we should adjust the conncetion name and data tag in both sides to be the same.
 
 Now for running the test:
 
 ```shell
-path/to/bin/tests_c/export_import_data_c_test & python3 path/to/import_export_data.py 
+path/to/bin/tests_c/export_import_data_c_test & python3 path/to/import_export_data.py
 ```
 
 ## Tutorial 10:  Mesh Exchange with Kratos
-In this step we send a mesh to Kratos and receive it back and we will check if they are the same. (like previous tutorial with data). 
+In this step we send a mesh to Kratos and receive it back and we will check if they are the same. (like previous tutorial with data).
 
 Recalling from what we had in tutorial 5 we just merge the export mesh and import mesh codes into one as we did for data exchage in previous tutorial:
 
@@ -505,5 +480,5 @@ You may find this python file in [Kratos/applications/CoSimulationApplication/te
 Now for running the test:
 
 ```shell
-path/to/bin/tests_c/export_import_mesh_c_test & python3 path/to/import_export_mesh.py 
+path/to/bin/tests_c/export_import_mesh_c_test & python3 path/to/import_export_mesh.py
 ```
