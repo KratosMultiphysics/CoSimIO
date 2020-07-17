@@ -90,13 +90,13 @@ inline Info Hello()
 inline Info Connect(const Info& I_Settings)
 {
     using namespace Internals;
-    const std::string name = I_Settings.Get<std::string>("name");
+    const std::string my_name = I_Settings.Get<std::string>("my_name");
     const std::string connect_to = I_Settings.Get<std::string>("connect_to");
-    CO_SIM_IO_ERROR_IF(name == connect_to) << "Connecting to self is not allowed!" << std::endl;
+    CO_SIM_IO_ERROR_IF(my_name == connect_to) << "Connecting to self is not allowed!" << std::endl;
 
-    const std::string connection_name = GetConnectionName(name, connect_to);
+    const std::string connection_name = GetConnectionName(my_name, connect_to);
 
-    CO_SIM_IO_ERROR_IF(HasIO(connection_name)) << "A connection from \"" << name << "\" to \"" << connect_to << "\"already exists!" << std::endl;
+    CO_SIM_IO_ERROR_IF(HasIO(connection_name)) << "A connection from \"" << my_name << "\" to \"" << connect_to << "\"already exists!" << std::endl;
 
     s_co_sim_connections[connection_name] = std::unique_ptr<Connection>(new Connection(connection_name, I_Settings));
 
