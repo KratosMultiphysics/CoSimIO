@@ -15,6 +15,8 @@ import unittest, sys, os
 
 from testing_utilities import IsOptionEnabled
 
+print(os.environ)
+
 if __name__ == '__main__':
     if not IsOptionEnabled("BUILD_PYTHON"):
         sys.exit(0)
