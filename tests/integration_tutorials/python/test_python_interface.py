@@ -13,16 +13,13 @@
 # tests for the python interface of the CoSimIO
 
 # python imports
-import unittest, os, sys
+import unittest, os
 import subprocess
 
 class PythonInterfaceTests(unittest.TestCase):
     CWD = os.path.dirname(os.path.realpath(__file__))
     USE_SHELL = os.name=="nt" # using shell on win
-    PYTHON_CMD = os.getenv("PYTHON_CMD", sys.executable)
-    print(">>>", PYTHON_CMD)
-    if not PYTHON_CMD:
-        raise Exception("Python command could not be determined!")
+    PYTHON_CMD = os.getenv("PYTHON_CMD", "python3") # use "python3" unless specified otherwise
 
     def setUp(self):
         # removing leftover files
