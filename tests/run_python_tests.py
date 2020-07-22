@@ -15,7 +15,7 @@ import unittest, sys, os
 
 from testing_utilities import IsOptionEnabled
 
-print(os.environ)
+print(os.environ["PYTHONPATH"])
 
 if __name__ == '__main__':
     if not IsOptionEnabled("BUILD_PYTHON"):
