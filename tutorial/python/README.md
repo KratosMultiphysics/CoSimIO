@@ -27,7 +27,7 @@ git clone https://github.com/KratosMultiphysics/CoSimIO.git
 
 
 
-## Tutorial 1: Building
+## Tutorial 1: Building the CoSimIO
 The Python interface is located in [co_sim_io/python](https://github.com/KratosMultiphysics/CoSimIO/tree/master/co_sim_io/python) folder of the repository. It uses the [pybind11 library](https://github.com/pybind/pybind11) for exposing the C++ code to Python. It is provided in the [expternal_libraries/pybind11](https://github.com/KratosMultiphysics/CoSimIO/tree/master/external_libraries/pybind11) folder of this repo.
 
 Using cmake the compilation is straightforward. Just calling the following command from the _CoSimIO_ root:
