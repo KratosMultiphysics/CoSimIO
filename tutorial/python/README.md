@@ -186,3 +186,23 @@ return_info, nodal_coords, element_connectivities, element_types = CoSimIO.Impor
 ```
 
 This example can be found in [integration_tutorials/python/export_mesh.py](../../tests/integration_tutorials/python/export_mesh.py) and [integration_tutorials/python/import_mesh.py](../../tests/integration_tutorials/python/import_mesh.py).
+
+
+## Tutorial 6: Kratos CoSimulation Library Overview
+The overview of the Kratos CoSimulation Library can be found [here](../README.md#kratos-cosimulation-library-overview).
+
+
+## Tutorial 7: Building Kratos with CoSimulation
+The building instructions for the Kratos CoSimulation Library can be found [here](../README.md#building-kratos-with-cosimulation).
+
+
+## Tutorial 8: Connecting/Disconnecting to/from Kratos
+coming soon!
+
+
+## Tutorial 9: Data Exchange with Kratos
+coming soon!
+
+
+## Tutorial 10: Mesh Exchange with Kratos
+coming soon!

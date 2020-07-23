@@ -196,3 +196,23 @@ info = CoSimIO::ImportMesh(info,nodal_coordinates, elements_connectivities, elem
 ```
 
 This example can be found in [integration_tutorials/cpp/export_mesh.cpp](../../tests/integration_tutorials/cpp/export_mesh.cpp) and [integration_tutorials/cpp/import_mesh.cpp](../../tests/integration_tutorials/cpp/import_mesh.cpp).
+
+
+## Tutorial 6: Kratos CoSimulation Library Overview
+The overview of the Kratos CoSimulation Library can be found [here](../README.md#kratos-cosimulation-library-overview).
+
+
+## Tutorial 7: Building Kratos with CoSimulation
+The building instructions for the Kratos CoSimulation Library can be found [here](../README.md#building-kratos-with-cosimulation).
+
+
+## Tutorial 8: Connecting/Disconnecting to/from Kratos
+coming soon!
+
+
+## Tutorial 9: Data Exchange with Kratos
+coming soon!
+
+
+## Tutorial 10: Mesh Exchange with Kratos
+coming soon!
