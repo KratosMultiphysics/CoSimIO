@@ -2,6 +2,20 @@
 
 This tutorial helps you through to integrate the _CoSimIO_ into a solver/software-tool using the C interface.
 
+## Overview
+
+- [What you need](#what-you-need)
+- [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
+- [Tutorial 2: Hello CoSimIO](#tutorial-2-hello-cosimio)
+- [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
+- [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
+- [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
+- [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-CoSimulation-Library-Overview)
+- [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-Building-Kratos-with-CoSimulation)
+- [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-Connecting/Disconnecting-tofrom-Kratos)
+- [Tutorial 9: Data Exchange with Kratos](#tutorial-9-Data-Exchange-with-Kratos)
+- [Tutorial 10: Mesh Exchange with Kratos](#tutorial-10-Mesh-Exchange-with-Kratos)
+
 ## What you need
 - Downloading the _CosimIO_ from the repository:
 
@@ -12,7 +26,7 @@ git clone https://github.com/KratosMultiphysics/CoSimIO.git
 - A C++11 compatible compiler because the library by itself is in C++ and only a small C wrapper provides its C interface. most of the major C++ compilers in Windows, Linux, and Mac are C++11 compatible. You may find a detailed list of C++11 compatible compilers in https://en.cppreference.com/w/cpp/compiler_support#cpp11
 
 
-## Tutorial 1: Building
+## Tutorial 1: Building the CoSimIO
 The C version of CosimIO is implemented in the [co_sim_io_c.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/c/co_sim_io_c.cpp). You may include it directly into your project or compiling it as a library. One may use the [build_c.sh]() script from the CoSimIO root folder to create a shared library of the C interface:
 
 ```bash
@@ -277,7 +291,7 @@ Then you may run your executable with python script of Kratos from your working 
 path/to/bin/tests_c/connect_disconnect_c_test & python3 path/to/connect_disconnect.py
 ```
 
-## Tutorial 9:  Data Exchange with Kratos
+## Tutorial 9: Data Exchange with Kratos
 Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one descirbed in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
 
 
@@ -354,7 +368,7 @@ Now for running the test:
 path/to/bin/tests_c/export_import_data_c_test & python3 path/to/import_export_data.py
 ```
 
-## Tutorial 10:  Mesh Exchange with Kratos
+## Tutorial 10: Mesh Exchange with Kratos
 In this step we send a mesh to Kratos and receive it back and we will check if they are the same. (like previous tutorial with data).
 
 Recalling from what we had in tutorial 5 we just merge the export mesh and import mesh codes into one as we did for data exchage in previous tutorial:
