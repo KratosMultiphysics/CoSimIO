@@ -328,7 +328,7 @@ if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
 
 From solver side first we recall the export data code described in tutorial 4 adjusting the connection name and data tag to the ones in our example python given above.
 
-```c++
+```c
     int data_size = 4;
     double data_to_send[] = {3, .1, .14, 3.14};
 
@@ -374,7 +374,7 @@ In this step we send a mesh to Kratos and receive it back and we will check if t
 
 Recalling from what we had in tutorial 5 we just merge the export mesh and import mesh codes into one as we did for data exchage in previous tutorial:
 
-```cpp
+```c
 // Creatint the export_settings
 CoSimIO_Info export_settings=CoSimIO_CreateInfo();
 CoSimIO_Info_SetString(export_settings, "identifier", "mesh_exchange_1");
@@ -412,7 +412,7 @@ CoSimIO_FreeInfo(import_info);
 CoSimIO_FreeInfo(import_settings);
 
 ```
-Now lets create the python script for Kratos which gets the mesh and returns it back to us. Here again the python scritp is very similar to one of the standard CoSimIO. Except for the ImportMesh and ExportMesh methods which are adapted to work directly with Kratos data structure. This means that the work with [ModelPart](https://github.com/KratosMultiphysics/Kratos/wiki/ModelPart-and-SubModelPart) instead of raw coordinates and connectivities arrays:
+Now lets create the python script for Kratos which gets the mesh and returns it back to us. Here again the python script is very similar to one of the standard CoSimIO. Except for the ImportMesh and ExportMesh methods which are adapted to work directly with Kratos data structure. This means that the work with [ModelPart](https://github.com/KratosMultiphysics/Kratos/wiki/ModelPart-and-SubModelPart) instead of raw coordinates and connectivities arrays:
 
 ```Python
 CoSimIO.ImportMesh(import_info, model_part)
@@ -499,4 +499,80 @@ path/to/bin/tests_c/export_import_mesh_c_test & python3 path/to/import_export_me
 ```
 
 ## Tutorial 11: Mapping with Kratos
-coming soon!
+In this tutorial the [MappingApplication of Kratos](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/MappingApplication) to map data between non matching meshes. It is based on tutorials 9 & 10.
+
+For this we first send two meshes based on the same geometry but with different discretizations to Kratos.
+
+After that we send data of the first mesh to Kratos, map it and send it back.
+
+
+```Python
+import KratosMultiphysics as KM
+from KratosMultiphysics.CoSimulationApplication import CoSimIO
+import KratosMultiphysics.MappingApplication as KratosMapping
+
+# create the Kratos ModelParts
+model = KM.Model()
+model_part_origin = model.CreateModelPart("mp_origin")
+model_part_destination = model.CreateModelPart("mp_destination")
+
+# allocate memory
+model_part_origin.AddNodalSolutionStepVariable(KM.TEMPERATURE)
+model_part_destination.AddNodalSolutionStepVariable(KM.AMBIENT_TEMPERATURE)
+
+model_part_origin.AddNodalSolutionStepVariable(KM.VELOCITY)
+model_part_destination.AddNodalSolutionStepVariable(KM.MESH_VELOCITY)
+
+# connect to CoSimIO
+connection_settings = CoSimIO.Info()
+connection_settings.SetString("connection_name", "mesh_mapping")
+connection_settings.SetInt("echo_level", 0)
+info = CoSimIO.Connect(connection_settings)
+if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Connected:
+    raise Exception("Connecting failed")
+
+# import meshes
+import_mesh_info = CoSimIO.Info()
+import_mesh_info.SetString("connection_name", "mesh_mapping")
+import_mesh_info.SetString("identifier", "mesh_exchange")
+CoSimIO.ImportMesh(import_mesh_info, model_part_origin)
+CoSimIO.ImportMesh(import_mesh_info, model_part_destination)
+
+print(model_part_origin)
+print(model_part_destination)
+
+# input for the mapper is a Kratos::Parameters object
+mapper_settings = KM.Parameters("""{
+    "mapper_type": "nearest_neighbor",
+    "echo_level" : 0
+}""")
+
+mapper = KratosMapping.MapperFactory(model_part_origin, model_part_destination, mapper_settings)
+
+# import data to be mapped
+import_data_info = CoSimIO.Info()
+import_data_info.SetString("connection_name", "mesh_mapping")
+import_data_info.SetString("identifier", "temperature")
+CoSimIO.ImportData(import_data_info, model_part_origin, KM.TEMPERATURE, CoSimIO.DataLocation.NodeHistorical)
+
+# map scalar quantities
+mapper.Map(KM.TEMPERATURE, KM.AMBIENT_TEMPERATURE)
+
+# map scalar quantities
+mapper.Map(KM.VELOCITY, KM.MESH_VELOCITY)
+
+# export mapped data
+export_data_info = CoSimIO.Info()
+export_data_info.SetString("connection_name", "mesh_mapping")
+export_data_info.SetString("identifier", "ambient_temperature")
+CoSimIOExportData(export_data_info, model_part_destination, KM.AMBIENT_TEMPERATURE, CoSimIO.DataLocation.NodeHistorical)
+
+# disconnect from CoSimIO
+disconnect_settings = CoSimIO.Info()
+disconnect_settings.SetString("connection_name", "mesh_mapping")
+
+info = CoSimIO.Disconnect(disconnect_settings)
+if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
+    raise Exception("Disconnecting failed")
+
+```
