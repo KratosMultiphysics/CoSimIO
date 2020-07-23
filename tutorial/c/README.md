@@ -15,6 +15,7 @@ This tutorial helps you through to integrate the _CoSimIO_ into a solver/softwar
 - [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-Connecting/Disconnecting-tofrom-Kratos)
 - [Tutorial 9: Data Exchange with Kratos](#tutorial-9-Data-Exchange-with-Kratos)
 - [Tutorial 10: Mesh Exchange with Kratos](#tutorial-10-Mesh-Exchange-with-Kratos)
+- [Tutorial 11: Mapping with Kratos](#tutorial-11-Mapping-with-Kratos)
 
 ## What you need
 - Downloading the _CosimIO_ from the repository:
@@ -496,3 +497,6 @@ Now for running the test:
 ```shell
 path/to/bin/tests_c/export_import_mesh_c_test & python3 path/to/import_export_mesh.py
 ```
+
+## Tutorial 11: Mapping with Kratos
+coming soon!
