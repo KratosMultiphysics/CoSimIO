@@ -380,7 +380,7 @@ CoSimIO_Info export_settings=CoSimIO_CreateInfo();
 CoSimIO_Info_SetString(export_settings, "identifier", "mesh_exchange_1");
 CoSimIO_Info_SetString(export_settings, "connection_name", "im_exp_mesh");
 
-// Exporting the data
+// Exporting the mesh
 CoSimIO_Info export_info = CoSimIO_ExportMesh(export_settings
     , export_number_of_nodes*3,export_number_of_elements,export_number_of_elements_connectivities
     , export_nodal_coordinates, export_elements_connectivities, export_elements_types);
@@ -501,11 +501,11 @@ path/to/bin/tests_c/export_import_mesh_c_test & python3 path/to/import_export_me
 ## Tutorial 11: Mapping with Kratos
 This tutorial shows how to map data between (non matching) meshes with Kratos. It is based on tutorials 9 & 10.
 
-For this we first send two meshes based on the same geometry but with different discretizations to Kratos.
+For we first send two meshes based on the same geometry but with different discretizations to Kratos. Those meshes are used as basis for the mapping. In Kratos teminology those are the origin and the destination.
 
-After that we send data of the first mesh to Kratos, map it and send it back.
+After sending the meshes, data that is to be mapped is sent to Kratos. It is mapped and then sent back.
 
-A detailed overview of the mapping capabiliies of Kratos can be found [here](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/MappingApplication)
+Note that the following tutorial contains only a subset of the mapping capabilities of Kratos. Check [here](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/MappingApplication) for a more detailed explanation.
 
 ```c
 // Creating the export mesh settings
@@ -534,7 +534,7 @@ CoSimIO_Info_SetString(export_data_settings, "identifier", "data_to_map");
 CoSimIO_Info_SetString(export_data_settings, "connection_name", "mesh_mapping");
 
 // Exporting the origin data
-CoSimIO_Info export_info = CoSimIO_ExportData(export_data_settings, export_data_size, export data);
+CoSimIO_Info export_info = CoSimIO_ExportData(export_data_settings, export_data_size, export_data);
 
 // Free memory
 CoSimIO_FreeInfo(export_info);
@@ -562,11 +562,12 @@ The following code is used to import the meshes and data to map in Kratos. It ma
 Note the differences between mapping scalar and mapping vector quantities.
 
 ```Python
+# importing the Kratos library
 import KratosMultiphysics as KM
 from KratosMultiphysics.CoSimulationApplication import CoSimIO
 import KratosMultiphysics.MappingApplication as KratosMapping
 
-# create the Kratos ModelParts
+# create the Kratos ModelParts that contain the mesh
 model = KM.Model()
 model_part_origin = model.CreateModelPart("mp_origin")
 model_part_destination = model.CreateModelPart("mp_destination")
@@ -603,7 +604,10 @@ mapper_settings = KM.Parameters("""{
 }""")
 
 # creating the mapper using the mapper factory
-mapper = KratosMapping.MapperFactory(model_part_origin, model_part_destination, mapper_settings)
+mapper = KratosMapping.MapperFactory(
+    model_part_origin,
+    model_part_destination,
+    mapper_settings)
 
 # import data to be mapped
 import_data_info = CoSimIO.Info()
@@ -614,7 +618,7 @@ CoSimIO.ImportData(import_data_info, model_part_origin, KM.TEMPERATURE, CoSimIO.
 # map scalar quantities
 mapper.Map(KM.TEMPERATURE, KM.AMBIENT_TEMPERATURE)
 
-# map scalar quantities
+# map vector quantities
 mapper.Map(KM.VELOCITY, KM.MESH_VELOCITY)
 
 # export mapped data
