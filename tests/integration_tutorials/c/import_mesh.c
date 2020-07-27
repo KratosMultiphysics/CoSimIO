@@ -13,9 +13,15 @@
 // CoSimulation includes
 #include "c/co_sim_io_c.h"
 
-#define COSIMIO_CHECK_EQUAL(a, b)                                \
+#define COSIMIO_CHECK_EQUAL_INT(a, b)                            \
     if (a != b) {                                                \
         printf("in line %d : %d is not equalt to %d\n", __LINE__ , a, b); \
+        return 1;                                                \
+    }
+
+#define COSIMIO_CHECK_EQUAL_DOUBLE(a, b)                         \
+    if (a != b) {                                                \
+        printf("in line %d : %f is not equalt to %f\n", __LINE__ , a, b); \
         return 1;                                                \
     }
 
@@ -30,7 +36,7 @@ int main()
 
     // Connecting using the connection settings
     CoSimIO_Info connect_info = CoSimIO_Connect(connection_settings);
-    COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
+    COSIMIO_CHECK_EQUAL_INT(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
     CoSimIO_FreeInfo(connect_info); // Don't forget to free the connect_info
 
     // After conneting we may import the mesh
@@ -77,23 +83,23 @@ int main()
     int expected_number_of_elements = 4;
     int expected_elements_types[] = {5,5,5,5}; // VTK_TRIANGLE
 
-    COSIMIO_CHECK_EQUAL(expected_number_of_nodes,  number_of_nodes);
-    COSIMIO_CHECK_EQUAL(expected_number_of_elements_connectivities,  number_of_elements_connectivities);
-    COSIMIO_CHECK_EQUAL(expected_number_of_elements,  number_of_elements);
+    COSIMIO_CHECK_EQUAL_INT(expected_number_of_nodes,  number_of_nodes);
+    COSIMIO_CHECK_EQUAL_INT(expected_number_of_elements_connectivities,  number_of_elements_connectivities);
+    COSIMIO_CHECK_EQUAL_INT(expected_number_of_elements,  number_of_elements);
 
     for(int i = 0 ; i <  number_of_nodes * 3 ; i++)
-        COSIMIO_CHECK_EQUAL(expected_nodal_coordinates[i],  nodal_coordinates[i]);
+        COSIMIO_CHECK_EQUAL_DOUBLE(expected_nodal_coordinates[i],  nodal_coordinates[i]);
 
     for(int i = 0 ; i <  number_of_elements_connectivities ; i++)
-        COSIMIO_CHECK_EQUAL(expected_elements_connectivities[i],  elements_connectivities[i]);
+        COSIMIO_CHECK_EQUAL_INT(expected_elements_connectivities[i],  elements_connectivities[i]);
 
     for(int i = 0 ; i <  number_of_elements ; i++)
-        COSIMIO_CHECK_EQUAL(expected_elements_types[i],  elements_types[i]);
+        COSIMIO_CHECK_EQUAL_INT(expected_elements_types[i],  elements_types[i]);
 
 
     // Disconnecting at the end
     CoSimIO_Info disconnect_info = CoSimIO_Disconnect(connection_settings); // disconnect afterwards
-    COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(disconnect_info, "connection_status"), CoSimIO_Disconnected);
+    COSIMIO_CHECK_EQUAL_INT(CoSimIO_Info_GetInt(disconnect_info, "connection_status"), CoSimIO_Disconnected);
 
     // Don't forget to release the settings and info
     CoSimIO_FreeInfo(connection_settings);
