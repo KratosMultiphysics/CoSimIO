@@ -100,6 +100,9 @@ CoSimIO_Info CoSimIO_ExportMesh(
 {
     using namespace CoSimIO::Internals;
     constexpr int coordinates_per_node = 3;
+
+    CO_SIM_IO_ERROR_IF(O_NumberOfElements != O_NumberOfElementConnectivities) << "Number of elements does not match number of element connectivities!" << std::endl;
+
     std::unique_ptr<DataContainer<double>> p_container_coords(new DataContainerRawMemoryReadOnly<double>(O_NodalCoordinates, O_NumberOfNodes * coordinates_per_node));
     std::unique_ptr<DataContainer<int>> p_container_conn(new DataContainerRawMemoryReadOnly<int>(O_ElementConnectivities, O_NumberOfElementConnectivities));
     std::unique_ptr<DataContainer<int>> p_container_types(new DataContainerRawMemoryReadOnly<int>(O_ElementTypes, O_NumberOfElements));
