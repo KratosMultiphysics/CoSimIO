@@ -112,14 +112,14 @@ public:
     const TDataType& Get(const std::string& I_Key) const
     {
         CO_SIM_IO_ERROR_IF_NOT(Has(I_Key)) << "Trying to get \"" << I_Key << "\" which does not exist!" << std::endl;
-        return GetExistingKey(I_Key);
+        return GetExistingKey<TDataType>(I_Key);
     }
 
     template<typename TDataType>
     const TDataType& Get(const std::string& I_Key, const TDataType& I_Default) const
     {
         if (Has(I_Key)) {
-            return GetExistingKey(I_Key);
+            return GetExistingKey<TDataType>(I_Key);
         } else {
             return I_Default;
         }
