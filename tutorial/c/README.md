@@ -588,11 +588,15 @@ if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Connected:
     raise Exception("Connecting failed")
 
 # import meshes
-import_mesh_info = CoSimIO.Info()
-import_mesh_info.SetString("connection_name", "mesh_mapping")
-import_mesh_info.SetString("identifier", "mesh_exchange")
-CoSimIO.ImportMesh(import_mesh_info, model_part_origin)
-CoSimIO.ImportMesh(import_mesh_info, model_part_destination)
+import_mesh_info_o = CoSimIO.Info()
+import_mesh_info_o.SetString("connection_name", "mesh_mapping")
+import_mesh_info_o.SetString("identifier", "mesh_origin")
+CoSimIO.ImportMesh(import_mesh_info_o, model_part_origin)
+
+import_mesh_info_d = CoSimIO.Info()
+import_mesh_info_d.SetString("connection_name", "mesh_mapping")
+import_mesh_info_d.SetString("identifier", "mesh_destination")
+CoSimIO.ImportMesh(import_mesh_info_d, model_part_destination)
 
 print(model_part_origin)
 print(model_part_destination)
@@ -604,7 +608,7 @@ mapper_settings = KM.Parameters("""{
 }""")
 
 # creating the mapper using the mapper factory
-mapper = KratosMapping.MapperFactory(
+mapper = KratosMapping.MapperFactory.CreateMapper(
     model_part_origin,
     model_part_destination,
     mapper_settings)
@@ -625,7 +629,7 @@ mapper.Map(KM.VELOCITY, KM.MESH_VELOCITY)
 export_data_info = CoSimIO.Info()
 export_data_info.SetString("connection_name", "mesh_mapping")
 export_data_info.SetString("identifier", "mapped_data")
-CoSimIOExportData(export_data_info, model_part_destination, KM.AMBIENT_TEMPERATURE, CoSimIO.DataLocation.NodeHistorical)
+CoSimIO.ExportData(export_data_info, model_part_destination, KM.AMBIENT_TEMPERATURE, CoSimIO.DataLocation.NodeHistorical)
 
 # disconnect from CoSimIO
 disconnect_settings = CoSimIO.Info()
@@ -634,5 +638,4 @@ disconnect_settings.SetString("connection_name", "mesh_mapping")
 info = CoSimIO.Disconnect(disconnect_settings)
 if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
     raise Exception("Disconnecting failed")
-
 ```
