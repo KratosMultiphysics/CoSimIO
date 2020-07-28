@@ -117,6 +117,18 @@ public:
         return *static_cast<const TDataType*>(r_val->GetData());
     }
 
+    template<typename TDataType>
+    const TDataType& GetDefault(const std::string& I_Key, const TDataType& I_Default) const
+    {
+        if (Has(I_Key)) {
+            const auto& r_val = mOptions.at(I_Key);
+            CO_SIM_IO_ERROR_IF(r_val->GetDataTypeName() != Internals::Name(TDataType())) << "Wrong DataType! Trying to get \"" << I_Key << "\" which is of type \"" << r_val->GetDataTypeName() << "\" with \"" << Internals::Name(TDataType()) << "\"!" << std::endl;
+            return *static_cast<const TDataType*>(r_val->GetData());
+        } else {
+            return I_Default;
+        }
+    }
+
     bool Has(const std::string& I_Key) const
     {
         return mOptions.count(I_Key)>0;
