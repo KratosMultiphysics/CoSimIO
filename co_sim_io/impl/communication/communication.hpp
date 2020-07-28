@@ -27,8 +27,8 @@ class Communication
 public:
     explicit Communication(const std::string& rName, const Info& I_Settings, const bool IsConnectionMaster) : mConnectionName(rName), mIsConnectionMaster(IsConnectionMaster)
     {
-        mEchoLevel = I_Settings.GetDefault<int>("echo_level", 0);
-        mPrintTiming = I_Settings.GetDefault<bool>("print_timing", false);
+        mEchoLevel = I_Settings.Get<int>("echo_level", 0);
+        mPrintTiming = I_Settings.Get<bool>("print_timing", false);
     }
 
     virtual ~Communication() = default; // impl of disconnect has to be in derived class due to order of class destruction

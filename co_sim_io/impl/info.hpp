@@ -118,7 +118,7 @@ public:
     }
 
     template<typename TDataType>
-    const TDataType& GetDefault(const std::string& I_Key, const TDataType& I_Default) const
+    const TDataType& Get(const std::string& I_Key, const TDataType& I_Default) const
     {
         if (Has(I_Key)) {
             const auto& r_val = mOptions.at(I_Key);
