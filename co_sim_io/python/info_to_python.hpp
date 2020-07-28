@@ -27,8 +27,8 @@ namespace {
 template<typename TDataType>
 void AddGetSetInterface(pybind11::class_<CoSimIO::Info>& PythonInfo, const std::string& Name)
 {
-    PythonInfo.def(std::string("Get"+Name).c_str(), [](const CoSimIO::Info& I_Info, const std::string& I_Key){I_Info.Get<TDataType>(I_Key);});
-    PythonInfo.def(std::string("Get"+Name).c_str(), [](const CoSimIO::Info& I_Info, const std::string& I_Key, const TDataType& I_Default){I_Info.Get<TDataType>(I_Key, I_Default);});
+    PythonInfo.def(std::string("Get"+Name).c_str(), [](const CoSimIO::Info& I_Info, const std::string& I_Key){return I_Info.Get<TDataType>(I_Key);});
+    PythonInfo.def(std::string("Get"+Name).c_str(), [](const CoSimIO::Info& I_Info, const std::string& I_Key, const TDataType& I_Default){return I_Info.Get<TDataType>(I_Key, I_Default);});
     PythonInfo.def(std::string("Set"+Name).c_str(), &CoSimIO::Info::Set<TDataType>);
 }
 
