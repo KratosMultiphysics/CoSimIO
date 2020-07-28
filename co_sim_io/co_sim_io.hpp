@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_H_INCLUDED
-#define CO_SIM_IO_H_INCLUDED
+#ifndef CO_SIM_IO_INCLUDED
+#define CO_SIM_IO_INCLUDED
 
 /*
 This file defines the IO of Kratos-CoSimulation for the exchange of data with external solvers.
@@ -96,4 +96,4 @@ inline Info Register(
 
 #include "impl/co_sim_io_impl.hpp"
 
-#endif // CO_SIM_IO_H_INCLUDED
+#endif // CO_SIM_IO_INCLUDED
