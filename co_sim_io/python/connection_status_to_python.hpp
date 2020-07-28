@@ -10,6 +10,9 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
+#ifndef CO_SIM_IO_CONNECTION_STATUS_TO_PYHON_INCLUDED
+#define CO_SIM_IO_CONNECTION_STATUS_TO_PYHON_INCLUDED
+
 // Exposure of the CoSimIO to Python
 
 // System includes
@@ -32,3 +35,5 @@ void AddCoSimIOConnectionStatusToPython(pybind11::module& m)
         .value("DisconnectionError", CoSimIO::ConnectionStatus::DisconnectionError)
         ;
 }
+
+#endif // CO_SIM_IO_CONNECTION_STATUS_TO_PYHON_INCLUDED
