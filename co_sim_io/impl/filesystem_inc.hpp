@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_FILESYSTEM_INC_H_INCLUDED
-#define CO_SIM_IO_FILESYSTEM_INC_H_INCLUDED
+#ifndef CO_SIM_IO_FILESYSTEM_INC_INCLUDED
+#define CO_SIM_IO_FILESYSTEM_INC_INCLUDED
 
 /* This file selects which implementation of std::filesystem to be used
 std::filesystem is part of C++17
@@ -38,4 +38,4 @@ When using only C++11 the alternative implementation from
 
 #undef STD_FILESYSTEM_AVAILABLE
 
-#endif // CO_SIM_IO_FILESYSTEM_INC_H_INCLUDED
+#endif // CO_SIM_IO_FILESYSTEM_INC_INCLUDED
