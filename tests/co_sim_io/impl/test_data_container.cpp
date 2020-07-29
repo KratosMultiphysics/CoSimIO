@@ -16,31 +16,21 @@
 
 
 namespace CoSimIO {
+namespace Internals { // DataContainer is in the Internals namespace
+
+TEST_SUITE("DataContainer")
+{
 
 
+
+} // TEST_SUITE("Info")
+
+
+} // namespace Internals
 } // namespace CoSimIO
 
 
 /*
-// KRATOS  / ___|___/ ___|(_)_ __ ___  _   _| | __ _| |_(_) ___  _ ___
-//        | |   / _ \___ \| | '_ ` _ \| | | | |/ _` | __| |/ _ \| '_  |
-//        | |__| (_) |__) | | | | | | | |_| | | (_| | |_| | (_) | | | |
-//         \____\___/____/|_|_| |_| |_|\__,_|_|\__,_|\__|_|\___/|_| |_|
-//
-//  License:		 BSD License
-//                   license: CoSimulationApplication/license.txt
-//
-//  Main authors:    Philipp Bucher
-//
-
-// System includes
-#include <vector>
-
-// External includes
-
-// Project includes
-#include "includes/define.h"
-#include "testing/testing.h"
 #include "co_sim_io/impl/co_sim_io_internals.h"
 
 namespace Kratos {
