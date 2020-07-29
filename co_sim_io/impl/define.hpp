@@ -19,7 +19,7 @@
 
 namespace CoSimIO {
 
-typedef std::unordered_map<std::string, std::string> SettingsType;
+using SettingsType = std::unordered_map<std::string, std::string>;
 
 enum class ControlSignal
 {
