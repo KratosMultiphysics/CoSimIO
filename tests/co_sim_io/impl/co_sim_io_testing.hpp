@@ -12,3 +12,12 @@
 
 // External includes
 #include "doctest/doctest.h"
+
+// Custom macros
+
+#define CO_SIM_IO_CHECK_VECTOR_NEAR(a, b) { \
+CHECK_EQ(a.size(), b.size());               \
+for (std::size_t i=0; i<a.size(); ++i) {    \
+   CHECK_EQ(a[i], doctest::Approx(b[i]));   \
+}                                           \
+}
