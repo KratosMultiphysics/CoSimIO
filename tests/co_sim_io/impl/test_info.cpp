@@ -26,7 +26,7 @@ TEST_CASE("info_basics_int")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("echo_level"));
+    CHECK_FALSE(info.Has("echo_level"));
 
     info.Set<int>("echo_level", 1);
 
@@ -39,7 +39,7 @@ TEST_CASE("info_basics_double")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("tolerance"));
+    CHECK_FALSE(info.Has("tolerance"));
 
     info.Set<double>("tolerance", 1.5);
 
@@ -52,7 +52,7 @@ TEST_CASE("info_basics_bool")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("print_sth"));
+    CHECK_FALSE(info.Has("print_sth"));
 
     info.Set<bool>("print_sth", false);
 
@@ -65,7 +65,7 @@ TEST_CASE("info_basics_string")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("identifier"));
+    CHECK_FALSE(info.Has("identifier"));
 
     info.Set<std::string>("identifier", "pressure");
 
@@ -78,7 +78,7 @@ TEST_CASE("info_basics_char")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("identifier"));
+    CHECK_FALSE(info.Has("identifier"));
 
     std::string val = "pressure";
 
@@ -93,52 +93,52 @@ TEST_CASE("info_int_default")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("echo_level"));
+    CHECK_FALSE(info.Has("echo_level"));
 
     CHECK(info.Get<int>("echo_level", 3) == 3);
 
-    REQUIRE_FALSE(info.Has("echo_level")); // getting the default must not insert it!
+    CHECK_FALSE(info.Has("echo_level")); // getting the default must not insert it!
 }
 
 TEST_CASE("info_double_default")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("tolerance"));
+    CHECK_FALSE(info.Has("tolerance"));
 
     CHECK(info.Get<double>("tolerance", 1.5) == doctest::Approx(1.5));
 
-    REQUIRE_FALSE(info.Has("tolerance")); // getting the default must not insert it!
+    CHECK_FALSE(info.Has("tolerance")); // getting the default must not insert it!
 }
 
 TEST_CASE("info_bool_default")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("is_converged"));
+    CHECK_FALSE(info.Has("is_converged"));
 
     CHECK(info.Get<bool>("is_converged", true));
-    REQUIRE_FALSE(info.Get<bool>("is_converged", false));
+    CHECK_FALSE(info.Get<bool>("is_converged", false));
 
-    REQUIRE_FALSE(info.Has("is_converged")); // getting the default must not insert it!
+    CHECK_FALSE(info.Has("is_converged")); // getting the default must not insert it!
 }
 
 TEST_CASE("info_string_default")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("identifier"));
+    CHECK_FALSE(info.Has("identifier"));
 
     CHECK(info.Get<std::string>("identifier", "dummy") == "dummy");
 
-    REQUIRE_FALSE(info.Has("identifier")); // getting the default must not insert it!
+    CHECK_FALSE(info.Has("identifier")); // getting the default must not insert it!
 }
 
 TEST_CASE("info_non_existing_key")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("identifier"));
+    CHECK_FALSE(info.Has("identifier"));
 
     REQUIRE_THROWS_WITH(info.Get<int>("identifier"), "Error: "); // TODO find a better way of testing this
 }
@@ -147,7 +147,7 @@ TEST_CASE("info_wrong_type")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("identifier"));
+    CHECK_FALSE(info.Has("identifier"));
 
     info.Set<std::string>("identifier", "pressure");
 
@@ -159,10 +159,10 @@ TEST_CASE("info_many_values")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("identifier"));
-    REQUIRE_FALSE(info.Has("is_converged"));
-    REQUIRE_FALSE(info.Has("tol"));
-    REQUIRE_FALSE(info.Has("echo_level"));
+    CHECK_FALSE(info.Has("identifier"));
+    CHECK_FALSE(info.Has("is_converged"));
+    CHECK_FALSE(info.Has("tol"));
+    CHECK_FALSE(info.Has("echo_level"));
 
     info.Set<std::string>("identifier", "velocity_interface");
     info.Set<bool>("is_converged", true);
@@ -184,7 +184,7 @@ TEST_CASE("info_set_alreay_existing")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("identifier"));
+    CHECK_FALSE(info.Has("identifier"));
     info.Set<std::string>("identifier", "velocity_interface");
     CHECK(info.Has("identifier"));
     CHECK(info.Get<std::string>("identifier") == "velocity_interface");
@@ -198,7 +198,7 @@ TEST_CASE("info_set_alreay_existing_different_data_type")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("identifier"));
+    CHECK_FALSE(info.Has("identifier"));
     info.Set<std::string>("identifier", "velocity_interface");
     CHECK(info.Has("identifier"));
     CHECK(info.Get<std::string>("identifier") == "velocity_interface");
@@ -251,7 +251,7 @@ TEST_CASE("info_erase")
     CHECK(info.Size() == 1);
 
     info.Erase("identifier");
-    REQUIRE_FALSE(info.Has("identifier"));
+    CHECK_FALSE(info.Has("identifier"));
     CHECK(info.Size() == 0);
 
     // erasing non-existing keys does not throw
