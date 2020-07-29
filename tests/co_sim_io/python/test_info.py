@@ -65,6 +65,43 @@ class CoSimIO_Info(unittest.TestCase):
 
         self.assertEqual(info.GetString("identifier"), "pressure")
 
+    def test_int_default(self):
+        info = CoSimIO.Info()
+
+        self.assertFalse(info.Has("echo_level"))
+
+        self.assertEqual(info.GetInt("echo_level", 3), 3)
+
+        self.assertFalse(info.Has("echo_level")) # getting the default must not insert it!
+
+    def test_double_default(self):
+        info = CoSimIO.Info()
+
+        self.assertFalse(info.Has("tolerance"))
+
+        self.assertAlmostEqual(info.GetDouble("tolerance", 1.5), 1.5)
+
+        self.assertFalse(info.Has("tolerance")) # getting the default must not insert it!
+
+    def test_bool_default(self):
+        info = CoSimIO.Info()
+
+        self.assertFalse(info.Has("print_sth"))
+
+        self.assertTrue(info.GetBool("print_sth", True))
+        self.assertFalse(info.GetBool("print_sth", False))
+
+        self.assertFalse(info.Has("print_sth")) # getting the default must not insert it!
+
+    def test_string_default(self):
+        info = CoSimIO.Info()
+
+        self.assertFalse(info.Has("identifier"))
+
+        self.assertEqual(info.GetString("identifier", "dummy"), "dummy")
+
+        self.assertFalse(info.Has("identifier")) # getting the default must not insert it!
+
     def test_non_existing_key(self):
         info = CoSimIO.Info()
 
