@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_INTERNALS_INCLUDED
-#define CO_SIM_IO_INTERNALS_INCLUDED
+#ifndef CO_SIM_IO_DATA_CONTAINER_INCLUDED
+#define CO_SIM_IO_DATA_CONTAINER_INCLUDED
 
 // System includes
 #include <iostream>
@@ -54,7 +54,6 @@ public:
         return this->data()[Index];
     }
 };
-
 
 /// output stream function
 template<typename TDataType>
@@ -151,33 +150,7 @@ private:
     const std::size_t mSize;
 };
 
-inline void AddMissingSettings(const SettingsType& rDefaultSettings, SettingsType& rSettings)
-{
-    for (const auto& r_setting : rDefaultSettings) {
-        if (rSettings.count(r_setting.first) == 0) {
-            rSettings[r_setting.first] = r_setting.second;
-        }
-    }
-}
-
-inline SettingsType ReadSettingsFile(const std::string& rSettingsFileName)
-{
-    std::ifstream settings_file(rSettingsFileName);
-
-    if (!settings_file.good()) {
-        CO_SIM_IO_INFO("CoSimIO") << "Input file \"" << rSettingsFileName << "\" could not be read, using default configuration" << std::endl;
-        return SettingsType();
-    }
-
-    SettingsType settings;
-    std::string current_line;
-    while (std::getline(settings_file, current_line)) {
-        // TODO implement this
-    }
-    return settings;
-}
-
 } // namespace Internals
 } // namespace CoSimIO
 
-#endif // CO_SIM_IO_INTERNALS_INCLUDED
+#endif // CO_SIM_IO_DATA_CONTAINER_INCLUDED
