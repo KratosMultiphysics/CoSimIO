@@ -26,7 +26,7 @@ constexpr int GetMinorVersion() {
     return 0;
 }
 
-std::string GetPatchVersion() {
+inline std::string GetPatchVersion() {
     return "0";
 }
 
