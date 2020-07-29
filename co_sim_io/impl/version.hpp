@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_VERSION_H_INCLUDED
-#define CO_SIM_IO_VERSION_H_INCLUDED
+#ifndef CO_SIM_IO_VERSION_INCLUDED
+#define CO_SIM_IO_VERSION_INCLUDED
 
 // System includes
 #include <string>
@@ -32,4 +32,4 @@ std::string GetPatchVersion() {
 
 } // namespace CoSimIO
 
-#endif // CO_SIM_IO_VERSION_H_INCLUDED
+#endif // CO_SIM_IO_VERSION_INCLUDED

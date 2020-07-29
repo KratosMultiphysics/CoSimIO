@@ -10,6 +10,9 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
+#ifndef CO_SIM_IO_VERSION_TO_PYHON_INCLUDED
+#define CO_SIM_IO_VERSION_TO_PYHON_INCLUDED
+
 // Exposure of the CoSimIO to Python
 
 // System includes
@@ -32,3 +35,5 @@ void AddCoSimIOVersionToPython(pybind11::module& m)
                    << CoSimIO::GetPatchVersion();
     m.attr("__version__") = version_stream.str();
 }
+
+#endif // CO_SIM_IO_VERSION_TO_PYHON_INCLUDED
