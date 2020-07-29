@@ -20,6 +20,8 @@
 
 namespace CoSimIO {
 
+TEST_SUITE("Info") {
+
 TEST_CASE("info_basics_int")
 {
     Info info;
@@ -374,5 +376,7 @@ TEST_CASE("info_assignment")
     REQUIRE(another_info.Get<bool>("is_converged") == true);
     REQUIRE(another_info.Get<double>("tol") == doctest::Approx(0.008));
 }
+
+} // TEST_SUITE("Info")
 
 } // namespace CoSimIO
