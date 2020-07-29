@@ -10,26 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_VERSION_INCLUDED
-#define CO_SIM_IO_VERSION_INCLUDED
+/* see "test_include_co_sim_io_1.cpp" for why this file is necessary
+*/
 
-// System includes
-#include <string>
-
-namespace CoSimIO {
-
-constexpr int GetMajorVersion() {
-    return 1;
-}
-
-constexpr int GetMinorVersion() {
-    return 0;
-}
-
-inline std::string GetPatchVersion() {
-    return "0";
-}
-
-} // namespace CoSimIO
-
-#endif // CO_SIM_IO_VERSION_INCLUDED
+// Project includes
+#include "co_sim_io.hpp"

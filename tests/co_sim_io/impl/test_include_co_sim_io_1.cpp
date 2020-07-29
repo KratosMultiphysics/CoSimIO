@@ -10,26 +10,10 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_VERSION_INCLUDED
-#define CO_SIM_IO_VERSION_INCLUDED
+/* this file makes sure that the CoSimIO can be safely included in different cpp files
+i.e. it ensures that all the functions are inlined otherwise linking errors occur
+the "other" file that includes CoSimIO is "test_include_co_sim_io_2.cpp"
+*/
 
-// System includes
-#include <string>
-
-namespace CoSimIO {
-
-constexpr int GetMajorVersion() {
-    return 1;
-}
-
-constexpr int GetMinorVersion() {
-    return 0;
-}
-
-inline std::string GetPatchVersion() {
-    return "0";
-}
-
-} // namespace CoSimIO
-
-#endif // CO_SIM_IO_VERSION_INCLUDED
+// Project includes
+#include "co_sim_io.hpp"
