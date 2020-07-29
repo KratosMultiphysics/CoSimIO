@@ -228,6 +228,27 @@ class CoSimIO_Info(unittest.TestCase):
 
         self.assertMultiLineEqual(str(info), exp_string)
 
+    def test_copy_constructor(self):
+        info = CoSimIO.Info()
+
+        info.SetString("keyword", "awesome")
+        info.SetBool("is_converged", True)
+        info.SetString("identifier", "mesh")
+        info.SetDouble("tol", 0.008)
+        info.SetInt("echo_level", 2)
+        info.SetInt("checking", 22)
+
+        copied_info = CoSimIO.Info(info)
+
+        self.assertEqual(copied_info.Size(), 6)
+
+        self.assertEqual(copied_info.GetString("keyword"), "awesome")
+        self.assertTrue(copied_info.GetBool("is_converged"))
+        self.assertEqual(copied_info.GetString("identifier"), "mesh")
+        self.assertAlmostEqual(copied_info.GetDouble("tol"), 0.008)
+        self.assertEqual(copied_info.GetInt("echo_level"), 2)
+        self.assertEqual(copied_info.GetInt("checking"), 22)
+
 
 if __name__ == '__main__':
     unittest.main()

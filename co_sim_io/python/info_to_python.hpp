@@ -43,6 +43,7 @@ void AddCoSimIOInfoToPython(pybind11::module& m)
 
     auto py_info = py::class_<CoSimIO::Info>(m,"Info")
     .def(py::init<>())
+    .def(py::init<const CoSimIO::Info&>())
     .def("Has",       &CoSimIO::Info::Has)
     .def("Erase",     &CoSimIO::Info::Erase)
     .def("Clear",     &CoSimIO::Info::Clear)
