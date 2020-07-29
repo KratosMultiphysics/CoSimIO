@@ -140,7 +140,7 @@ TEST_CASE("info_non_existing_key")
 
     CHECK_FALSE(info.Has("identifier"));
 
-    REQUIRE_THROWS_WITH(info.Get<int>("identifier"), "Error: "); // TODO find a better way of testing this
+    CHECK_THROWS_WITH(info.Get<int>("identifier"), "Error: "); // TODO find a better way of testing this
 }
 
 TEST_CASE("info_wrong_type")
@@ -152,7 +152,7 @@ TEST_CASE("info_wrong_type")
     info.Set<std::string>("identifier", "pressure");
 
     CHECK(info.Has("identifier"));
-    REQUIRE_THROWS_WITH(info.Get<int>("identifier"), "Error: "); // TODO find a better way of testing this
+    CHECK_THROWS_WITH(info.Get<int>("identifier"), "Error: "); // TODO find a better way of testing this
 }
 
 TEST_CASE("info_many_values")
@@ -255,8 +255,8 @@ TEST_CASE("info_erase")
     CHECK(info.Size() == 0);
 
     // erasing non-existing keys does not throw
-    REQUIRE_NOTHROW(info.Erase("identifier"));
-    REQUIRE_NOTHROW(info.Erase("whatever"));
+    CHECK_NOTHROW(info.Erase("identifier"));
+    CHECK_NOTHROW(info.Erase("whatever"));
 }
 
 TEST_CASE("info_save")
