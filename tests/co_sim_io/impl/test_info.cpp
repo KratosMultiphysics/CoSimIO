@@ -13,10 +13,8 @@
 // System includes
 #include <sstream>
 
-// External includes
-#include "catch2/catch.hpp"
-
 // Project includes
+#include "co_sim_io_testing.hpp"
 #include "impl/info.hpp"
 
 
@@ -45,7 +43,7 @@ TEST_CASE("info_basics_double")
 
     REQUIRE(info.Has("tolerance"));
 
-    REQUIRE(info.Get<double>("tolerance") == Approx(1.5));
+    REQUIRE(info.Get<double>("tolerance") == doctest::Approx(1.5));
 }
 
 TEST_CASE("info_basics_bool")
@@ -131,7 +129,7 @@ TEST_CASE("info_many_values")
 
     REQUIRE(info.Get<std::string>("identifier") == "velocity_interface");
     REQUIRE(info.Get<bool>("is_converged") == true);
-    REQUIRE(info.Get<double>("tol") == Approx(0.008));
+    REQUIRE(info.Get<double>("tol") == doctest::Approx(0.008));
     REQUIRE(info.Get<int>("echo_level") == 2);
 }
 
@@ -247,7 +245,7 @@ TEST_CASE("info_load")
     REQUIRE(info.Get<int>("echo_level") == 2);
     REQUIRE(info.Get<std::string>("keyword") == "awesome");
     REQUIRE(info.Get<bool>("is_converged") == true);
-    REQUIRE(info.Get<double>("tol") == Approx(1.225));
+    REQUIRE(info.Get<double>("tol") == doctest::Approx(1.225));
 }
 
 TEST_CASE("info_save_load")
@@ -271,7 +269,7 @@ TEST_CASE("info_save_load")
     REQUIRE(another_info.Get<int>("echo_level") == 2);
     REQUIRE(another_info.Get<std::string>("keyword") == "awesome");
     REQUIRE(another_info.Get<bool>("is_converged") == true);
-    REQUIRE(another_info.Get<double>("tol") == Approx(0.008));
+    REQUIRE(another_info.Get<double>("tol") == doctest::Approx(0.008));
 }
 
 TEST_CASE("info_ostream")
@@ -309,7 +307,7 @@ TEST_CASE("info_copy_constructor")
     REQUIRE(another_info.Get<int>("echo_level") == 2);
     REQUIRE(another_info.Get<std::string>("keyword") == "awesome");
     REQUIRE(another_info.Get<bool>("is_converged") == true);
-    REQUIRE(another_info.Get<double>("tol") == Approx(0.008));
+    REQUIRE(another_info.Get<double>("tol") == doctest::Approx(0.008));
 }
 
 TEST_CASE("info_assignment")
@@ -329,7 +327,7 @@ TEST_CASE("info_assignment")
     REQUIRE(another_info.Get<int>("echo_level") == 2);
     REQUIRE(another_info.Get<std::string>("keyword") == "awesome");
     REQUIRE(another_info.Get<bool>("is_converged") == true);
-    REQUIRE(another_info.Get<double>("tol") == Approx(0.008));
+    REQUIRE(another_info.Get<double>("tol") == doctest::Approx(0.008));
 }
 
 } // namespace CoSimIO

@@ -11,7 +11,7 @@ set_target_properties(co_sim_io_tests PROPERTIES
     CXX_EXTENSIONS NO
 )
 
-catch_discover_tests(co_sim_io_tests)
+doctest_discover_tests(co_sim_io_tests)
 
 
 ### C++ tests ###
