@@ -20,241 +20,243 @@
 
 namespace CoSimIO {
 
+TEST_SUITE("Info") {
+
 TEST_CASE("info_basics_int")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("echo_level"));
+    CHECK_UNARY_FALSE(info.Has("echo_level"));
 
     info.Set<int>("echo_level", 1);
 
-    REQUIRE(info.Has("echo_level"));
+    CHECK_UNARY(info.Has("echo_level"));
 
-    REQUIRE(info.Get<int>("echo_level") == 1);
+    CHECK_EQ(info.Get<int>("echo_level"), 1);
 }
 
 TEST_CASE("info_basics_double")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("tolerance"));
+    CHECK_UNARY_FALSE(info.Has("tolerance"));
 
     info.Set<double>("tolerance", 1.5);
 
-    REQUIRE(info.Has("tolerance"));
+    CHECK_UNARY(info.Has("tolerance"));
 
-    REQUIRE(info.Get<double>("tolerance") == doctest::Approx(1.5));
+    CHECK_EQ(info.Get<double>("tolerance"), doctest::Approx(1.5));
 }
 
 TEST_CASE("info_basics_bool")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("print_sth"));
+    CHECK_UNARY_FALSE(info.Has("print_sth"));
 
     info.Set<bool>("print_sth", false);
 
-    REQUIRE(info.Has("print_sth"));
+    CHECK_UNARY(info.Has("print_sth"));
 
-    REQUIRE(info.Get<bool>("print_sth") == false);
+    CHECK_UNARY_FALSE(info.Get<bool>("print_sth"));
 }
 
 TEST_CASE("info_basics_string")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("identifier"));
+    CHECK_UNARY_FALSE(info.Has("identifier"));
 
     info.Set<std::string>("identifier", "pressure");
 
-    REQUIRE(info.Has("identifier"));
+    CHECK_UNARY(info.Has("identifier"));
 
-    REQUIRE(info.Get<std::string>("identifier") == "pressure");
+    CHECK_EQ(info.Get<std::string>("identifier"), "pressure");
 }
 
 TEST_CASE("info_basics_char")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("identifier"));
+    CHECK_UNARY_FALSE(info.Has("identifier"));
 
     std::string val = "pressure";
 
     info.Set<std::string>("identifier", val.c_str());
 
-    REQUIRE(info.Has("identifier"));
+    CHECK_UNARY(info.Has("identifier"));
 
-    REQUIRE(info.Get<std::string>("identifier") == "pressure"); // char* will be turned into string
+    CHECK_EQ(info.Get<std::string>("identifier"), "pressure"); // char* will be turned into string
 }
 
 TEST_CASE("info_int_default")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("echo_level"));
+    CHECK_UNARY_FALSE(info.Has("echo_level"));
 
-    REQUIRE(info.Get<int>("echo_level", 3) == 3);
+    CHECK_EQ(info.Get<int>("echo_level", 3), 3);
 
-    REQUIRE_FALSE(info.Has("echo_level")); // getting the default must not insert it!
+    CHECK_UNARY_FALSE(info.Has("echo_level")); // getting the default must not insert it!
 }
 
 TEST_CASE("info_double_default")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("tolerance"));
+    CHECK_UNARY_FALSE(info.Has("tolerance"));
 
-    REQUIRE(info.Get<double>("tolerance", 1.5) == doctest::Approx(1.5));
+    CHECK_EQ(info.Get<double>("tolerance", 1.5), doctest::Approx(1.5));
 
-    REQUIRE_FALSE(info.Has("tolerance")); // getting the default must not insert it!
+    CHECK_UNARY_FALSE(info.Has("tolerance")); // getting the default must not insert it!
 }
 
 TEST_CASE("info_bool_default")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("is_converged"));
+    CHECK_UNARY_FALSE(info.Has("is_converged"));
 
-    REQUIRE(info.Get<bool>("is_converged", true));
-    REQUIRE_FALSE(info.Get<bool>("is_converged", false));
+    CHECK_UNARY(info.Get<bool>("is_converged", true));
+    CHECK_UNARY_FALSE(info.Get<bool>("is_converged", false));
 
-    REQUIRE_FALSE(info.Has("is_converged")); // getting the default must not insert it!
+    CHECK_UNARY_FALSE(info.Has("is_converged")); // getting the default must not insert it!
 }
 
 TEST_CASE("info_string_default")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("identifier"));
+    CHECK_UNARY_FALSE(info.Has("identifier"));
 
-    REQUIRE(info.Get<std::string>("identifier", "dummy") == "dummy");
+    CHECK_EQ(info.Get<std::string>("identifier", "dummy"), "dummy");
 
-    REQUIRE_FALSE(info.Has("identifier")); // getting the default must not insert it!
+    CHECK_UNARY_FALSE(info.Has("identifier")); // getting the default must not insert it!
 }
 
 TEST_CASE("info_non_existing_key")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("identifier"));
+    CHECK_UNARY_FALSE(info.Has("identifier"));
 
-    REQUIRE_THROWS_WITH(info.Get<int>("identifier"), "Error: "); // TODO find a better way of testing this
+    CHECK_THROWS_WITH(info.Get<int>("identifier"), "Error: "); // TODO find a better way of testing this
 }
 
 TEST_CASE("info_wrong_type")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("identifier"));
+    CHECK_UNARY_FALSE(info.Has("identifier"));
 
     info.Set<std::string>("identifier", "pressure");
 
-    REQUIRE(info.Has("identifier"));
-    REQUIRE_THROWS_WITH(info.Get<int>("identifier"), "Error: "); // TODO find a better way of testing this
+    CHECK_UNARY(info.Has("identifier"));
+    CHECK_THROWS_WITH(info.Get<int>("identifier"), "Error: "); // TODO find a better way of testing this
 }
 
 TEST_CASE("info_many_values")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("identifier"));
-    REQUIRE_FALSE(info.Has("is_converged"));
-    REQUIRE_FALSE(info.Has("tol"));
-    REQUIRE_FALSE(info.Has("echo_level"));
+    CHECK_UNARY_FALSE(info.Has("identifier"));
+    CHECK_UNARY_FALSE(info.Has("is_converged"));
+    CHECK_UNARY_FALSE(info.Has("tol"));
+    CHECK_UNARY_FALSE(info.Has("echo_level"));
 
     info.Set<std::string>("identifier", "velocity_interface");
     info.Set<bool>("is_converged", true);
     info.Set<double>("tol", 0.008);
     info.Set<int>("echo_level", 2);
 
-    REQUIRE(info.Has("identifier"));
-    REQUIRE(info.Has("is_converged"));
-    REQUIRE(info.Has("tol"));
-    REQUIRE(info.Has("echo_level"));
+    CHECK_UNARY(info.Has("identifier"));
+    CHECK_UNARY(info.Has("is_converged"));
+    CHECK_UNARY(info.Has("tol"));
+    CHECK_UNARY(info.Has("echo_level"));
 
-    REQUIRE(info.Get<std::string>("identifier") == "velocity_interface");
-    REQUIRE(info.Get<bool>("is_converged") == true);
-    REQUIRE(info.Get<double>("tol") == doctest::Approx(0.008));
-    REQUIRE(info.Get<int>("echo_level") == 2);
+    CHECK_EQ(info.Get<std::string>("identifier"), "velocity_interface");
+    CHECK_UNARY(info.Get<bool>("is_converged"));
+    CHECK_EQ(info.Get<double>("tol"), doctest::Approx(0.008));
+    CHECK_EQ(info.Get<int>("echo_level"), 2);
 }
 
 TEST_CASE("info_set_alreay_existing")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("identifier"));
+    CHECK_UNARY_FALSE(info.Has("identifier"));
     info.Set<std::string>("identifier", "velocity_interface");
-    REQUIRE(info.Has("identifier"));
-    REQUIRE(info.Get<std::string>("identifier") == "velocity_interface");
+    CHECK_UNARY(info.Has("identifier"));
+    CHECK_EQ(info.Get<std::string>("identifier"), "velocity_interface");
 
     // now overwriting the already existing value
     info.Set<std::string>("identifier", "pressure");
-    REQUIRE(info.Get<std::string>("identifier") == "pressure");
+    CHECK_EQ(info.Get<std::string>("identifier"), "pressure");
 }
 
 TEST_CASE("info_set_alreay_existing_different_data_type")
 {
     Info info;
 
-    REQUIRE_FALSE(info.Has("identifier"));
+    CHECK_UNARY_FALSE(info.Has("identifier"));
     info.Set<std::string>("identifier", "velocity_interface");
-    REQUIRE(info.Has("identifier"));
-    REQUIRE(info.Get<std::string>("identifier") == "velocity_interface");
+    CHECK_UNARY(info.Has("identifier"));
+    CHECK_EQ(info.Get<std::string>("identifier"), "velocity_interface");
 
     // now overwriting the already existing value with a different type
     info.Set<int>("identifier", 15);
-    REQUIRE(info.Get<int>("identifier") == 15);
+    CHECK_EQ(info.Get<int>("identifier"), 15);
 }
 
 TEST_CASE("info_size")
 {
     Info info;
-    REQUIRE(info.Size() == 0);
+    CHECK_EQ(info.Size(), 0);
 
     info.Set<std::string>("identifier", "velocity_interface");
     info.Set<bool>("is_converged", true);
     info.Set<double>("tol", 0.008);
     info.Set<int>("echo_level", 2);
 
-    REQUIRE(info.Size() == 4);
+    CHECK_EQ(info.Size(), 4);
     info.Set<int>("echo_level", 6);
-    REQUIRE(info.Size() == 4);
+    CHECK_EQ(info.Size(), 4);
 }
 
 TEST_CASE("info_clear")
 {
     Info info;
-    REQUIRE(info.Size() == 0);
+    CHECK_EQ(info.Size(), 0);
 
     info.Set<std::string>("identifier", "velocity_interface");
     info.Set<bool>("is_converged", true);
     info.Set<double>("tol", 0.008);
     info.Set<int>("echo_level", 2);
 
-    REQUIRE(info.Size() == 4);
+    CHECK_EQ(info.Size(), 4);
     info.Set<int>("echo_level", 6);
-    REQUIRE(info.Size() == 4);
+    CHECK_EQ(info.Size(), 4);
 
     info.Clear();
-    REQUIRE(info.Size() == 0);
+    CHECK_EQ(info.Size(), 0);
 }
 
 TEST_CASE("info_erase")
 {
     Info info;
-    REQUIRE(info.Size() == 0);
+    CHECK_EQ(info.Size(), 0);
 
     info.Set<std::string>("identifier", "velocity_interface");
-    REQUIRE(info.Has("identifier"));
-    REQUIRE(info.Size() == 1);
+    CHECK_UNARY(info.Has("identifier"));
+    CHECK_EQ(info.Size(), 1);
 
     info.Erase("identifier");
-    REQUIRE_FALSE(info.Has("identifier"));
-    REQUIRE(info.Size() == 0);
+    CHECK_UNARY_FALSE(info.Has("identifier"));
+    CHECK_EQ(info.Size(), 0);
 
     // erasing non-existing keys does not throw
-    REQUIRE_NOTHROW(info.Erase("identifier"));
-    REQUIRE_NOTHROW(info.Erase("whatever"));
+    CHECK_NOTHROW(info.Erase("identifier"));
+    CHECK_NOTHROW(info.Erase("whatever"));
 }
 
 TEST_CASE("info_save")
@@ -273,7 +275,7 @@ TEST_CASE("info_save")
 
     const std::string exp_string = "5\nchecking\nInfoData_int\n22\necho_level\nInfoData_int\n2\nis_converged\nInfoData_bool\n1\nkeyword\nInfoData_string\nawesome\ntol\nInfoData_double\n0.008\n";
 
-    REQUIRE(test_stream.str() == exp_string);
+    CHECK_EQ(test_stream.str(), exp_string);
 }
 
 TEST_CASE("info_load")
@@ -285,12 +287,12 @@ TEST_CASE("info_load")
     Info info;
     info.Load(test_stream);
 
-    REQUIRE(info.Size() == 5);
-    REQUIRE(info.Get<int>("checking") == 22);
-    REQUIRE(info.Get<int>("echo_level") == 2);
-    REQUIRE(info.Get<std::string>("keyword") == "awesome");
-    REQUIRE(info.Get<bool>("is_converged") == true);
-    REQUIRE(info.Get<double>("tol") == doctest::Approx(1.225));
+    CHECK_EQ(info.Size(), 5);
+    CHECK_EQ(info.Get<int>("checking"), 22);
+    CHECK_EQ(info.Get<int>("echo_level"), 2);
+    CHECK_EQ(info.Get<std::string>("keyword"), "awesome");
+    CHECK_UNARY(info.Get<bool>("is_converged"));
+    CHECK_EQ(info.Get<double>("tol"), doctest::Approx(1.225));
 }
 
 TEST_CASE("info_save_load")
@@ -309,12 +311,12 @@ TEST_CASE("info_save_load")
     Info another_info;
     another_info.Load(test_stream);
 
-    REQUIRE(another_info.Size() == 5);
-    REQUIRE(another_info.Get<int>("checking") == 22);
-    REQUIRE(another_info.Get<int>("echo_level") == 2);
-    REQUIRE(another_info.Get<std::string>("keyword") == "awesome");
-    REQUIRE(another_info.Get<bool>("is_converged") == true);
-    REQUIRE(another_info.Get<double>("tol") == doctest::Approx(0.008));
+    CHECK_EQ(another_info.Size(), 5);
+    CHECK_EQ(another_info.Get<int>("checking"), 22);
+    CHECK_EQ(another_info.Get<int>("echo_level"), 2);
+    CHECK_EQ(another_info.Get<std::string>("keyword"), "awesome");
+    CHECK_UNARY(another_info.Get<bool>("is_converged"));
+    CHECK_EQ(another_info.Get<double>("tol"), doctest::Approx(0.008));
 }
 
 TEST_CASE("info_ostream")
@@ -333,7 +335,7 @@ TEST_CASE("info_ostream")
 
     const std::string exp_string = "CoSimIO-Info; containing 5 entries\n  name: checking | value: 22 | type: int\n  name: echo_level | value: 2 | type: int\n  name: is_converged | value: 1 | type: bool\n  name: keyword | value: awesome | type: string\n  name: tol | value: 0.008 | type: double\n";
 
-    REQUIRE(test_stream.str() == exp_string);
+    CHECK_EQ(test_stream.str(), exp_string);
 }
 
 TEST_CASE("info_copy_constructor")
@@ -347,12 +349,12 @@ TEST_CASE("info_copy_constructor")
 
     Info another_info(info);
 
-    REQUIRE(another_info.Size() == 5);
-    REQUIRE(another_info.Get<int>("checking") == 22);
-    REQUIRE(another_info.Get<int>("echo_level") == 2);
-    REQUIRE(another_info.Get<std::string>("keyword") == "awesome");
-    REQUIRE(another_info.Get<bool>("is_converged") == true);
-    REQUIRE(another_info.Get<double>("tol") == doctest::Approx(0.008));
+    CHECK_EQ(another_info.Size(), 5);
+    CHECK_EQ(another_info.Get<int>("checking"), 22);
+    CHECK_EQ(another_info.Get<int>("echo_level"), 2);
+    CHECK_EQ(another_info.Get<std::string>("keyword"), "awesome");
+    CHECK_UNARY(another_info.Get<bool>("is_converged"));
+    CHECK_EQ(another_info.Get<double>("tol"), doctest::Approx(0.008));
 }
 
 TEST_CASE("info_assignment")
@@ -367,12 +369,14 @@ TEST_CASE("info_assignment")
     Info another_info;
     another_info = info;
 
-    REQUIRE(another_info.Size() == 5);
-    REQUIRE(another_info.Get<int>("checking") == 22);
-    REQUIRE(another_info.Get<int>("echo_level") == 2);
-    REQUIRE(another_info.Get<std::string>("keyword") == "awesome");
-    REQUIRE(another_info.Get<bool>("is_converged") == true);
-    REQUIRE(another_info.Get<double>("tol") == doctest::Approx(0.008));
+    CHECK_EQ(another_info.Size(), 5);
+    CHECK_EQ(another_info.Get<int>("checking"), 22);
+    CHECK_EQ(another_info.Get<int>("echo_level"), 2);
+    CHECK_EQ(another_info.Get<std::string>("keyword"), "awesome");
+    CHECK_UNARY(another_info.Get<bool>("is_converged"));
+    CHECK_EQ(another_info.Get<double>("tol"), doctest::Approx(0.008));
 }
+
+} // TEST_SUITE("Info")
 
 } // namespace CoSimIO
