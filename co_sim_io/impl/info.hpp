@@ -121,6 +121,7 @@ public:
         if (Has(I_Key)) {
             return GetExistingKey<TDataType>(I_Key);
         } else {
+            // this does NOT insert the value! (same behavior as in python)
             return I_Default;
         }
     }
