@@ -171,7 +171,7 @@ class CoSimIO_Info(unittest.TestCase):
 
     def test_size(self):
         info = CoSimIO.Info()
-        self.assertTrue(info.Size() == 0)
+        self.assertEqual(info.Size(), 0)
 
         info.SetString("identifier", "velocity_interface")
         info.SetBool("is_converged", True)
@@ -182,9 +182,20 @@ class CoSimIO_Info(unittest.TestCase):
         info.SetInt("echo_level", 6)
         self.assertEqual(info.Size(), 4)
 
+    def test_len(self):
+        info = CoSimIO.Info()
+        self.assertEqual(len(info), 0)
+
+        info.SetString("identifier", "velocity_interface")
+        info.SetBool("is_converged", True)
+        info.SetDouble("tol", 0.008)
+        info.SetInt("echo_level", 2)
+
+        self.assertEqual(len(info), 4)
+
     def test_clear(self):
         info = CoSimIO.Info()
-        self.assertTrue(info.Size() == 0)
+        self.assertEqual(info.Size(), 0)
 
         info.SetString("identifier", "velocity_interface")
         info.SetBool("is_converged", True)
@@ -200,15 +211,15 @@ class CoSimIO_Info(unittest.TestCase):
 
     def test_erase(self):
         info = CoSimIO.Info()
-        self.assertTrue(info.Size() == 0)
+        self.assertEqual(info.Size(), 0)
 
         info.SetString("identifier", "velocity_interface")
         self.assertTrue(info.Has("identifier"))
-        self.assertTrue(info.Size() == 1)
+        self.assertEqual(info.Size(), 1)
 
         info.Erase("identifier")
         self.assertFalse(info.Has("identifier"))
-        self.assertTrue(info.Size() == 0)
+        self.assertEqual(info.Size(), 0)
 
         # erasing non-existing keys does not throw
         info.Erase("identifier")
