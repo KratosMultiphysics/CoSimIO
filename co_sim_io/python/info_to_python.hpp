@@ -25,27 +25,36 @@
 // CoSimIO include
 #include "../co_sim_io.hpp"
 
+namespace {
+
+template<typename TDataType>
+void AddGetSetInterface(pybind11::class_<CoSimIO::Info>& PythonInfo, const std::string& Name)
+{
+    PythonInfo.def(std::string("Get"+Name).c_str(), [](const CoSimIO::Info& I_Info, const std::string& I_Key){return I_Info.Get<TDataType>(I_Key);});
+    PythonInfo.def(std::string("Get"+Name).c_str(), [](const CoSimIO::Info& I_Info, const std::string& I_Key, const TDataType& I_Default){return I_Info.Get<TDataType>(I_Key, I_Default);});
+    PythonInfo.def(std::string("Set"+Name).c_str(), &CoSimIO::Info::Set<TDataType>);
+}
+
+}
+
 void AddCoSimIOInfoToPython(pybind11::module& m)
 {
     namespace py = pybind11;
 
-    py::class_<CoSimIO::Info>(m,"Info")
+    auto py_info = py::class_<CoSimIO::Info>(m,"Info")
     .def(py::init<>())
     .def("Has",       &CoSimIO::Info::Has)
-    .def("GetInt",    &CoSimIO::Info::Get<int>)
-    .def("GetDouble", &CoSimIO::Info::Get<double>)
-    .def("GetBool",   &CoSimIO::Info::Get<bool>)
-    .def("GetString", &CoSimIO::Info::Get<std::string>)
-    .def("SetInt",    &CoSimIO::Info::Set<int>)
-    .def("SetDouble", &CoSimIO::Info::Set<double>)
-    .def("SetBool",   &CoSimIO::Info::Set<bool>)
-    .def("SetString", &CoSimIO::Info::Set<std::string>)
     .def("Erase",     &CoSimIO::Info::Erase)
     .def("Clear",     &CoSimIO::Info::Clear)
     .def("Size",      &CoSimIO::Info::Size)
     .def("__str__",   [](const CoSimIO::Info& I_Info)
         { std::stringstream ss; ss << I_Info; return ss.str(); } );
     ;
+
+    AddGetSetInterface<int>(py_info, "Int");
+    AddGetSetInterface<double>(py_info, "Double");
+    AddGetSetInterface<bool>(py_info, "Bool");
+    AddGetSetInterface<std::string>(py_info, "String");
 }
 
 #endif // CO_SIM_IO_INFO_TO_PYHON_INCLUDED

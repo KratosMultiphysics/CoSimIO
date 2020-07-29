@@ -87,6 +87,51 @@ TEST_CASE("info_basics_char")
     REQUIRE(info.Get<std::string>("identifier") == "pressure"); // char* will be turned into string
 }
 
+TEST_CASE("info_int_default")
+{
+    Info info;
+
+    REQUIRE_FALSE(info.Has("echo_level"));
+
+    REQUIRE(info.Get<int>("echo_level", 3) == 3);
+
+    REQUIRE_FALSE(info.Has("echo_level")); // getting the default must not insert it!
+}
+
+TEST_CASE("info_double_default")
+{
+    Info info;
+
+    REQUIRE_FALSE(info.Has("tolerance"));
+
+    REQUIRE(info.Get<double>("tolerance", 1.5) == doctest::Approx(1.5));
+
+    REQUIRE_FALSE(info.Has("tolerance")); // getting the default must not insert it!
+}
+
+TEST_CASE("info_bool_default")
+{
+    Info info;
+
+    REQUIRE_FALSE(info.Has("is_converged"));
+
+    REQUIRE(info.Get<bool>("is_converged", true));
+    REQUIRE_FALSE(info.Get<bool>("is_converged", false));
+
+    REQUIRE_FALSE(info.Has("is_converged")); // getting the default must not insert it!
+}
+
+TEST_CASE("info_string_default")
+{
+    Info info;
+
+    REQUIRE_FALSE(info.Has("identifier"));
+
+    REQUIRE(info.Get<std::string>("identifier", "dummy") == "dummy");
+
+    REQUIRE_FALSE(info.Has("identifier")); // getting the default must not insert it!
+}
+
 TEST_CASE("info_non_existing_key")
 {
     Info info;
