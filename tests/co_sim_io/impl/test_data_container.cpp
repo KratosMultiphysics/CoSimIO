@@ -12,6 +12,7 @@
 
 // System includes
 #include <memory>
+#include <algorithm>
 
 // Project includes
 #include "co_sim_io_testing.hpp"
@@ -29,10 +30,49 @@ using DataContainerRawMemoryType = DataContainerRawMemory<double>;
 using DataContainerStdVectorReadOnlyType = DataContainerStdVectorReadOnly<double>;
 using DataContainerRawMemoryReadOnlyType = DataContainerRawMemoryReadOnly<double>;
 
+namespace {
+
+void TestDataContainerDifferentValues(const std::vector<std::vector<double>>& rRefValues, DataContainerBase& rDataContainer)
+{
+    std::vector<double> orig_values;
+
+    for (const auto& r_current_ref_vals : rRefValues) {
+        const std::size_t current_size(r_current_ref_vals.size());
+
+        // saving current values to make sure they are preserved after resize
+        const std::size_t orig_size(rDataContainer.size());
+        orig_values.clear();
+        orig_values.resize(orig_size);
+        for (std::size_t i=0; i<orig_size; ++i) {
+            orig_values[i] = rDataContainer[i];
+        }
+
+        // resizing if necessary
+        if (rDataContainer.size() != current_size) {
+            rDataContainer.resize(current_size);
+        }
+
+        CO_SIM_IO_CHECK_VECTOR_NEAR_SIZE(orig_values, rDataContainer, std::min(orig_size, current_size))
+
+        // setting new values
+        for (std::size_t i=0; i<current_size; ++i) {
+            rDataContainer[i] = r_current_ref_vals[i];
+        }
+
+        // checking size
+        CHECK_EQ(current_size, rDataContainer.size());
+
+        // checking values
+        CO_SIM_IO_CHECK_VECTOR_NEAR(r_current_ref_vals, rDataContainer)
+    }
+}
+
+} // empty namespace
+
 TEST_SUITE("DataContainer")
 {
 
-TEST_CASE("DataContainerStdVector_basics")
+TEST_CASE("DataContainer_StdVector_basics")
 {
     const std::vector<double> ref_values {
         1.0, -2.333, 15.88, 14.7, -99.6
@@ -45,7 +85,7 @@ TEST_CASE("DataContainerStdVector_basics")
     CO_SIM_IO_CHECK_VECTOR_NEAR(ref_values, (*p_container));
 }
 
-TEST_CASE("DataContainerStdVectorReadOnly_basics")
+TEST_CASE("DataContainer_StdVectorReadOnly_basics")
 {
     const std::vector<double> ref_values {
         1.0, -2.333, 15.88, 14.7, -99.6
@@ -58,7 +98,22 @@ TEST_CASE("DataContainerStdVectorReadOnly_basics")
     CO_SIM_IO_CHECK_VECTOR_NEAR(ref_values, const_ref);
 }
 
-TEST_CASE("DataContainerRawMemory_empty")
+TEST_CASE("DataContainer_StdVector_multiple_resizes")
+{
+    const std::vector<std::vector<double>> ref_values {
+        {1.0, -2.333, 15.88, 14.7, -99.6},
+        {2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.1, 3.5},
+        {-88.66, 77.9}
+    };
+
+    std::vector<double> values_vec;
+
+    DataContainerBasePointer p_container(CoSimIO::make_unique<DataContainerStdVectorType>(values_vec));
+
+    TestDataContainerDifferentValues(ref_values, *p_container);
+}
+
+TEST_CASE("DataContainer_RawMemory_empty")
 {
     double* data;
 
@@ -67,7 +122,7 @@ TEST_CASE("DataContainerRawMemory_empty")
     CHECK_EQ(0, p_container->size());
 }
 
-TEST_CASE("DataContainerRawMemory_empty_resize")
+TEST_CASE("DataContainer_RawMemory_empty_resize")
 {
     double* data;
 
@@ -83,7 +138,7 @@ TEST_CASE("DataContainerRawMemory_empty_resize")
     free(data);
 }
 
-TEST_CASE("DataContainerRawMemory_basics")
+TEST_CASE("DataContainer_RawMemory_basics")
 {
     const std::vector<double> ref_values {
         1.0, -2.333, 15.88, 14.7, -99.6
@@ -107,7 +162,7 @@ TEST_CASE("DataContainerRawMemory_basics")
     free(values_raw);
 }
 
-TEST_CASE("DataContainerRawMemoryReadOnly_basics")
+TEST_CASE("DataContainer_RawMemoryReadOnly_basics")
 {
     const std::vector<double> ref_values {
         1.0, -2.333, 15.88, 14.7, -99.6
@@ -149,157 +204,39 @@ TEST_CASE("DataContainerRawMemoryReadOnly_basics")
     }
 }
 
-} // TEST_SUITE("Info")
-
-} // namespace Testing
-} // namespace Internals
-} // namespace CoSimIO
-
-
-/*
-#include "co_sim_io/impl/co_sim_io_internals.h"
-
-namespace Kratos {
-namespace Testing {
-
-typedef double double;
-typedef CoSimIO::Internals::DataContainer<double> DataContainerBase;
-typedef Kratos::unique_ptr<DataContainerBase> DataContainerBasePointer;
-typedef CoSimIO::Internals::DataContainerStdVector<double> DataContainerStdVectorType;
-typedef CoSimIO::Internals::DataContainerRawMemory<double> DataContainerRawMemoryType;
-
-namespace {
-
-void TestDataContainerBasics(const std::vector<double>& rRefValues, DataContainerBase& rDataContainer)
-{
-    // checking size
-    KRATOS_CHECK_EQUAL(rRefValues.size(), rDataContainer.size());
-
-    // checking values
-    KRATOS_CHECK_VECTOR_NEAR(rRefValues, rDataContainer, 1e-12)
-}
-
-void TestDataContainerDifferentValues(const std::vector<std::vector<double>>& rRefValues, DataContainerBase& rDataContainer)
-{
-    for (const auto& r_current_ref_vals : rRefValues) {
-        const std::size_t current_size(r_current_ref_vals.size());
-        if (rDataContainer.size() != current_size) {
-            rDataContainer.resize(current_size);
-        }
-
-        for (std::size_t i=0; i<current_size; ++i) {
-            rDataContainer[i] = r_current_ref_vals[i];
-        }
-
-        // checking size
-        KRATOS_CHECK_EQUAL(current_size, rDataContainer.size());
-
-        // checking values
-        KRATOS_CHECK_VECTOR_NEAR(r_current_ref_vals, rDataContainer, 1e-12)
-    }
-}
-
-} // helpers namespace
-
-KRATOS_TEST_CASE_IN_SUITE(DataContainers_RawMemory_empty, KratosCoSimulationFastSuite)
-{
-    double** values_raw = (double**)malloc(sizeof(double*)*1);
-    values_raw[0] = NULL;
-
-    DataContainerBasePointer p_container(Kratos::make_unique<DataContainerRawMemoryType>(values_raw, 0));
-
-    KRATOS_CHECK_EQUAL(0, p_container->size());
-
-    // deallocating memory
-    free(*values_raw);
-    free(values_raw);
-}
-
-KRATOS_TEST_CASE_IN_SUITE(DataContainers_StdVector_basics, KratosCoSimulationFastSuite)
-{
-    const std::vector<double> ref_values {
-        1.0, -2.333, 15.88, 14.7, -99.6
-    };
-
-    std::vector<double> values_vec(ref_values);
-
-    DataContainerBasePointer p_container(Kratos::make_unique<DataContainerStdVectorType>(values_vec));
-
-    TestDataContainerBasics(ref_values, *p_container);
-}
-
-KRATOS_TEST_CASE_IN_SUITE(DataContainers_RawMemory_basics, KratosCoSimulationFastSuite)
-{
-    const std::vector<double> ref_values {
-        1.0, -2.333, 15.88, 14.7, -99.6
-    };
-
-    const std::size_t size(ref_values.size());
-
-    double** values_raw = (double**)malloc(sizeof(double*)*1);
-    values_raw[0]= (double*)malloc(sizeof(double)*size);
-
-    for (std::size_t i=0; i<size; ++i) {
-        (*values_raw)[i] = ref_values[i];
-    }
-
-    DataContainerBasePointer p_container(Kratos::make_unique<DataContainerRawMemoryType>(values_raw, size));
-
-    TestDataContainerBasics(ref_values, *p_container);
-}
-
-KRATOS_TEST_CASE_IN_SUITE(DataContainers_StdVector_multiple_resizes, KratosCoSimulationFastSuite)
-{
-    const std::vector<std::vector<double>> ref_values {
-        {1.0, -2.333, 15.88, 14.7, -99.6},
-        {2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.1, 3.5},
-        {-88.66, 77.9}
-    };
-
-    std::vector<double> values_vec;
-
-    DataContainerBasePointer p_container(Kratos::make_unique<DataContainerStdVectorType>(values_vec));
-
-    TestDataContainerDifferentValues(ref_values, *p_container);
-}
-
-KRATOS_TEST_CASE_IN_SUITE(DataContainers_RawMemory_resize_larger, KratosCoSimulationFastSuite)
+TEST_CASE("DataContainer_RawMemory_resize_larger")
 {
     const std::vector<std::vector<double>> ref_values {
         {1.0, -2.333, 15.88, 14.7, -99.6},
         {2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.1, 3.5}
     };
 
-    double** values_raw = (double**)malloc(sizeof(double*)*1);
-    values_raw[0] = NULL;
-    DataContainerBasePointer p_container(Kratos::make_unique<DataContainerRawMemoryType>(values_raw, 0));
+    double* data;
+    DataContainerBasePointer p_container(CoSimIO::make_unique<DataContainerRawMemoryType>(&data, 0));
 
     TestDataContainerDifferentValues(ref_values, *p_container);
 
     // deallocating memory
-    free(*values_raw);
-    free(values_raw);
+    free(data);
 }
 
-KRATOS_TEST_CASE_IN_SUITE(DataContainers_RawMemory_resize_smaller, KratosCoSimulationFastSuite)
+TEST_CASE("DataContainer_RawMemory_resize_smaller")
 {
     const std::vector<std::vector<double>> ref_values {
         {1.0, -2.333, 15.88, 14.7, -99.6},
         {-88.66, 77.9}
     };
 
-    double** values_raw = (double**)malloc(sizeof(double*)*1);
-    values_raw[0] = NULL;
-    DataContainerBasePointer p_container(Kratos::make_unique<DataContainerRawMemoryType>(values_raw, 0));
+    double* data;
+    DataContainerBasePointer p_container(CoSimIO::make_unique<DataContainerRawMemoryType>(&data, 0));
 
     TestDataContainerDifferentValues(ref_values, *p_container);
 
     // deallocating memory
-    free(*values_raw);
-    free(values_raw);
+    free(data);
 }
 
-KRATOS_TEST_CASE_IN_SUITE(DataContainers_RawMemory_multiple_resizes, KratosCoSimulationFastSuite)
+TEST_CASE("DataContainer_RawMemory_multiple_resizes")
 {
     const std::vector<std::vector<double>> ref_values {
         {1.0, -2.333, 15.88, 14.7, -99.6},
@@ -310,18 +247,17 @@ KRATOS_TEST_CASE_IN_SUITE(DataContainers_RawMemory_multiple_resizes, KratosCoSim
         {-88.66, 77.9}
     };
 
-    double** values_raw = (double**)malloc(sizeof(double*)*1);
-    values_raw[0] = NULL;
-    DataContainerBasePointer p_container(Kratos::make_unique<DataContainerRawMemoryType>(values_raw, 0));
+    double* data;
+    DataContainerBasePointer p_container(CoSimIO::make_unique<DataContainerRawMemoryType>(&data, 0));
 
     TestDataContainerDifferentValues(ref_values, *p_container);
 
     // deallocating memory
-    free(*values_raw);
-    free(values_raw);
+    free(data);
 }
 
-} // namespace Testing
-}  // namespace Kratos.
+} // TEST_SUITE("DataContainer")
 
-*/
+} // namespace Testing
+} // namespace Internals
+} // namespace CoSimIO
