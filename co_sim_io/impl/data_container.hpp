@@ -31,6 +31,7 @@ template<typename TDataType>
 class DataContainer
 {
 public:
+    DataContainer() = default;
     virtual ~DataContainer() = default;
 
     DataContainer(const DataContainer&) = delete;
