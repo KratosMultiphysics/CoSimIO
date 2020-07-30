@@ -192,11 +192,7 @@ TEST_CASE("DataContainer_RawMemoryReadOnly_basics")
 
     SUBCASE("array")
     {
-        double values[cur_size];
-
-        for (std::size_t i=0; i<cur_size; ++i) {
-            values[i] = ref_values[i];
-        }
+        double values[] = {1.0, -2.333, 15.88, 14.7, -99.6};
         const DataContainerBasePointer p_container(CoSimIO::make_unique<DataContainerRawMemoryReadOnlyType>(&(*values), cur_size));
 
         const DataContainerBase& const_ref = *p_container;
