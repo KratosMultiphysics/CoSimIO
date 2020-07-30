@@ -40,13 +40,114 @@ TEST_CASE("DataContainerStdVector_basics")
 
     std::vector<double> values_vec(ref_values);
 
-    DataContainerBasePointer p_container;
-
-    p_container = CoSimIO::make_unique<DataContainerStdVectorType>(values_vec);
+    DataContainerBasePointer p_container(CoSimIO::make_unique<DataContainerStdVectorType>(values_vec));
 
     CO_SIM_IO_CHECK_VECTOR_NEAR(ref_values, (*p_container));
 }
 
+TEST_CASE("DataContainerStdVectorReadOnly_basics")
+{
+    const std::vector<double> ref_values {
+        1.0, -2.333, 15.88, 14.7, -99.6
+    };
+
+    const DataContainerBasePointer p_container(CoSimIO::make_unique<DataContainerStdVectorReadOnlyType>(ref_values));
+
+    const DataContainerBase& const_ref = *p_container;
+
+    CO_SIM_IO_CHECK_VECTOR_NEAR(ref_values, const_ref);
+}
+
+TEST_CASE("DataContainerRawMemory_empty")
+{
+    double* data;
+
+    DataContainerBasePointer p_container(CoSimIO::make_unique<DataContainerRawMemoryType>(&data, 0));
+
+    CHECK_EQ(0, p_container->size());
+}
+
+TEST_CASE("DataContainerRawMemory_empty_resize")
+{
+    double* data;
+
+    DataContainerBasePointer p_container(CoSimIO::make_unique<DataContainerRawMemoryType>(&data, 0));
+
+    CHECK_EQ(0, p_container->size());
+
+    p_container->resize(2);
+
+    CHECK_EQ(2, p_container->size());
+
+    // deallocating memory
+    free(data);
+}
+
+TEST_CASE("DataContainerRawMemory_basics")
+{
+    const std::vector<double> ref_values {
+        1.0, -2.333, 15.88, 14.7, -99.6
+    };
+
+    const std::size_t cur_size(ref_values.size());
+
+    double** values_raw = (double**)malloc(sizeof(double*)*1);
+    values_raw[0]= (double*)malloc(sizeof(double)*cur_size);
+
+    for (std::size_t i=0; i<cur_size; ++i) {
+        (*values_raw)[i] = ref_values[i];
+    }
+
+    const DataContainerBasePointer p_container(CoSimIO::make_unique<DataContainerRawMemoryType>(values_raw, cur_size));
+
+    CO_SIM_IO_CHECK_VECTOR_NEAR(ref_values, (*p_container));
+
+    // deallocating memory
+    free(*values_raw);
+    free(values_raw);
+}
+
+TEST_CASE("DataContainerRawMemoryReadOnly_basics")
+{
+    const std::vector<double> ref_values {
+        1.0, -2.333, 15.88, 14.7, -99.6
+    };
+
+    const std::size_t cur_size(ref_values.size());
+
+    SUBCASE("malloc")
+    {
+        double** values_raw = (double**)malloc(sizeof(double*)*1);
+        values_raw[0]= (double*)malloc(sizeof(double)*cur_size);
+
+        for (std::size_t i=0; i<cur_size; ++i) {
+            (*values_raw)[i] = ref_values[i];
+        }
+
+        const DataContainerBasePointer p_container(CoSimIO::make_unique<DataContainerRawMemoryReadOnlyType>(*values_raw, cur_size));
+
+        const DataContainerBase& const_ref = *p_container;
+
+        CO_SIM_IO_CHECK_VECTOR_NEAR(ref_values, const_ref);
+
+        // deallocating memory
+        free(*values_raw);
+        free(values_raw);
+    }
+
+    SUBCASE("array")
+    {
+        double values[cur_size];
+
+        for (std::size_t i=0; i<cur_size; ++i) {
+            values[i] = ref_values[i];
+        }
+        const DataContainerBasePointer p_container(CoSimIO::make_unique<DataContainerRawMemoryReadOnlyType>(&(*values), cur_size));
+
+        const DataContainerBase& const_ref = *p_container;
+        CO_SIM_IO_CHECK_VECTOR_NEAR(ref_values, const_ref);
+    }
+}
 
 } // TEST_SUITE("Info")
 
