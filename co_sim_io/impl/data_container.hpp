@@ -119,11 +119,10 @@ public:
     void resize(const std::size_t NewSize) override
     {
         if (NewSize > mCapacity) { // only increase the capacity if too small => same behavior as std::vector
-            if (mCapacity != 0) { // Maybe is not null neigther allocated: double *data. Pooyan.
-                free(*mppData); // this is ok according to the standard, no matter if it is null or allocated //also check if using "std::"
+            if (mCapacity == 0) {
+                *mppData = nullptr;
             }
-
-            *mppData = (TDataType *)malloc((NewSize)*sizeof(TDataType)); // TODO maybe use realloc? //also check if using "std::"
+            *mppData = (TDataType *)realloc(*mppData, (NewSize)*sizeof(TDataType));
             CO_SIM_IO_ERROR_IF_NOT(*mppData) << "Memory reallocation failed";
 
             mCapacity = NewSize;
