@@ -110,27 +110,31 @@ class DataContainerRawMemory : public DataContainer<TDataType>
 {
 public:
     explicit DataContainerRawMemory(TDataType** ppData, const std::size_t Size)
-        : mppData(ppData), mSize(Size) {}
+        : mppData(ppData), mSize(Size), mCapacity(Size) {}
 
     std::size_t size() const override {return mSize;};
     void resize(const std::size_t NewSize) override
     {
-        if (NewSize > mSize) { // only increase the capacity if too small => same behavior as std::vector
-            if(mSize != 0) // Maybe is not null neigther allocated: double *data. Pooyan.
+        if (NewSize > mCapacity) { // only increase the capacity if too small => same behavior as std::vector
+            if (mCapacity != 0) { // Maybe is not null neigther allocated: double *data. Pooyan.
                 free(*mppData); // this is ok according to the standard, no matter if it is null or allocated //also check if using "std::"
+            }
 
             *mppData = (TDataType *)malloc((NewSize)*sizeof(TDataType)); // TODO maybe use realloc? //also check if using "std::"
             CO_SIM_IO_ERROR_IF_NOT(*mppData) << "Memory reallocation failed";
+
+            mCapacity = NewSize;
         }
         mSize = NewSize;
-
     };
+
     const TDataType* data() const override {return *mppData;}
     TDataType* data() override {return *mppData;}
 
 private:
     TDataType** mppData;
     std::size_t mSize;
+    std::size_t mCapacity;
 };
 
 template<typename TDataType>
