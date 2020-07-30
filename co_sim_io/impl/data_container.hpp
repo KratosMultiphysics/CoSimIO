@@ -33,6 +33,9 @@ class DataContainer
 public:
     virtual ~DataContainer() = default;
 
+    DataContainer(const DataContainer&) = delete;
+    DataContainer& operator=(const DataContainer&) = delete;
+
     virtual std::size_t size() const = 0;
     virtual void resize(const std::size_t NewSize) = 0;
 
