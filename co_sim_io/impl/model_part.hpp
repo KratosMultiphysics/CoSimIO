@@ -131,10 +131,6 @@ public:
     const Node& GetNode(const int Id) const;
     const Element& GetElement(const int Id) const;
 
-    // should we have this?
-    void SortNodes();
-    void SortElements();
-
 private:
     NodesContainerType mNodes;
     ElementsContainerType mElements;
