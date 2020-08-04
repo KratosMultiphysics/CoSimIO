@@ -10,5 +10,10 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "doctest/doctest.h"
+/* this file makes sure that the CoSimIO can be safely included in different cpp files
+i.e. it ensures that all the functions are inlined otherwise linking errors occur
+the "other" file that includes CoSimIO is "test_include_co_sim_io_2.cpp"
+*/
+
+// Project includes
+#include "co_sim_io.hpp"

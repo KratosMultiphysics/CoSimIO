@@ -10,5 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "doctest/doctest.h"
+/* see "test_include_co_sim_io_1.cpp" for why this file is necessary
+*/
+
+// Project includes
+#include "co_sim_io.hpp"

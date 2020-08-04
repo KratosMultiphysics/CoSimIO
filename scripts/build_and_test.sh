@@ -4,10 +4,10 @@
 
 sh scripts/build.sh
 
-echo "\n>>> Running CTests"
+echo $'\n>>> Running CTests'
 cd build
 ctest -T memcheck
 
-echo "\n>>> Running Python Tests"
+echo $'\n>>> Running Python Tests'
 cd ../tests
 python3 run_python_tests.py

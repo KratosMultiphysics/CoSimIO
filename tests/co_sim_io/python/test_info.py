@@ -65,6 +65,43 @@ class CoSimIO_Info(unittest.TestCase):
 
         self.assertEqual(info.GetString("identifier"), "pressure")
 
+    def test_int_default(self):
+        info = CoSimIO.Info()
+
+        self.assertFalse(info.Has("echo_level"))
+
+        self.assertEqual(info.GetInt("echo_level", 3), 3)
+
+        self.assertFalse(info.Has("echo_level")) # getting the default must not insert it!
+
+    def test_double_default(self):
+        info = CoSimIO.Info()
+
+        self.assertFalse(info.Has("tolerance"))
+
+        self.assertAlmostEqual(info.GetDouble("tolerance", 1.5), 1.5)
+
+        self.assertFalse(info.Has("tolerance")) # getting the default must not insert it!
+
+    def test_bool_default(self):
+        info = CoSimIO.Info()
+
+        self.assertFalse(info.Has("print_sth"))
+
+        self.assertTrue(info.GetBool("print_sth", True))
+        self.assertFalse(info.GetBool("print_sth", False))
+
+        self.assertFalse(info.Has("print_sth")) # getting the default must not insert it!
+
+    def test_string_default(self):
+        info = CoSimIO.Info()
+
+        self.assertFalse(info.Has("identifier"))
+
+        self.assertEqual(info.GetString("identifier", "dummy"), "dummy")
+
+        self.assertFalse(info.Has("identifier")) # getting the default must not insert it!
+
     def test_non_existing_key(self):
         info = CoSimIO.Info()
 
@@ -134,7 +171,7 @@ class CoSimIO_Info(unittest.TestCase):
 
     def test_size(self):
         info = CoSimIO.Info()
-        self.assertTrue(info.Size() == 0)
+        self.assertEqual(info.Size(), 0)
 
         info.SetString("identifier", "velocity_interface")
         info.SetBool("is_converged", True)
@@ -145,9 +182,20 @@ class CoSimIO_Info(unittest.TestCase):
         info.SetInt("echo_level", 6)
         self.assertEqual(info.Size(), 4)
 
+    def test_len(self):
+        info = CoSimIO.Info()
+        self.assertEqual(len(info), 0)
+
+        info.SetString("identifier", "velocity_interface")
+        info.SetBool("is_converged", True)
+        info.SetDouble("tol", 0.008)
+        info.SetInt("echo_level", 2)
+
+        self.assertEqual(len(info), 4)
+
     def test_clear(self):
         info = CoSimIO.Info()
-        self.assertTrue(info.Size() == 0)
+        self.assertEqual(info.Size(), 0)
 
         info.SetString("identifier", "velocity_interface")
         info.SetBool("is_converged", True)
@@ -163,15 +211,15 @@ class CoSimIO_Info(unittest.TestCase):
 
     def test_erase(self):
         info = CoSimIO.Info()
-        self.assertTrue(info.Size() == 0)
+        self.assertEqual(info.Size(), 0)
 
         info.SetString("identifier", "velocity_interface")
         self.assertTrue(info.Has("identifier"))
-        self.assertTrue(info.Size() == 1)
+        self.assertEqual(info.Size(), 1)
 
         info.Erase("identifier")
         self.assertFalse(info.Has("identifier"))
-        self.assertTrue(info.Size() == 0)
+        self.assertEqual(info.Size(), 0)
 
         # erasing non-existing keys does not throw
         info.Erase("identifier")
@@ -190,6 +238,27 @@ class CoSimIO_Info(unittest.TestCase):
         exp_string = "CoSimIO-Info; containing 5 entries\n  name: checking | value: 22 | type: int\n  name: echo_level | value: 2 | type: int\n  name: is_converged | value: 1 | type: bool\n  name: keyword | value: awesome | type: string\n  name: tol | value: 0.008 | type: double\n"
 
         self.assertMultiLineEqual(str(info), exp_string)
+
+    def test_copy_constructor(self):
+        info = CoSimIO.Info()
+
+        info.SetString("keyword", "awesome")
+        info.SetBool("is_converged", True)
+        info.SetString("identifier", "mesh")
+        info.SetDouble("tol", 0.008)
+        info.SetInt("echo_level", 2)
+        info.SetInt("checking", 22)
+
+        copied_info = CoSimIO.Info(info)
+
+        self.assertEqual(copied_info.Size(), 6)
+
+        self.assertEqual(copied_info.GetString("keyword"), "awesome")
+        self.assertTrue(copied_info.GetBool("is_converged"))
+        self.assertEqual(copied_info.GetString("identifier"), "mesh")
+        self.assertAlmostEqual(copied_info.GetDouble("tol"), 0.008)
+        self.assertEqual(copied_info.GetInt("echo_level"), 2)
+        self.assertEqual(copied_info.GetInt("checking"), 22)
 
 
 if __name__ == '__main__':
