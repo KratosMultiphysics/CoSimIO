@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_SOCKETS_COMMUNICATION_H_INCLUDED
-#define CO_SIM_IO_SOCKETS_COMMUNICATION_H_INCLUDED
+#ifndef CO_SIM_IO_SOCKETS_COMMUNICATION_INCLUDED
+#define CO_SIM_IO_SOCKETS_COMMUNICATION_INCLUDED
 
 // System includes
 
@@ -37,4 +37,4 @@ public:
 } // namespace Internals
 } // namespace CoSimIO
 
-#endif // CO_SIM_IO_SOCKETS_COMMUNICATION_H_INCLUDED
+#endif // CO_SIM_IO_SOCKETS_COMMUNICATION_INCLUDED

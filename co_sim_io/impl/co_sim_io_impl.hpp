@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_IMPL_H_INCLUDED
-#define CO_SIM_IO_IMPL_H_INCLUDED
+#ifndef CO_SIM_IO_IMPL_INCLUDED
+#define CO_SIM_IO_IMPL_INCLUDED
 
 /*
 This file contains the implementation of the functions defined in "co_sim_io.hpp"
@@ -281,4 +281,4 @@ inline Info Register(
 
 } // namespace CoSimIO
 
-#endif // CO_SIM_IO_IMPL_H_INCLUDED
+#endif // CO_SIM_IO_IMPL_INCLUDED

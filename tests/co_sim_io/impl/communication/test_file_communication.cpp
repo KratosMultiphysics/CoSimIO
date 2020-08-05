@@ -1,4 +1,4 @@
-#include "catch2/catch.hpp"
+#include "../co_sim_io_testing.hpp"
 #include "impl/communication/file_communication.hpp"
 
 
