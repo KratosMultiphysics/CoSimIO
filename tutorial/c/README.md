@@ -4,17 +4,20 @@ This tutorial helps you through to integrate the _CoSimIO_ into a solver/softwar
 
 ## Overview
 
-- [What you need](#what-you-need)
-- [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
-- [Tutorial 2: Hello CoSimIO](#tutorial-2-hello-cosimio)
-- [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
-- [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
-- [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
-- [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-CoSimulation-Library-Overview)
-- [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-Building-Kratos-with-CoSimulation)
-- [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-Connecting/Disconnecting-tofrom-Kratos)
-- [Tutorial 9: Data Exchange with Kratos](#tutorial-9-Data-Exchange-with-Kratos)
-- [Tutorial 10: Mesh Exchange with Kratos](#tutorial-10-Mesh-Exchange-with-Kratos)
+- [Tutorial for integrating the _CoSimIO_ using the C interface](#tutorial-for-integrating-the-cosimio-using-the-c-interface)
+  - [Overview](#overview)
+  - [What you need](#what-you-need)
+  - [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
+  - [Tutorial 2: Hello CosimIO](#tutorial-2-hello-cosimio)
+  - [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
+  - [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
+  - [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
+  - [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-cosimulation-library-overview)
+  - [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-building-kratos-with-cosimulation)
+  - [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-connectingdisconnecting-tofrom-kratos)
+  - [Tutorial 9: Data Exchange with Kratos](#tutorial-9-data-exchange-with-kratos)
+  - [Tutorial 10: Mesh Exchange with Kratos](#tutorial-10-mesh-exchange-with-kratos)
+  - [Tutorial 11: Mapping with Kratos](#tutorial-11-mapping-with-kratos)
 
 ## What you need
 - Downloading the _CosimIO_ from the repository:
@@ -327,7 +330,7 @@ if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
 
 From solver side first we recall the export data code described in tutorial 4 adjusting the connection name and data tag to the ones in our example python given above.
 
-```c++
+```c
     int data_size = 4;
     double data_to_send[] = {3, .1, .14, 3.14};
 
@@ -373,15 +376,15 @@ In this step we send a mesh to Kratos and receive it back and we will check if t
 
 Recalling from what we had in tutorial 5 we just merge the export mesh and import mesh codes into one as we did for data exchage in previous tutorial:
 
-```cpp
-// Creatint the export_settings
+```c
+// Creating the export_settings
 CoSimIO_Info export_settings=CoSimIO_CreateInfo();
 CoSimIO_Info_SetString(export_settings, "identifier", "mesh_exchange_1");
 CoSimIO_Info_SetString(export_settings, "connection_name", "im_exp_mesh");
 
-// Exporting the data
+// Exporting the mesh
 CoSimIO_Info export_info = CoSimIO_ExportMesh(export_settings
-    , export_number_of_nodes*3,export_number_of_elements,export_number_of_elements_connectivities
+    , export_number_of_nodes,export_number_of_elements,export_number_of_elements_connectivities
     , export_nodal_coordinates, export_elements_connectivities, export_elements_types);
 
 // Freeing the export_info and export_settings
@@ -411,7 +414,7 @@ CoSimIO_FreeInfo(import_info);
 CoSimIO_FreeInfo(import_settings);
 
 ```
-Now lets create the python script for Kratos which gets the mesh and returns it back to us. Here again the python scritp is very similar to one of the standard CoSimIO. Except for the ImportMesh and ExportMesh methods which are adapted to work directly with Kratos data structure. This means that the work with [ModelPart](https://github.com/KratosMultiphysics/Kratos/wiki/ModelPart-and-SubModelPart) instead of raw coordinates and connectivities arrays:
+Now lets create the python script for Kratos which gets the mesh and returns it back to us. Here again the python script is very similar to one of the standard CoSimIO. Except for the ImportMesh and ExportMesh methods which are adapted to work directly with Kratos data structure. This means that the work with [ModelPart](https://github.com/KratosMultiphysics/Kratos/wiki/ModelPart-and-SubModelPart) instead of raw coordinates and connectivities arrays:
 
 ```Python
 CoSimIO.ImportMesh(import_info, model_part)
@@ -495,4 +498,305 @@ Now for running the test:
 
 ```shell
 path/to/bin/tests_c/export_import_mesh_c_test & python3 path/to/import_export_mesh.py
+```
+
+## Tutorial 11: Mapping with Kratos
+This tutorial shows how to map data between (non matching) meshes with Kratos. It is based on tutorials 9 & 10.
+
+In this tutorial we first send two meshes based on the same geometry but with different discretizations to Kratos. Those meshes are used as basis for the mapping. In Kratos teminology those are the origin and the destination.
+
+After sending the meshes, data that is to be mapped is sent to Kratos. It is mapped and then sent back.
+
+Note that the following tutorial contains only a subset of the mapping capabilities of Kratos. Check [here](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/MappingApplication) for a more detailed explanation.
+
+The first step is to send the origin and destination meshes for mapping between:
+
+```c
+// Creating the export mesh settings
+CoSimIO_Info export_mesh_settings=CoSimIO_CreateInfo();
+CoSimIO_Info_SetString(export_mesh_settings, "identifier", "mesh_origin");
+CoSimIO_Info_SetString(export_mesh_settings, "connection_name", "mesh_mapping");
+
+// Exporting the origin mesh
+CoSimIO_Info export_info_o = CoSimIO_ExportMesh(export_mesh_settings
+    , export_number_of_nodes_o*3, export_number_of_elements_o,      export_number_of_elements_connectivities_o
+    , export_nodal_coordinates_o, export_elements_connectivities_o, export_elements_types_o);
+
+// Exporting the destination mesh
+CoSimIO_Info_SetString(export_mesh_settings, "identifier", "mesh_destination");
+CoSimIO_Info export_info_d = CoSimIO_ExportMesh(export_mesh_settings
+    , export_number_of_nodes_d*3, export_number_of_elements_d,      export_number_of_elements_connectivities_d
+    , export_nodal_coordinates_d, export_elements_connectivities_d, export_elements_types_d);
+
+// Free memory
+CoSimIO_FreeInfo(export_info_o);
+CoSimIO_FreeInfo(export_info_d);
+CoSimIO_FreeInfo(export_mesh_settings);
+```
+On the Kratos side we should receive these meshes as modelparts similar to what we did in the previous tutorial. Please note that you should create the origin and destination model parts before and then use the `ImportMesh` method to get the mesh:
+
+```Python
+# importing the Kratos library
+import KratosMultiphysics as KM
+from KratosMultiphysics.CoSimulationApplication import CoSimIO
+
+# create the Kratos ModelParts that contain the mesh
+model = KM.Model()
+model_part_origin = model.CreateModelPart("mp_origin")
+model_part_destination = model.CreateModelPart("mp_destination")
+
+# connect to CoSimIO
+connection_settings = CoSimIO.Info()
+connection_settings.SetString("connection_name", "mesh_mapping")
+connection_settings.SetInt("echo_level", 0)
+info = CoSimIO.Connect(connection_settings)
+if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Connected:
+    raise Exception("Connecting failed")
+
+# import meshes
+import_mesh_info_o = CoSimIO.Info()
+import_mesh_info_o.SetString("connection_name", "mesh_mapping")
+import_mesh_info_o.SetString("identifier", "mesh_origin")
+CoSimIO.ImportMesh(import_mesh_info_o, model_part_origin)
+
+import_mesh_info_d = CoSimIO.Info()
+import_mesh_info_d.SetString("connection_name", "mesh_mapping")
+import_mesh_info_d.SetString("identifier", "mesh_destination")
+CoSimIO.ImportMesh(import_mesh_info_d, model_part_destination)
+
+```
+After sending the meshes now we should send the data field in the origin (to be mapped afterward). From application side we will use the `CoSimIO_ExportData` function:
+
+```c
+// Creating the export origin data settings
+CoSimIO_Info export_data_settings=CoSimIO_CreateInfo();
+CoSimIO_Info_SetString(export_data_settings, "identifier", "data_to_map");
+CoSimIO_Info_SetString(export_data_settings, "connection_name", "mesh_mapping");
+
+// Exporting the origin data
+CoSimIO_Info export_info = CoSimIO_ExportData(export_data_settings, export_data_size, export_data);
+
+// Free memory
+CoSimIO_FreeInfo(export_data_settings);
+CoSimIO_FreeInfo(export_info);
+```
+
+On Kratos side, we should take this data and store it as nodal data in the imported origin model part. For doing that, first we should add those nodal data to the model part using the `AddNodalSolutionStepVariable` method. For example let's consider that we are recieving the temperature and we want to map it into the ambient temperature:
+
+```Python
+# allocate memory
+model_part_origin.AddNodalSolutionStepVariable(KM.TEMPERATURE)
+model_part_destination.AddNodalSolutionStepVariable(KM.AMBIENT_TEMPERATURE)
+
+model_part_origin.AddNodalSolutionStepVariable(KM.VELOCITY)
+model_part_destination.AddNodalSolutionStepVariable(KM.MESH_VELOCITY)
+```
+
+Please note that above methods should be called before importing the mesh. For the list of the variables which are defined in the core of Kratos and their types, please check the [variables.h](https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/variables.h)
+
+After preparing the model parts we can import the data from the application and store it in the origin model part using the `ImportData` method. For example for storing the data as temperature in origin model part we will have:
+
+```Python
+# import data to be mapped
+import_data_info = CoSimIO.Info()
+import_data_info.SetString("connection_name", "mesh_mapping")
+import_data_info.SetString("identifier", "data_to_map")
+CoSimIO.ImportData(import_data_info, model_part_origin, KM.TEMPERATURE, CoSimIO.DataLocation.NodeHistorical)
+```
+Please note that here the `CoSimIO.DataLocation.NodeHistorical` argument is saying that we want to store the imported data as historical value in the nodes of this model part. So the size of the data should be coherent with the number of the nodes in the model parts.
+
+Now is time to do the mapping. The first step would be to import the mapping application which provides the mapping mechanism:
+
+```Python
+import KratosMultiphysics.MappingApplication as KratosMapping
+```
+
+Then we can create a mapper using the mapper factory:
+
+```Python
+
+# input for the mapper is a Kratos::Parameters object
+mapper_settings = KM.Parameters("""{
+    "mapper_type": "nearest_neighbor",
+    "echo_level" : 0
+}""")
+
+# creating the mapper using the mapper factory
+mapper = KratosMapping.MapperFactory.CreateMapper(
+    model_part_origin,
+    model_part_destination,
+    mapper_settings)
+
+```
+Here we have only created a mapper with nearest neighbor mapping algorithm. For more options please check the [mapping application documentation](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/MappingApplication). After creating the mapper we can use it to map the data from one mesh to the other one using the `Map` method:
+
+```Python
+# map scalar quantities
+mapper.Map(KM.TEMPERATURE, KM.AMBIENT_TEMPERATURE)
+
+# map vector quantities
+mapper.Map(KM.VELOCITY, KM.MESH_VELOCITY)
+```
+And finally to send back the mapped data to the application from kratos side we will use the `ExportData` method:
+
+```Python
+# export mapped data
+export_data_info = CoSimIO.Info()
+export_data_info.SetString("connection_name", "mesh_mapping")
+export_data_info.SetString("identifier", "mapped_data")
+CoSimIO.ExportData(export_data_info, model_part_destination, KM.AMBIENT_TEMPERATURE, CoSimIO.DataLocation.NodeHistorical)
+```
+Again here the `CoSimIO.DataLocation.NodeHistorical` arguments denotes that we take the `AMBIENT_TEMPERATURE` from each node historical data and export it.
+
+In application side we should import the data as described in data transfer tutorial:
+
+```c
+// Import the mapped destination data
+double* mapped_data;
+int data_allocated_size = 0;
+
+// Creating the import data settings
+CoSimIO_Info import_mapped_data_settings=CoSimIO_CreateInfo();
+CoSimIO_Info_SetString(import_mapped_data_settings, "identifier", "mapped_data");
+CoSimIO_Info_SetString(import_mapped_data_settings, "connection_name", "mesh_mapping");
+
+// Importing the data
+CoSimIO_Info import_info = CoSimIO_ImportData(import_mapped_data_settings, &data_allocated_size, &mapped_data);
+
+// Free memory
+CoSimIO_FreeInfo(import_info);
+CoSimIO_FreeInfo(import_mapped_data_settings);
+```
+
+Now putting everything together in the application side we have:
+```c
+// Creating the export mesh settings
+CoSimIO_Info export_mesh_settings=CoSimIO_CreateInfo();
+CoSimIO_Info_SetString(export_mesh_settings, "identifier", "mesh_origin");
+CoSimIO_Info_SetString(export_mesh_settings, "connection_name", "mesh_mapping");
+
+// Exporting the origin mesh
+CoSimIO_Info export_info_o = CoSimIO_ExportMesh(export_mesh_settings
+    , export_number_of_nodes_o*3, export_number_of_elements_o,      export_number_of_elements_connectivities_o
+    , export_nodal_coordinates_o, export_elements_connectivities_o, export_elements_types_o);
+
+// Exporting the destination mesh
+CoSimIO_Info_SetString(export_mesh_settings, "identifier", "mesh_destination");
+CoSimIO_Info export_info_d = CoSimIO_ExportMesh(export_mesh_settings
+    , export_number_of_nodes_d*3, export_number_of_elements_d,      export_number_of_elements_connectivities_d
+    , export_nodal_coordinates_d, export_elements_connectivities_d, export_elements_types_d);
+
+// Free memory
+CoSimIO_FreeInfo(export_info_o);
+CoSimIO_FreeInfo(export_info_d);
+CoSimIO_FreeInfo(export_mesh_settings);
+
+// Creating the export origin data settings
+CoSimIO_Info export_data_settings=CoSimIO_CreateInfo();
+CoSimIO_Info_SetString(export_data_settings, "identifier", "data_to_map");
+CoSimIO_Info_SetString(export_data_settings, "connection_name", "mesh_mapping");
+
+// Exporting the origin data
+CoSimIO_Info export_info = CoSimIO_ExportData(export_data_settings, export_data_size, export_data);
+
+// Free memory
+CoSimIO_FreeInfo(export_data_settings);
+CoSimIO_FreeInfo(export_info);
+
+// Import the mapped destination data
+double* mapped_data;
+int data_allocated_size = 0;
+
+// Creating the import data settings
+CoSimIO_Info import_mapped_data_settings=CoSimIO_CreateInfo();
+CoSimIO_Info_SetString(import_mapped_data_settings, "identifier", "mapped_data");
+CoSimIO_Info_SetString(import_mapped_data_settings, "connection_name", "mesh_mapping");
+
+// Importing the data
+CoSimIO_Info import_info = CoSimIO_ImportData(import_mapped_data_settings, &data_allocated_size, &mapped_data);
+
+// Free memory
+CoSimIO_FreeInfo(import_info);
+CoSimIO_FreeInfo(import_mapped_data_settings);
+```
+
+And in the Kratos side the python script would be:
+
+```Python
+# importing the Kratos library
+import KratosMultiphysics as KM
+from KratosMultiphysics.CoSimulationApplication import CoSimIO
+import KratosMultiphysics.MappingApplication as KratosMapping
+
+# create the Kratos ModelParts that contain the mesh
+model = KM.Model()
+model_part_origin = model.CreateModelPart("mp_origin")
+model_part_destination = model.CreateModelPart("mp_destination")
+
+# allocate memory
+model_part_origin.AddNodalSolutionStepVariable(KM.TEMPERATURE)
+model_part_destination.AddNodalSolutionStepVariable(KM.AMBIENT_TEMPERATURE)
+
+model_part_origin.AddNodalSolutionStepVariable(KM.VELOCITY)
+model_part_destination.AddNodalSolutionStepVariable(KM.MESH_VELOCITY)
+
+# connect to CoSimIO
+connection_settings = CoSimIO.Info()
+connection_settings.SetString("connection_name", "mesh_mapping")
+connection_settings.SetInt("echo_level", 0)
+info = CoSimIO.Connect(connection_settings)
+if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Connected:
+    raise Exception("Connecting failed")
+
+# import meshes
+import_mesh_info_o = CoSimIO.Info()
+import_mesh_info_o.SetString("connection_name", "mesh_mapping")
+import_mesh_info_o.SetString("identifier", "mesh_origin")
+CoSimIO.ImportMesh(import_mesh_info_o, model_part_origin)
+
+import_mesh_info_d = CoSimIO.Info()
+import_mesh_info_d.SetString("connection_name", "mesh_mapping")
+import_mesh_info_d.SetString("identifier", "mesh_destination")
+CoSimIO.ImportMesh(import_mesh_info_d, model_part_destination)
+
+print(model_part_origin)
+print(model_part_destination)
+
+# input for the mapper is a Kratos::Parameters object
+mapper_settings = KM.Parameters("""{
+    "mapper_type": "nearest_neighbor",
+    "echo_level" : 0
+}""")
+
+# creating the mapper using the mapper factory
+mapper = KratosMapping.MapperFactory.CreateMapper(
+    model_part_origin,
+    model_part_destination,
+    mapper_settings)
+
+# import data to be mapped
+import_data_info = CoSimIO.Info()
+import_data_info.SetString("connection_name", "mesh_mapping")
+import_data_info.SetString("identifier", "data_to_map")
+CoSimIO.ImportData(import_data_info, model_part_origin, KM.TEMPERATURE, CoSimIO.DataLocation.NodeHistorical)
+
+# map scalar quantities
+mapper.Map(KM.TEMPERATURE, KM.AMBIENT_TEMPERATURE)
+
+# map vector quantities
+mapper.Map(KM.VELOCITY, KM.MESH_VELOCITY)
+
+# export mapped data
+export_data_info = CoSimIO.Info()
+export_data_info.SetString("connection_name", "mesh_mapping")
+export_data_info.SetString("identifier", "mapped_data")
+CoSimIO.ExportData(export_data_info, model_part_destination, KM.AMBIENT_TEMPERATURE, CoSimIO.DataLocation.NodeHistorical)
+
+# disconnect from CoSimIO
+disconnect_settings = CoSimIO.Info()
+disconnect_settings.SetString("connection_name", "mesh_mapping")
+
+info = CoSimIO.Disconnect(disconnect_settings)
+if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
+    raise Exception("Disconnecting failed")
 ```

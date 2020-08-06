@@ -18,6 +18,7 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 #include <string>
 
 // Project includes
@@ -31,7 +32,11 @@ template<typename TDataType>
 class DataContainer
 {
 public:
+    DataContainer() = default;
     virtual ~DataContainer() = default;
+
+    DataContainer(const DataContainer&) = delete;
+    DataContainer& operator=(const DataContainer&) = delete;
 
     virtual std::size_t size() const = 0;
     virtual void resize(const std::size_t NewSize) = 0;
@@ -97,7 +102,7 @@ public:
         : mrVector(rVector) {}
 
     std::size_t size() const override {return mrVector.size();}
-    void resize(const std::size_t NewSize) override {CO_SIM_IO_ERROR << "Using non-const member of readonly object!" << std::endl;}
+    void resize(const std::size_t NewSize) override {CO_SIM_IO_ERROR << "Resizing of readonly object is not possible!" << std::endl;}
     const TDataType* data() const override {return mrVector.data();}
     TDataType* data() override {CO_SIM_IO_ERROR << "Using non-const member of readonly object!" << std::endl; return nullptr;}
 
@@ -110,27 +115,31 @@ class DataContainerRawMemory : public DataContainer<TDataType>
 {
 public:
     explicit DataContainerRawMemory(TDataType** ppData, const std::size_t Size)
-        : mppData(ppData), mSize(Size) {}
+        : mppData(ppData), mSize(Size), mCapacity(Size) {}
 
     std::size_t size() const override {return mSize;};
     void resize(const std::size_t NewSize) override
     {
-        if (NewSize > mSize) { // only increase the capacity if too small => same behavior as std::vector
-            if(mSize != 0) // Maybe is not null neigther allocated: double *data. Pooyan.
-                free(*mppData); // this is ok according to the standard, no matter if it is null or allocated //also check if using "std::"
-
-            *mppData = (TDataType *)malloc((NewSize)*sizeof(TDataType)); // TODO maybe use realloc? //also check if using "std::"
-            CO_SIM_IO_ERROR_IF_NOT(*mppData) << "Memory reallocation failed";
-        }
         mSize = NewSize;
+        if (NewSize > mCapacity) { // only increase the capacity if too small => same behavior as std::vector
+            if (mCapacity == 0) {
+                *mppData = nullptr; // initial allocation if not done outside
+            }
+            mCapacity = std::max(mCapacity*2, NewSize); // increase size beyond what is necessary to avoid frequent reallocations (like std::vector does)
 
+            *mppData = (TDataType *)realloc(*mppData, (mCapacity)*sizeof(TDataType));
+
+            CO_SIM_IO_ERROR_IF_NOT(*mppData) << "Memory reallocation failed!";
+        }
     };
+
     const TDataType* data() const override {return *mppData;}
     TDataType* data() override {return *mppData;}
 
 private:
     TDataType** mppData;
     std::size_t mSize;
+    std::size_t mCapacity;
 };
 
 template<typename TDataType>
@@ -141,7 +150,7 @@ public:
         : mpData(pData), mSize(Size) {}
 
     std::size_t size() const override {return mSize;};
-    void resize(const std::size_t NewSize) override {CO_SIM_IO_ERROR << "Using non-const member of readonly object!" << std::endl;};
+    void resize(const std::size_t NewSize) override {CO_SIM_IO_ERROR << "Resizing of readonly object is not possible!" << std::endl;};
     const TDataType* data() const override {return mpData;}
     TDataType* data() override {CO_SIM_IO_ERROR << "Using non-const member of readonly object!" << std::endl; return nullptr;}
 

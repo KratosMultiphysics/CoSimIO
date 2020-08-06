@@ -1,3 +1,6 @@
+# !/bin/bash
+set -e
+
 # should be called with "sh scripts/build_and_test.sh" from the root-directory
 
 # rm -r build/
