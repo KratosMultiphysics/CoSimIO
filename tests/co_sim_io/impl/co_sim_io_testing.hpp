@@ -12,3 +12,22 @@
 
 // External includes
 #include "doctest/doctest.h"
+
+// Custom macros
+
+#define CO_SIM_IO_CHECK_VECTOR_NEAR(a, b) {     \
+REQUIRE_EQ(a.size(), b.size());                 \
+for (std::size_t i=0; i<a.size(); ++i) {        \
+   CHECK_MESSAGE(a[i] == doctest::Approx(b[i]), \
+   "Mismatch in component: " << i);             \
+}                                               \
+}
+
+#define CO_SIM_IO_CHECK_VECTOR_NEAR_SIZE(a, b, s) { \
+REQUIRE_GE(a.size(), s);                            \
+REQUIRE_GE(b.size(), s);                            \
+for (std::size_t i=0; i<s; ++i) {                   \
+   CHECK_MESSAGE(a[i] == doctest::Approx(b[i]),     \
+   "Mismatch in component: " << i);                 \
+}                                                   \
+}
