@@ -34,9 +34,9 @@ int main()
     CoSimIO_FreeInfo(connect_info); // Don't forget to free the connect_info
 
     // Creating the export origin mesh settings
-    CoSimIO_Info export_mesh_o_settings=CoSimIO_CreateInfo();
-    CoSimIO_Info_SetString(export_mesh_o_settings, "identifier", "mesh_origin");
-    CoSimIO_Info_SetString(export_mesh_o_settings, "connection_name", "mesh_mapping");
+    CoSimIO_Info export_mesh_settings=CoSimIO_CreateInfo();
+    CoSimIO_Info_SetString(export_mesh_settings, "identifier", "mesh_origin");
+    CoSimIO_Info_SetString(export_mesh_settings, "connection_name", "mesh_mapping");
 
     // defining the origin mesh
     int number_of_nodes_o=6;
@@ -62,15 +62,12 @@ int main()
 
 
     // Exporting the origin mesh
-    CoSimIO_Info export_info_o = CoSimIO_ExportMesh(export_mesh_o_settings
-        , number_of_nodes_o, number_of_elements_o,      number_of_elements_connectivities_o
+    CoSimIO_Info export_info_o = CoSimIO_ExportMesh(export_mesh_settings
+        , number_of_nodes_o, number_of_elements_o,        number_of_elements_connectivities_o
         , nodal_coordinates_o, elements_connectivities_o, elements_types_o);
 
 
     // Creating the export destination mesh settings
-    CoSimIO_Info export_mesh_d_settings=CoSimIO_CreateInfo();
-    CoSimIO_Info_SetString(export_mesh_d_settings, "identifier", "mesh_destination");
-    CoSimIO_Info_SetString(export_mesh_d_settings, "connection_name", "mesh_mapping");
 
     // defining the destination mesh
     int number_of_nodes_d=6;
@@ -95,15 +92,15 @@ int main()
     int elements_types_d[] = {5,5,5,5}; // VTK_TRIANGLE
 
     // Exporting the destination mesh
-    CoSimIO_Info export_info_d = CoSimIO_ExportMesh(export_mesh_d_settings
+    CoSimIO_Info_SetString(export_mesh_settings, "identifier", "mesh_destination");
+    CoSimIO_Info export_info_d = CoSimIO_ExportMesh(export_mesh_settings
         , number_of_nodes_d, number_of_elements_d,      number_of_elements_connectivities_d
         , nodal_coordinates_d, elements_connectivities_d, elements_types_d);
 
     // Free memory
     CoSimIO_FreeInfo(export_info_o);
     CoSimIO_FreeInfo(export_info_d);
-    CoSimIO_FreeInfo(export_mesh_o_settings);
-    CoSimIO_FreeInfo(export_mesh_d_settings);
+    CoSimIO_FreeInfo(export_mesh_settings);
 
     // Creating the export origin data settings
     CoSimIO_Info export_data_settings=CoSimIO_CreateInfo();

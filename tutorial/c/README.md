@@ -514,7 +514,7 @@ The first step is to send the origin and destination meshes for mapping between:
 ```c
 // Creating the export mesh settings
 CoSimIO_Info export_mesh_settings=CoSimIO_CreateInfo();
-CoSimIO_Info_SetString(export_mesh_settings, "identifier", "mesh_exchange");
+CoSimIO_Info_SetString(export_mesh_settings, "identifier", "mesh_origin");
 CoSimIO_Info_SetString(export_mesh_settings, "connection_name", "mesh_mapping");
 
 // Exporting the origin mesh
@@ -523,6 +523,7 @@ CoSimIO_Info export_info_o = CoSimIO_ExportMesh(export_mesh_settings
     , export_nodal_coordinates_o, export_elements_connectivities_o, export_elements_types_o);
 
 // Exporting the destination mesh
+CoSimIO_Info_SetString(export_mesh_settings, "identifier", "mesh_destination");
 CoSimIO_Info export_info_d = CoSimIO_ExportMesh(export_mesh_settings
     , export_number_of_nodes_d*3, export_number_of_elements_d,      export_number_of_elements_connectivities_d
     , export_nodal_coordinates_d, export_elements_connectivities_d, export_elements_types_d);
@@ -671,7 +672,7 @@ Now putting everything together in the application side we have:
 ```c
 // Creating the export mesh settings
 CoSimIO_Info export_mesh_settings=CoSimIO_CreateInfo();
-CoSimIO_Info_SetString(export_mesh_settings, "identifier", "mesh_exchange");
+CoSimIO_Info_SetString(export_mesh_settings, "identifier", "mesh_origin");
 CoSimIO_Info_SetString(export_mesh_settings, "connection_name", "mesh_mapping");
 
 // Exporting the origin mesh
@@ -680,6 +681,7 @@ CoSimIO_Info export_info_o = CoSimIO_ExportMesh(export_mesh_settings
     , export_nodal_coordinates_o, export_elements_connectivities_o, export_elements_types_o);
 
 // Exporting the destination mesh
+CoSimIO_Info_SetString(export_mesh_settings, "identifier", "mesh_destination");
 CoSimIO_Info export_info_d = CoSimIO_ExportMesh(export_mesh_settings
     , export_number_of_nodes_d*3, export_number_of_elements_d,      export_number_of_elements_connectivities_d
     , export_nodal_coordinates_d, export_elements_connectivities_d, export_elements_types_d);
