@@ -577,8 +577,8 @@ CoSimIO_Info_SetString(export_data_settings, "connection_name", "mesh_mapping");
 CoSimIO_Info export_info = CoSimIO_ExportData(export_data_settings, export_data_size, export_data);
 
 // Free memory
+CoSimIO_FreeInfo(export_data_settings);
 CoSimIO_FreeInfo(export_info);
-CoSimIO_FreeInfo(import_mapped_data_settings);
 ```
 
 On Kratos side, we should take this data and store it as nodal data in the imported origin model part. For doing that, first we should add those nodal data to the model part using the `AddNodalSolutionStepVariable` method. For example let's consider that we are recieving the temperature and we want to map it into the ambient temperature:
@@ -646,7 +646,7 @@ export_data_info.SetString("connection_name", "mesh_mapping")
 export_data_info.SetString("identifier", "mapped_data")
 CoSimIO.ExportData(export_data_info, model_part_destination, KM.AMBIENT_TEMPERATURE, CoSimIO.DataLocation.NodeHistorical)
 ```
-Again here the CoSimIO.DataLocation.NodeHistorical arguments denotes that we take the AMBIENT_TEMPERATURE from each node historical data and export it.
+Again here the `CoSimIO.DataLocation.NodeHistorical` arguments denotes that we take the `AMBIENT_TEMPERATURE` from each node historical data and export it.
 
 In application side we should import the data as described in data transfer tutorial:
 
@@ -690,6 +690,18 @@ CoSimIO_Info export_info_d = CoSimIO_ExportMesh(export_mesh_settings
 CoSimIO_FreeInfo(export_info_o);
 CoSimIO_FreeInfo(export_info_d);
 CoSimIO_FreeInfo(export_mesh_settings);
+
+// Creating the export origin data settings
+CoSimIO_Info export_data_settings=CoSimIO_CreateInfo();
+CoSimIO_Info_SetString(export_data_settings, "identifier", "data_to_map");
+CoSimIO_Info_SetString(export_data_settings, "connection_name", "mesh_mapping");
+
+// Exporting the origin data
+CoSimIO_Info export_info = CoSimIO_ExportData(export_data_settings, export_data_size, export_data);
+
+// Free memory
+CoSimIO_FreeInfo(export_data_settings);
+CoSimIO_FreeInfo(export_info);
 
 // Import the mapped destination data
 double* mapped_data;
