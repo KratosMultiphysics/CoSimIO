@@ -33,7 +33,7 @@ public:
     using CoordinatesType = std::array<double,3>;
 
     Node(
-        const int I_Id,
+        const std::size_t I_Id,
         const double I_X,
         const double I_Y,
         const double I_Z)
@@ -44,7 +44,7 @@ public:
     { }
 
     Node(
-        const int I_Id,
+        const std::size_t I_Id,
         const CoordinatesType& I_Coordinates)
     : mId(I_Id),
       mX(I_Coordinates[0]),
@@ -52,13 +52,13 @@ public:
       mZ(I_Coordinates[2])
     { }
 
-    int GetId() const;
-    double GetX() const;
-    double GetY() const;
-    double GetZ() const;
+    std::size_t Id() const;
+    double X() const;
+    double Y() const;
+    double Z() const;
 
 private:
-    int mId;
+    std::size_t mId;
     double mX;
     double mY;
     double mZ;
@@ -67,11 +67,11 @@ private:
 class Element
 {
 public:
-    using ElementType = int;
-    using ConnectivitiesType = std::vector<int>;
+    using ElementType = std::size_t;
+    using ConnectivitiesType = std::vector<std::size_t>;
 
     Element(
-        const int I_Id,
+        const std::size_t I_Id,
         const ElementType I_Type,
         const ConnectivitiesType& I_Connectivities)
     : mId(I_Id),
@@ -79,14 +79,14 @@ public:
       mConnectivities(I_Connectivities)
     { }
 
-    int GetId() const;
-    ElementType GetType() const;
-    const ConnectivitiesType& GetConnectivities() const;
+    std::size_t Id() const;
+    ElementType Type() const;
+    const ConnectivitiesType& Connectivities() const;
 
 private:
-    int mId;
-    int mType;
-    std::vector<int> mConnectivities;
+    std::size_t mId;
+    std::size_t mType;
+    std::vector<std::size_t> mConnectivities;
 };
 
 class ModelPart
@@ -98,24 +98,24 @@ private:
     using ElementsContainerType = std::vector<Element>;
 
 public:
-    int NumberOfNodes() const
+    std::size_t NumberOfNodes() const
     {
         return mNodes.size();
     }
 
-    int NumberOfElements() const
+    std::size_t NumberOfElements() const
     {
         return mElements.size();
     }
 
     Node& CreateNewNode(
-        const int I_Id,
+        const std::size_t I_Id,
         const double I_X,
         const double I_Y,
         const double I_Z);
 
     Element& CreateNewElement(
-        const int I_Id,
+        const std::size_t I_Id,
         const Element::ElementType I_Type,
         const Element::ConnectivitiesType& I_Connectivities);
 
@@ -125,11 +125,11 @@ public:
     NodesContainerType::const_iterator NodesBegin() const;
     ElementsContainerType::const_iterator ElementsBegin() const;
 
-    Node& GetNode(const int Id);
-    Element& GetElement(const int Id);
+    Node& GetNode(const std::size_t Id);
+    Element& GetElement(const std::size_t Id);
 
-    const Node& GetNode(const int Id) const;
-    const Element& GetElement(const int Id) const;
+    const Node& GetNode(const std::size_t Id) const;
+    const Element& GetElement(const std::size_t Id) const;
 
 private:
     NodesContainerType mNodes;
