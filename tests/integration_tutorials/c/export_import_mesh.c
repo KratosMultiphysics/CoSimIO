@@ -67,7 +67,7 @@ int main()
 
     // Exporting the data
     CoSimIO_Info export_info = CoSimIO_ExportMesh(export_settings
-        , export_number_of_nodes*3,export_number_of_elements,export_number_of_elements_connectivities
+        , export_number_of_nodes,export_number_of_elements,export_number_of_elements_connectivities
         , export_nodal_coordinates, export_elements_connectivities, export_elements_types);
 
     // Freeing the export_info and export_settings
