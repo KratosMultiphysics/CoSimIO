@@ -18,6 +18,7 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 #include <string>
 
 // Project includes
@@ -124,7 +125,7 @@ public:
             if (mCapacity == 0) {
                 *mppData = nullptr; // initial allocation if not done outside
             }
-            mCapacity = 1.5*NewSize; // increase size beyond what is necessary to avoid frequent reallocations (like std::vector does)
+            mCapacity = std::max(mCapacity*2, NewSize); // increase size beyond what is necessary to avoid frequent reallocations (like std::vector does)
 
             *mppData = (TDataType *)realloc(*mppData, (mCapacity)*sizeof(TDataType));
 
