@@ -101,7 +101,7 @@ public:
         : mrVector(rVector) {}
 
     std::size_t size() const override {return mrVector.size();}
-    void resize(const std::size_t NewSize) override {CO_SIM_IO_ERROR << "Using non-const member of readonly object!" << std::endl;}
+    void resize(const std::size_t NewSize) override {CO_SIM_IO_ERROR << "Resizing of readonly object is not possible!" << std::endl;}
     const TDataType* data() const override {return mrVector.data();}
     TDataType* data() override {CO_SIM_IO_ERROR << "Using non-const member of readonly object!" << std::endl; return nullptr;}
 
@@ -119,16 +119,17 @@ public:
     std::size_t size() const override {return mSize;};
     void resize(const std::size_t NewSize) override
     {
+        mSize = NewSize;
         if (NewSize > mCapacity) { // only increase the capacity if too small => same behavior as std::vector
             if (mCapacity == 0) {
-                *mppData = nullptr;
+                *mppData = nullptr; // initial allocation if not done outside
             }
-            *mppData = (TDataType *)realloc(*mppData, (NewSize)*sizeof(TDataType));
-            CO_SIM_IO_ERROR_IF_NOT(*mppData) << "Memory reallocation failed";
+            mCapacity = 1.5*NewSize; // increase size beyond what is necessary to avoid frequent reallocations (like std::vector does)
 
-            mCapacity = NewSize;
+            *mppData = (TDataType *)realloc(*mppData, (mCapacity)*sizeof(TDataType));
+
+            CO_SIM_IO_ERROR_IF_NOT(*mppData) << "Memory reallocation failed!";
         }
-        mSize = NewSize;
     };
 
     const TDataType* data() const override {return *mppData;}
@@ -148,7 +149,7 @@ public:
         : mpData(pData), mSize(Size) {}
 
     std::size_t size() const override {return mSize;};
-    void resize(const std::size_t NewSize) override {CO_SIM_IO_ERROR << "Using non-const member of readonly object!" << std::endl;};
+    void resize(const std::size_t NewSize) override {CO_SIM_IO_ERROR << "Resizing of readonly object is not possible!" << std::endl;};
     const TDataType* data() const override {return mpData;}
     TDataType* data() override {CO_SIM_IO_ERROR << "Using non-const member of readonly object!" << std::endl; return nullptr;}
 
