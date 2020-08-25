@@ -125,11 +125,11 @@ public:
     NodesContainerType::const_iterator NodesBegin() const;
     ElementsContainerType::const_iterator ElementsBegin() const;
 
-    Node& GetNode(const std::size_t Id);
-    Element& GetElement(const std::size_t Id);
+    Node& GetNode(const std::size_t I_Id);
+    Element& GetElement(const std::size_t I_Id);
 
-    const Node& GetNode(const std::size_t Id) const;
-    const Element& GetElement(const std::size_t Id) const;
+    const Node& GetNode(const std::size_t I_Id) const;
+    const Element& GetElement(const std::size_t I_Id) const;
 
 private:
     NodesContainerType mNodes;
