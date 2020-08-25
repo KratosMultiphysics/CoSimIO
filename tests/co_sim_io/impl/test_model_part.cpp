@@ -17,8 +17,8 @@
 
 namespace CoSimIO {
 
-TEST_SUITE("ModelPart") {
+// TEST_SUITE("ModelPart") {
 
-} // TEST_SUITE("ModelPart")
+// } // TEST_SUITE("ModelPart")
 
 } // namespace CoSimIO
