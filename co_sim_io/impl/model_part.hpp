@@ -119,14 +119,8 @@ public:
         const Element::ElementType I_Type,
         const Element::ConnectivitiesType& I_Connectivities);
 
-    NodesContainerType::iterator NodesBegin();
-    ElementsContainerType::iterator ElementsBegin();
-
     NodesContainerType::const_iterator NodesBegin() const;
     ElementsContainerType::const_iterator ElementsBegin() const;
-
-    Node& GetNode(const std::size_t I_Id);
-    Element& GetElement(const std::size_t I_Id);
 
     const Node& GetNode(const std::size_t I_Id) const;
     const Element& GetElement(const std::size_t I_Id) const;
