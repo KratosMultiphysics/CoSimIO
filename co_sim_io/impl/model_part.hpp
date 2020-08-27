@@ -91,7 +91,7 @@ public:
     ConnectivitiesType Connectivities() const // TODO maybe rename to sth like NodeIds? Or do we need it at all?
     {
         ConnectivitiesType connectivities(mNodes.size());
-        for (std::size_t i=i; i<mNodes.size(); ++i) {
+        for (std::size_t i=0; i<mNodes.size(); ++i) {
             connectivities[i] = mNodes[i].get().Id();
         }
         return connectivities;
