@@ -83,6 +83,7 @@ public:
 
     IdType Id() const { return mId; }
     ElementType Type() const { return mType; }
+    std::size_t NumberOfNodes() const { return mNodes.size(); }
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
     NodesContainerType::const_iterator NodesEnd() const { return mNodes.end(); }
     ConnectivitiesType Connectivities() const

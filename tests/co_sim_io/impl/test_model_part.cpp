@@ -43,9 +43,20 @@ TEST_CASE("node")
     CHECK_EQ(p_node->Z(), doctest::Approx(coords[2]));
 
     for (std::size_t i=0; i<3; ++i) {
-        CAPTURE(i); // log the current input data
+        CAPTURE(i); // log the current input data (done manually as not fully supported yet by doctest)
         CHECK_EQ(p_node->Coordinates()[i], doctest::Approx(coords[i]));
     }
+}
+
+TEST_CASE("element_basics")
+{
+    const int id = 33;
+    const std::size_t type = 5;
+    Element element(id, type, {});
+
+    CHECK_EQ(element.Id(), id);
+    CHECK_EQ(element.Type(), type);
+    CHECK_EQ(element.NumberOfNodes(), 0);
 }
 
 } // TEST_SUITE("ModelPart")
