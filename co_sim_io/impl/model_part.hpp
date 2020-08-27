@@ -46,10 +46,7 @@ public:
     Node(
         const IdType I_Id,
         const CoordinatesType& I_Coordinates)
-    : mId(I_Id),
-      mX(I_Coordinates[0]),
-      mY(I_Coordinates[1]),
-      mZ(I_Coordinates[2])
+    : Node(I_Id, I_Coordinates[0], I_Coordinates[1], I_Coordinates[2])
     { }
 
     IdType Id() const { return mId; }
