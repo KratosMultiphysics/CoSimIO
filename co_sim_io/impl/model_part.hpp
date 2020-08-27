@@ -86,7 +86,7 @@ public:
 private:
     IdType mId;
     std::size_t mType;
-    std::vector<std::size_t> mConnectivities;
+    ConnectivitiesType mConnectivities;
 };
 
 class ModelPart
@@ -119,6 +119,9 @@ public:
 
     NodesContainerType::const_iterator NodesBegin() const;
     ElementsContainerType::const_iterator ElementsBegin() const;
+
+    NodesContainerType::const_iterator NodesEnd() const;
+    ElementsContainerType::const_iterator ElementsEnd() const;
 
     const Node& GetNode(const IdType I_Id) const;
     const Element& GetElement(const IdType I_Id) const;
