@@ -68,25 +68,27 @@ class Element
 {
 public:
     using ElementType = std::size_t;
+    using NodesContainerType = std::vector<Node&>;
     using ConnectivitiesType = std::vector<std::size_t>;
 
     Element(
         const IdType I_Id,
         const ElementType I_Type,
-        const ConnectivitiesType& I_Connectivities)
+        const NodesContainerType& I_Nodes)
     : mId(I_Id),
       mType(I_Type),
-      mConnectivities(I_Connectivities)
+      mNodes(I_Nodes)
     { }
 
     IdType Id() const;
     ElementType Type() const;
-    const ConnectivitiesType& Connectivities() const;
+    ConnectivitiesType Connectivities() const;
+    const NodesContainerType& Nodes() const;
 
 private:
     IdType mId;
-    std::size_t mType;
-    ConnectivitiesType mConnectivities;
+    NodesContainerType mType;
+    NodesContainerType mNodes;
 };
 
 class ModelPart
