@@ -70,7 +70,7 @@ class Element
 public:
     using ElementType = std::size_t;
     using NodesContainerType = std::vector<std::reference_wrapper<Node>>;
-    using ConnectivitiesType = std::vector<std::size_t>;
+    using ConnectivitiesType = std::vector<IdType>;
 
     Element(
         const IdType I_Id,
@@ -86,7 +86,7 @@ public:
     std::size_t NumberOfNodes() const { return mNodes.size(); }
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
     NodesContainerType::const_iterator NodesEnd() const { return mNodes.end(); }
-    ConnectivitiesType Connectivities() const
+    ConnectivitiesType Connectivities() const // TODO maybe rename to sth like NodeIds? Or do we need it at all?
     {
         ConnectivitiesType connectivities(mNodes.size());
         for (std::size_t i=i; i<mNodes.size(); ++i) {
