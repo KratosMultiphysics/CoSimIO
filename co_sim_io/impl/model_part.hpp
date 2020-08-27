@@ -22,6 +22,7 @@ see https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/mod
 
 // System includes
 #include <vector>
+#include <string>
 #include <functional>
 
 // Project includes
@@ -110,6 +111,9 @@ public:
     using NodesContainerType = std::vector<Node>;
     using ElementsContainerType = std::vector<Element>;
 
+    ModelPart(const std::string& I_Name) : mName(I_Name) {}
+
+    std::string Name() const { return mName; }
     std::size_t NumberOfNodes() const { return mNodes.size(); }
     std::size_t NumberOfElements() const { return mElements.size(); }
 
@@ -134,6 +138,7 @@ public:
     const Element& GetElement(const IdType I_Id) const;
 
 private:
+    std::string mName;
     NodesContainerType mNodes;
     ElementsContainerType mElements;
 };
