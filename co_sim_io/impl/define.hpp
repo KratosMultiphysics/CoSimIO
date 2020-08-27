@@ -21,7 +21,7 @@
 namespace CoSimIO {
 
 // signed integer type, 32 bit in 32 bit systems, but 64bit in 64 bit systems => like std::size_t but signed
-using IdType = std:ptrdiff_t;
+using IdType = std::ptrdiff_t;
 
 using CoordinatesType = std::array<double,3>;
 
