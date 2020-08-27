@@ -78,7 +78,7 @@ TEST_CASE("element_nodes")
     CHECK_EQ(element.NumberOfNodes(), 3);
 
     std::size_t counter=0;
-    for (auto node_it=element.NodesBegin(); node_it!=element.NodesEnd(); ++node_it) {
+    for (Element::NodesContainerType::const_iterator node_it=element.NodesBegin(); node_it!=element.NodesEnd(); ++node_it) {
         CAPTURE(counter); // log the current input data (done manually as not fully supported yet by doctest)
 
         CHECK_EQ(node_it->get().Id(), node_ids[counter]);
