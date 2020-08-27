@@ -106,15 +106,8 @@ public:
     using NodesContainerType = std::vector<Node>;
     using ElementsContainerType = std::vector<Element>;
 
-    std::size_t NumberOfNodes() const
-    {
-        return mNodes.size();
-    }
-
-    std::size_t NumberOfElements() const
-    {
-        return mElements.size();
-    }
+    std::size_t NumberOfNodes() const { return mNodes.size(); }
+    std::size_t NumberOfElements() const { return mElements.size(); }
 
     Node& CreateNewNode(
         const IdType I_Id,
@@ -127,11 +120,11 @@ public:
         const Element::ElementType I_Type,
         const Element::ConnectivitiesType& I_Connectivities);
 
-    NodesContainerType::const_iterator NodesBegin() const;
-    ElementsContainerType::const_iterator ElementsBegin() const;
+    NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
+    ElementsContainerType::const_iterator ElementsBegin() const { return mElements.begin(); }
 
-    NodesContainerType::const_iterator NodesEnd() const;
-    ElementsContainerType::const_iterator ElementsEnd() const;
+    NodesContainerType::const_iterator NodesEnd() const { return mNodes.end(); }
+    ElementsContainerType::const_iterator ElementsEnd() const { return mElements.end(); }
 
     const Node& GetNode(const IdType I_Id) const;
     const Element& GetElement(const IdType I_Id) const;
