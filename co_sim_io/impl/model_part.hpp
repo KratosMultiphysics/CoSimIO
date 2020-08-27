@@ -111,7 +111,11 @@ public:
     using NodesContainerType = std::vector<Node>;
     using ElementsContainerType = std::vector<Element>;
 
-    ModelPart(const std::string& I_Name) : mName(I_Name) {}
+    ModelPart(const std::string& I_Name) : mName(I_Name)
+    {
+        CO_SIM_IO_ERROR_IF(I_Name.empty()) << "Please don't use empty names (\"\") when creating a ModelPart" << std::endl;
+        CO_SIM_IO_ERROR_IF_NOT(I_Name.find(".") == std::string::npos) << "Please don't use names containing (\".\") when creating a ModelPart (used in \"" << I_Name << "\")" << std::endl;
+    }
 
     std::string Name() const { return mName; }
     std::size_t NumberOfNodes() const { return mNodes.size(); }

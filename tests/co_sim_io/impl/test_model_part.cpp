@@ -132,6 +132,21 @@ TEST_CASE("model_part_basics")
     CHECK_EQ(model_part.NumberOfElements(), 0);
 }
 
+TEST_CASE("model_part_invalid_names")
+{
+    CHECK_THROWS_WITH(ModelPart model_part(""), "Error: "); // TODO find a better way of testing this
+    CHECK_THROWS_WITH(ModelPart model_part("my_name.ssss"), "Error: "); // TODO find a better way of testing this
+}
+
+TEST_CASE("model_part_add_nodes")
+{
+    ModelPart model_part("for_test");
+
+    CHECK_EQ(model_part.Name(), "for_test");
+    CHECK_EQ(model_part.NumberOfNodes(), 0);
+    CHECK_EQ(model_part.NumberOfElements(), 0);
+}
+
 } // TEST_SUITE("ModelPart")
 
 } // namespace CoSimIO
