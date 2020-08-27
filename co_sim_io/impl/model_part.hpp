@@ -21,8 +21,8 @@ see https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/mod
 */
 
 // System includes
-#include <array>
 #include <vector>
+#include <functional>
 
 // Project includes
 #include "define.hpp"
@@ -68,7 +68,7 @@ class Element
 {
 public:
     using ElementType = std::size_t;
-    using NodesContainerType = std::vector<Node&>;
+    using NodesContainerType = std::vector<std::reference_wrapper<Node>>;
     using ConnectivitiesType = std::vector<std::size_t>;
 
     Element(
@@ -80,14 +80,14 @@ public:
       mNodes(I_Nodes)
     { }
 
-    IdType Id() const;
-    ElementType Type() const;
+    IdType Id() const {return mId;}
+    ElementType Type() const {return mType;}
     ConnectivitiesType Connectivities() const;
     const NodesContainerType& Nodes() const;
 
 private:
     IdType mId;
-    NodesContainerType mType;
+    ElementType mType;
     NodesContainerType mNodes;
 };
 
