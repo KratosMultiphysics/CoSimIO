@@ -48,15 +48,51 @@ TEST_CASE("node")
     }
 }
 
+TEST_CASE("node_negative_id")
+{
+    const std::array<double, 3> coords = {1.0, -2.7, 9.44};
+    const int id = -16;
+
+    SUBCASE("from_coords")
+    {
+        CHECK_THROWS_WITH(Node(id, coords[0], coords[1], coords[2]), "Error: "); // TODO find a better way of testing this
+    }
+
+    SUBCASE("from_coords_array")
+    {
+        CHECK_THROWS_WITH(Node(id, coords), "Error: "); // TODO find a better way of testing this
+    }
+}
+
 TEST_CASE("element_basics")
 {
     const int id = 33;
     const std::size_t type = 5;
-    Element element(id, type, {});
+
+    Node node(1, 0,0,0);
+
+    Element element(id, type, {node});
 
     CHECK_EQ(element.Id(), id);
     CHECK_EQ(element.Type(), type);
-    CHECK_EQ(element.NumberOfNodes(), 0);
+    CHECK_EQ(element.NumberOfNodes(), 1);
+}
+
+TEST_CASE("element_checks")
+{
+    const int id = -33;
+    const std::size_t type = 5;
+    Node node(1, 0,0,0);
+
+    SUBCASE("negative_id")
+    {
+        CHECK_THROWS_WITH(Element element(id, type, {node}), "Error: "); // TODO find a better way of testing this
+    }
+
+    SUBCASE("no_nodes")
+    {
+        CHECK_THROWS_WITH(Element element(1, type, {}), "Error: "); // TODO find a better way of testing this
+    }
 }
 
 TEST_CASE("element_nodes")

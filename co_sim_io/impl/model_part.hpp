@@ -41,7 +41,9 @@ public:
       mX(I_X),
       mY(I_Y),
       mZ(I_Z)
-    { }
+    {
+        CO_SIM_IO_ERROR_IF(I_Id < 1) << "Id must be >= 1!" << std::endl;
+    }
 
     Node(
         const IdType I_Id,
@@ -76,7 +78,10 @@ public:
     : mId(I_Id),
       mType(I_Type),
       mNodes(I_Nodes)
-    { }
+    {
+        CO_SIM_IO_ERROR_IF(I_Id < 1) << "Id must be >= 1!" << std::endl;
+        CO_SIM_IO_ERROR_IF(NumberOfNodes() < 1) << "No nodes were passed!" << std::endl;
+    }
 
     IdType Id() const { return mId; }
     ElementType Type() const { return mType; }
