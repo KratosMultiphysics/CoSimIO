@@ -59,6 +59,34 @@ TEST_CASE("element_basics")
     CHECK_EQ(element.NumberOfNodes(), 0);
 }
 
+TEST_CASE("element_nodes")
+{
+    const int id = 33;
+    const std::size_t type = 5;
+
+    const int node_ids[] = {2, 159, 61};
+
+    const std::array<double, 3> dummy_coords = {0,0,0};
+    Node node_1(node_ids[0], dummy_coords);
+    Node node_2(node_ids[1], dummy_coords);
+    Node node_3(node_ids[2], dummy_coords);
+
+    Element element(id, type, {node_1, node_2, node_3});
+
+    CHECK_EQ(element.Id(), id);
+    CHECK_EQ(element.Type(), type);
+    CHECK_EQ(element.NumberOfNodes(), 3);
+
+    std::size_t counter=0;
+    for (auto node_it=element.NodesBegin(); node_it!=element.NodesEnd(); ++node_it) {
+        CAPTURE(counter); // log the current input data (done manually as not fully supported yet by doctest)
+
+        CHECK_EQ(node_it->get().Id(), node_ids[counter]);
+
+        counter++;
+    }
+}
+
 } // TEST_SUITE("ModelPart")
 
 } // namespace CoSimIO
