@@ -15,7 +15,7 @@
 
 /* This file contains the implementation of th  CoSimIO::ModelPart
 It serves as a data container when exchanging data
-Also it is used in order to be consitent with Kratos to reduce compatibility problems
+Also it is used in order to be consistent with Kratos to reduce compatibility problems
 This is a simplified version of Kratos::ModelPart
 see https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/model_part.h
 */
@@ -52,11 +52,11 @@ public:
       mZ(I_Coordinates[2])
     { }
 
-    IdType Id() const { return mId;}
-    double X() const { return mX;}
-    double Y() const { return mY;}
-    double Z() const { return mZ;}
-    CoordinatesType Coordinates() const { return {mX, mY, mZ};}
+    IdType Id() const { return mId; }
+    double X() const { return mX; }
+    double Y() const { return mY; }
+    double Z() const { return mZ; }
+    CoordinatesType Coordinates() const { return {mX, mY, mZ}; }
 
 private:
     IdType mId;
@@ -81,10 +81,17 @@ public:
       mNodes(I_Nodes)
     { }
 
-    IdType Id() const {return mId;}
-    ElementType Type() const {return mType;}
-    ConnectivitiesType Connectivities() const;
-    const NodesContainerType& Nodes() const;
+    IdType Id() const { return mId; }
+    ElementType Type() const { return mType; }
+    const NodesContainerType& Nodes() const { return mNodes; }
+    ConnectivitiesType Connectivities() const
+    {
+        ConnectivitiesType connectivities(mNodes.size());
+        for (std::size_t i=i; i<mNodes.size(); ++i) {
+            connectivities[i] = mNodes[i].get().Id();
+        }
+        return connectivities;
+    }
 
 private:
     IdType mId;
