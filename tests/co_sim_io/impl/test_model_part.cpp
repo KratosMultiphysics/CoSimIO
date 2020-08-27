@@ -123,6 +123,15 @@ TEST_CASE("element_nodes")
     }
 }
 
+TEST_CASE("model_part_basics")
+{
+    ModelPart model_part("for_test");
+
+    CHECK_EQ(model_part.Name(), "for_test");
+    CHECK_EQ(model_part.NumberOfNodes(), 0);
+    CHECK_EQ(model_part.NumberOfElements(), 0);
+}
+
 } // TEST_SUITE("ModelPart")
 
 } // namespace CoSimIO
