@@ -14,6 +14,7 @@
 #define CO_SIM_IO_COMMUNICATION_INCLUDED
 
 // System includes
+#include <unordered_map>
 
 // Project includes
 #include "../info.hpp"
