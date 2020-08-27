@@ -52,10 +52,11 @@ public:
       mZ(I_Coordinates[2])
     { }
 
-    IdType Id() const;
-    double X() const;
-    double Y() const;
-    double Z() const;
+    IdType Id() const { return mId;}
+    double X() const { return mX;}
+    double Y() const { return mY;}
+    double Z() const { return mZ;}
+    CoordinatesType Coordinates() const { return {mX, mY, mZ};}
 
 private:
     IdType mId;
