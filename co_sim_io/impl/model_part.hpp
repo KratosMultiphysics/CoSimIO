@@ -24,6 +24,7 @@ see https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/mod
 #include <vector>
 #include <string>
 #include <functional>
+#include <algorithm>
 
 // Project includes
 #include "define.hpp"
@@ -51,6 +52,12 @@ public:
         const CoordinatesType& I_Coordinates)
     : Node(I_Id, I_Coordinates[0], I_Coordinates[1], I_Coordinates[2])
     { }
+
+    // delete copy and assignment CTor
+    Node(const Node&) = delete;
+    Node& operator=(Node const&) = delete;
+
+    Node(Node&&) = default;
 
     IdType Id() const { return mId; }
     double X() const { return mX; }
@@ -84,12 +91,18 @@ public:
         CO_SIM_IO_ERROR_IF(NumberOfNodes() < 1) << "No nodes were passed!" << std::endl;
     }
 
+    // delete copy and assignment CTor
+    Element(const Element&) = delete;
+    Element& operator=(Element const&) = delete;
+
+    Element(Element&&) = default;
+
     IdType Id() const { return mId; }
     ElementType Type() const { return mType; }
     std::size_t NumberOfNodes() const { return mNodes.size(); }
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
     NodesContainerType::const_iterator NodesEnd() const { return mNodes.end(); }
-    ConnectivitiesType Connectivities() const // TODO maybe rename to sth like NodeIds? Or do we need it at all?
+    ConnectivitiesType Connectivities() const // TODO maybe rename to sth like NodeIds? Or do we need it at all? If we leave it then it needs a test
     {
         ConnectivitiesType connectivities(mNodes.size());
         for (std::size_t i=0; i<mNodes.size(); ++i) {
@@ -111,11 +124,15 @@ public:
     using NodesContainerType = std::vector<Node>;
     using ElementsContainerType = std::vector<Element>;
 
-    ModelPart(const std::string& I_Name) : mName(I_Name)
+    explicit ModelPart(const std::string& I_Name) : mName(I_Name)
     {
         CO_SIM_IO_ERROR_IF(I_Name.empty()) << "Please don't use empty names (\"\") when creating a ModelPart" << std::endl;
         CO_SIM_IO_ERROR_IF_NOT(I_Name.find(".") == std::string::npos) << "Please don't use names containing (\".\") when creating a ModelPart (used in \"" << I_Name << "\")" << std::endl;
     }
+
+    // delete copy and assignment CTor
+    ModelPart(const ModelPart&) = delete;
+    ModelPart& operator=(ModelPart const&) = delete;
 
     std::string Name() const { return mName; }
     std::size_t NumberOfNodes() const { return mNodes.size(); }
@@ -125,12 +142,36 @@ public:
         const IdType I_Id,
         const double I_X,
         const double I_Y,
-        const double I_Z);
+        const double I_Z)
+    {
+        CO_SIM_IO_ERROR_IF(HasNode(I_Id)) << "The Node with Id " << I_Id << " exists already!" << std::endl;
+
+        mNodes.emplace_back(I_Id, I_X, I_Y, I_Z);
+
+        std::cout << "\naddress: " << &mNodes.back() << std::endl;
+        std::cout << "size: " << mNodes.size() << std::endl;
+
+        for (const auto& r_node: mNodes) {
+            std::cout << "    Node Id: " << r_node.Id() << std::endl;
+        }
+        return mNodes.back();
+    }
 
     Element& CreateNewElement(
         const IdType I_Id,
         const Element::ElementType I_Type,
-        const Element::ConnectivitiesType& I_Connectivities);
+        const Element::ConnectivitiesType& I_Connectivities)
+    {
+        CO_SIM_IO_ERROR_IF(HasElement(I_Id)) << "The Element with Id " << I_Id << " exists already!" << std::endl;
+
+        Element::NodesContainerType nodes;
+        nodes.reserve(I_Connectivities.size());
+        for (const IdType node_id : I_Connectivities) {
+            nodes.push_back(GetNode(node_id));
+        }
+        mElements.emplace_back(I_Id, I_Type, nodes);
+        return mElements.back();
+    }
 
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
     ElementsContainerType::const_iterator ElementsBegin() const { return mElements.begin(); }
@@ -138,13 +179,66 @@ public:
     NodesContainerType::const_iterator NodesEnd() const { return mNodes.end(); }
     ElementsContainerType::const_iterator ElementsEnd() const { return mElements.end(); }
 
-    const Node& GetNode(const IdType I_Id) const;
-    const Element& GetElement(const IdType I_Id) const;
+    Node& GetNode(const IdType I_Id)
+    {
+        auto it_node = std::find_if(
+            mNodes.begin(), mNodes.end(),
+            [I_Id](const Node& r_node) { return r_node.Id() == I_Id;});
+
+        CO_SIM_IO_ERROR_IF(it_node == mNodes.end()) << "Node with Id " << I_Id << " does not exist!" << std::endl;
+        return *it_node;
+    }
+
+    const Node& GetNode(const IdType I_Id) const
+    {
+        auto it_node = std::find_if(
+            mNodes.begin(), mNodes.end(),
+            [I_Id](const Node& r_node) { return r_node.Id() == I_Id;});
+
+        CO_SIM_IO_ERROR_IF(it_node == mNodes.end()) << "Node with Id " << I_Id << " does not exist!" << std::endl;
+        return *it_node;
+    }
+
+    Element& GetElement(const IdType I_Id)
+    {
+        auto it_elem = std::find_if(
+            mElements.begin(), mElements.end(),
+            [I_Id](const Element& r_elem) { return r_elem.Id() == I_Id;});
+
+        CO_SIM_IO_ERROR_IF(it_elem == mElements.end()) << "Element with Id " << I_Id << " does not exist!" << std::endl;
+        return *it_elem;
+    }
+
+    const Element& GetElement(const IdType I_Id) const
+    {
+        auto it_elem = std::find_if(
+            mElements.begin(), mElements.end(),
+            [I_Id](const Element& r_elem) { return r_elem.Id() == I_Id;});
+
+        CO_SIM_IO_ERROR_IF(it_elem == mElements.end()) << "Element with Id " << I_Id << " does not exist!" << std::endl;
+        return *it_elem;
+    }
 
 private:
     std::string mName;
     NodesContainerType mNodes;
     ElementsContainerType mElements;
+
+    bool HasNode(const IdType I_Id) const
+    {
+        for (const auto& r_node : mNodes) {
+            if (r_node.Id() == I_Id) return true;
+        }
+        return false;
+    }
+
+    bool HasElement(const IdType I_Id) const
+    {
+        for (const auto& r_elem : mElements) {
+            if (r_elem.Id() == I_Id) return true;
+        }
+        return false;
+    }
 };
 
 } //namespace CoSimIO
