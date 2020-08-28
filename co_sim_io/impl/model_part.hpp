@@ -76,7 +76,7 @@ class Element
 {
 public:
     using ElementType = std::size_t;
-    using NodesContainerType = std::vector<std::reference_wrapper<Node>>;
+    using NodesContainerType = std::vector<Node*>;
     using ConnectivitiesType = std::vector<IdType>;
 
     Element(
@@ -102,14 +102,6 @@ public:
     std::size_t NumberOfNodes() const { return mNodes.size(); }
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
     NodesContainerType::const_iterator NodesEnd() const { return mNodes.end(); }
-    ConnectivitiesType Connectivities() const // TODO maybe rename to sth like NodeIds? Or do we need it at all? If we leave it then it needs a test
-    {
-        ConnectivitiesType connectivities(mNodes.size());
-        for (std::size_t i=0; i<mNodes.size(); ++i) {
-            connectivities[i] = mNodes[i].get().Id();
-        }
-        return connectivities;
-    }
 
 private:
     IdType mId;
