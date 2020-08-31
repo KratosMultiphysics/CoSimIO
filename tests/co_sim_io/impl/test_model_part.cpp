@@ -193,7 +193,7 @@ TEST_CASE("model_part_get_node")
 
     REQUIRE_EQ(model_part.NumberOfNodes(), 1);
 
-    SUBCASE("existing_node")
+    SUBCASE("existing")
     {
         const auto& r_node = model_part.GetNode(node_id);
 
@@ -204,7 +204,81 @@ TEST_CASE("model_part_get_node")
         }
     }
 
-    SUBCASE("non_existing_node")
+    SUBCASE("non_existing")
+    {
+        CHECK_THROWS_WITH(model_part.GetNode(node_id+1), "Error: "); // TODO find a better way of testing this
+    }
+}
+
+TEST_CASE("model_part_add_element")
+{
+    ModelPart model_part("for_test");
+
+    const int node_id = 691;
+    const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
+    const auto& new_node = model_part.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2]);
+    CHECK_EQ(model_part.NumberOfNodes(), 1);
+
+    CHECK_EQ(new_node.Id(), node_id);
+    for (std::size_t i=0; i<3; ++i) {
+        CAPTURE(i); // log the current input data (done manually as not fully supported yet by doctest)
+        CHECK_EQ(new_node.Coordinates()[i], doctest::Approx(node_coords[i]));
+    }
+}
+
+TEST_CASE("model_part_add_elements")
+{
+    ModelPart model_part("for_test");
+
+    const int node_id = 691;
+    const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
+    const auto& new_node = model_part.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2]);
+    CHECK_EQ(model_part.NumberOfNodes(), 1);
+
+    model_part.CreateNewNode(node_id+1, node_coords[0], node_coords[1], node_coords[2]);
+    model_part.CreateNewNode(node_id+2, node_coords[0], node_coords[1], node_coords[2]);
+    CHECK_EQ(model_part.NumberOfNodes(), 3);
+
+    CHECK_EQ(new_node.Id(), node_id);
+    for (std::size_t i=0; i<3; ++i) {
+        CAPTURE(i); // log the current input data (done manually as not fully supported yet by doctest)
+        CHECK_EQ(new_node.Coordinates()[i], doctest::Approx(node_coords[i]));
+    }
+}
+
+TEST_CASE("model_part_add_element_twice")
+{
+    ModelPart model_part("for_test");
+
+    model_part.CreateNewNode(1, 0,0,0);
+    REQUIRE_EQ(model_part.NumberOfNodes(), 1);
+
+    CHECK_THROWS_WITH(model_part.CreateNewNode(1, 0,0,0), "Error: "); // TODO find a better way of testing this
+}
+
+TEST_CASE("model_part_get_element")
+{
+    ModelPart model_part("for_test");
+
+    const int node_id = 691;
+    const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
+
+    model_part.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2]);
+
+    REQUIRE_EQ(model_part.NumberOfNodes(), 1);
+
+    SUBCASE("existing")
+    {
+        const auto& r_node = model_part.GetNode(node_id);
+
+        CHECK_EQ(r_node.Id(), node_id);
+        for (std::size_t i=0; i<3; ++i) {
+            CAPTURE(i); // log the current input data (done manually as not fully supported yet by doctest)
+            CHECK_EQ(r_node.Coordinates()[i], doctest::Approx(node_coords[i]));
+        }
+    }
+
+    SUBCASE("non_existing")
     {
         CHECK_THROWS_WITH(model_part.GetNode(node_id+1), "Error: "); // TODO find a better way of testing this
     }
