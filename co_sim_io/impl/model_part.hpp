@@ -165,40 +165,28 @@ public:
 
     Node& GetNode(const IdType I_Id)
     {
-        auto it_node = std::find_if(
-            mNodes.begin(), mNodes.end(),
-            [I_Id](const NodePointerType& rp_node) { return rp_node->Id() == I_Id;});
-
+        auto it_node = FindNode(I_Id);
         CO_SIM_IO_ERROR_IF(it_node == mNodes.end()) << "Node with Id " << I_Id << " does not exist!" << std::endl;
         return **it_node;
     }
 
     const Node& GetNode(const IdType I_Id) const
     {
-        auto it_node = std::find_if(
-            mNodes.begin(), mNodes.end(),
-            [I_Id](const NodePointerType& rp_node) { return rp_node->Id() == I_Id;});
-
+        auto it_node = FindNode(I_Id);
         CO_SIM_IO_ERROR_IF(it_node == mNodes.end()) << "Node with Id " << I_Id << " does not exist!" << std::endl;
         return **it_node;
     }
 
     Element& GetElement(const IdType I_Id)
     {
-        auto it_elem = std::find_if(
-            mElements.begin(), mElements.end(),
-            [I_Id](const ElementPointerType& rp_elem) { return rp_elem->Id() == I_Id;});
-
+        auto it_elem = FindElement(I_Id);
         CO_SIM_IO_ERROR_IF(it_elem == mElements.end()) << "Element with Id " << I_Id << " does not exist!" << std::endl;
         return **it_elem;
     }
 
     const Element& GetElement(const IdType I_Id) const
     {
-        auto it_elem = std::find_if(
-            mElements.begin(), mElements.end(),
-            [I_Id](const ElementPointerType& rp_elem) { return rp_elem->Id() == I_Id;});
-
+        auto it_elem = FindElement(I_Id);
         CO_SIM_IO_ERROR_IF(it_elem == mElements.end()) << "Element with Id " << I_Id << " does not exist!" << std::endl;
         return **it_elem;
     }
@@ -208,20 +196,42 @@ private:
     NodesContainerType mNodes;
     ElementsContainerType mElements;
 
+    NodesContainerType::const_iterator FindNode(const IdType I_Id) const
+    {
+        return std::find_if(
+            mNodes.begin(), mNodes.end(),
+            [I_Id](const NodePointerType& rp_node) { return rp_node->Id() == I_Id;});
+    }
+
+    NodesContainerType::iterator FindNode(const IdType I_Id)
+    {
+        return std::find_if(
+            mNodes.begin(), mNodes.end(),
+            [I_Id](const NodePointerType& rp_node) { return rp_node->Id() == I_Id;});
+    }
+
+    ElementsContainerType::const_iterator FindElement(const IdType I_Id) const
+    {
+        return std::find_if(
+            mElements.begin(), mElements.end(),
+            [I_Id](const ElementPointerType& rp_elem) { return rp_elem->Id() == I_Id;});
+    }
+
+    ElementsContainerType::iterator FindElement(const IdType I_Id)
+    {
+        return std::find_if(
+            mElements.begin(), mElements.end(),
+            [I_Id](const ElementPointerType& rp_elem) { return rp_elem->Id() == I_Id;});
+    }
+
     bool HasNode(const IdType I_Id) const
     {
-        for (const auto& rp_node : mNodes) {
-            if (rp_node->Id() == I_Id) return true;
-        }
-        return false;
+        return FindNode(I_Id) != mNodes.end();
     }
 
     bool HasElement(const IdType I_Id) const
     {
-        for (const auto& rp_elem : mElements) {
-            if (rp_elem->Id() == I_Id) return true;
-        }
-        return false;
+        return FindElement(I_Id) != mElements.end();
     }
 };
 
