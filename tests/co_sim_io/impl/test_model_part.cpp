@@ -71,7 +71,7 @@ TEST_CASE("element_basics")
 
     Node node(1, 0,0,0);
 
-    Element element(id, type, {node});
+    Element element(id, type, {&node});
 
     CHECK_EQ(element.Id(), id);
     CHECK_EQ(element.Type(), type);
@@ -86,7 +86,7 @@ TEST_CASE("element_checks")
 
     SUBCASE("negative_id")
     {
-        CHECK_THROWS_WITH(Element element(id, type, {node}), "Error: "); // TODO find a better way of testing this
+        CHECK_THROWS_WITH(Element element(id, type, {&node}), "Error: "); // TODO find a better way of testing this
     }
 
     SUBCASE("no_nodes")
@@ -107,7 +107,7 @@ TEST_CASE("element_nodes")
     Node node_2(node_ids[1], dummy_coords);
     Node node_3(node_ids[2], dummy_coords);
 
-    Element element(id, type, {node_1, node_2, node_3});
+    Element element(id, type, {&node_1, &node_2, &node_3});
 
     CHECK_EQ(element.Id(), id);
     CHECK_EQ(element.Type(), type);
@@ -116,7 +116,7 @@ TEST_CASE("element_nodes")
     std::size_t counter=0;
     for (Element::NodesContainerType::const_iterator node_it=element.NodesBegin(); node_it!=element.NodesEnd(); ++node_it) {
         CAPTURE(counter); // log the current input data (done manually as not fully supported yet by doctest)
-        CHECK_EQ(node_it->get().Id(), node_ids[counter]);
+        CHECK_EQ((*node_it)->Id(), node_ids[counter]);
         counter++;
     }
 }

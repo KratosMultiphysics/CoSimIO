@@ -21,6 +21,7 @@ see https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/mod
 */
 
 // System includes
+#include <memory>
 #include <vector>
 #include <string>
 #include <functional>
@@ -56,8 +57,6 @@ public:
     // delete copy and assignment CTor
     Node(const Node&) = delete;
     Node& operator=(Node const&) = delete;
-
-    Node(Node&&) = default;
 
     IdType Id() const { return mId; }
     double X() const { return mX; }
@@ -95,8 +94,6 @@ public:
     Element(const Element&) = delete;
     Element& operator=(Element const&) = delete;
 
-    Element(Element&&) = default;
-
     IdType Id() const { return mId; }
     ElementType Type() const { return mType; }
     std::size_t NumberOfNodes() const { return mNodes.size(); }
@@ -113,8 +110,10 @@ class ModelPart
 {
 public:
 
-    using NodesContainerType = std::vector<Node>;
-    using ElementsContainerType = std::vector<Element>;
+    using NodePointerType = std::shared_ptr<Node>; // TODO switch to intrusive_ptr
+    using ElementPointerType = std::shared_ptr<Element>; // TODO switch to intrusive_ptr
+    using NodesContainerType = std::vector<NodePointerType>;
+    using ElementsContainerType = std::vector<ElementPointerType>;
 
     explicit ModelPart(const std::string& I_Name) : mName(I_Name)
     {
@@ -138,15 +137,8 @@ public:
     {
         CO_SIM_IO_ERROR_IF(HasNode(I_Id)) << "The Node with Id " << I_Id << " exists already!" << std::endl;
 
-        mNodes.emplace_back(I_Id, I_X, I_Y, I_Z);
-
-        std::cout << "\naddress: " << &mNodes.back() << std::endl;
-        std::cout << "size: " << mNodes.size() << std::endl;
-
-        for (const auto& r_node: mNodes) {
-            std::cout << "    Node Id: " << r_node.Id() << std::endl;
-        }
-        return mNodes.back();
+        mNodes.push_back(std::make_shared<Node>(I_Id, I_X, I_Y, I_Z));
+        return *(mNodes.back());
     }
 
     Element& CreateNewElement(
@@ -159,10 +151,10 @@ public:
         Element::NodesContainerType nodes;
         nodes.reserve(I_Connectivities.size());
         for (const IdType node_id : I_Connectivities) {
-            nodes.push_back(GetNode(node_id));
+            nodes.push_back(&GetNode(node_id));
         }
-        mElements.emplace_back(I_Id, I_Type, nodes);
-        return mElements.back();
+        mElements.push_back(std::make_shared<Element>(I_Id, I_Type, nodes));
+        return *(mElements.back());
     }
 
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
@@ -175,40 +167,40 @@ public:
     {
         auto it_node = std::find_if(
             mNodes.begin(), mNodes.end(),
-            [I_Id](const Node& r_node) { return r_node.Id() == I_Id;});
+            [I_Id](const NodePointerType& rp_node) { return rp_node->Id() == I_Id;});
 
         CO_SIM_IO_ERROR_IF(it_node == mNodes.end()) << "Node with Id " << I_Id << " does not exist!" << std::endl;
-        return *it_node;
+        return **it_node;
     }
 
     const Node& GetNode(const IdType I_Id) const
     {
         auto it_node = std::find_if(
             mNodes.begin(), mNodes.end(),
-            [I_Id](const Node& r_node) { return r_node.Id() == I_Id;});
+            [I_Id](const NodePointerType& rp_node) { return rp_node->Id() == I_Id;});
 
         CO_SIM_IO_ERROR_IF(it_node == mNodes.end()) << "Node with Id " << I_Id << " does not exist!" << std::endl;
-        return *it_node;
+        return **it_node;
     }
 
     Element& GetElement(const IdType I_Id)
     {
         auto it_elem = std::find_if(
             mElements.begin(), mElements.end(),
-            [I_Id](const Element& r_elem) { return r_elem.Id() == I_Id;});
+            [I_Id](const ElementPointerType& rp_elem) { return rp_elem->Id() == I_Id;});
 
         CO_SIM_IO_ERROR_IF(it_elem == mElements.end()) << "Element with Id " << I_Id << " does not exist!" << std::endl;
-        return *it_elem;
+        return **it_elem;
     }
 
     const Element& GetElement(const IdType I_Id) const
     {
         auto it_elem = std::find_if(
             mElements.begin(), mElements.end(),
-            [I_Id](const Element& r_elem) { return r_elem.Id() == I_Id;});
+            [I_Id](const ElementPointerType& rp_elem) { return rp_elem->Id() == I_Id;});
 
         CO_SIM_IO_ERROR_IF(it_elem == mElements.end()) << "Element with Id " << I_Id << " does not exist!" << std::endl;
-        return *it_elem;
+        return **it_elem;
     }
 
 private:
@@ -218,16 +210,16 @@ private:
 
     bool HasNode(const IdType I_Id) const
     {
-        for (const auto& r_node : mNodes) {
-            if (r_node.Id() == I_Id) return true;
+        for (const auto& rp_node : mNodes) {
+            if (rp_node->Id() == I_Id) return true;
         }
         return false;
     }
 
     bool HasElement(const IdType I_Id) const
     {
-        for (const auto& r_elem : mElements) {
-            if (r_elem.Id() == I_Id) return true;
+        for (const auto& rp_elem : mElements) {
+            if (rp_elem->Id() == I_Id) return true;
         }
         return false;
     }
