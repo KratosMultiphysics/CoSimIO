@@ -158,7 +158,7 @@ TEST_CASE("model_part_add_nodes")
 
     const int node_id = 691;
     const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
-    const auto& new_node = model_part.CreateNewNode(node_id-1, node_coords[0], node_coords[1], node_coords[2]);
+    const auto& new_node = model_part.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2]);
     CHECK_EQ(model_part.NumberOfNodes(), 1);
 
     model_part.CreateNewNode(node_id+1, node_coords[0], node_coords[1], node_coords[2]);
