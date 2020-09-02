@@ -103,7 +103,7 @@ jobs:
         exit /b %errorlevel%
 
     - name: Running tests (Ctest)
-      if: ${{ matrix.python-version }} == '3.8' # only run for one py version, not necessary for all of them
+      if: ${{ matrix.python-version == '3.8' }} # only run for one py version, not necessary for all of them
       shell: cmd
       run: |
         set PATH=%PATH%;%GITHUB_WORKSPACE%/bin
