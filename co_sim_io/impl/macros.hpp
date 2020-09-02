@@ -33,7 +33,7 @@ the code where the CoSimIO is included
 #endif
 
 #ifndef CO_SIM_IO_ERROR_IF_NOT
-    #define CO_SIM_IO_ERROR_IF_NOT(conditional) if (!conditional) CO_SIM_IO_ERROR
+    #define CO_SIM_IO_ERROR_IF_NOT(conditional) if (!(conditional)) CO_SIM_IO_ERROR
 #endif
 
 #ifndef CO_SIM_IO_INFO
