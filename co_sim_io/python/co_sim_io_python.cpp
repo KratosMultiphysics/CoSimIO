@@ -27,6 +27,7 @@
 // CoSimIO includes
 #include "../co_sim_io.hpp"
 #include "info_to_python.hpp"
+#include "model_part_to_python.hpp"
 #include "connection_status_to_python.hpp"
 #include "version_to_python.hpp"
 
@@ -120,6 +121,7 @@ PYBIND11_MODULE(CoSimIO, m)
         { return CoSimIO::Register(I_Info, FunctionPointer); } );
 
     AddCoSimIOInfoToPython(m);
+    AddCoSimIOModelPartToPython(m);
     AddCoSimIOConnectionStatusToPython(m);
     AddCoSimIOVersionToPython(m);
 }
