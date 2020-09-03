@@ -295,25 +295,15 @@ TEST_CASE("model_part_ostream")
 class CoSimIO_ModelPart(unittest.TestCase):
     maxDiff = None # to display all the diff
 
-    def test_node_from_coords(self):
+    def test_node(self):
         coords = [1.0, -2.7, 9.44]
         node_id = 16
 
-        node = CoSimIO.Node(node_id, coords[0], coords[1], coords[2])
+        with self.subTest("from_coords"):
+            node = CoSimIO.Node(node_id, coords[0], coords[1], coords[2])
 
-        self.assertEqual(node.Id(), node_id)
-        self.assertAlmostEqual(node.X(), coords[0])
-        self.assertAlmostEqual(node.Y(), coords[1])
-        self.assertAlmostEqual(node.Z(), coords[2])
-
-        for i in range(3):
-            self.assertAlmostEqual(coords[i], node.Coordinates()[i], msg=str(i))
-
-    def test_node_from_coords_array(self):
-        coords = [1.0, -2.7, 9.44]
-        node_id = 16
-
-        node = CoSimIO.Node(node_id, coords)
+        with self.subTest("from_coords_array"):
+            node = CoSimIO.Node(node_id, coords)
 
         self.assertEqual(node.Id(), node_id)
         self.assertAlmostEqual(node.X(), coords[0])
