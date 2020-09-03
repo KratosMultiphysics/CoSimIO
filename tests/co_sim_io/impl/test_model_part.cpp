@@ -10,6 +10,9 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
+// System includes
+#include <sstream>
+
 // Project includes
 #include "co_sim_io_testing.hpp"
 #include "impl/model_part.hpp"
@@ -62,6 +65,19 @@ TEST_CASE("node_negative_id")
     {
         CHECK_THROWS_WITH(Node(id, coords), "Error: "); // TODO find a better way of testing this
     }
+}
+
+TEST_CASE("node_ostream")
+{
+    Node node(1, 0.2, -33.4, 647);
+
+    std::stringstream test_stream;
+
+    test_stream << node;
+
+    const std::string exp_string = "CoSimIO-Node; Id: 1\n    Coordinates: [ 0.2 | -33.4 | 647 ]\n";
+
+    CHECK_EQ(test_stream.str(), exp_string);
 }
 
 TEST_CASE("element_basics")
@@ -119,6 +135,24 @@ TEST_CASE("element_nodes")
         CHECK_EQ((*node_it)->Id(), node_ids[counter]);
         counter++;
     }
+}
+
+TEST_CASE("element_ostream")
+{
+    const std::array<double, 3> dummy_coords = {0,0,0};
+    Node node_1(1, dummy_coords);
+    Node node_2(22, dummy_coords);
+    Node node_3(321, dummy_coords);
+
+    Element element(65, 5, {&node_1, &node_2, &node_3});
+
+    std::stringstream test_stream;
+
+    test_stream << element;
+
+    const std::string exp_string = "CoSimIO-Element; Id: 65\n    Number of Nodes: 3\n    Node Ids: 1, 22, 321\n";
+
+    CHECK_EQ(test_stream.str(), exp_string);
 }
 
 TEST_CASE("model_part_basics")
@@ -302,6 +336,37 @@ TEST_CASE("model_part_get_element")
     {
         CHECK_THROWS_WITH(model_part.GetElement(elem_id+1), "Error: "); // TODO find a better way of testing this
     }
+}
+
+TEST_CASE("model_part_ostream")
+{
+    ModelPart model_part("for_test");
+
+    std::string exp_string;
+
+    SUBCASE("empty")
+    {
+        exp_string = "CoSimIO-ModelPart \"for_test\"\n    Number of Nodes: 0\n    Number of Elements: 0\n";
+    }
+
+    SUBCASE("with_entities")
+    {
+        const int node_ids[] = {2, 159, 61};
+        const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
+        model_part.CreateNewNode(node_ids[0], node_coords[0], node_coords[1], node_coords[2]);
+        model_part.CreateNewNode(node_ids[1], node_coords[1], node_coords[2], node_coords[0]);
+        model_part.CreateNewNode(node_ids[2], node_coords[2], node_coords[0], node_coords[1]);
+
+        model_part.CreateNewElement(15, 1, {node_ids[0]});
+
+        exp_string = "CoSimIO-ModelPart \"for_test\"\n    Number of Nodes: 3\n    Number of Elements: 1\n";
+    }
+
+    std::stringstream test_stream;
+
+    test_stream << model_part;
+
+    CHECK_EQ(test_stream.str(), exp_string);
 }
 
 } // TEST_SUITE("ModelPart")
