@@ -41,6 +41,14 @@ This will compile the binaries in the build folder and installs them into the bi
 
 Please don't forget to add the binaries in the bin folder to your `PYTHONPATH`.
 
+Usually pybind automatically detects the Python installation. Sometimes it can however be necessary to explicitly specify the target Python version. This can be achieved through CMake by setting PYBIND11_PYTHON_VERSION or an exact Python installation can be specified with PYTHON_EXECUTABLE. For example:
+```cmake
+-DPYBIND11_PYTHON_VERSION=3.6
+# or
+-DPYTHON_EXECUTABLE=path/to/python
+```
+see also the corresponding [pybind documentstion](https://pybind11.readthedocs.io/en/stable/compiling.html#configuration-variables)
+
 
 
 ## Tutorial 2: Hello CosimIO
