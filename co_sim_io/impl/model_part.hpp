@@ -64,12 +64,28 @@ public:
     double Z() const { return mZ; }
     CoordinatesType Coordinates() const { return {mX, mY, mZ}; }
 
+    void Print(std::ostream& rOStream) const
+    {
+        rOStream << "CoSimIO-Node; Id: " << Id() << "\n";
+        rOStream << "    Coordinates: [ " << X() << " | " << Y() << " | " << Z() << " ]" << std::endl;
+    }
+
 private:
     IdType mId;
     double mX;
     double mY;
     double mZ;
 };
+
+/// output stream function
+inline std::ostream & operator <<(
+    std::ostream& rOStream,
+    const Node& rThis)
+{
+    rThis.Print(rOStream);
+    return rOStream;
+}
+
 
 class Element
 {
@@ -100,11 +116,34 @@ public:
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
     NodesContainerType::const_iterator NodesEnd() const { return mNodes.end(); }
 
+    void Print(std::ostream& rOStream) const
+    {
+        rOStream << "CoSimIO-Element; Id: " << Id() << "\n";
+        rOStream << "    Number of Nodes: " << NumberOfNodes() << "\n";
+        rOStream << "    Node Ids: ";
+        if (NumberOfNodes() > 0) {
+            rOStream << mNodes[0]->Id();
+        }
+        for (std::size_t i=1; i<NumberOfNodes(); ++i) {
+            rOStream << ", " << mNodes[i]->Id();
+        }
+        rOStream << std::endl;
+    }
+
 private:
     IdType mId;
     ElementType mType;
     NodesContainerType mNodes;
 };
+
+/// output stream function
+inline std::ostream & operator <<(
+    std::ostream& rOStream,
+    const Element& rThis)
+{
+    rThis.Print(rOStream);
+    return rOStream;
+}
 
 class ModelPart
 {
@@ -191,6 +230,13 @@ public:
         return **it_elem;
     }
 
+    void Print(std::ostream& rOStream) const
+    {
+        rOStream << "CoSimIO-ModelPart \"" << mName << "\"\n";
+        rOStream << "    Number of Nodes: " << NumberOfNodes() << "\n";
+        rOStream << "    Number of Elements: " << NumberOfElements() << std::endl;
+    }
+
 private:
     std::string mName;
     NodesContainerType mNodes;
@@ -234,6 +280,15 @@ private:
         return FindElement(I_Id) != mElements.end();
     }
 };
+
+/// output stream function
+inline std::ostream & operator <<(
+    std::ostream& rOStream,
+    const ModelPart& rThis)
+{
+    rThis.Print(rOStream);
+    return rOStream;
+}
 
 } //namespace CoSimIO
 
