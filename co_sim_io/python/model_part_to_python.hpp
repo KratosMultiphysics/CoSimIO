@@ -47,7 +47,7 @@ void AddCoSimIOModelPartToPython(pybind11::module& m)
         .def("Id", &CoSimIO::Element::Id)
         .def("Type", &CoSimIO::Element::Type)
         .def("NumberOfNodes", &CoSimIO::Element::NumberOfNodes)
-        .def("Nodes", [](CoSimIO::Element& I_Element) {
+        .def_property_readonly("Nodes", [](CoSimIO::Element& I_Element) {
             return py::make_iterator(I_Element.NodesBegin(), I_Element.NodesEnd());
             }, py::keep_alive<0, 1>()) /* Keep vector alive while iterator is used */
         .def("__str__",   [](const CoSimIO::Element& I_Element)
@@ -56,14 +56,17 @@ void AddCoSimIOModelPartToPython(pybind11::module& m)
 
     py::class_<CoSimIO::ModelPart>(m,"ModelPart")
         .def(py::init<const std::string&>())
+        .def("Name",             &CoSimIO::ModelPart::Name)
+        .def("NumberOfNodes",    &CoSimIO::ModelPart::NumberOfNodes)
+        .def("NumberOfElements", &CoSimIO::ModelPart::NumberOfElements)
         .def("CreateNewNode",    &CoSimIO::ModelPart::CreateNewNode)
         .def("CreateNewElement", &CoSimIO::ModelPart::CreateNewElement)
         // .def("GetNode",          &CoSimIO::ModelPart::GetNode)
         // .def("GetElement",       &CoSimIO::ModelPart::GetElement)
-        .def("Nodes", [](CoSimIO::ModelPart& I_ModelPart) {
+        .def_property_readonly("Nodes", [](CoSimIO::ModelPart& I_ModelPart) {
             return py::make_iterator(I_ModelPart.NodesBegin(), I_ModelPart.NodesEnd());
             }, py::keep_alive<0, 1>()) /* Keep vector alive while iterator is used */
-        .def("Elements", [](CoSimIO::ModelPart& I_ModelPart) {
+        .def_property_readonly("Elements", [](CoSimIO::ModelPart& I_ModelPart) {
             return py::make_iterator(I_ModelPart.ElementsBegin(), I_ModelPart.ElementsEnd());
             }, py::keep_alive<0, 1>()) /* Keep vector alive while iterator is used */
         .def("__str__",   [](const CoSimIO::ModelPart& I_ModelPart)

@@ -281,14 +281,14 @@ class CoSimIO_ModelPart(unittest.TestCase):
         node_2 = CoSimIO.Node(node_ids[1], dummy_coords)
         node_3 = CoSimIO.Node(node_ids[2], dummy_coords)
 
-        element CoSimIO.Element(elem_id, elem_type, [node_1, node_2, node_3])
+        element = CoSimIO.Element(elem_id, elem_type, [node_1, node_2, node_3])
 
         self.assertEqual(element.Id(), elem_id)
         self.assertEqual(element.Type(), elem_type)
         self.assertEqual(element.NumberOfNodes(), 3)
 
         for i, node in enumerate(element.Nodes):
-            self.assertEqual(node.Id(), node_ids[i]. msg=str(i))
+            self.assertEqual(node.Id(), node_ids[i], msg=str(i))
 
     def test_element_printing(self):
         dummy_coords = [0,0,0]
