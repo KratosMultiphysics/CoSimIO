@@ -130,7 +130,7 @@ TEST_CASE("element_nodes")
     CHECK_EQ(element.NumberOfNodes(), 3);
 
     std::size_t counter=0;
-    for (Element::NodesContainerType::const_iterator node_it=element.NodesBegin(); node_it!=element.NodesEnd(); ++node_it) {
+    for (auto node_it=element.NodesBegin(); node_it!=element.NodesEnd(); ++node_it) {
         CAPTURE(counter); // log the current input data (done manually as not fully supported yet by doctest)
         CHECK_EQ((*node_it)->Id(), node_ids[counter]);
         counter++;
@@ -204,6 +204,13 @@ TEST_CASE("model_part_create_new_nodes")
         CAPTURE(i); // log the current input data (done manually as not fully supported yet by doctest)
         CHECK_EQ(new_node.Coordinates()[i], doctest::Approx(node_coords[i]));
     }
+
+    std::size_t counter=0;
+    for (auto node_it=model_part.NodesBegin(); node_it!=model_part.NodesEnd(); ++node_it) {
+        CAPTURE(counter); // log the current input data (done manually as not fully supported yet by doctest)
+        CHECK_EQ((*node_it)->Id(), node_id+counter);
+        counter++;
+    }
 }
 
 TEST_CASE("model_part_create_new_node_twice")
@@ -235,6 +242,17 @@ TEST_CASE("model_part_get_node")
         for (std::size_t i=0; i<3; ++i) {
             CAPTURE(i); // log the current input data (done manually as not fully supported yet by doctest)
             CHECK_EQ(r_node.Coordinates()[i], doctest::Approx(node_coords[i]));
+        }
+    }
+
+    SUBCASE("existing_pointer_version")
+    {
+        const auto p_node = model_part.pGetNode(node_id);
+
+        CHECK_EQ(p_node->Id(), node_id);
+        for (std::size_t i=0; i<3; ++i) {
+            CAPTURE(i); // log the current input data (done manually as not fully supported yet by doctest)
+            CHECK_EQ(p_node->Coordinates()[i], doctest::Approx(node_coords[i]));
         }
     }
 
@@ -330,6 +348,15 @@ TEST_CASE("model_part_get_element")
         CHECK_EQ(r_elem.Id(), elem_id);
         CHECK_EQ(r_elem.Type(), 5);
         CHECK_EQ(r_elem.NumberOfNodes(), 1);
+    }
+
+    SUBCASE("existing_pointer_version")
+    {
+        const auto p_elem = model_part.pGetElement(elem_id);
+
+        CHECK_EQ(p_elem->Id(), elem_id);
+        CHECK_EQ(p_elem->Type(), 5);
+        CHECK_EQ(p_elem->NumberOfNodes(), 1);
     }
 
     SUBCASE("non_existing")
