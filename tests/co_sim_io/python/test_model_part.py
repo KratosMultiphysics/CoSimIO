@@ -19,72 +19,7 @@ import CoSimIO
 
 
 '''
-TEST_CASE("element_basics")
-{
-    const int id = 33;
-    const std::size_t type = 5;
 
-    Node node(1, 0,0,0);
-
-    Element element(id, type, {&node});
-
-    CHECK_EQ(element.Id(), id);
-    CHECK_EQ(element.Type(), type);
-    CHECK_EQ(element.NumberOfNodes(), 1);
-}
-
-TEST_CASE("element_nodes")
-{
-    const int id = 33;
-    const std::size_t type = 5;
-
-    const int node_ids[] = {2, 159, 61};
-
-    const std::array<double, 3> dummy_coords = {0,0,0};
-    Node node_1(node_ids[0], dummy_coords);
-    Node node_2(node_ids[1], dummy_coords);
-    Node node_3(node_ids[2], dummy_coords);
-
-    Element element(id, type, {&node_1, &node_2, &node_3});
-
-    CHECK_EQ(element.Id(), id);
-    CHECK_EQ(element.Type(), type);
-    CHECK_EQ(element.NumberOfNodes(), 3);
-
-    std::size_t counter=0;
-    for (Element::NodesContainerType::const_iterator node_it=element.NodesBegin(); node_it!=element.NodesEnd(); ++node_it) {
-        CAPTURE(counter); // log the current input data (done manually as not fully supported yet by doctest)
-        CHECK_EQ((*node_it)->Id(), node_ids[counter]);
-        counter++;
-    }
-}
-
-TEST_CASE("element_ostream")
-{
-    const std::array<double, 3> dummy_coords = {0,0,0};
-    Node node_1(1, dummy_coords);
-    Node node_2(22, dummy_coords);
-    Node node_3(321, dummy_coords);
-
-    Element element(65, 5, {&node_1, &node_2, &node_3});
-
-    std::stringstream test_stream;
-
-    test_stream << element;
-
-    const std::string exp_string = "CoSimIO-Element; Id: 65\n    Number of Nodes: 3\n    Node Ids: 1, 22, 321\n";
-
-    CHECK_EQ(test_stream.str(), exp_string);
-}
-
-TEST_CASE("model_part_basics")
-{
-    ModelPart model_part("for_test");
-
-    CHECK_EQ(model_part.Name(), "for_test");
-    CHECK_EQ(model_part.NumberOfNodes(), 0);
-    CHECK_EQ(model_part.NumberOfElements(), 0);
-}
 
 TEST_CASE("model_part_invalid_names")
 {
@@ -322,6 +257,56 @@ class CoSimIO_ModelPart(unittest.TestCase):
         exp_string = "CoSimIO-Node; Id: 16\n    Coordinates: [ 1 | -2.7 | 9.44 ]\n"
         self.assertMultiLineEqual(str(node), exp_string)
 
+    def test_element_basics(self):
+        elem_id = 33
+        elem_type = 5
+
+        node = CoSimIO.Node(1, 0,0,0)
+
+        element = CoSimIO.Element(elem_id, elem_type, [node])
+
+        self.assertEqual(element.Id(), elem_id)
+        self.assertEqual(element.Type(), elem_type)
+        self.assertEqual(element.NumberOfNodes(), 1)
+
+    def test_element_nodes(self):
+        elem_id = 33
+        elem_type = 5
+
+        node_ids = [2, 159, 61]
+
+        dummy_coords = [0,0,0]
+
+        node_1 = CoSimIO.Node(node_ids[0], dummy_coords)
+        node_2 = CoSimIO.Node(node_ids[1], dummy_coords)
+        node_3 = CoSimIO.Node(node_ids[2], dummy_coords)
+
+        element CoSimIO.Element(elem_id, elem_type, [node_1, node_2, node_3])
+
+        self.assertEqual(element.Id(), elem_id)
+        self.assertEqual(element.Type(), elem_type)
+        self.assertEqual(element.NumberOfNodes(), 3)
+
+        for i, node in enumerate(element.Nodes):
+            self.assertEqual(node.Id(), node_ids[i]. msg=str(i))
+
+    def test_element_printing(self):
+        dummy_coords = [0,0,0]
+        node_1 = CoSimIO.Node(1, dummy_coords)
+        node_2 = CoSimIO.Node(22, dummy_coords)
+        node_3 = CoSimIO.Node(321, dummy_coords)
+
+        element = CoSimIO.Element(65, 5, [node_1, node_2, node_3])
+
+        exp_string = "CoSimIO-Element; Id: 65\n    Number of Nodes: 3\n    Node Ids: 1, 22, 321\n"
+        self.assertMultiLineEqual(str(element), exp_string)
+
+    def test_model_part_basics(self):
+        model_part = CoSimIO.ModelPart("for_test")
+
+        self.assertEqual(model_part.Name(), "for_test")
+        self.assertEqual(model_part.NumberOfNodes(), 0)
+        self.assertEqual(model_part.NumberOfElements(), 0)
 
 
 if __name__ == '__main__':
