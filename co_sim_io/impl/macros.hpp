@@ -27,6 +27,7 @@ the code where the CoSimIO is included
 
     namespace CoSimIO {
 
+    // Simplified version of kratos/includes/exception.h
     class Exception : public std::exception
     {
         public:
