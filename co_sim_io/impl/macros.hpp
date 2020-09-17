@@ -21,11 +21,58 @@ the code where the CoSimIO is included
 
 #ifndef CO_SIM_IO_ERROR
     #include <iostream>
+    #include <string>
     #include <stdexcept>
-    struct err { // helper struct to mimic behavior of KRATOS_ERROR
-    ~err() noexcept(false) { throw std::runtime_error("Error: "); } // destructors are noexcept by default
+    #include <sstream>
+
+    namespace CoSimIO {
+
+    class Exception : public std::exception
+    {
+        public:
+        explicit Exception(const std::string& rWhat) : std::exception(), mMessage(rWhat) { }
+
+        const char* what() const noexcept override
+        {
+            return mMessage.c_str();
+        }
+
+        /// string stream function
+        template<class StreamValueType>
+        Exception& operator << (StreamValueType const& rValue)
+        {
+            std::stringstream buffer;
+            buffer << rValue;
+
+            mMessage.append(buffer.str());
+
+            return *this;
+        }
+
+        Exception& operator << (std::ostream& (*pf)(std::ostream&))
+        {
+            std::stringstream buffer;
+            pf(buffer);
+
+            mMessage.append(buffer.str());
+
+            return *this;
+        }
+
+        Exception& operator << (const char* pString)
+        {
+            mMessage.append(pString);
+            return *this;
+        }
+
+        private:
+        std::string mMessage;
+
     };
-    #define CO_SIM_IO_ERROR (err(), std::cout)
+
+    } // namespace CoSimIO
+
+    #define CO_SIM_IO_ERROR throw CoSimIO::Exception("Error: ")
 #endif
 
 #ifndef CO_SIM_IO_ERROR_IF
