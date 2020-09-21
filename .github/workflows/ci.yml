@@ -55,6 +55,11 @@ jobs:
           ctest
         fi
 
+    - uses: actions/upload-artifact@v2
+      with:
+        name: my-artifact
+        path: /home/runner/work/CoSimIO/CoSimIO/build/Testing/Temporary/ # or path/to/artifact
+
     - name: Running tests (Python)
       run: |
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
