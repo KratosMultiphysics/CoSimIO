@@ -12,6 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
+      continue-on-error: true
       matrix:
         os: [ubuntu-latest]
         python-version: [3.8]
