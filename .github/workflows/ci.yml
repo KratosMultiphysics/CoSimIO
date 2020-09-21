@@ -48,14 +48,14 @@ jobs:
     - name: Running tests (Ctest)
       if: ${{ matrix.python-version == '3.8' }} # only run for one py version, not necessary for all of them
       run: |
+        which bash
+        which dash
         cd build
         if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
           ctest -T memcheck
         else
           ctest
         fi
-        which bash
-        which dash
 
     - name: Running tests (Python)
       run: |
