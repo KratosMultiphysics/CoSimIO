@@ -13,8 +13,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-        python-version: [3.8]
+        os: [ubuntu-latest, macOS-latest]
+        python-version: [3.5, 3.6, 3.7, 3.8]
     timeout-minutes: 15
     env:
       FC: gfortran-9
@@ -46,7 +46,6 @@ jobs:
         cmake --build "build" --target install
 
     - name: Running tests (Ctest)
-      continue-on-error: true
       if: ${{ matrix.python-version == '3.8' }} # only run for one py version, not necessary for all of them
       run: |
         cd build
@@ -56,14 +55,68 @@ jobs:
           ctest
         fi
 
-    - uses: actions/upload-artifact@v2
-      with:
-        name: my-artifact
-        path: /home/runner/work/CoSimIO/CoSimIO/build/Testing/Temporary/ # or path/to/artifact
-
     - name: Running tests (Python)
       run: |
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
+        cd tests
+        # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
+        python run_python_tests.py
+
+
+  Windows:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.5, 3.6, 3.7, 3.8]
+    timeout-minutes: 5
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Build CoSimIO
+      shell: cmd
+      run: |
+        call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64 || goto :error
+
+        set CC=cl.exe
+        set CXX=cl.exe
+
+        cmake                         ^
+          -G"Visual Studio 16 2019"   ^
+          -H"."                       ^
+          -B"build"                   ^
+          -DBUILD_C=ON                ^
+          -DBUILD_PYTHON=ON           ^
+          -DCMAKE_CXX_FLAGS="/WX"     || goto :error
+
+        cmake --build "build" --target install -- /p:Platform=x64 || goto :error
+
+        goto :EOF
+
+        :error
+        echo Failed with error #%errorlevel%.
+        exit /b %errorlevel%
+
+    - name: Running tests (Ctest)
+      if: ${{ matrix.python-version == '3.8' }} # only run for one py version, not necessary for all of them
+      shell: cmd
+      run: |
+        set PATH=%PATH%;%GITHUB_WORKSPACE%/bin
+        cd build
+        ctest -C Debug
+
+    - name: Running tests (Python)
+      env:
+        PYTHON_CMD: python # for the tests (subprocess)
+      shell: cmd
+      run: |
+        set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%/bin
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
         python run_python_tests.py
