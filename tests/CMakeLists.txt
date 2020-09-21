@@ -72,7 +72,7 @@ if(BUILD_C)
     add_test(hello_c_test hello_c_test)
     add_test(NAME connect_disconnect_c_test COMMAND bash run.sh $<TARGET_FILE:connect_disconnect_c_test>  $<TARGET_FILE:connect_disconnect_c_test>)
     # TODO for some reason those tests hang in Win => FIXME
-    if(not MSVC)
+    if(NOT MSVC)
         add_test(NAME import_export_data_c_test COMMAND bash run.sh $<TARGET_FILE:export_data_c_test>  $<TARGET_FILE:import_data_c_test>)
         add_test(NAME import_export_mesh_c_test COMMAND bash run.sh $<TARGET_FILE:export_mesh_c_test>  $<TARGET_FILE:import_mesh_c_test>)
     endif()
