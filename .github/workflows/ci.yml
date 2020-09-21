@@ -34,9 +34,6 @@ jobs:
 
     - name: Build CoSimIO
       run: |
-        which bash
-        which dash
-
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_C=ON               \
@@ -51,8 +48,6 @@ jobs:
     - name: Running tests (Ctest)
       if: ${{ matrix.python-version == '3.8' }} # only run for one py version, not necessary for all of them
       run: |
-        which bash
-        which dash
         cd build
         if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
           ctest -T memcheck
