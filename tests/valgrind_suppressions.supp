@@ -2,11 +2,11 @@
    <insert_a_suppression_name_here>
    Memcheck:Leak
    ...
-   obj:/bin/bash
+   obj:*/bin/bash
 }
 {
    <insert_a_suppression_name_here>
    Memcheck:Leak
    ...
-   obj:/bin/dash
+   obj:*/bin/dash
 }
