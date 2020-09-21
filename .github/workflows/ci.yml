@@ -12,7 +12,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      continue-on-error: true
       matrix:
         os: [ubuntu-latest]
         python-version: [3.8]
@@ -47,6 +46,7 @@ jobs:
         cmake --build "build" --target install
 
     - name: Running tests (Ctest)
+      continue-on-error: true
       if: ${{ matrix.python-version == '3.8' }} # only run for one py version, not necessary for all of them
       run: |
         cd build
