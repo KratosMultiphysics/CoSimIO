@@ -2,7 +2,7 @@ project(CoSimIO CXX C)
 cmake_minimum_required (VERSION 2.8.6)
 
 # this has to be specified BEFORE including CTest!
-set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track-origins=yes --tool=memcheck")
+set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track-origins=yes --tool=memcheck --gen-suppressions=all ")
 set(MEMORYCHECK_SUPPRESSIONS_FILE "${CMAKE_SOURCE_DIR}/tests/valgrind_suppressions.supp")
 
 include(CTest)
