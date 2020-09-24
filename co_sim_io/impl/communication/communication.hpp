@@ -35,6 +35,18 @@ public:
 
     virtual ~Communication() = default; // impl of disconnect has to be in derived class due to order of class destruction
 
+    Info Connect(const Info& I_Info)
+    {
+        CO_SIM_IO_ERROR << "Connect not implemented yet" << std::endl;
+        return Info();
+    }
+
+    Info Disonnect(const Info& I_Info)
+    {
+        CO_SIM_IO_ERROR << "Disonnect not implemented yet" << std::endl;
+        return Info();
+    }
+
     bool Connect()
     {
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Connecting \"" << mConnectionName << "\" as Connection-" << (mIsConnectionMaster ? "MASTER" : "SLAVE") << " ..." << std::endl;
@@ -82,6 +94,32 @@ public:
         CheckConnection(); return ImportControlSignalDetail(std::forward<Args>(args)...);
     }
 
+    template<class... Args>
+    Info ImportData_1X2(Args&&... args) // TODO fix name once other interface is removed
+    {
+        CheckConnection(); return ImportDataImpl(std::forward<Args>(args)...);
+    }
+
+    template<class... Args>
+    Info ExportData_1X2(Args&&... args) // TODO fix name once other interface is removed
+    {
+        CheckConnection(); return ExportDataImpl(std::forward<Args>(args)...);
+    }
+
+    template<class... Args>
+    Info ImportMesh_1X2(Args&&... args) // TODO fix name once other interface is removed
+    {
+        CheckConnection(); return ImportMeshImpl(std::forward<Args>(args)...);
+    }
+
+    template<class... Args>
+    Info ExportMesh_1X2(Args&&... args) // TODO fix name once other interface is removed
+    {
+        CheckConnection(); return ExportMeshImpl(std::forward<Args>(args)...);
+    }
+
+
+    // old interface, functions need to be removed before release
     void SendControlSignal(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal)
     {
         CheckConnection(); SendControlSignalDetail(rIdentifier, Signal);
