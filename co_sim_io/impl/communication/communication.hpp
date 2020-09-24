@@ -19,6 +19,7 @@
 // Project includes
 #include "../info.hpp"
 #include "../data_container.hpp"
+#include "../model_part.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -33,6 +34,18 @@ public:
     }
 
     virtual ~Communication() = default; // impl of disconnect has to be in derived class due to order of class destruction
+
+    Info Connect(const Info& I_Info)
+    {
+        CO_SIM_IO_ERROR << "Connect not implemented yet" << std::endl;
+        return Info();
+    }
+
+    Info Disonnect(const Info& I_Info)
+    {
+        CO_SIM_IO_ERROR << "Disonnect not implemented yet" << std::endl;
+        return Info();
+    }
 
     bool Connect()
     {
@@ -69,6 +82,44 @@ public:
         return true;
     }
 
+    template<class... Args>
+    Info ExportControlSignal(Args&&... args)
+    {
+        CheckConnection(); return ExportControlSignalDetail(std::forward<Args>(args)...);
+    }
+
+    template<class... Args>
+    Info ImportControlSignal(Args&&... args)
+    {
+        CheckConnection(); return ImportControlSignalDetail(std::forward<Args>(args)...);
+    }
+
+    template<class... Args>
+    Info ImportData_1X2(Args&&... args) // TODO fix name once other interface is removed
+    {
+        CheckConnection(); return ImportDataImpl(std::forward<Args>(args)...);
+    }
+
+    template<class... Args>
+    Info ExportData_1X2(Args&&... args) // TODO fix name once other interface is removed
+    {
+        CheckConnection(); return ExportDataImpl(std::forward<Args>(args)...);
+    }
+
+    template<class... Args>
+    Info ImportMesh_1X2(Args&&... args) // TODO fix name once other interface is removed
+    {
+        CheckConnection(); return ImportMeshImpl(std::forward<Args>(args)...);
+    }
+
+    template<class... Args>
+    Info ExportMesh_1X2(Args&&... args) // TODO fix name once other interface is removed
+    {
+        CheckConnection(); return ExportMeshImpl(std::forward<Args>(args)...);
+    }
+
+
+    // old interface, functions need to be removed before release
     void SendControlSignal(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal)
     {
         CheckConnection(); SendControlSignalDetail(rIdentifier, Signal);
@@ -128,6 +179,64 @@ private:
     bool mPrintTiming = false;
     bool mIsConnected = false;
 
+    void CheckConnection()
+    {
+        CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "No active connection exists!" << std::endl;;
+    }
+
+    // new interface, functions return Info
+    virtual Info ConnectDetail(const Info& I_Info) = 0;
+    virtual Info DisconnectDetail(const Info& I_Info) = 0;
+
+    virtual Info ImportControlSignalDetail(
+        const Info& I_Info,
+        ControlSignal& O_Signal)
+    {
+        CO_SIM_IO_ERROR << "ImportControlSignalDetail not implemented for this comm-type" << std::endl;
+        return Info();
+    }
+
+    virtual Info ExportControlSignalDetail(
+        const Info& I_Info,
+        const ControlSignal I_Signal)
+    {
+        CO_SIM_IO_ERROR << "ExportControlSignalDetail not implemented for this comm-type" << std::endl;
+        return Info();
+    }
+
+    virtual Info ImportDataImpl(
+        const Info& I_Info,
+        Internals::DataContainer<double>& rData)
+    {
+        CO_SIM_IO_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
+        return Info();
+    }
+
+    virtual Info ExportDataImpl(
+        const Info& I_Info,
+        const Internals::DataContainer<double>& rData)
+    {
+        CO_SIM_IO_ERROR << "ExportDataImpl not implemented for this comm-type!" << std::endl;
+        return Info();
+    }
+
+    virtual Info ImportMeshImpl(
+        const Info& I_Info,
+        ModelPart& O_ModelPart)
+    {
+        CO_SIM_IO_ERROR << "ImportMeshImpl not implemented for this comm-type!" << std::endl;
+        return Info();
+    }
+
+    virtual Info ExportMeshImpl(
+        const Info& I_Info,
+        const ModelPart& I_ModelPart)
+    {
+        CO_SIM_IO_ERROR << "ExportMeshImpl not implemented for this comm-type!" << std::endl;
+        return Info();
+    }
+
+    // old interface, functions need to be removed before release
     virtual bool ConnectDetail() = 0;
     virtual bool DisconnectDetail() = 0;
 
@@ -171,11 +280,6 @@ private:
         const CoSimIO::Internals::DataContainer<int>& rElementTypes)
     {
         CO_SIM_IO_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
-    }
-
-    void CheckConnection()
-    {
-        CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "No active connection exists!" << std::endl;;
     }
 };
 
