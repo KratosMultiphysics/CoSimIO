@@ -19,6 +19,7 @@
 // Project includes
 #include "../info.hpp"
 #include "../data_container.hpp"
+#include "../model_part.hpp"
 
 namespace CoSimIO {
 namespace Internals {
