@@ -212,25 +212,28 @@ private:
         return Info();
     }
 
-    virtual void ExportDataImpl(
+    virtual Info ExportDataImpl(
         const Info& I_Info,
         const Internals::DataContainer<double>& rData)
     {
         CO_SIM_IO_ERROR << "ExportDataImpl not implemented for this comm-type!" << std::endl;
+        return Info();
     }
 
-    virtual void ImportMeshImpl(
+    virtual Info ImportMeshImpl(
         const Info& I_Info,
         ModelPart& O_ModelPart)
     {
         CO_SIM_IO_ERROR << "ImportMeshImpl not implemented for this comm-type!" << std::endl;
+        return Info();
     }
 
-    virtual void ExportMeshImpl(
+    virtual Info ExportMeshImpl(
         const Info& I_Info,
         const ModelPart& I_ModelPart)
     {
         CO_SIM_IO_ERROR << "ExportMeshImpl not implemented for this comm-type!" << std::endl;
+        return Info();
     }
 
     // old interface, functions need to be removed before release
