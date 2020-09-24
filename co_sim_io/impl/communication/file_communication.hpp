@@ -113,15 +113,25 @@ private:
     std::string mCommFolder = "";
     bool mCommInFolder = false;
 
+    virtual Info ConnectDetail(const Info& I_Info) override
+    {
+        return Info(); // nothing needed here for file-based communication (maybe do sth here?)
+        // master could write a file that gets deleted by slave to aknowledge connection... Probably not a bad idea! => slave returns once it found and deleted file, master waits for deletion of file
+    }
+
+    virtual Info DisconnectDetail(const Info& I_Info) override
+    {
+        return Info(); // nothing needed here for file-based communication (maybe do sth here?)
+    }
+
     bool ConnectDetail() override
     {
-        return true; // nothing needed here for file-based communication (maybe do sth here?)
-        // master could write a file that gets deleted by slave to aknowledge connection... Probably not a bad idea! => slave returns once it found and deleted file, master waits for deletion of file
+        return true;
     }
 
     bool DisconnectDetail() override
     {
-        return true; // nothing needed here for file-based communication (maybe do sth here?)
+        return true;
     }
 
      void ImportDataImpl(

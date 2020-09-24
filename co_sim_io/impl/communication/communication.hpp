@@ -129,6 +129,61 @@ private:
     bool mPrintTiming = false;
     bool mIsConnected = false;
 
+    void CheckConnection()
+    {
+        CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "No active connection exists!" << std::endl;;
+    }
+
+    // new interface, functions return Info
+    virtual Info ConnectDetail(const Info& I_Info) = 0;
+    virtual Info DisconnectDetail(const Info& I_Info) = 0;
+
+    virtual Info ImportControlSignalDetail(
+        const Info& I_Info,
+        ControlSignal& O_Signal)
+    {
+        CO_SIM_IO_ERROR << "ImportControlSignalDetail not implemented for this comm-type" << std::endl;
+        return Info();
+    }
+
+    virtual Info ExportControlSignalDetail(
+        const Info& I_Info,
+        const ControlSignal I_Signal)
+    {
+        CO_SIM_IO_ERROR << "ExportControlSignalDetail not implemented for this comm-type" << std::endl;
+        return Info();
+    }
+
+    virtual Info ImportDataImpl(
+        const Info& I_Info,
+        Internals::DataContainer<double>& rData)
+    {
+        CO_SIM_IO_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
+        return Info();
+    }
+
+    virtual void ExportDataImpl(
+        const Info& I_Info,
+        const Internals::DataContainer<double>& rData)
+    {
+        CO_SIM_IO_ERROR << "ExportDataImpl not implemented for this comm-type!" << std::endl;
+    }
+
+    virtual void ImportMeshImpl(
+        const Info& I_Info,
+        ModelPart& O_ModelPart)
+    {
+        CO_SIM_IO_ERROR << "ImportMeshImpl not implemented for this comm-type!" << std::endl;
+    }
+
+    virtual void ExportMeshImpl(
+        const Info& I_Info,
+        const ModelPart& I_ModelPart)
+    {
+        CO_SIM_IO_ERROR << "ExportMeshImpl not implemented for this comm-type!" << std::endl;
+    }
+
+    // old interface, functions need to be removed before release
     virtual bool ConnectDetail() = 0;
     virtual bool DisconnectDetail() = 0;
 
@@ -172,11 +227,6 @@ private:
         const CoSimIO::Internals::DataContainer<int>& rElementTypes)
     {
         CO_SIM_IO_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
-    }
-
-    void CheckConnection()
-    {
-        CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "No active connection exists!" << std::endl;;
     }
 };
 
