@@ -70,6 +70,18 @@ public:
         return true;
     }
 
+    template<class... Args>
+    Info ExportControlSignal(Args&&... args)
+    {
+        CheckConnection(); return ExportControlSignalDetail(std::forward<Args>(args)...);
+    }
+
+    template<class... Args>
+    Info ImportControlSignal(Args&&... args)
+    {
+        CheckConnection(); return ImportControlSignalDetail(std::forward<Args>(args)...);
+    }
+
     void SendControlSignal(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal)
     {
         CheckConnection(); SendControlSignalDetail(rIdentifier, Signal);
