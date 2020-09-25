@@ -83,15 +83,15 @@ public:
     }
 
     template<class... Args>
-    Info ExportControlSignal(Args&&... args)
+    Info ExportInfo(Args&&... args)
     {
-        CheckConnection(); return ExportControlSignalDetail(std::forward<Args>(args)...);
+        CheckConnection(); return ExportInfoDetail(std::forward<Args>(args)...);
     }
 
     template<class... Args>
-    Info ImportControlSignal(Args&&... args)
+    Info ImportInfo(Args&&... args)
     {
-        CheckConnection(); return ImportControlSignalDetail(std::forward<Args>(args)...);
+        CheckConnection(); return ImportInfoDetail(std::forward<Args>(args)...);
     }
 
     template<class... Args>
@@ -188,19 +188,15 @@ private:
     virtual Info ConnectDetail(const Info& I_Info) = 0;
     virtual Info DisconnectDetail(const Info& I_Info) = 0;
 
-    virtual Info ImportControlSignalDetail(
-        const Info& I_Info,
-        ControlSignal& O_Signal)
+    virtual Info ImportInfo(const Info& I_Info)
     {
-        CO_SIM_IO_ERROR << "ImportControlSignalDetail not implemented for this comm-type" << std::endl;
+        CO_SIM_IO_ERROR << "ImportInfo not implemented for this comm-type" << std::endl;
         return Info();
     }
 
-    virtual Info ExportControlSignalDetail(
-        const Info& I_Info,
-        const ControlSignal I_Signal)
+    virtual Info ExportInfo(const Info& I_Info)
     {
-        CO_SIM_IO_ERROR << "ExportControlSignalDetail not implemented for this comm-type" << std::endl;
+        CO_SIM_IO_ERROR << "ExportInfo not implemented for this comm-type" << std::endl;
         return Info();
     }
 
