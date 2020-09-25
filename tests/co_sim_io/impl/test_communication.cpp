@@ -35,7 +35,7 @@ TYPE_TO_STRING(MPICommunication);
 #endif
 
 
-TEST_CASE_TEMPLATE("Communication"* doctest::timeout(0.05), TComm,
+TEST_CASE_TEMPLATE("Communication"* doctest::timeout(0.5), TComm, // neither of the tests should take more than 0.5 seconds. If it does it means that it hangs!
     FileCommunication
 #ifdef CO_SIM_IO_USING_SOCKETS
     ,SocketsCommunication
