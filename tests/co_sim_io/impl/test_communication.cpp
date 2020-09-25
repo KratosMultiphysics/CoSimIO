@@ -75,8 +75,8 @@ TEST_CASE_TEMPLATE("Communication"* doctest::timeout(0.05), TComm,
 
     SUBCASE("import_export_mesh_multiple")
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500)); // wait 0.5s before next check
+        // std::this_thread::sleep_for(std::chrono::milliseconds(500)); // wait 0.5s before next check
     }
 
-    TComm("sss", CoSimIO::Info(), true);
+    // TComm("sss", CoSimIO::Info(), true);
 }
