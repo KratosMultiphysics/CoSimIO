@@ -23,6 +23,7 @@
 // Project includes
 #include "communication.hpp"
 #include "../filesystem_inc.hpp"
+// TODO refactor using fs::path for file-names!
 
 namespace CoSimIO {
 namespace Internals {
@@ -121,6 +122,7 @@ private:
 
     Info DisconnectDetail(const Info& I_Info) override
     {
+        // remove communication folder (?)
         return Info(); // nothing needed here for file-based communication (maybe do sth here?)
     }
 
