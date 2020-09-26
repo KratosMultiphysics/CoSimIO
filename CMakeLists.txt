@@ -27,6 +27,12 @@ message("    BUILD_PYTHON:     " ${BUILD_PYTHON})
 message("    BUILD_FORTRAN:    " ${BUILD_FORTRAN})
 message("")
 
+if (ENABLE_SOCKETS)
+    add_definitions( -DCO_SIM_IO_USING_SOCKETS )
+endif()
+if (ENABLE_MPI)
+    add_definitions( -DCO_SIM_IO_USING_MPI )
+endif()
 
 if(MSVC)
     # required such that "__cplusplus" is set to the correct value

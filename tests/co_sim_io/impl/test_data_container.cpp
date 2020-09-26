@@ -21,7 +21,6 @@
 
 namespace CoSimIO {
 namespace Internals { // DataContainer is in the Internals namespace
-namespace Testing {
 
 using DataContainerBase = DataContainer<double>;
 using DataContainerBasePointer = std::unique_ptr<DataContainerBase>;
@@ -254,6 +253,5 @@ TEST_CASE("DataContainer_RawMemory_multiple_resizes")
 
 } // TEST_SUITE("DataContainer")
 
-} // namespace Testing
 } // namespace Internals
 } // namespace CoSimIO
