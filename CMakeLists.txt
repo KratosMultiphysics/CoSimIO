@@ -2,7 +2,8 @@ project(CoSimIO CXX C)
 cmake_minimum_required (VERSION 2.8.6)
 
 # this has to be specified BEFORE including CTest!
-set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track-origins=yes --tool=memcheck --error-exitcode=1")
+# suppressions file has to be included in the options, as using "MEMORYCHECK_SUPPRESSIONS_FILE" doesn't work on all systems
+set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track-origins=yes --tool=memcheck --error-exitcode=1 --suppressions=${CMAKE_SOURCE_DIR}/tests/valgrind_suppressions.supp")
 
 include(CTest)
 
@@ -26,6 +27,12 @@ message("    BUILD_PYTHON:     " ${BUILD_PYTHON})
 message("    BUILD_FORTRAN:    " ${BUILD_FORTRAN})
 message("")
 
+if (ENABLE_SOCKETS)
+    add_definitions( -DCO_SIM_IO_USING_SOCKETS )
+endif()
+if (ENABLE_MPI)
+    add_definitions( -DCO_SIM_IO_USING_MPI )
+endif()
 
 if(MSVC)
     # required such that "__cplusplus" is set to the correct value
