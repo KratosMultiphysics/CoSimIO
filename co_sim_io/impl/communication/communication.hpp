@@ -24,9 +24,22 @@
 namespace CoSimIO {
 namespace Internals {
 
+
 class Communication
 {
 public:
+    explicit Communication(const Info& I_Settings)
+    {
+        mMyName = I_Settings.Get<std::string>("my_name");
+        mConnectTo = I_Settings.Get<std::string>("connect_to");
+        mIsPrimaryConnection = mMyName < mConnectTo;
+        mConnectionName = I_Settings.Get<std::string>("connection_name");
+
+        mEchoLevel = I_Settings.Get<int>("echo_level", 0);
+        mPrintTiming = I_Settings.Get<bool>("print_timing", false);
+    }
+
+    // deprecated
     explicit Communication(const std::string& rName, const Info& I_Settings, const bool IsConnectionMaster) : mConnectionName(rName), mIsConnectionMaster(IsConnectionMaster)
     {
         mEchoLevel = I_Settings.Get<int>("echo_level", 0);
@@ -37,11 +50,27 @@ public:
 
     Info Connect(const Info& I_Info)
     {
-        CO_SIM_IO_ERROR << "Connect not implemented yet" << std::endl;
-        return Info();
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0)
+            << "Establishing connection for \"" << mConnectionName
+            << "\" from \"" << mMyName
+            << "\" to \"" << mConnectTo
+            << "\" as " << (mIsPrimaryConnection ? "PRIMARY" : "SECONDARY")
+            << " connection ..." << std::endl;
+
+        CO_SIM_IO_ERROR_IF(mIsConnected) << "A connection was already established!" << std::endl;
+
+        Info connect_detail_info = ConnectDetail(I_Info);
+        mIsConnected = connect_detail_info.Get<bool>("is_connected");
+        connect_detail_info.Set<int>("connection_status", ConnectionStatus::Connected);
+
+        CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "Connection was not successful!" << std::endl;
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Connection established" << std::endl;
+
+        return connect_detail_info;
     }
 
-    Info Disonnect(const Info& I_Info)
+    Info Disconnect(const Info& I_Info)
     {
         CO_SIM_IO_ERROR << "Disonnect not implemented yet" << std::endl;
         return Info();
@@ -168,14 +197,18 @@ public:
 protected:
     std::string GetConnectionName() const {return mConnectionName;}
     int GetEchoLevel() const              {return mEchoLevel;}
-    bool GetIsConnectionMaster() const    {return mIsConnectionMaster;}
+    bool GetIsConnectionMaster() const    {return mIsConnectionMaster;} // TODO remove
+    bool GetIsPrimaryConnection() const   {return mIsPrimaryConnection;}
     bool GetPrintTiming() const           {return mPrintTiming;}
     bool GetIsConnected() const           {return mIsConnected;}
 
 private:
     std::string mConnectionName;
+    std::string mMyName;
+    std::string mConnectTo;
     int mEchoLevel = 1;
-    bool mIsConnectionMaster = false;
+    bool mIsConnectionMaster = false; // TODO remove
+    bool mIsPrimaryConnection;
     bool mPrintTiming = false;
     bool mIsConnected = false;
 

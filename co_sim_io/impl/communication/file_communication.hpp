@@ -85,6 +85,11 @@ static int GetNumNodesForVtkCellType(const int VtkCellType)
 class FileCommunication : public Communication
 {
 public:
+    explicit FileCommunication(const Info& I_Settings) : Communication(I_Settings)
+    {
+
+    }
+
     explicit FileCommunication(const std::string& rName, const Info& I_Settings, const bool IsConnectionMaster)
         : Communication(rName, I_Settings, IsConnectionMaster)
     {
