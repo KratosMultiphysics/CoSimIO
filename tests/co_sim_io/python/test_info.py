@@ -107,7 +107,7 @@ class CoSimIO_Info(unittest.TestCase):
 
         self.assertFalse(info.Has("identifier"))
 
-        with self.assertRaisesRegex(Exception, 'Error: '): # TODO improve this once errors are working better
+        with self.assertRaisesRegex(Exception, 'Error: Trying to get "identifier" which does not exist!'):
             info.GetBool("identifier")
 
     def test_wrong_type(self):
@@ -119,7 +119,7 @@ class CoSimIO_Info(unittest.TestCase):
 
         self.assertTrue(info.Has("identifier"))
 
-        with self.assertRaisesRegex(Exception, 'Error: '): # TODO improve this once errors are working better
+        with self.assertRaisesRegex(Exception, 'Error: Wrong DataType! Trying to get "identifier" which is of type "string" with "bool"!'):
             info.GetBool("identifier")
 
     def test_many_values(self):
