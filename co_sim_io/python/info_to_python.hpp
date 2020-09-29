@@ -42,16 +42,16 @@ void AddCoSimIOInfoToPython(pybind11::module& m)
     namespace py = pybind11;
 
     auto py_info = py::class_<CoSimIO::Info>(m,"Info")
-    .def(py::init<>())
-    .def(py::init<const CoSimIO::Info&>())
-    .def("Has",       &CoSimIO::Info::Has)
-    .def("Erase",     &CoSimIO::Info::Erase)
-    .def("Clear",     &CoSimIO::Info::Clear)
-    .def("Size",      &CoSimIO::Info::Size)
-    .def("__len__",   [](const CoSimIO::Info& I_Info){return I_Info.Size();})
-    .def("__str__",   [](const CoSimIO::Info& I_Info)
-        { std::stringstream ss; ss << I_Info; return ss.str(); } )
-    ;
+        .def(py::init<>())
+        .def(py::init<const CoSimIO::Info&>())
+        .def("Has",       &CoSimIO::Info::Has)
+        .def("Erase",     &CoSimIO::Info::Erase)
+        .def("Clear",     &CoSimIO::Info::Clear)
+        .def("Size",      &CoSimIO::Info::Size)
+        .def("__len__",   [](const CoSimIO::Info& I_Info){return I_Info.Size();})
+        .def("__str__",   [](const CoSimIO::Info& I_Info)
+            { std::stringstream ss; ss << I_Info; return ss.str(); } )
+        ;
 
     AddGetSetInterface<int>(py_info, "Int");
     AddGetSetInterface<double>(py_info, "Double");

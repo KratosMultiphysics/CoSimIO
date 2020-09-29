@@ -9,7 +9,7 @@ sh scripts/build.sh
 
 echo $'\n>>> Running CTests'
 cd build
-ctest -T memcheck
+ctest -T memcheck || true # don't stop if this fails
 
 echo $'\n>>> Running Python Tests'
 cd ../tests

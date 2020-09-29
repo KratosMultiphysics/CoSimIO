@@ -216,6 +216,13 @@ public:
         return **it_node;
     }
 
+    NodePointerType pGetNode(const IdType I_Id)
+    {
+        auto it_node = FindNode(I_Id);
+        CO_SIM_IO_ERROR_IF(it_node == mNodes.end()) << "Node with Id " << I_Id << " does not exist!" << std::endl;
+        return *it_node;
+    }
+
     Element& GetElement(const IdType I_Id)
     {
         auto it_elem = FindElement(I_Id);
@@ -228,6 +235,13 @@ public:
         auto it_elem = FindElement(I_Id);
         CO_SIM_IO_ERROR_IF(it_elem == mElements.end()) << "Element with Id " << I_Id << " does not exist!" << std::endl;
         return **it_elem;
+    }
+
+    ElementPointerType pGetElement(const IdType I_Id)
+    {
+        auto it_elem = FindElement(I_Id);
+        CO_SIM_IO_ERROR_IF(it_elem == mElements.end()) << "Element with Id " << I_Id << " does not exist!" << std::endl;
+        return *it_elem;
     }
 
     void Print(std::ostream& rOStream) const
