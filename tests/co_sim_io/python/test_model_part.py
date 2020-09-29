@@ -140,7 +140,7 @@ class CoSimIO_ModelPart(unittest.TestCase):
         model_part.CreateNewNode(1, 0,0,0)
         self.assertEqual(model_part.NumberOfNodes(), 1)
 
-        with self.assertRaisesRegex(Exception, 'Error: '): # TODO improve this once errors are working better
+        with self.assertRaisesRegex(Exception, 'Error: The Node with Id 1 exists already!'):
             model_part.CreateNewNode(1, 0,0,0)
 
     def test_model_part_get_node(self):
@@ -159,7 +159,7 @@ class CoSimIO_ModelPart(unittest.TestCase):
                 self.assertAlmostEqual(new_node.Coordinates()[i], node_coords[i], msg=str(i))
 
         with self.subTest("non_existing"):
-            with self.assertRaisesRegex(Exception, 'Error: '): # TODO improve this once errors are working better
+            with self.assertRaisesRegex(Exception, 'Error: Node with Id 692 does not exist!'):
                 model_part.GetNode(node_id+1)
 
     def test_model_part_create_new_element(self):
@@ -217,7 +217,7 @@ class CoSimIO_ModelPart(unittest.TestCase):
         model_part.CreateNewElement(1, 5, [1])
         self.assertEqual(model_part.NumberOfElements(), 1)
 
-        with self.assertRaisesRegex(Exception, 'Error: '): # TODO improve this once errors are working better
+        with self.assertRaisesRegex(Exception, 'Error: The Element with Id 1 exists already!'):
             model_part.CreateNewElement(1, 5, [1])
 
     def test_model_part_get_element(self):
@@ -236,7 +236,7 @@ class CoSimIO_ModelPart(unittest.TestCase):
             self.assertEqual(elem.NumberOfNodes(), 1)
 
         with self.subTest("non_existing"):
-            with self.assertRaisesRegex(Exception, 'Error: '): # TODO improve this once errors are working better
+            with self.assertRaisesRegex(Exception, 'Error: Element with Id 7 does not exist!'):
                 model_part.GetElement(elem_id+1)
 
     def test_print_model_part(self):
