@@ -27,11 +27,30 @@ message("    BUILD_PYTHON:     " ${BUILD_PYTHON})
 message("    BUILD_FORTRAN:    " ${BUILD_FORTRAN})
 message("")
 
+set( CO_SIM_IO_REQUIRES_BOOST OFF )
+set( CO_SIM_IO_REQUIRES_MPI OFF )
+
 if (ENABLE_SOCKETS)
+    set( CO_SIM_IO_REQUIRES_BOOST ON ) # Sockets Communication is implemented using Boost::ASIO
     add_definitions( -DCO_SIM_IO_USING_SOCKETS )
 endif()
 if (ENABLE_MPI)
+    set( CO_SIM_IO_REQUIRES_MPI ON )
     add_definitions( -DCO_SIM_IO_USING_MPI )
+endif()
+
+if (CO_SIM_IO_REQUIRES_BOOST)
+    find_package(Boost REQUIRED)
+    include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+endif()
+
+if (CO_SIM_IO_REQUIRES_MPI)
+    find_package(MPI REQUIRED)
+    # TODO check this, was copied from Kratos
+    # set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
+    # set(CMAKE_C_COMPILE_FLAGS ${CMAKE_C_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
+    # set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
+    include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 endif()
 
 if(MSVC)
