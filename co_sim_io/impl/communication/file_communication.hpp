@@ -87,7 +87,15 @@ class FileCommunication : public Communication
 public:
     explicit FileCommunication(const Info& I_Settings) : Communication(I_Settings)
     {
+        mCommFolder = GetWorkingDirectory();
+        mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", true);
 
+        if (mCommInFolder && GetIsPrimaryConnection()) {
+            mCommFolder /= ".CoSimIOFileComm_" + GetConnectionName();
+            // delete and recreate directory to remove potential leftovers
+            fs::remove_all(mCommFolder);
+            fs::create_directory(mCommFolder);
+        }
     }
 
     explicit FileCommunication(const std::string& rName, const Info& I_Settings, const bool IsConnectionMaster)
@@ -116,8 +124,8 @@ public:
 
 private:
 
-    std::string mCommFolder = "";
-    bool mCommInFolder = false;
+    fs::path mCommFolder;
+    bool mCommInFolder = true;
 
     Info ConnectDetail(const Info& I_Info) override
     {
@@ -127,6 +135,10 @@ private:
 
     Info DisconnectDetail(const Info& I_Info) override
     {
+        if (mCommInFolder && GetIsPrimaryConnection()) {
+            // delete directory to remove potential leftovers
+            fs::remove_all(mCommFolder);
+        }
         // remove communication folder (?)
         return Info(); // nothing needed here for file-based communication (maybe do sth here?)
     }
@@ -423,7 +435,7 @@ private:
     {
         if (mCommInFolder) {
             // TODO check this
-            return std::string(rFileName).insert(mCommFolder.length()+1, ".");
+            // return std::string(rFileName).insert(mCommFolder.length()+1, ".");
         } else {
             return "." + rFileName;
         }
@@ -433,7 +445,7 @@ private:
     {
         if (mCommInFolder) {
             // TODO check this
-            return mCommFolder + "/" + rFileName;  // using portable separator "/"
+            // return mCommFolder + "/" + rFileName;  // using portable separator "/"
         } else {
             return rFileName;
         }

@@ -16,10 +16,24 @@
 
 // Project includes
 #include "co_sim_io_testing.hpp"
+#include "impl/communication/communication.hpp"
 
 // neither of the tests should take more than 0.5 seconds. If it does it means that it hangs!
 TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(0.5), TCommType, COMM_TESTS)
 {
+    CoSimIO::Info settings;
+
+    settings.Set<std::string>("my_name", "main");
+    settings.Set<std::string>("connect_to", "thread");
+    settings.Set<std::string>("connection_name", "custom_communication");
+    settings.Set<int>("echo_level", 2);
+
+    using Communication = CoSimIO::Internals::Communication;
+    std::unique_ptr<Communication> p_comm(CoSimIO::make_unique<TCommType>(settings));
+
+    CoSimIO::Info connect_info;
+    p_comm->Connect(connect_info);
+
     SUBCASE("connect_disconnect_once")
     {
     }
@@ -52,6 +66,8 @@ TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(0.5), TCommType, COM
     {
         // std::this_thread::sleep_for(std::chrono::milliseconds(500)); // wait 0.5s before next check
     }
+    CoSimIO::Info disconnect_info;
+    p_comm->Disconnect(disconnect_info);
 }
 
 // Registering tests for different types of Communication

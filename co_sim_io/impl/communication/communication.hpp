@@ -20,6 +20,7 @@
 #include "../info.hpp"
 #include "../data_container.hpp"
 #include "../model_part.hpp"
+#include "../filesystem_inc.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -34,6 +35,8 @@ public:
         mConnectTo = I_Settings.Get<std::string>("connect_to");
         mIsPrimaryConnection = mMyName < mConnectTo;
         mConnectionName = I_Settings.Get<std::string>("connection_name");
+
+        mWorkingDirectory = I_Settings.Get<std::string>("working_directory", fs::current_path());
 
         mEchoLevel = I_Settings.Get<int>("echo_level", 0);
         mPrintTiming = I_Settings.Get<bool>("print_timing", false);
@@ -52,10 +55,10 @@ public:
     {
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0)
             << "Establishing connection for \"" << mConnectionName
-            << "\" from \"" << mMyName
-            << "\" to \"" << mConnectTo
-            << "\" as " << (mIsPrimaryConnection ? "PRIMARY" : "SECONDARY")
-            << " connection ..." << std::endl;
+            << "\"\n    from \"" << mMyName
+            << "\"\n    to \"" << mConnectTo
+            << "\"\n    as " << (mIsPrimaryConnection ? "PRIMARY" : "SECONDARY")
+            << " connection, working directory: " << mWorkingDirectory << " ..." << std::endl;
 
         CO_SIM_IO_ERROR_IF(mIsConnected) << "A connection was already established!" << std::endl;
 
@@ -196,6 +199,7 @@ public:
 
 protected:
     std::string GetConnectionName() const {return mConnectionName;}
+    fs::path GetWorkingDirectory() const  {return mWorkingDirectory;}
     int GetEchoLevel() const              {return mEchoLevel;}
     bool GetIsConnectionMaster() const    {return mIsConnectionMaster;} // TODO remove
     bool GetIsPrimaryConnection() const   {return mIsPrimaryConnection;}
@@ -206,6 +210,7 @@ private:
     std::string mConnectionName;
     std::string mMyName;
     std::string mConnectTo;
+    fs::path mWorkingDirectory;
     int mEchoLevel = 1;
     bool mIsConnectionMaster = false; // TODO remove
     bool mIsPrimaryConnection;
