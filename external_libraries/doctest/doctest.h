@@ -1766,7 +1766,7 @@ int registerReporter(const char* name, int priority, bool isReporter) {
         }                                                                                          \
         DOCTEST_REGISTER_FUNCTION(DOCTEST_EMPTY, func, decorators)                                 \
     }                                                                                              \
-    DOCTEST_NOINLINE void der::f()
+    inline DOCTEST_NOINLINE void der::f()
 
 #define DOCTEST_CREATE_AND_REGISTER_FUNCTION(f, decorators)                                        \
     static void f();                                                                               \
