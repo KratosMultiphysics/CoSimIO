@@ -1009,7 +1009,7 @@ namespace detail {
 
 #define DOCTEST_DO_BINARY_EXPRESSION_COMPARISON(op, op_str, op_macro)                              \
     template <typename R>                                                                          \
-    Result operator op(const DOCTEST_REF_WRAP(R) rhs) {                           \
+    DOCTEST_NOINLINE Result operator op(const DOCTEST_REF_WRAP(R) rhs) {                           \
         bool res = op_macro(lhs, rhs);                                                             \
         if(m_at & assertType::is_false)                                                            \
             res = !res;                                                                            \
@@ -1766,7 +1766,7 @@ int registerReporter(const char* name, int priority, bool isReporter) {
         }                                                                                          \
         DOCTEST_REGISTER_FUNCTION(DOCTEST_EMPTY, func, decorators)                                 \
     }                                                                                              \
-    inline DOCTEST_NOINLINE void der::f()
+    DOCTEST_NOINLINE void der::f()
 
 #define DOCTEST_CREATE_AND_REGISTER_FUNCTION(f, decorators)                                        \
     static void f();                                                                               \
