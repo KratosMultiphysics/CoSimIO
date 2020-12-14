@@ -29,10 +29,13 @@ jobs:
         if [ ${{ matrix.compiler }} = clang ]; then
           sudo apt-get install clang-9
         elif [ ${{ matrix.compiler }} = intel ]; then
-          # sudo echo "deb https://apt.repos.intel.com/oneapi all main" >/etc/apt/sources.list.d/intel-oneapi.list
+          sudo apt-get update
+          sudo apt-get install -y wget build-essential pkg-config cmake ca-certificates gnupg
+          wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
+          sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
           echo "deb https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
           sudo apt-get update
-          sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+          sudo apt-get install -y intel-oneapi-dpcpp-cpp-compiler-pro
         fi
 
     - name: Build CoSimIO
