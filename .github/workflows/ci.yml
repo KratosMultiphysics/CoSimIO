@@ -8,6 +8,58 @@ on:
     - cron:  '0 1 * * *'
 
 jobs:
+  Linux:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang, intel]
+    timeout-minutes: 15
+    env:
+      FC: gfortran-9
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run : |
+        sudo apt-get install valgrind
+        sudo apt-get install libopenmpi-dev
+        sudo apt-get install openmpi-bin
+        echo "deb https://apt.repos.intel.com/oneapi all main" >/etc/apt/sources.list.d/intel-oneapi.list
+        sudo apt-get update
+        sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+
+    - name: Build CoSimIO
+      run: |
+        if [ ${{ matrix.compiler }} = gcc ]; then
+          export CC=/usr/lib/ccache/gcc
+          export CXX=/usr/lib/ccache/g++
+        elif [ ${{ matrix.compiler }} = clang ]; then
+          export CC=clang-9
+          export CXX=clang++-9
+        elif [ ${{ matrix.compiler }} = intel ]; then
+          set +e; source /opt/intel/oneapi/setvars.sh; set -e
+        else
+          echo 'Unsupported compiler: ${{ matrix.compiler }}'
+          exit 1
+        fi
+
+        cmake -H"." -B"build"        \
+          -DCMAKE_BUILD_TYPE="Debug" \
+          -DBUILD_C=ON               \
+          -DBUILD_PYTHON=OFF         \
+          -DBUILD_FORTRAN=OFF        \
+          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror -diag-disable 2196" \
+          -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
+
+        cmake --build "build" --target install
+
+    - name: Running tests
+      run: |
+        cd build
+        ctest -T memcheck
+
   Unix:
     runs-on: ${{ matrix.os }}
     strategy:
