@@ -26,9 +26,11 @@ jobs:
         sudo apt-get install valgrind
         sudo apt-get install libopenmpi-dev
         sudo apt-get install openmpi-bin
-        echo "deb https://apt.repos.intel.com/oneapi all main" >/etc/apt/sources.list.d/intel-oneapi.list
-        sudo apt-get update
-        sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+        if [ ${{ matrix.compiler }} = intel ]; then
+          sudo echo "deb https://apt.repos.intel.com/oneapi all main" >/etc/apt/sources.list.d/intel-oneapi.list
+          sudo apt-get update
+          sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+        fi
 
     - name: Build CoSimIO
       run: |
