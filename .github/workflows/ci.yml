@@ -54,7 +54,7 @@ jobs:
           -DBUILD_C=ON               \
           -DBUILD_PYTHON=OFF         \
           -DBUILD_FORTRAN=OFF        \
-          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror -diag-disable 2196" \
+          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
           -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
 
         cmake --build "build" --target install
@@ -64,59 +64,59 @@ jobs:
         cd build
         ctest -T memcheck
 
-  Unix:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macOS-latest]
-        python-version: [3.5, 3.6, 3.7, 3.8]
-    timeout-minutes: 15
-    env:
-      FC: gfortran-9
+  # Unix:
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os: [ubuntu-latest, macOS-latest]
+  #       python-version: [3.5, 3.6, 3.7, 3.8]
+  #   timeout-minutes: 15
+  #   env:
+  #     FC: gfortran-9
 
-    steps:
-    - uses: actions/checkout@v2
+  #   steps:
+  #   - uses: actions/checkout@v2
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
+  #   - name: Set up Python ${{ matrix.python-version }}
+  #     uses: actions/setup-python@v1
+  #     with:
+  #       python-version: ${{ matrix.python-version }}
 
-    - name: Install Valgrind
-      if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.8' }}
-      run: |
-        sudo apt-get install valgrind
+  #   - name: Install Valgrind
+  #     if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.8' }}
+  #     run: |
+  #       sudo apt-get install valgrind
 
-    - name: Build CoSimIO
-      run: |
-        cmake -H"." -B"build"        \
-          -DCMAKE_BUILD_TYPE="Debug" \
-          -DBUILD_C=ON               \
-          -DBUILD_PYTHON=ON          \
-          -DBUILD_FORTRAN=OFF        \
-          -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }} \
-          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
-          -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
+  #   - name: Build CoSimIO
+  #     run: |
+  #       cmake -H"." -B"build"        \
+  #         -DCMAKE_BUILD_TYPE="Debug" \
+  #         -DBUILD_C=ON               \
+  #         -DBUILD_PYTHON=ON          \
+  #         -DBUILD_FORTRAN=OFF        \
+  #         -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }} \
+  #         -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
+  #         -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
 
-        cmake --build "build" --target install
+  #       cmake --build "build" --target install
 
-    - name: Running tests (Ctest)
-      if: ${{ matrix.python-version == '3.8' }} # only run for one py version, not necessary for all of them
-      run: |
-        cd build
-        if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
-          ctest -T memcheck
-        else
-          ctest
-        fi
+  #   - name: Running tests (Ctest)
+  #     if: ${{ matrix.python-version == '3.8' }} # only run for one py version, not necessary for all of them
+  #     run: |
+  #       cd build
+  #       if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
+  #         ctest -T memcheck
+  #       else
+  #         ctest
+  #       fi
 
-    - name: Running tests (Python)
-      run: |
-        export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
-        cd tests
-        # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
-        python run_python_tests.py
+  #   - name: Running tests (Python)
+  #     run: |
+  #       export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
+  #       cd tests
+  #       # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
+  #       python run_python_tests.py
 
 
   Windows:
