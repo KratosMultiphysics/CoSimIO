@@ -75,10 +75,28 @@ public:
 
     Info Disconnect(const Info& I_Info)
     {
-        Info disconnect_detail_info = DisconnectDetail(I_Info);
-        mIsConnected = false;
-        disconnect_detail_info.Set<bool>("is_connected", false);
-        return disconnect_detail_info;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Disconnecting \"" << mConnectionName << "\" ..." << std::endl;
+
+        if (mIsConnected) {
+            Info disconnect_detail_info = DisconnectDetail(I_Info);
+            mIsConnected = disconnect_detail_info.Get<bool>("is_connected");
+
+            if (mIsConnected) {
+                CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not successful!" << std::endl;
+                disconnect_detail_info.Set<int>("connection_status", ConnectionStatus::DisconnectionError);
+            } else {
+                CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Disconnecting successful" << std::endl;
+                disconnect_detail_info.Set<int>("connection_status", ConnectionStatus::Disconnected);
+            }
+            return disconnect_detail_info;
+
+        } else {
+            CO_SIM_IO_INFO("CoSimIO") << "Warning: Calling Disconnect but there was no active connection!" << std::endl;
+            Info disconnect_info;
+            disconnect_info.Set<bool>("is_connected", false);
+            disconnect_info.Set<int>("connection_status", ConnectionStatus::DisconnectionError);
+            return disconnect_info;
+        }
     }
 
     /*[[deprecated]]*/ bool Connect()

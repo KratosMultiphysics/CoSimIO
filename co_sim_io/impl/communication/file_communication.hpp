@@ -141,8 +141,10 @@ private:
             // delete directory to remove potential leftovers
             fs::remove_all(mCommFolder);
         }
-        // remove communication folder (?)
-        return Info(); // nothing needed here for file-based communication (maybe do sth here?)
+
+        Info info;
+        info.Set("is_connected", false);
+        return info;
     }
 
     bool ConnectDetail() override
