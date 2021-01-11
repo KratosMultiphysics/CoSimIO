@@ -129,7 +129,9 @@ private:
 
     Info ConnectDetail(const Info& I_Info) override
     {
-        return Info(); // nothing needed here for file-based communication (maybe do sth here?)
+        Info info;
+        info.Set("is_connected", true);
+        return info; // nothing needed here for file-based communication (maybe do sth here?)
         // master could write a file that gets deleted by slave to aknowledge connection... Probably not a bad idea! => slave returns once it found and deleted file, master waits for deletion of file
     }
 
@@ -434,6 +436,7 @@ private:
     std::string GetTempFileName(const std::string& rFileName)
     {
         if (mCommInFolder) {
+            return "";
             // TODO check this
             // return std::string(rFileName).insert(mCommFolder.length()+1, ".");
         } else {
@@ -445,6 +448,7 @@ private:
     {
         if (mCommInFolder) {
             // TODO check this
+            return "";
             // return mCommFolder + "/" + rFileName;  // using portable separator "/"
         } else {
             return rFileName;

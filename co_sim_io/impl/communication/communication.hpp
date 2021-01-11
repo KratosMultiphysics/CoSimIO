@@ -75,8 +75,10 @@ public:
 
     Info Disconnect(const Info& I_Info)
     {
-        CO_SIM_IO_ERROR << "Disonnect not implemented yet" << std::endl;
-        return Info();
+        Info disconnect_detail_info = DisconnectDetail(I_Info);
+        mIsConnected = false;
+        disconnect_detail_info.Set<bool>("is_connected", false);
+        return disconnect_detail_info;
     }
 
     bool Connect()
