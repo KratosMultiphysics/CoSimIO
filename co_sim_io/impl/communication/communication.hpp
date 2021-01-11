@@ -101,37 +101,16 @@ public:
 
     /*[[deprecated]]*/ bool Connect()
     {
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Connecting \"" << mConnectionName << "\" as Connection-" << (mIsConnectionMaster ? "MASTER" : "SLAVE") << " ..." << std::endl;
-
-        CO_SIM_IO_ERROR_IF(mIsConnected) << "A connection was already established!" << std::endl;
-
-        mIsConnected = ConnectDetail();
-
-        CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "Connection was not successful!" << std::endl;
-
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Connection established" << std::endl;
-
+        Info temp_info;
+        this->Connect(temp_info);
         return mIsConnected;
     }
 
     /*[[deprecated]]*/ bool Disconnect()
     {
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Disconnecting \"" << mConnectionName << "\" ..." << std::endl;
-
-        if (mIsConnected) {
-            mIsConnected = !DisconnectDetail();
-            if (mIsConnected) {
-                CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not successful!" << std::endl;
-                return false;
-            }
-        } else {
-            CO_SIM_IO_INFO("CoSimIO") << "Warning: Calling Disconnect but there was no active connection!" << std::endl;
-            return false;
-        }
-
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Disconnecting successful" << std::endl;
-
-        return true;
+        Info temp_info;
+        this->Disconnect(temp_info);
+        return mIsConnected;
     }
 
     template<class... Args>
