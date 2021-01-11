@@ -438,9 +438,7 @@ private:
     std::string GetTempFileName(const std::string& rFileName) const
     {
         if (mCommInFolder) {
-            return "";
-            // TODO check this
-            // return std::string(rFileName).insert(mCommFolder.length()+1, ".");
+            return std::string(rFileName).insert(std::string(mCommFolder).length()+1, ".");
         } else {
             return "." + rFileName;
         }
@@ -449,9 +447,7 @@ private:
     std::string GetFullPath(const std::string& rFileName) const
     {
         if (mCommInFolder) {
-            // TODO check this
-            return "";
-            // return mCommFolder + "/" + rFileName;  // using portable separator "/"
+            return mCommFolder / rFileName;
         } else {
             return rFileName;
         }
