@@ -28,6 +28,7 @@ void ConnectDisconnect()
     settings.Set<std::string>("my_name", "thread");
     settings.Set<std::string>("connect_to", "main");
     settings.Set<std::string>("connection_name", "custom_communication");
+    settings.Set<bool>("is_primary_connection", false);
     settings.Set<int>("echo_level", 0);
 
     using Communication = CoSimIO::Internals::Communication;
@@ -57,6 +58,7 @@ TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(0.5), TCommType, COM
     settings.Set<std::string>("my_name", "main");
     settings.Set<std::string>("connect_to", "thread");
     settings.Set<std::string>("connection_name", "custom_communication");
+    settings.Set<bool>("is_primary_connection", true);
     settings.Set<int>("echo_level", 0);
 
     using Communication = CoSimIO::Internals::Communication;

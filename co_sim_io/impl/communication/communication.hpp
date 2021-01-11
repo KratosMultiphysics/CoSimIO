@@ -33,7 +33,12 @@ public:
     {
         mMyName = I_Settings.Get<std::string>("my_name");
         mConnectTo = I_Settings.Get<std::string>("connect_to");
-        mIsPrimaryConnection = mMyName < mConnectTo;
+        if (I_Settings.Has("is_primary_connection")) {
+            mIsPrimaryConnection = I_Settings.Get<bool>("is_primary_connection");
+        } else {
+            // automatically determine the primary connection in case the user didn't specify it
+            mIsPrimaryConnection = mMyName < mConnectTo;
+        }
         mConnectionName = I_Settings.Get<std::string>("connection_name");
 
         mWorkingDirectory = I_Settings.Get<std::string>("working_directory", fs::current_path());
