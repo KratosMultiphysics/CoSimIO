@@ -42,6 +42,11 @@ static bool FileExists(const std::string& rFileName)
     return infile.good(); // no need to close manually
 }
 
+static bool FolderExists(const fs::path& rFolderName)
+{
+    return fs::exists(rFolderName);
+}
+
 static void RemoveFile(const std::string& rFileName)
 {
     if (std::remove(rFileName.c_str()) != 0) {
@@ -88,30 +93,15 @@ public:
     explicit FileCommunication(const Info& I_Settings) : Communication(I_Settings)
     {
         mCommFolder = GetWorkingDirectory();
+        mCommFolder /= ".CoSimIOFileComm_" + GetConnectionName();
         mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", true);
-
-        if (mCommInFolder && GetIsPrimaryConnection()) {
-            mCommFolder /= ".CoSimIOFileComm_" + GetConnectionName();
-            // delete and recreate directory to remove potential leftovers
-            fs::remove_all(mCommFolder);
-            fs::create_directory(mCommFolder);
-        }
     }
 
     /*[[deprecated]]*/ explicit FileCommunication(const std::string& rName, const Info& I_Settings, const bool IsConnectionMaster)
         : Communication(rName, I_Settings, IsConnectionMaster)
     {
-        if (I_Settings.Has("use_folder_for_communication")) {
-            mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication");
-        }
-
-        mCommFolder = ".CoSimIOFileComm_"+rName;
-
-        if (mCommInFolder && GetIsConnectionMaster()) {
-            // delete and recreate directory to remove potential leftovers
-            fs::remove_all(mCommFolder);
-            fs::create_directory(mCommFolder);
-        }
+        mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", false);
+        mCommFolder = GetWorkingDirectory();
     }
 
     ~FileCommunication() override
@@ -129,6 +119,18 @@ private:
 
     Info ConnectDetail(const Info& I_Info) override
     {
+        if (mCommInFolder) {
+            if (GetIsPrimaryConnection()) {
+                // delete and recreate directory to remove potential leftovers
+                fs::remove_all(mCommFolder);
+                fs::create_directory(mCommFolder);
+            } else {
+                // secondary connection waits until folder is created, otherwise it will crash
+                // when trying to create files in a non-existing folder
+                WaitForFolder(mCommFolder);
+            }
+        }
+
         Info info;
         info.Set("is_connected", true);
         return info; // nothing needed here for file-based communication (maybe do sth here?)
@@ -480,6 +482,16 @@ private:
         if (std::rename(GetTempFileName(rFinalFileName).c_str(), rFinalFileName.c_str()) != 0) {
             CO_SIM_IO_INFO("CoSimIO") << "Warning: \"" << rFinalFileName << "\" could not be made visible!" << std::endl;
         }
+    }
+
+    void WaitForFolder(const std::string& rFolderName) const
+    {
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for folder: \"" << rFolderName << "\"" << std::endl;
+        while(!FolderExists(rFolderName)) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(50)); // wait 0.05s before next check
+            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>2) << "    Waiting" << std::endl;
+        }
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found folder: \"" << rFolderName << "\"" << std::endl;
     }
 
 };
