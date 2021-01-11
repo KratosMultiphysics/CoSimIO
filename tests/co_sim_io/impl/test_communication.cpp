@@ -51,7 +51,7 @@ void ConnectDisconnect()
 }
 
 // neither of the tests should take more than 0.5 seconds. If it does it means that it hangs!
-TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(0.5), TCommType, COMM_TESTS)
+TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(1.0), TCommType, COMM_TESTS)
 {
     CoSimIO::Info settings;
 
