@@ -98,7 +98,7 @@ public:
         }
     }
 
-    explicit FileCommunication(const std::string& rName, const Info& I_Settings, const bool IsConnectionMaster)
+    /*[[deprecated]]*/ explicit FileCommunication(const std::string& rName, const Info& I_Settings, const bool IsConnectionMaster)
         : Communication(rName, I_Settings, IsConnectionMaster)
     {
         if (I_Settings.Has("use_folder_for_communication")) {
