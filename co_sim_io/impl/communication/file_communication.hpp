@@ -149,16 +149,6 @@ private:
         return info;
     }
 
-    bool ConnectDetail() override
-    {
-        return true;
-    }
-
-    bool DisconnectDetail() override
-    {
-        return true;
-    }
-
      void ImportDataImpl(
         const std::string& rIdentifier,
         CoSimIO::Internals::DataContainer<double>& rData) override

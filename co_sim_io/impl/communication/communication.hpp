@@ -270,9 +270,6 @@ private:
     }
 
     // old interface, functions need to be removed before release
-    virtual /*[[deprecated]]*/ bool ConnectDetail() = 0;
-    virtual /*[[deprecated]]*/ bool DisconnectDetail() = 0;
-
     virtual /*[[deprecated]]*/ void SendControlSignalDetail(const std::string& rIdentifier, CoSimIO::ControlSignal Signal)
     {
         CO_SIM_IO_ERROR << "SendControlSignalDetail not implemented for this comm-type" << std::endl;
