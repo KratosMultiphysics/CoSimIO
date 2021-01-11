@@ -433,7 +433,7 @@ private:
         return static_cast<CoSimIO::ControlSignal>(control_signal);
     }
 
-    std::string GetTempFileName(const std::string& rFileName)
+    std::string GetTempFileName(const std::string& rFileName) const
     {
         if (mCommInFolder) {
             return "";
@@ -444,7 +444,7 @@ private:
         }
     }
 
-    std::string GetFullPath(const std::string& rFileName)
+    std::string GetFullPath(const std::string& rFileName) const
     {
         if (mCommInFolder) {
             // TODO check this
@@ -455,7 +455,7 @@ private:
         }
     }
 
-    void WaitForFile(const std::string& rFileName)
+    void WaitForFile(const std::string& rFileName) const
     {
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for file: \"" << rFileName << "\"" << std::endl;
         while(!FileExists(rFileName)) {
@@ -465,7 +465,7 @@ private:
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found file: \"" << rFileName << "\"" << std::endl;
     }
 
-    void WaitUntilFileIsRemoved(const std::string& rFileName)
+    void WaitUntilFileIsRemoved(const std::string& rFileName) const
     {
         if (FileExists(rFileName)) { // only issue the wating message if the file exists initially
             CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for file: \"" << rFileName << "\" to be removed" << std::endl;
@@ -477,7 +477,7 @@ private:
         }
     }
 
-    void MakeFileVisible(const std::string& rFinalFileName)
+    void MakeFileVisible(const std::string& rFinalFileName) const
     {
         if (std::rename(GetTempFileName(rFinalFileName).c_str(), rFinalFileName.c_str()) != 0) {
             CO_SIM_IO_INFO("CoSimIO") << "Warning: \"" << rFinalFileName << "\" could not be made visible!" << std::endl;
