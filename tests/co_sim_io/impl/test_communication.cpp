@@ -33,6 +33,9 @@ void ConnectDisconnect()
     using Communication = CoSimIO::Internals::Communication;
     std::unique_ptr<Communication> p_comm(CoSimIO::make_unique<TCommType>(settings));
 
+    // the secondary thread should wait a bit until the primary has created the folder!
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+
     CoSimIO::Info connect_info;
     CoSimIO::Info ret_info_connect = p_comm->Connect(connect_info);
 
