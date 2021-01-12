@@ -16,16 +16,77 @@
 
 // Project includes
 #include "co_sim_io_testing.hpp"
+#include "impl/communication/communication.hpp"
 
-// neither of the tests should take more than 0.5 seconds. If it does it means that it hangs!
-TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(0.5), TCommType, COMM_TESTS)
+namespace {
+
+template<class TCommType>
+void ConnectDisconnect()
 {
+    CoSimIO::Info settings;
+
+    settings.Set<std::string>("my_name", "thread");
+    settings.Set<std::string>("connect_to", "main");
+    settings.Set<bool>("is_primary_connection", false);
+    settings.Set<int>("echo_level", 0);
+
+    using Communication = CoSimIO::Internals::Communication;
+    std::unique_ptr<Communication> p_comm(CoSimIO::make_unique<TCommType>(settings));
+
+    // the secondary thread should wait a bit until the primary has created the folder!
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+
+    CoSimIO::Info connect_info;
+    CoSimIO::Info ret_info_connect = p_comm->Connect(connect_info);
+
+    CHECK_UNARY(ret_info_connect.Get<bool>("is_connected"));
+
+    CoSimIO::Info disconnect_info;
+    CoSimIO::Info ret_info_disconnect = p_comm->Disconnect(disconnect_info);
+
+    CHECK_UNARY_FALSE(ret_info_disconnect.Get<bool>("is_connected"));
+}
+
+}
+
+// neither of the tests should take more than 1.0 seconds. If it does it means that it hangs!
+TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(1.0), TCommType, COMM_TESTS)
+{
+    CoSimIO::Info settings;
+
+    settings.Set<std::string>("my_name", "main");
+    settings.Set<std::string>("connect_to", "thread");
+    settings.Set<bool>("is_primary_connection", true);
+    settings.Set<int>("echo_level", 0);
+
+    using Communication = CoSimIO::Internals::Communication;
+    std::unique_ptr<Communication> p_comm(CoSimIO::make_unique<TCommType>(settings));
+
     SUBCASE("connect_disconnect_once")
     {
+        CoSimIO::Info connect_info;
+        p_comm->Connect(connect_info);
+
+        std::thread ext_thread(ConnectDisconnect<TCommType>);
+        ext_thread.join();
+
+        CoSimIO::Info disconnect_info;
+        p_comm->Disconnect(disconnect_info);
     }
 
     SUBCASE("connect_disconnect_multiple")
     {
+        // connecting and disconnecting three times
+        for (std::size_t i=0; i<3; ++i) {
+            CoSimIO::Info connect_info;
+            p_comm->Connect(connect_info);
+
+            std::thread ext_thread(ConnectDisconnect<TCommType>);
+            ext_thread.join();
+
+            CoSimIO::Info disconnect_info;
+            p_comm->Disconnect(disconnect_info);
+        }
     }
 
     SUBCASE("import_export_info_once")

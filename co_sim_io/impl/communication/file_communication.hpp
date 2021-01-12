@@ -42,6 +42,11 @@ static bool FileExists(const std::string& rFileName)
     return infile.good(); // no need to close manually
 }
 
+static bool FolderExists(const fs::path& rFolderName)
+{
+    return fs::exists(rFolderName);
+}
+
 static void RemoveFile(const std::string& rFileName)
 {
     if (std::remove(rFileName.c_str()) != 0) {
@@ -85,20 +90,18 @@ static int GetNumNodesForVtkCellType(const int VtkCellType)
 class FileCommunication : public Communication
 {
 public:
-    explicit FileCommunication(const std::string& rName, const Info& I_Settings, const bool IsConnectionMaster)
+    explicit FileCommunication(const Info& I_Settings) : Communication(I_Settings)
+    {
+        mCommFolder = GetWorkingDirectory();
+        mCommFolder /= ".CoSimIOFileComm_" + GetConnectionName();
+        mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", true);
+    }
+
+    /*[[deprecated]]*/ explicit FileCommunication(const std::string& rName, const Info& I_Settings, const bool IsConnectionMaster)
         : Communication(rName, I_Settings, IsConnectionMaster)
     {
-        if (I_Settings.Has("use_folder_for_communication")) {
-            mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication");
-        }
-
-        mCommFolder = ".CoSimIOFileComm_"+rName;
-
-        if (mCommInFolder && GetIsConnectionMaster()) {
-            // delete and recreate directory to remove potential leftovers
-            fs::remove_all(mCommFolder);
-            fs::create_directory(mCommFolder);
-        }
+        mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", false);
+        mCommFolder = GetWorkingDirectory();
     }
 
     ~FileCommunication() override
@@ -111,29 +114,39 @@ public:
 
 private:
 
-    std::string mCommFolder = "";
-    bool mCommInFolder = false;
+    fs::path mCommFolder;
+    bool mCommInFolder = true;
 
     Info ConnectDetail(const Info& I_Info) override
     {
-        return Info(); // nothing needed here for file-based communication (maybe do sth here?)
+        if (mCommInFolder) {
+            if (GetIsPrimaryConnection()) {
+                // delete and recreate directory to remove potential leftovers
+                fs::remove_all(mCommFolder);
+                fs::create_directory(mCommFolder);
+            } else {
+                // secondary connection waits until folder is created, otherwise it will crash
+                // when trying to create files in a non-existing folder
+                WaitForFolder(mCommFolder);
+            }
+        }
+
+        Info info;
+        info.Set("is_connected", true);
+        return info; // nothing needed here for file-based communication (maybe do sth here?)
         // master could write a file that gets deleted by slave to aknowledge connection... Probably not a bad idea! => slave returns once it found and deleted file, master waits for deletion of file
     }
 
     Info DisconnectDetail(const Info& I_Info) override
     {
-        // remove communication folder (?)
-        return Info(); // nothing needed here for file-based communication (maybe do sth here?)
-    }
+        if (mCommInFolder && GetIsPrimaryConnection()) {
+            // delete directory to remove potential leftovers
+            fs::remove_all(mCommFolder);
+        }
 
-    bool ConnectDetail() override
-    {
-        return true;
-    }
-
-    bool DisconnectDetail() override
-    {
-        return true;
+        Info info;
+        info.Set("is_connected", false);
+        return info;
     }
 
      void ImportDataImpl(
@@ -414,27 +427,25 @@ private:
         return static_cast<CoSimIO::ControlSignal>(control_signal);
     }
 
-    std::string GetTempFileName(const std::string& rFileName)
+    std::string GetTempFileName(const std::string& rFileName) const
     {
         if (mCommInFolder) {
-            // TODO check this
-            return std::string(rFileName).insert(mCommFolder.length()+1, ".");
+            return std::string(rFileName).insert(std::string(mCommFolder).length()+1, ".");
         } else {
             return "." + rFileName;
         }
     }
 
-    std::string GetFullPath(const std::string& rFileName)
+    std::string GetFullPath(const std::string& rFileName) const
     {
         if (mCommInFolder) {
-            // TODO check this
-            return mCommFolder + "/" + rFileName;  // using portable separator "/"
+            return mCommFolder / rFileName;
         } else {
             return rFileName;
         }
     }
 
-    void WaitForFile(const std::string& rFileName)
+    void WaitForFile(const std::string& rFileName) const
     {
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for file: \"" << rFileName << "\"" << std::endl;
         while(!FileExists(rFileName)) {
@@ -444,7 +455,7 @@ private:
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found file: \"" << rFileName << "\"" << std::endl;
     }
 
-    void WaitUntilFileIsRemoved(const std::string& rFileName)
+    void WaitUntilFileIsRemoved(const std::string& rFileName) const
     {
         if (FileExists(rFileName)) { // only issue the wating message if the file exists initially
             CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for file: \"" << rFileName << "\" to be removed" << std::endl;
@@ -456,11 +467,21 @@ private:
         }
     }
 
-    void MakeFileVisible(const std::string& rFinalFileName)
+    void MakeFileVisible(const std::string& rFinalFileName) const
     {
         if (std::rename(GetTempFileName(rFinalFileName).c_str(), rFinalFileName.c_str()) != 0) {
             CO_SIM_IO_INFO("CoSimIO") << "Warning: \"" << rFinalFileName << "\" could not be made visible!" << std::endl;
         }
+    }
+
+    void WaitForFolder(const std::string& rFolderName) const
+    {
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for folder: \"" << rFolderName << "\"" << std::endl;
+        while(!FolderExists(rFolderName)) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(50)); // wait 0.05s before next check
+            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>2) << "    Waiting" << std::endl;
+        }
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found folder: \"" << rFolderName << "\"" << std::endl;
     }
 
 };
