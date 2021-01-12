@@ -47,6 +47,43 @@ void ConnectDisconnect()
     CHECK_UNARY_FALSE(ret_info_disconnect.Get<bool>("is_connected"));
 }
 
+template<class TCommType>
+void ExportInfoHelper(const std::size_t NumExports)
+{
+    CoSimIO::Info settings;
+
+    settings.Set<std::string>("my_name", "thread");
+    settings.Set<std::string>("connect_to", "main");
+    settings.Set<bool>("is_primary_connection", false);
+
+    using Communication = CoSimIO::Internals::Communication;
+    std::unique_ptr<Communication> p_comm(CoSimIO::make_unique<TCommType>(settings));
+
+    // the secondary thread should wait a bit until the primary has created the folder!
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+
+    CoSimIO::Info connect_info;
+    CoSimIO::Info ret_info_connect = p_comm->Connect(connect_info);
+
+    CHECK_UNARY(ret_info_connect.Get<bool>("is_connected"));
+
+    CoSimIO::Info info_for_export;
+    info_for_export.Set<std::string>("some_random_name", "the_CoSimIO");
+    info_for_export.Set<bool>("is_converged", true);
+    info_for_export.Set<int>("echo_level", 2);
+
+    for (std::size_t i=0; i<NumExports; ++i) {
+        info_for_export.Set<double>("tol", 0.008*(i+1));
+        info_for_export.Set<int>("counter", i+3);
+        p_comm->ExportInfo(info_for_export);
+    }
+
+    CoSimIO::Info disconnect_info;
+    CoSimIO::Info ret_info_disconnect = p_comm->Disconnect(disconnect_info);
+
+    CHECK_UNARY_FALSE(ret_info_disconnect.Get<bool>("is_connected"));
+}
+
 }
 
 // neither of the tests should take more than 1.0 seconds. If it does it means that it hangs!
@@ -91,10 +128,57 @@ TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(1.0), TCommType, COM
 
     SUBCASE("import_export_info_once")
     {
+        std::thread ext_thread(ExportInfoHelper<TCommType>, 1);
+
+        CoSimIO::Info connect_info;
+        p_comm->Connect(connect_info);
+
+        CoSimIO::Info import_info;
+        auto imported_info = p_comm->ImportInfo(import_info);
+
+        CHECK_UNARY(imported_info.Has("some_random_name"));
+        CHECK_UNARY(imported_info.Has("is_converged"));
+        CHECK_UNARY(imported_info.Has("tol"));
+        CHECK_UNARY(imported_info.Has("counter"));
+
+        CHECK_EQ(imported_info.Get<std::string>("some_random_name"), "the_CoSimIO");
+        CHECK_UNARY(imported_info.Get<bool>("is_converged"));
+        CHECK_EQ(imported_info.Get<double>("tol"), doctest::Approx(0.008));
+        CHECK_EQ(imported_info.Get<int>("counter"), 3);
+
+        CoSimIO::Info disconnect_info;
+        p_comm->Disconnect(disconnect_info);
+
+        ext_thread.join();
     }
 
     SUBCASE("import_export_info_multiple")
     {
+        const std::size_t num_exports = 4;
+        std::thread ext_thread(ExportInfoHelper<TCommType>, num_exports);
+
+        CoSimIO::Info connect_info;
+        p_comm->Connect(connect_info);
+
+        for (std::size_t i=0; i<num_exports; ++i) {
+            CoSimIO::Info import_info;
+            auto imported_info = p_comm->ImportInfo(import_info);
+
+            CHECK_UNARY(imported_info.Has("some_random_name"));
+            CHECK_UNARY(imported_info.Has("is_converged"));
+            CHECK_UNARY(imported_info.Has("tol"));
+            CHECK_UNARY(imported_info.Has("counter"));
+
+            CHECK_EQ(imported_info.Get<std::string>("some_random_name"), "the_CoSimIO");
+            CHECK_UNARY(imported_info.Get<bool>("is_converged"));
+            CHECK_EQ(imported_info.Get<double>("tol"), doctest::Approx(0.008*(i+1)));
+            CHECK_EQ(imported_info.Get<int>("counter"), i+3);
+        }
+
+        CoSimIO::Info disconnect_info;
+        p_comm->Disconnect(disconnect_info);
+
+        ext_thread.join();
     }
 
     SUBCASE("import_export_data_once")
