@@ -149,7 +149,6 @@ private:
         return info;
     }
 
-
     Info ImportInfoImpl(const Info& I_Info) override
     {
         const std::string file_name(GetFullPath("CoSimIO_info_" + GetConnectionName() + ".dat"));
@@ -266,6 +265,176 @@ private:
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting array" << std::endl;
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Array \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+
+        return Info(); // TODO use
+    }
+
+    Info ImportMeshImpl(
+        const Info& I_Info,
+        ModelPart& O_ModelPart) override
+    {
+        const std::string identifier = I_Info.Get<std::string>("identifier");
+        const std::string file_name(GetFullPath("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + ".vtk"));
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import mesh \"" << identifier << "\" in file \"" << file_name << "\" ..." << std::endl;
+
+        WaitForFile(file_name);
+
+        const auto start_time(std::chrono::steady_clock::now());
+
+        std::ifstream input_file(file_name);
+        CheckStream(input_file, file_name);
+
+        // reading file
+        std::string current_line;
+        bool nodes_read = false;
+        bool cells_read = false;
+
+        while (std::getline(input_file, current_line)) {
+            // reading nodes
+            if (current_line.find("POINTS") != std::string::npos) {
+                CO_SIM_IO_ERROR_IF(nodes_read) << "The nodes were read already!" << std::endl;
+                CO_SIM_IO_ERROR_IF(cells_read) << "The cells were read already!" << std::endl;
+                nodes_read = true;
+
+                // int num_nodes;
+                // current_line = current_line.substr(current_line.find("POINTS") + 7); // removing "POINTS"
+                // std::istringstream line_stream(current_line);
+                // line_stream >> num_nodes;
+
+                // CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Mesh contains " << num_nodes << " Nodes" << std::endl;
+
+        //         rNodalCoordinates.resize(3*num_nodes);
+
+        //         for (int i=0; i<num_nodes*3; ++i) {
+        //             input_file >> rNodalCoordinates[i];
+        //         }
+            }
+
+            // reading cells
+            if (current_line.find("CELLS") != std::string::npos) {
+                CO_SIM_IO_ERROR_IF_NOT(nodes_read) << "The nodes were not yet read!" << std::endl;
+                CO_SIM_IO_ERROR_IF(cells_read) << "The cells were read already!" << std::endl;
+                cells_read = true;
+
+                // int num_nodes_per_cell, num_cells, elem_conn, cell_list_size;
+                // current_line = current_line.substr(current_line.find("CELLS") + 6); // removing "CELLS"
+                // std::istringstream line_stream(current_line);
+                // line_stream >> num_cells;
+                // line_stream >> cell_list_size;
+
+        //         rElementConnectivities.resize(cell_list_size-num_cells); // the first in number in each line is the number of connectivities, which is not needed bcs it can be derived form the elements-type
+        //         rElementTypes.resize(num_cells);
+
+        //         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Mesh contains " << num_cells << " Elements" << std::endl;
+
+        //         int counter=0;
+        //         for (int i=0; i<num_cells; ++i) {
+        //             input_file >> num_nodes_per_cell;
+        //             for (int j=0; j<num_nodes_per_cell; ++j) {
+        //                 input_file >> elem_conn;
+        //                 rElementConnectivities[counter++] = elem_conn;
+        //             }
+        //         }
+        //     }
+
+        //     // reading cell types
+        //     if (current_line.find("CELL_TYPES") != std::string::npos) {
+        //         CO_SIM_IO_ERROR_IF_NOT(nodes_read) << "The nodes were not yet read!" << std::endl;
+        //         CO_SIM_IO_ERROR_IF_NOT(cells_read) << "The cells were not yet read!" << std::endl;
+
+        //         for (std::size_t i=0; i<rElementTypes.size(); ++i) { // rElementTypes was resized to correct size above
+        //             input_file >> rElementTypes[i];
+        //         }
+            }
+        }
+
+        input_file.close();
+        RemoveFile(file_name);
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing mesh" << std::endl;
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Mesh \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+
+        return Info(); // TODO use
+    }
+
+    Info ExportMeshImpl(
+        const Info& I_Info,
+        const ModelPart& I_ModelPart) override
+    {
+        const std::string identifier = I_Info.Get<std::string>("identifier");
+        const std::string file_name(GetFullPath("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + ".vtk"));
+
+        WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
+
+        // const std::size_t num_nodes = rNodalCoordinates.size()/3;
+        // const std::size_t num_elems = rElementTypes.size();
+
+        // CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export mesh \"" << identifier << "\" with " << num_nodes << " Nodes | " << num_elems << " Elements in file \"" << file_name << "\" ..." << std::endl;
+
+        const auto start_time(std::chrono::steady_clock::now());
+
+        std::ofstream output_file;
+        output_file.open(GetTempFileName(file_name));
+        CheckStream(output_file, file_name);
+
+        output_file << std::scientific << std::setprecision(7); // TODO maybe this should be configurable
+
+        // write file header
+        output_file << "# vtk DataFile Version 4.0\n";
+        output_file << "vtk output\n";
+        output_file << "ASCII\n";
+        output_file << "DATASET UNSTRUCTURED_GRID\n\n";
+
+        // write nodes
+        // output_file << "POINTS " << num_nodes << " float\n";
+        // for (std::size_t i=0; i<num_nodes; ++i) {
+        //     output_file << rNodalCoordinates[i*3] << " " << rNodalCoordinates[i*3+1] << " " << rNodalCoordinates[i*3+2] << "\n";
+        // }
+        // output_file << "\n";
+
+        // // get connectivity information
+        // std::size_t cell_list_size = 0;
+        // std::size_t counter = 0;
+        // int connectivities_offset = std::numeric_limits<int>::max(); //in paraview the connectivities start from 0, hence we have to check beforehand what is the connectivities offset
+        // for (std::size_t i=0; i<num_elems; ++i) {
+        //     const std::size_t num_nodes_cell = GetNumNodesForVtkCellType(rElementTypes[i]);
+        //     cell_list_size += num_nodes_cell + 1; // +1 for size of connectivity
+        //     for (std::size_t j=0; j<num_nodes_cell; ++j) {
+        //         connectivities_offset = std::min(connectivities_offset, rElementConnectivities[counter++]);
+        //     }
+        // }
+
+        // CO_SIM_IO_ERROR_IF(num_elems > 0 && connectivities_offset != 0) << "Connectivities have an offset of " << connectivities_offset << " which is not allowed!" << std::endl;
+
+        // // write cells connectivity
+        // counter = 0;
+        // output_file << "CELLS " << num_elems << " " << cell_list_size << "\n";
+        // for (std::size_t i=0; i<num_elems; ++i) {
+        //     const std::size_t num_nodes_cell = GetNumNodesForVtkCellType(rElementTypes[i]);
+        //     output_file << num_nodes_cell << " ";
+        //     for (std::size_t j=0; j<num_nodes_cell; ++j) {
+        //         output_file << (rElementConnectivities[counter++]-connectivities_offset);
+        //         if (j<num_nodes_cell-1) output_file << " "; // not adding a whitespace after last number
+        //     }
+        //     output_file << "\n";
+        // }
+
+        // output_file << "\n";
+
+        // // write cell types
+        // output_file << "CELL_TYPES " << num_elems << "\n";
+        // for (std::size_t i=0; i<num_elems; ++i) {
+        //     output_file << rElementTypes[i] << "\n";
+        // }
+
+        output_file.close();
+        MakeFileVisible(file_name);
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting mesh" << std::endl;
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Mesh \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
 
         return Info(); // TODO use
     }
