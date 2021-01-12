@@ -123,13 +123,13 @@ public:
     template<class... Args>
     Info ExportInfo(Args&&... args)
     {
-        CheckConnection(); return ExportInfoDetail(std::forward<Args>(args)...);
+        CheckConnection(); return ExportInfoImpl(std::forward<Args>(args)...);
     }
 
     template<class... Args>
     Info ImportInfo(Args&&... args)
     {
-        CheckConnection(); return ImportInfoDetail(std::forward<Args>(args)...);
+        CheckConnection(); return ImportInfoImpl(std::forward<Args>(args)...);
     }
 
     template<class... Args>
@@ -232,13 +232,13 @@ private:
     virtual Info ConnectDetail(const Info& I_Info) = 0;
     virtual Info DisconnectDetail(const Info& I_Info) = 0;
 
-    virtual Info ImportInfo(const Info& I_Info)
+    virtual Info ImportInfoImpl(const Info& I_Info)
     {
         CO_SIM_IO_ERROR << "ImportInfo not implemented for this comm-type" << std::endl;
         return Info();
     }
 
-    virtual Info ExportInfo(const Info& I_Info)
+    virtual Info ExportInfoImpl(const Info& I_Info)
     {
         CO_SIM_IO_ERROR << "ExportInfo not implemented for this comm-type" << std::endl;
         return Info();

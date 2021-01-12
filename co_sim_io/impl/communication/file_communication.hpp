@@ -149,6 +149,51 @@ private:
         return info;
     }
 
+
+    Info ImportInfoImpl(const Info& I_Info) override
+    {
+        const std::string file_name(GetFullPath("CoSimIO_info_" + GetConnectionName() + ".dat"));
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import Info in file \"" << file_name << "\" ..." << std::endl;
+
+        WaitForFile(file_name);
+
+        std::ifstream input_file(file_name);
+        CheckStream(input_file, file_name);
+
+        Info imported_info;
+        imported_info.Load(input_file);
+
+        input_file.close(); // TODO check return value?
+        RemoveFile(file_name);
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing Info" << std::endl;
+
+        return imported_info;
+    }
+
+    Info ExportInfoImpl(const Info& I_Info) override
+    {
+        const std::string file_name(GetFullPath("CoSimIO_info_" + GetConnectionName() + ".dat"));
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export Info in file \"" << file_name << "\" ..." << std::endl;
+
+        WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
+
+        std::ofstream output_file;
+        output_file.open(GetTempFileName(file_name));
+        CheckStream(output_file, file_name);
+
+        I_Info.Save(output_file);
+
+        output_file.close();
+        MakeFileVisible(file_name);
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting Info" << std::endl;
+
+        return Info(); // TODO use
+    }
+
      void ImportDataImpl(
         const std::string& rIdentifier,
         CoSimIO::Internals::DataContainer<double>& rData) override
