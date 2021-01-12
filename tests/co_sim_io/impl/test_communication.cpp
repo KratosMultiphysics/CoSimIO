@@ -74,7 +74,7 @@ void ExportInfoHelper(const std::size_t NumExports)
 
     for (std::size_t i=0; i<NumExports; ++i) {
         info_for_export.Set<double>("tol", 0.008*(i+1));
-        info_for_export.Set<int>("counter", i+3);
+        info_for_export.Set<int>("counter", static_cast<int>(i)+3);
         p_comm->ExportInfo(info_for_export);
     }
 
