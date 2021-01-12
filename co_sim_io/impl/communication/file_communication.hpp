@@ -164,7 +164,7 @@ private:
         Info imported_info;
         imported_info.Load(input_file);
 
-        input_file.close();
+        input_file.close(); // TODO check return value?
         RemoveFile(file_name);
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing Info" << std::endl;
