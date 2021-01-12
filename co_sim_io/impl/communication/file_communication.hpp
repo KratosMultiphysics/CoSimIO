@@ -194,13 +194,14 @@ private:
         return Info(); // TODO use
     }
 
-     void ImportDataImpl(
-        const std::string& rIdentifier,
-        CoSimIO::Internals::DataContainer<double>& rData) override
+    Info ImportDataImpl(
+        const Info& I_Info,
+        Internals::DataContainer<double>& rData) override
     {
-        const std::string file_name(GetFullPath("CoSimIO_data_" + GetConnectionName() + "_" + rIdentifier + ".dat"));
+        const std::string identifier = I_Info.Get<std::string>("identifier");
+        const std::string file_name(GetFullPath("CoSimIO_data_" + GetConnectionName() + "_" + identifier + ".dat"));
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to receive array \"" << rIdentifier << "\" in file \"" << file_name << "\" ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import array \"" << identifier << "\" in file \"" << file_name << "\" ..." << std::endl;
 
         WaitForFile(file_name);
 
@@ -220,23 +221,28 @@ private:
             input_file >> rData[i];
         }
 
+        input_file.close();
         RemoveFile(file_name);
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished receiving array with size: " << size_read << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing array with size: " << size_read << std::endl;
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Receiving Array \"" << rIdentifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Array \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+
+        return Info(); // TODO use
     }
 
-    void ExportDataImpl(
-        const std::string& rIdentifier,
-        const CoSimIO::Internals::DataContainer<double>& rData) override
+
+    Info ExportDataImpl(
+        const Info& I_Info,
+        const Internals::DataContainer<double>& rData) override
     {
-        const std::string file_name(GetFullPath("CoSimIO_data_" + GetConnectionName() + "_" + rIdentifier + ".dat"));
+        const std::string identifier = I_Info.Get<std::string>("identifier");
+        const std::string file_name(GetFullPath("CoSimIO_data_" + GetConnectionName() + "_" + identifier + ".dat"));
 
         WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
         const std::size_t size = rData.size();
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to send array \"" << rIdentifier << "\" with size: " << size << " in file \"" << file_name << "\" ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export array \"" << identifier << "\" with size: " << size << " in file \"" << file_name << "\" ..." << std::endl;
 
         const auto start_time(std::chrono::steady_clock::now());
 
@@ -257,9 +263,11 @@ private:
         output_file.close();
         MakeFileVisible(file_name);
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished sending array" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting array" << std::endl;
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Sending Array \"" << rIdentifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Array \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+
+        return Info(); // TODO use
     }
 
     void ImportMeshImpl(
