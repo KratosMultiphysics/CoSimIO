@@ -55,7 +55,7 @@ void ExportInfoHelper(const std::size_t NumExports)
     settings.Set<std::string>("my_name", "thread");
     settings.Set<std::string>("connect_to", "main");
     settings.Set<bool>("is_primary_connection", false);
-    info_for_export.Set<int>("echo_level", 0);
+    settings.Set<int>("echo_level", 0);
 
     using Communication = CoSimIO::Internals::Communication;
     std::unique_ptr<Communication> p_comm(CoSimIO::make_unique<TCommType>(settings));
