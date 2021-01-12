@@ -86,8 +86,8 @@ void ExportInfoHelper(const std::size_t NumExports)
 
 }
 
-// neither of the tests should take more than 1.0 seconds. If it does it means that it hangs!
-TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(1.0), TCommType, COMM_TESTS)
+// neither of the tests should take more than 5.0 seconds. If it does it means that it hangs!
+TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(5.0), TCommType, COMM_TESTS)
 {
     CoSimIO::Info settings;
 
