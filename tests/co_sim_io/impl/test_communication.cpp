@@ -27,7 +27,6 @@ void ConnectDisconnect()
 
     settings.Set<std::string>("my_name", "thread");
     settings.Set<std::string>("connect_to", "main");
-    settings.Set<std::string>("connection_name", "custom_communication");
     settings.Set<bool>("is_primary_connection", false);
     settings.Set<int>("echo_level", 0);
 
@@ -50,14 +49,13 @@ void ConnectDisconnect()
 
 }
 
-// neither of the tests should take more than 0.5 seconds. If it does it means that it hangs!
+// neither of the tests should take more than 1.0 seconds. If it does it means that it hangs!
 TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(1.0), TCommType, COMM_TESTS)
 {
     CoSimIO::Info settings;
 
     settings.Set<std::string>("my_name", "main");
     settings.Set<std::string>("connect_to", "thread");
-    settings.Set<std::string>("connection_name", "custom_communication");
     settings.Set<bool>("is_primary_connection", true);
     settings.Set<int>("echo_level", 0);
 

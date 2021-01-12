@@ -21,6 +21,7 @@
 #include "../data_container.hpp"
 #include "../model_part.hpp"
 #include "../filesystem_inc.hpp"
+#include "../utilities.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -39,7 +40,7 @@ public:
             // automatically determine the primary connection in case the user didn't specify it
             mIsPrimaryConnection = mMyName < mConnectTo;
         }
-        mConnectionName = I_Settings.Get<std::string>("connection_name");
+        mConnectionName = CreateConnectionName(mMyName, mConnectTo);
 
         mWorkingDirectory = I_Settings.Get<std::string>("working_directory", fs::current_path());
 
@@ -70,6 +71,7 @@ public:
         Info connect_detail_info = ConnectDetail(I_Info);
         mIsConnected = connect_detail_info.Get<bool>("is_connected");
         connect_detail_info.Set<int>("connection_status", ConnectionStatus::Connected);
+        connect_detail_info.Set<std::string>("working_directory", mWorkingDirectory);
 
         CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "Connection was not successful!" << std::endl;
 
