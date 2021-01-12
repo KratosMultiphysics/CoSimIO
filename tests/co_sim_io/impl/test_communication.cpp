@@ -84,6 +84,41 @@ void ExportInfoHelper(const std::size_t NumExports)
     CHECK_UNARY_FALSE(ret_info_disconnect.Get<bool>("is_connected"));
 }
 
+template<class TCommType>
+void ExportDataHelper(const std::vector<std::vector<double>>& DataToExport)
+{
+    CoSimIO::Info settings;
+
+    settings.Set<std::string>("my_name", "thread");
+    settings.Set<std::string>("connect_to", "main");
+    settings.Set<bool>("is_primary_connection", false);
+    settings.Set<int>("echo_level", 0);
+
+    using Communication = CoSimIO::Internals::Communication;
+    std::unique_ptr<Communication> p_comm(CoSimIO::make_unique<TCommType>(settings));
+
+    // the secondary thread should wait a bit until the primary has created the folder!
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+
+    CoSimIO::Info connect_info;
+    CoSimIO::Info ret_info_connect = p_comm->Connect(connect_info);
+
+    CHECK_UNARY(ret_info_connect.Get<bool>("is_connected"));
+
+    CoSimIO::Info export_info;
+    export_info.Set<std::string>("identifier", "data_exchange");
+
+    for (const auto& data : DataToExport) {
+        const CoSimIO::Internals::DataContainerStdVectorReadOnly<double> data_container(data);
+        p_comm->ExportData(export_info, data_container);
+    }
+
+    CoSimIO::Info disconnect_info;
+    CoSimIO::Info ret_info_disconnect = p_comm->Disconnect(disconnect_info);
+
+    CHECK_UNARY_FALSE(ret_info_disconnect.Get<bool>("is_connected"));
+}
+
 }
 
 // neither of the tests should take more than 5.0 seconds. If it does it means that it hangs!
@@ -183,10 +218,58 @@ TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(5.0), TCommType, COM
 
     SUBCASE("import_export_data_once")
     {
+        const std::vector<std::vector<double>> exp_data {
+            {1.0, -6.1, 55.789, 547}
+        };
+        std::thread ext_thread(ExportDataHelper<TCommType>, exp_data);
+
+        CoSimIO::Info connect_info;
+        p_comm->Connect(connect_info);
+
+        std::vector<double> data;
+        CoSimIO::Internals::DataContainerStdVector<double> data_container(data);
+
+        CoSimIO::Info import_info;
+        import_info.Set<std::string>("identifier", "data_exchange");
+        p_comm->ImportData(import_info, data_container);
+
+        CO_SIM_IO_CHECK_VECTOR_NEAR(data_container, exp_data[0]);
+
+        CoSimIO::Info disconnect_info;
+        p_comm->Disconnect(disconnect_info);
+
+        ext_thread.join();
     }
 
     SUBCASE("import_export_data_multiple")
     {
+        const std::vector<std::vector<double>> exp_data {
+            {1.1, -6.1, 535.789, 5487},
+            {1.2, -6.01, 552.789, 5477, 1.0, -6.19, -655.789, 91.5888867},
+            {1.3, -6.001, -655.789, 91.567},
+            {1.4, -6.0001, 551.789, 5647, -1.0, 44.5, -876.123, -6.1, -63455.789, 91.567},
+            {-11.56}
+        };
+        std::thread ext_thread(ExportDataHelper<TCommType>, exp_data);
+
+        CoSimIO::Info connect_info;
+        p_comm->Connect(connect_info);
+
+        std::vector<double> data;
+        CoSimIO::Internals::DataContainerStdVector<double> data_container(data);
+
+        CoSimIO::Info import_info;
+        import_info.Set<std::string>("identifier", "data_exchange");
+        for (std::size_t i=0; i<exp_data.size(); ++i) {
+            CAPTURE(i); // log the current input data (done manually as not fully supported yet by doctest)
+            p_comm->ImportData(import_info, data_container);
+            CO_SIM_IO_CHECK_VECTOR_NEAR(data_container, exp_data[i]);
+        }
+
+        CoSimIO::Info disconnect_info;
+        p_comm->Disconnect(disconnect_info);
+
+        ext_thread.join();
     }
 
     SUBCASE("import_export_mesh_once")
