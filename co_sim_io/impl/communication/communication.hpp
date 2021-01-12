@@ -287,7 +287,7 @@ private:
         return CoSimIO::ControlSignal::Dummy;
     }
 
-    virtual /*[[deprecated]]*/ void ImportDataImpl(
+    /*[[deprecated]]*/ void ImportDataImpl(
         const std::string& rIdentifier,
         CoSimIO::Internals::DataContainer<double>& rData)
     {
@@ -296,7 +296,7 @@ private:
         ImportDataImpl(tmp_info, rData);
     }
 
-    virtual /*[[deprecated]]*/ void ExportDataImpl(
+    /*[[deprecated]]*/ void ExportDataImpl(
         const std::string& rIdentifier,
         const CoSimIO::Internals::DataContainer<double>& rData)
     {
