@@ -291,14 +291,18 @@ private:
         const std::string& rIdentifier,
         CoSimIO::Internals::DataContainer<double>& rData)
     {
-        CO_SIM_IO_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
+        Info tmp_info;
+        tmp_info.Set<std::string>("identifier", rIdentifier);
+        ImportDataImpl(tmp_info, rData);
     }
 
     virtual /*[[deprecated]]*/ void ExportDataImpl(
         const std::string& rIdentifier,
         const CoSimIO::Internals::DataContainer<double>& rData)
     {
-        CO_SIM_IO_ERROR << "ExportDataImpl not implemented for this comm-type!" << std::endl;
+        Info tmp_info;
+        tmp_info.Set<std::string>("identifier", rIdentifier);
+        ExportDataImpl(tmp_info, rData);
     }
 
     virtual /*[[deprecated]]*/ void ImportMeshImpl(
