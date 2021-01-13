@@ -133,13 +133,13 @@ public:
     }
 
     template<class... Args>
-    Info ImportData_1X2(Args&&... args) // TODO fix name once other interface is removed
+    Info ImportData(Args&&... args)
     {
         CheckConnection(); return ImportDataImpl(std::forward<Args>(args)...);
     }
 
     template<class... Args>
-    Info ExportData_1X2(Args&&... args) // TODO fix name once other interface is removed
+    Info ExportData(Args&&... args)
     {
         CheckConnection(); return ExportDataImpl(std::forward<Args>(args)...);
     }
@@ -165,18 +165,6 @@ public:
     /*[[deprecated]]*/ CoSimIO::ControlSignal RecvControlSignal(std::string& rIdentifier)
     {
         CheckConnection(); return RecvControlSignalDetail(rIdentifier);
-    }
-
-    template<class... Args>
-    /*[[deprecated]]*/ void ImportData(Args&&... args)
-    {
-        CheckConnection(); ImportDataImpl(std::forward<Args>(args)...);
-    }
-
-    template<class... Args>
-    /*[[deprecated]]*/ void ExportData(Args&&... args)
-    {
-        CheckConnection(); ExportDataImpl(std::forward<Args>(args)...);
     }
 
     template<class... Args>
@@ -285,24 +273,6 @@ private:
     {
         CO_SIM_IO_ERROR << "RecvControlSignalDetail not implemented for this comm-type" << std::endl;
         return CoSimIO::ControlSignal::Dummy;
-    }
-
-    /*[[deprecated]]*/ void ImportDataImpl(
-        const std::string& rIdentifier,
-        CoSimIO::Internals::DataContainer<double>& rData)
-    {
-        Info tmp_info;
-        tmp_info.Set<std::string>("identifier", rIdentifier);
-        ImportDataImpl(tmp_info, rData);
-    }
-
-    /*[[deprecated]]*/ void ExportDataImpl(
-        const std::string& rIdentifier,
-        const CoSimIO::Internals::DataContainer<double>& rData)
-    {
-        Info tmp_info;
-        tmp_info.Set<std::string>("identifier", rIdentifier);
-        ExportDataImpl(tmp_info, rData);
     }
 
     virtual /*[[deprecated]]*/ void ImportMeshImpl(
