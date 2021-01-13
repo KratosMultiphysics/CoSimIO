@@ -109,6 +109,11 @@ TEST_CASE("element_checks")
     {
         CHECK_THROWS_WITH(Element element(1, type, {}), "Error: No nodes were passed!\n");
     }
+
+    SUBCASE("wrong_element_type")
+    {
+        CHECK_THROWS_WITH(Element element(1, CoSimIO::ElementType::LINE, {&node}), "Error: Number of nodes (1) does not match expected number for element type (2)!\n");
+    }
 }
 
 TEST_CASE("element_nodes")

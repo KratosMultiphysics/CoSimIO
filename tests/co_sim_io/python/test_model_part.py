@@ -42,7 +42,6 @@ class CoSimIO_ModelPart(unittest.TestCase):
             node = CoSimIO.Node(node_id, coords)
             Check(node)
 
-
     def test_print_node(self):
         coords = [1.0, -2.7, 9.44]
         node_id = 16
