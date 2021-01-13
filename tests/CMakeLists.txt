@@ -2,8 +2,10 @@ include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io )
 include_directories( ${CMAKE_SOURCE_DIR}/external_libraries )
 
 ### Test runner for tests of CoSimIO
+find_package (Threads REQUIRED)
 file( GLOB_RECURSE CO_SIM_IO_TEST_FILES co_sim_io/*.cpp)
 add_executable ( co_sim_io_tests ${CO_SIM_IO_TEST_FILES})
+target_link_libraries(co_sim_io_tests ${CMAKE_THREAD_LIBS_INIT})
 install( TARGETS co_sim_io_tests DESTINATION ${CMAKE_SOURCE_DIR}/bin )
 set_target_properties(co_sim_io_tests PROPERTIES
     CXX_STANDARD 11
@@ -12,7 +14,6 @@ set_target_properties(co_sim_io_tests PROPERTIES
 )
 
 doctest_discover_tests(co_sim_io_tests)
-
 
 ### C++ tests ###
 function(add_cpp_executable TEST_SOURCE_FILE)

@@ -20,14 +20,36 @@
 #include "../info.hpp"
 #include "../data_container.hpp"
 #include "../model_part.hpp"
+#include "../filesystem_inc.hpp"
+#include "../utilities.hpp"
 
 namespace CoSimIO {
 namespace Internals {
 
+
 class Communication
 {
 public:
-    explicit Communication(const std::string& rName, const Info& I_Settings, const bool IsConnectionMaster) : mConnectionName(rName), mIsConnectionMaster(IsConnectionMaster)
+    explicit Communication(const Info& I_Settings)
+    {
+        mMyName = I_Settings.Get<std::string>("my_name");
+        mConnectTo = I_Settings.Get<std::string>("connect_to");
+        if (I_Settings.Has("is_primary_connection")) {
+            mIsPrimaryConnection = I_Settings.Get<bool>("is_primary_connection");
+        } else {
+            // automatically determine the primary connection in case the user didn't specify it
+            mIsPrimaryConnection = mMyName < mConnectTo;
+        }
+        mConnectionName = CreateConnectionName(mMyName, mConnectTo);
+
+        mWorkingDirectory = I_Settings.Get<std::string>("working_directory", fs::current_path());
+
+        mEchoLevel = I_Settings.Get<int>("echo_level", 0);
+        mPrintTiming = I_Settings.Get<bool>("print_timing", false);
+    }
+
+    // deprecated
+    /*[[deprecated]]*/ explicit Communication(const std::string& rName, const Info& I_Settings, const bool IsConnectionMaster) : mConnectionName(rName), mIsConnectionMaster(IsConnectionMaster)
     {
         mEchoLevel = I_Settings.Get<int>("echo_level", 0);
         mPrintTiming = I_Settings.Get<bool>("print_timing", false);
@@ -37,61 +59,77 @@ public:
 
     Info Connect(const Info& I_Info)
     {
-        CO_SIM_IO_ERROR << "Connect not implemented yet" << std::endl;
-        return Info();
-    }
-
-    Info Disonnect(const Info& I_Info)
-    {
-        CO_SIM_IO_ERROR << "Disonnect not implemented yet" << std::endl;
-        return Info();
-    }
-
-    bool Connect()
-    {
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Connecting \"" << mConnectionName << "\" as Connection-" << (mIsConnectionMaster ? "MASTER" : "SLAVE") << " ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0)
+            << "Establishing connection for \"" << mConnectionName
+            << "\"\n    from: \"" << mMyName
+            << "\"\n    to:   \"" << mConnectTo
+            << "\"\n    as " << (mIsPrimaryConnection ? "PRIMARY" : "SECONDARY")
+            << " connection; working directory: " << mWorkingDirectory << " ..." << std::endl;
 
         CO_SIM_IO_ERROR_IF(mIsConnected) << "A connection was already established!" << std::endl;
 
-        mIsConnected = ConnectDetail();
+        Info connect_detail_info = ConnectDetail(I_Info);
+        mIsConnected = connect_detail_info.Get<bool>("is_connected");
+        connect_detail_info.Set<int>("connection_status", ConnectionStatus::Connected);
+        connect_detail_info.Set<std::string>("working_directory", mWorkingDirectory);
 
         CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "Connection was not successful!" << std::endl;
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Connection established" << std::endl;
 
-        return mIsConnected;
+        return connect_detail_info;
     }
 
-    bool Disconnect()
+    Info Disconnect(const Info& I_Info)
     {
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Disconnecting \"" << mConnectionName << "\" ..." << std::endl;
 
         if (mIsConnected) {
-            mIsConnected = !DisconnectDetail();
+            Info disconnect_detail_info = DisconnectDetail(I_Info);
+            mIsConnected = disconnect_detail_info.Get<bool>("is_connected");
+
             if (mIsConnected) {
                 CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not successful!" << std::endl;
-                return false;
+                disconnect_detail_info.Set<int>("connection_status", ConnectionStatus::DisconnectionError);
+            } else {
+                CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Disconnecting successful" << std::endl;
+                disconnect_detail_info.Set<int>("connection_status", ConnectionStatus::Disconnected);
             }
+            return disconnect_detail_info;
+
         } else {
             CO_SIM_IO_INFO("CoSimIO") << "Warning: Calling Disconnect but there was no active connection!" << std::endl;
-            return false;
+            Info disconnect_info;
+            disconnect_info.Set<bool>("is_connected", false);
+            disconnect_info.Set<int>("connection_status", ConnectionStatus::DisconnectionError);
+            return disconnect_info;
         }
+    }
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Disconnecting successful" << std::endl;
+    /*[[deprecated]]*/ bool Connect()
+    {
+        Info temp_info;
+        this->Connect(temp_info);
+        return mIsConnected;
+    }
 
-        return true;
+    /*[[deprecated]]*/ bool Disconnect()
+    {
+        Info temp_info;
+        this->Disconnect(temp_info);
+        return mIsConnected;
     }
 
     template<class... Args>
     Info ExportInfo(Args&&... args)
     {
-        CheckConnection(); return ExportInfoDetail(std::forward<Args>(args)...);
+        CheckConnection(); return ExportInfoImpl(std::forward<Args>(args)...);
     }
 
     template<class... Args>
     Info ImportInfo(Args&&... args)
     {
-        CheckConnection(); return ImportInfoDetail(std::forward<Args>(args)...);
+        CheckConnection(); return ImportInfoImpl(std::forward<Args>(args)...);
     }
 
     template<class... Args>
@@ -120,62 +158,68 @@ public:
 
 
     // old interface, functions need to be removed before release
-    void SendControlSignal(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal)
+    /*[[deprecated]]*/ void SendControlSignal(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal)
     {
         CheckConnection(); SendControlSignalDetail(rIdentifier, Signal);
     }
-    CoSimIO::ControlSignal RecvControlSignal(std::string& rIdentifier)
+    /*[[deprecated]]*/ CoSimIO::ControlSignal RecvControlSignal(std::string& rIdentifier)
     {
         CheckConnection(); return RecvControlSignalDetail(rIdentifier);
     }
 
     template<class... Args>
-    void ImportData(Args&&... args)
+    /*[[deprecated]]*/ void ImportData(Args&&... args)
     {
         CheckConnection(); ImportDataImpl(std::forward<Args>(args)...);
     }
 
     template<class... Args>
-    void ExportData(Args&&... args)
+    /*[[deprecated]]*/ void ExportData(Args&&... args)
     {
         CheckConnection(); ExportDataImpl(std::forward<Args>(args)...);
     }
 
     template<class... Args>
-    void ImportMesh(Args&&... args)
+    /*[[deprecated]]*/ void ImportMesh(Args&&... args)
     {
         CheckConnection(); ImportMeshImpl(std::forward<Args>(args)...);
     }
 
     template<class... Args>
-    void ExportMesh(Args&&... args)
+    /*[[deprecated]]*/ void ExportMesh(Args&&... args)
     {
         CheckConnection(); ExportMeshImpl(std::forward<Args>(args)...);
     }
 
     template<class... Args>
-    void ImportGeometry(Args&&... args)
+    /*[[deprecated]]*/ void ImportGeometry(Args&&... args)
     {
         CheckConnection(); // ImportGeometryImpl(std::forward<Args>(args)...);
     }
 
     template<class... Args>
-    void ExportGeometry(Args&&... args)
+    /*[[deprecated]]*/ void ExportGeometry(Args&&... args)
     {
         CheckConnection(); // ExportGeometryImpl(std::forward<Args>(args)...);
     }
 
 protected:
     std::string GetConnectionName() const {return mConnectionName;}
+    fs::path GetWorkingDirectory() const  {return mWorkingDirectory;}
     int GetEchoLevel() const              {return mEchoLevel;}
-    bool GetIsConnectionMaster() const    {return mIsConnectionMaster;}
+    bool GetIsConnectionMaster() const    {return mIsConnectionMaster;} // TODO remove
+    bool GetIsPrimaryConnection() const   {return mIsPrimaryConnection;}
     bool GetPrintTiming() const           {return mPrintTiming;}
     bool GetIsConnected() const           {return mIsConnected;}
 
 private:
     std::string mConnectionName;
+    std::string mMyName;
+    std::string mConnectTo;
+    fs::path mWorkingDirectory;
     int mEchoLevel = 1;
-    bool mIsConnectionMaster = false;
+    bool mIsConnectionMaster = false; // TODO remove
+    bool mIsPrimaryConnection;
     bool mPrintTiming = false;
     bool mIsConnected = false;
 
@@ -188,13 +232,13 @@ private:
     virtual Info ConnectDetail(const Info& I_Info) = 0;
     virtual Info DisconnectDetail(const Info& I_Info) = 0;
 
-    virtual Info ImportInfo(const Info& I_Info)
+    virtual Info ImportInfoImpl(const Info& I_Info)
     {
         CO_SIM_IO_ERROR << "ImportInfo not implemented for this comm-type" << std::endl;
         return Info();
     }
 
-    virtual Info ExportInfo(const Info& I_Info)
+    virtual Info ExportInfoImpl(const Info& I_Info)
     {
         CO_SIM_IO_ERROR << "ExportInfo not implemented for this comm-type" << std::endl;
         return Info();
@@ -233,34 +277,35 @@ private:
     }
 
     // old interface, functions need to be removed before release
-    virtual bool ConnectDetail() = 0;
-    virtual bool DisconnectDetail() = 0;
-
-    virtual void SendControlSignalDetail(const std::string& rIdentifier, CoSimIO::ControlSignal Signal)
+    virtual /*[[deprecated]]*/ void SendControlSignalDetail(const std::string& rIdentifier, CoSimIO::ControlSignal Signal)
     {
         CO_SIM_IO_ERROR << "SendControlSignalDetail not implemented for this comm-type" << std::endl;
     }
-    virtual CoSimIO::ControlSignal RecvControlSignalDetail(std::string& rIdentifier)
+    virtual /*[[deprecated]]*/ CoSimIO::ControlSignal RecvControlSignalDetail(std::string& rIdentifier)
     {
         CO_SIM_IO_ERROR << "RecvControlSignalDetail not implemented for this comm-type" << std::endl;
         return CoSimIO::ControlSignal::Dummy;
     }
 
-    virtual void ImportDataImpl(
+    /*[[deprecated]]*/ void ImportDataImpl(
         const std::string& rIdentifier,
         CoSimIO::Internals::DataContainer<double>& rData)
     {
-        CO_SIM_IO_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
+        Info tmp_info;
+        tmp_info.Set<std::string>("identifier", rIdentifier);
+        ImportDataImpl(tmp_info, rData);
     }
 
-    virtual void ExportDataImpl(
+    /*[[deprecated]]*/ void ExportDataImpl(
         const std::string& rIdentifier,
         const CoSimIO::Internals::DataContainer<double>& rData)
     {
-        CO_SIM_IO_ERROR << "ExportDataImpl not implemented for this comm-type!" << std::endl;
+        Info tmp_info;
+        tmp_info.Set<std::string>("identifier", rIdentifier);
+        ExportDataImpl(tmp_info, rData);
     }
 
-    virtual void ImportMeshImpl(
+    virtual /*[[deprecated]]*/ void ImportMeshImpl(
         const std::string& rIdentifier,
         CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
         CoSimIO::Internals::DataContainer<int>& rElementConnectivities,
@@ -269,7 +314,7 @@ private:
         CO_SIM_IO_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
     }
 
-    virtual void ExportMeshImpl(
+    virtual /*[[deprecated]]*/ void ExportMeshImpl(
         const std::string& rIdentifier,
         const CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
         const CoSimIO::Internals::DataContainer<int>& rElementConnectivities,

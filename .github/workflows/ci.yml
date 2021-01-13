@@ -30,7 +30,7 @@ jobs:
     - name: Install Valgrind
       if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.8' }}
       run: |
-        sudo apt-get install valgrind
+        sudo apt-get update && sudo apt-get install valgrind
 
     - name: Build CoSimIO
       run: |

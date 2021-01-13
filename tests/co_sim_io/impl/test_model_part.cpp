@@ -58,12 +58,12 @@ TEST_CASE("node_negative_id")
 
     SUBCASE("from_coords")
     {
-        CHECK_THROWS_WITH(Node(id, coords[0], coords[1], coords[2]), "Error: "); // TODO find a better way of testing this
+        CHECK_THROWS_WITH(Node(id, coords[0], coords[1], coords[2]), "Error: Id must be >= 1!\n");
     }
 
     SUBCASE("from_coords_array")
     {
-        CHECK_THROWS_WITH(Node(id, coords), "Error: "); // TODO find a better way of testing this
+        CHECK_THROWS_WITH(Node(id, coords), "Error: Id must be >= 1!\n");
     }
 }
 
@@ -102,12 +102,12 @@ TEST_CASE("element_checks")
 
     SUBCASE("negative_id")
     {
-        CHECK_THROWS_WITH(Element element(id, type, {&node}), "Error: "); // TODO find a better way of testing this
+        CHECK_THROWS_WITH(Element element(id, type, {&node}), "Error: Id must be >= 1!\n");
     }
 
     SUBCASE("no_nodes")
     {
-        CHECK_THROWS_WITH(Element element(1, type, {}), "Error: "); // TODO find a better way of testing this
+        CHECK_THROWS_WITH(Element element(1, type, {}), "Error: No nodes were passed!\n");
     }
 }
 
@@ -130,7 +130,7 @@ TEST_CASE("element_nodes")
     CHECK_EQ(element.NumberOfNodes(), 3);
 
     std::size_t counter=0;
-    for (Element::NodesContainerType::const_iterator node_it=element.NodesBegin(); node_it!=element.NodesEnd(); ++node_it) {
+    for (auto node_it=element.NodesBegin(); node_it!=element.NodesEnd(); ++node_it) {
         CAPTURE(counter); // log the current input data (done manually as not fully supported yet by doctest)
         CHECK_EQ((*node_it)->Id(), node_ids[counter]);
         counter++;
@@ -166,8 +166,8 @@ TEST_CASE("model_part_basics")
 
 TEST_CASE("model_part_invalid_names")
 {
-    CHECK_THROWS_WITH(ModelPart model_part(""), "Error: "); // TODO find a better way of testing this
-    CHECK_THROWS_WITH(ModelPart model_part("my_name.ssss"), "Error: "); // TODO find a better way of testing this
+    CHECK_THROWS_WITH(ModelPart model_part(""), "Error: Please don't use empty names (\"\") when creating a ModelPart\n");
+    CHECK_THROWS_WITH(ModelPart model_part("my_name.ssss"), "Error: Please don't use names containing (\".\") when creating a ModelPart (used in \"my_name.ssss\")\n");
 }
 
 TEST_CASE("model_part_create_new_node")
@@ -204,6 +204,13 @@ TEST_CASE("model_part_create_new_nodes")
         CAPTURE(i); // log the current input data (done manually as not fully supported yet by doctest)
         CHECK_EQ(new_node.Coordinates()[i], doctest::Approx(node_coords[i]));
     }
+
+    std::size_t counter=0;
+    for (auto node_it=model_part.NodesBegin(); node_it!=model_part.NodesEnd(); ++node_it) {
+        CAPTURE(counter); // log the current input data (done manually as not fully supported yet by doctest)
+        CHECK_EQ((*node_it)->Id(), node_id+counter);
+        counter++;
+    }
 }
 
 TEST_CASE("model_part_create_new_node_twice")
@@ -213,7 +220,7 @@ TEST_CASE("model_part_create_new_node_twice")
     model_part.CreateNewNode(1, 0,0,0);
     REQUIRE_EQ(model_part.NumberOfNodes(), 1);
 
-    CHECK_THROWS_WITH(model_part.CreateNewNode(1, 0,0,0), "Error: "); // TODO find a better way of testing this
+    CHECK_THROWS_WITH(model_part.CreateNewNode(1, 0,0,0), "Error: The Node with Id 1 exists already!\n");
 }
 
 TEST_CASE("model_part_get_node")
@@ -238,9 +245,20 @@ TEST_CASE("model_part_get_node")
         }
     }
 
+    SUBCASE("existing_pointer_version")
+    {
+        const auto p_node = model_part.pGetNode(node_id);
+
+        CHECK_EQ(p_node->Id(), node_id);
+        for (std::size_t i=0; i<3; ++i) {
+            CAPTURE(i); // log the current input data (done manually as not fully supported yet by doctest)
+            CHECK_EQ(p_node->Coordinates()[i], doctest::Approx(node_coords[i]));
+        }
+    }
+
     SUBCASE("non_existing")
     {
-        CHECK_THROWS_WITH(model_part.GetNode(node_id+1), "Error: "); // TODO find a better way of testing this
+        CHECK_THROWS_WITH(model_part.GetNode(node_id+1), "Error: Node with Id 692 does not exist!\n");
     }
 }
 
@@ -310,7 +328,7 @@ TEST_CASE("model_part_create_new_element_twice")
     model_part.CreateNewElement(1, 5, {1});
     REQUIRE_EQ(model_part.NumberOfElements(), 1);
 
-    CHECK_THROWS_WITH(model_part.CreateNewElement(1, 5, {1}), "Error: "); // TODO find a better way of testing this
+    CHECK_THROWS_WITH(model_part.CreateNewElement(1, 5, {1}), "Error: The Element with Id 1 exists already!\n");
 }
 
 TEST_CASE("model_part_get_element")
@@ -332,9 +350,18 @@ TEST_CASE("model_part_get_element")
         CHECK_EQ(r_elem.NumberOfNodes(), 1);
     }
 
+    SUBCASE("existing_pointer_version")
+    {
+        const auto p_elem = model_part.pGetElement(elem_id);
+
+        CHECK_EQ(p_elem->Id(), elem_id);
+        CHECK_EQ(p_elem->Type(), 5);
+        CHECK_EQ(p_elem->NumberOfNodes(), 1);
+    }
+
     SUBCASE("non_existing")
     {
-        CHECK_THROWS_WITH(model_part.GetElement(elem_id+1), "Error: "); // TODO find a better way of testing this
+        CHECK_THROWS_WITH(model_part.GetElement(elem_id+1), "Error: Element with Id 7 does not exist!\n");
     }
 }
 

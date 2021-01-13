@@ -140,7 +140,7 @@ TEST_CASE("info_non_existing_key")
 
     CHECK_UNARY_FALSE(info.Has("identifier"));
 
-    CHECK_THROWS_WITH(info.Get<int>("identifier"), "Error: "); // TODO find a better way of testing this
+    CHECK_THROWS_WITH(info.Get<int>("identifier"), "Error: Trying to get \"identifier\" which does not exist!\n");
 }
 
 TEST_CASE("info_wrong_type")
@@ -152,7 +152,7 @@ TEST_CASE("info_wrong_type")
     info.Set<std::string>("identifier", "pressure");
 
     CHECK_UNARY(info.Has("identifier"));
-    CHECK_THROWS_WITH(info.Get<int>("identifier"), "Error: "); // TODO find a better way of testing this
+    CHECK_THROWS_WITH(info.Get<int>("identifier"), "Error: Wrong DataType! Trying to get \"identifier\" which is of type \"string\" with \"int\"!\n");
 }
 
 TEST_CASE("info_many_values")
