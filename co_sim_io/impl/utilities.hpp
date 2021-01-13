@@ -15,6 +15,10 @@
 
 // System includes
 #include <string>
+#include <unordered_map>
+
+// Project includes
+#include "define.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -31,6 +35,22 @@ inline std::string CreateConnectionName(
     } else {
         return rName2 + "_" + rName1;
     }
+}
+
+inline int GetNumberOfNodesForElementType(ElementType Type)
+{
+    const std::unordered_map<ElementType, int> vtk_cell_type_map {
+        { ElementType::VERTEX,     1},
+        { ElementType::LINE,       2},
+        { ElementType::TRIANGLE,   3},
+        { ElementType::QUAD,       4},
+        { ElementType::TETRA,      4},
+        { ElementType::HEXAHEDRON, 8}
+    };
+
+    auto type_iter = vtk_cell_type_map.find(Type);
+    CO_SIM_IO_ERROR_IF(type_iter == vtk_cell_type_map.end()) << "Unsupported cell type: " << Type << std::endl;
+    return type_iter->second;
 }
 
 } // namespace Internals
