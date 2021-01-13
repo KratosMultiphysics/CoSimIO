@@ -30,8 +30,10 @@ see https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/mod
 // Project includes
 #include "define.hpp"
 #include "macros.hpp"
+#include "utilities.hpp"
 
 namespace CoSimIO {
+
 class Node
 {
 public:
@@ -90,7 +92,6 @@ inline std::ostream & operator <<(
 class Element
 {
 public:
-    using ElementType = std::size_t;
     using NodesContainerType = std::vector<Node*>;
     using ConnectivitiesType = std::vector<IdType>;
 
@@ -104,6 +105,8 @@ public:
     {
         CO_SIM_IO_ERROR_IF(I_Id < 1) << "Id must be >= 1!" << std::endl;
         CO_SIM_IO_ERROR_IF(NumberOfNodes() < 1) << "No nodes were passed!" << std::endl;
+        const int num_nodes_elem_type = CoSimIO::Internals::GetNumberOfNodesForElementType(I_Type);
+        CO_SIM_IO_ERROR_IF_NOT(num_nodes_elem_type == static_cast<int>(NumberOfNodes())) << "Number of nodes (" << NumberOfNodes() << ") does not match expected number for element type (" << num_nodes_elem_type << ")!" << std::endl;
     }
 
     // delete copy and assignment CTor
@@ -145,6 +148,7 @@ inline std::ostream & operator <<(
     return rOStream;
 }
 
+
 class ModelPart
 {
 public:
@@ -182,7 +186,7 @@ public:
 
     Element& CreateNewElement(
         const IdType I_Id,
-        const Element::ElementType I_Type,
+        const ElementType I_Type,
         const Element::ConnectivitiesType& I_Connectivities)
     {
         CO_SIM_IO_ERROR_IF(HasElement(I_Id)) << "The Element with Id " << I_Id << " exists already!" << std::endl;
