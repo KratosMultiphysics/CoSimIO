@@ -90,7 +90,6 @@ inline std::ostream & operator <<(
 class Element
 {
 public:
-    using ElementType = std::size_t;
     using NodesContainerType = std::vector<Node*>;
     using ConnectivitiesType = std::vector<IdType>;
 
@@ -182,7 +181,7 @@ public:
 
     Element& CreateNewElement(
         const IdType I_Id,
-        const Element::ElementType I_Type,
+        const ElementType I_Type,
         const Element::ConnectivitiesType& I_Connectivities)
     {
         CO_SIM_IO_ERROR_IF(HasElement(I_Id)) << "The Element with Id " << I_Id << " exists already!" << std::endl;
