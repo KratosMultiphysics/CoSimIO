@@ -49,6 +49,7 @@ static bool FolderExists(const fs::path& rFolderName)
 
 static void RemoveFile(const std::string& rFileName)
 {
+    // TODO probably better to turn into error
     if (std::remove(rFileName.c_str()) != 0) {
         CO_SIM_IO_INFO("CoSimIO") << "Warning: \"" << rFileName << "\" could not be deleted!" << std::endl;
     }
@@ -273,7 +274,7 @@ private:
         const Info& I_Info,
         ModelPart& O_ModelPart) override
     {
-        const std::string identifier = I_Info.Get<std::string>("identifier");
+        const std::string identifier = O_ModelPart.Name();
         const std::string file_name(GetFullPath("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + ".vtk"));
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import mesh \"" << identifier << "\" in file \"" << file_name << "\" ..." << std::endl;
@@ -363,15 +364,12 @@ private:
         const Info& I_Info,
         const ModelPart& I_ModelPart) override
     {
-        const std::string identifier = I_Info.Get<std::string>("identifier");
+        const std::string identifier = I_ModelPart.Name();
         const std::string file_name(GetFullPath("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + ".vtk"));
 
         WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
-        // const std::size_t num_nodes = rNodalCoordinates.size()/3;
-        // const std::size_t num_elems = rElementTypes.size();
-
-        // CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export mesh \"" << identifier << "\" with " << num_nodes << " Nodes | " << num_elems << " Elements in file \"" << file_name << "\" ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export mesh \"" << identifier << "\" with " << I_ModelPart.NumberOfNodes() << " Nodes | " << I_ModelPart.NumberOfElements() << " Elements in file \"" << file_name << "\" ..." << std::endl;
 
         const auto start_time(std::chrono::steady_clock::now());
 
@@ -387,47 +385,66 @@ private:
         output_file << "ASCII\n";
         output_file << "DATASET UNSTRUCTURED_GRID\n\n";
 
-        // write nodes
-        // output_file << "POINTS " << num_nodes << " float\n";
-        // for (std::size_t i=0; i<num_nodes; ++i) {
-        //     output_file << rNodalCoordinates[i*3] << " " << rNodalCoordinates[i*3+1] << " " << rNodalCoordinates[i*3+2] << "\n";
-        // }
-        // output_file << "\n";
+        // write nodes and create Id map
+        std::unordered_map<IdType, IdType> id_map;
+        IdType vtk_id = 0;
+        output_file << "POINTS " << I_ModelPart.NumberOfNodes() << " float\n";
+        for (auto node_it=I_ModelPart.NodesBegin(); node_it!=I_ModelPart.NodesEnd(); ++node_it) {
+            output_file << (*node_it)->X() << " " << (*node_it)->Y() << " " << (*node_it)->Z() << "\n";
+            id_map[(*node_it)->Id()] = vtk_id++;
+        }
+        output_file << "\n";
 
-        // // get connectivity information
-        // std::size_t cell_list_size = 0;
-        // std::size_t counter = 0;
-        // int connectivities_offset = std::numeric_limits<int>::max(); //in paraview the connectivities start from 0, hence we have to check beforehand what is the connectivities offset
-        // for (std::size_t i=0; i<num_elems; ++i) {
-        //     const std::size_t num_nodes_cell = GetNumNodesForVtkCellType(rElementTypes[i]);
-        //     cell_list_size += num_nodes_cell + 1; // +1 for size of connectivity
-        //     for (std::size_t j=0; j<num_nodes_cell; ++j) {
-        //         connectivities_offset = std::min(connectivities_offset, rElementConnectivities[counter++]);
-        //     }
-        // }
+        // get cells size information
+        std::size_t cell_list_size = 0;
+        for (auto elem_it=I_ModelPart.ElementsBegin(); elem_it!=I_ModelPart.ElementsEnd(); ++elem_it) {
+            cell_list_size += (*elem_it)->NumberOfNodes() + 1; // +1 for size of connectivity
+        }
 
-        // CO_SIM_IO_ERROR_IF(num_elems > 0 && connectivities_offset != 0) << "Connectivities have an offset of " << connectivities_offset << " which is not allowed!" << std::endl;
+        // write cells connectivity
+        const auto const_id_map = id_map; // const reference to not accidentially modify the map
+        output_file << "CELLS " << I_ModelPart.NumberOfElements() << " " << cell_list_size << "\n";
+        for (auto elem_it=I_ModelPart.ElementsBegin(); elem_it!=I_ModelPart.ElementsEnd(); ++elem_it) {
+            const std::size_t num_nodes_cell = (*elem_it)->NumberOfNodes();
+            output_file << num_nodes_cell << " ";
+            std::size_t node_counter = 0;
+            for (auto node_it=(*elem_it)->NodesBegin(); node_it!=(*elem_it)->NodesEnd(); ++node_it) {
+                const IdType node_id = (*node_it)->Id();
+                auto id_iter = const_id_map.find(node_id);
+                CO_SIM_IO_ERROR_IF(id_iter == const_id_map.end()) << "The node with Id " << node_id << " is not part of the ModelPart but used for Element with Id " << (*elem_it)->Id() << std::endl;
+                output_file << id_iter->second;
+                if (node_counter++<num_nodes_cell-1) output_file << " "; // not adding a whitespace after last number
+            }
+            output_file << "\n";
+        }
 
-        // // write cells connectivity
-        // counter = 0;
-        // output_file << "CELLS " << num_elems << " " << cell_list_size << "\n";
-        // for (std::size_t i=0; i<num_elems; ++i) {
-        //     const std::size_t num_nodes_cell = GetNumNodesForVtkCellType(rElementTypes[i]);
-        //     output_file << num_nodes_cell << " ";
-        //     for (std::size_t j=0; j<num_nodes_cell; ++j) {
-        //         output_file << (rElementConnectivities[counter++]-connectivities_offset);
-        //         if (j<num_nodes_cell-1) output_file << " "; // not adding a whitespace after last number
-        //     }
-        //     output_file << "\n";
-        // }
+        output_file << "\n";
 
-        // output_file << "\n";
+        // write cell types
+        output_file << "CELL_TYPES " << I_ModelPart.NumberOfElements() << "\n";
+        for (auto elem_it=I_ModelPart.ElementsBegin(); elem_it!=I_ModelPart.ElementsEnd(); ++elem_it) {
+            output_file << (*elem_it)->Type() << "\n";
+        }
 
-        // // write cell types
-        // output_file << "CELL_TYPES " << num_elems << "\n";
-        // for (std::size_t i=0; i<num_elems; ++i) {
-        //     output_file << rElementTypes[i] << "\n";
-        // }
+        output_file << "\n";
+
+        // writing node Ids
+        output_file << "POINT_DATA " << I_ModelPart.NumberOfNodes() << "\n";
+        output_file << "FIELD FieldData 1" << "\n";
+        output_file << "NODE_ID 1 " << I_ModelPart.NumberOfNodes() << " int\n";
+        for (auto node_it=I_ModelPart.NodesBegin(); node_it!=I_ModelPart.NodesEnd(); ++node_it) {
+            output_file << (*node_it)->Id() << "\n";
+        }
+
+        output_file << "\n";
+
+        // writing element Ids
+        output_file << "CELL_DATA " << I_ModelPart.NumberOfElements() << "\n";
+        output_file << "FIELD FieldData 1" << "\n";
+        output_file << "ELEMENT_ID 1 " << I_ModelPart.NumberOfElements() << " int\n";
+        for (auto elem_it=I_ModelPart.ElementsBegin(); elem_it!=I_ModelPart.ElementsEnd(); ++elem_it) {
+            output_file << (*elem_it)->Id() << "\n";
+        }
 
         output_file.close();
         MakeFileVisible(file_name);
