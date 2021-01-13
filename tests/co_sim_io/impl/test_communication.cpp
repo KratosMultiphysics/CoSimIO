@@ -20,6 +20,77 @@
 
 namespace {
 
+void CheckModelPartsAreEqual(
+    const CoSimIO::ModelPart& ModelPart1,
+    const CoSimIO::ModelPart& ModelPart2)
+{
+    // global checks
+    CHECK_EQ(ModelPart1.Name(), ModelPart2.Name());
+    CHECK_EQ(ModelPart1.NumberOfNodes(), ModelPart2.NumberOfNodes());
+    CHECK_EQ(ModelPart1.NumberOfElements(), ModelPart2.NumberOfElements());
+
+    // check nodes
+
+    // check elements
+}
+
+std::shared_ptr<CoSimIO::ModelPart> CreateNodesOnlyModelPart()
+{
+    std::shared_ptr<CoSimIO::ModelPart> p_model_part(std::make_shared<CoSimIO::ModelPart>("nodes_model_part"));
+
+    const int num_nodes = 11;
+
+    for (int i=0; i<num_nodes; ++i) {
+        p_model_part->CreateNewNode(i+i+1, 0.1*i, 0, 0);
+    }
+
+    return p_model_part;
+}
+
+std::shared_ptr<CoSimIO::ModelPart> CreateLinesModelPart()
+{
+    std::shared_ptr<CoSimIO::ModelPart> p_model_part(std::make_shared<CoSimIO::ModelPart>("line_model_part"));
+
+    const int num_nodes = 13;
+
+    for (int i=0; i<num_nodes; ++i) {
+        p_model_part->CreateNewNode(i+i+1, 0.1*i, 0, 0);
+    }
+
+    for (int i=0; i<num_nodes-1; ++i) {
+        p_model_part->CreateNewElement(i+1, 3, {i+i+1, i+i+3});
+    }
+
+    return p_model_part;
+}
+
+std::shared_ptr<CoSimIO::ModelPart> CreateLinesAndPointElementsModelPart()
+{
+    std::shared_ptr<CoSimIO::ModelPart> p_model_part(std::make_shared<CoSimIO::ModelPart>("line_points_model_part"));
+
+    CO_SIM_IO_ERROR << "not implemented!" << std::endl;
+
+    return p_model_part;
+}
+
+std::shared_ptr<CoSimIO::ModelPart> CreateSurfaceModelPart()
+{
+    std::shared_ptr<CoSimIO::ModelPart> p_model_part(std::make_shared<CoSimIO::ModelPart>("surface_model_part"));
+
+    CO_SIM_IO_ERROR << "not implemented!" << std::endl;
+
+    return p_model_part;
+}
+
+std::shared_ptr<CoSimIO::ModelPart> CreateVolumeModelPart()
+{
+    std::shared_ptr<CoSimIO::ModelPart> p_model_part(std::make_shared<CoSimIO::ModelPart>("volume_model_part"));
+
+    CO_SIM_IO_ERROR << "not implemented!" << std::endl;
+
+    return p_model_part;
+}
+
 template<class TCommType>
 void ConnectDisconnect()
 {
@@ -111,6 +182,39 @@ void ExportDataHelper(const std::vector<std::vector<double>>& DataToExport)
     for (const auto& data : DataToExport) {
         const CoSimIO::Internals::DataContainerStdVectorReadOnly<double> data_container(data);
         p_comm->ExportData(export_info, data_container);
+    }
+
+    CoSimIO::Info disconnect_info;
+    CoSimIO::Info ret_info_disconnect = p_comm->Disconnect(disconnect_info);
+
+    CHECK_UNARY_FALSE(ret_info_disconnect.Get<bool>("is_connected"));
+}
+
+template<class TCommType>
+void ExportMeshHelper(const std::vector<std::shared_ptr<CoSimIO::ModelPart>>& ModelPartsToExport)
+{
+    CoSimIO::Info settings;
+
+    settings.Set<std::string>("my_name", "thread");
+    settings.Set<std::string>("connect_to", "main");
+    settings.Set<bool>("is_primary_connection", false);
+    settings.Set<int>("echo_level", 0);
+
+    using Communication = CoSimIO::Internals::Communication;
+    std::unique_ptr<Communication> p_comm(CoSimIO::make_unique<TCommType>(settings));
+
+    // the secondary thread should wait a bit until the primary has created the folder!
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+
+    CoSimIO::Info connect_info;
+    CoSimIO::Info ret_info_connect = p_comm->Connect(connect_info);
+
+    CHECK_UNARY(ret_info_connect.Get<bool>("is_connected"));
+
+    CoSimIO::Info export_info;
+
+    for (const auto& model_part : ModelPartsToExport) {
+        p_comm->ExportMesh(export_info, *model_part);
     }
 
     CoSimIO::Info disconnect_info;
@@ -274,11 +378,52 @@ TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(5.0), TCommType, COM
 
     SUBCASE("import_export_mesh_once")
     {
+        const std::vector<std::shared_ptr<CoSimIO::ModelPart>> model_parts {
+            CreateLinesAndPointElementsModelPart()
+        };
+        std::thread ext_thread(ExportMeshHelper<TCommType>, model_parts);
+
+        CoSimIO::Info connect_info;
+        p_comm->Connect(connect_info);
+
+        CoSimIO::Info import_info;
+        CoSimIO::ModelPart imported_model_part(model_parts[0]->Name());
+        p_comm->ImportMesh(import_info, imported_model_part);
+
+        CheckModelPartsAreEqual(*model_parts[0], imported_model_part);
+
+        CoSimIO::Info disconnect_info;
+        p_comm->Disconnect(disconnect_info);
+
+        ext_thread.join();
     }
 
     SUBCASE("import_export_mesh_multiple")
     {
-        // std::this_thread::sleep_for(std::chrono::milliseconds(500)); // wait 0.5s before next check
+        const std::vector<std::shared_ptr<CoSimIO::ModelPart>> model_parts {
+            CreateNodesOnlyModelPart(),
+            CreateLinesModelPart(),
+            CreateLinesAndPointElementsModelPart(),
+            CreateSurfaceModelPart(),
+            CreateVolumeModelPart()
+        };
+        std::thread ext_thread(ExportMeshHelper<TCommType>, model_parts);
+
+        CoSimIO::Info connect_info;
+        p_comm->Connect(connect_info);
+
+        CoSimIO::Info import_info;
+        for (std::size_t i=0; i<model_parts.size(); ++i) {
+            CAPTURE(i); // log the current input data (done manually as not fully supported yet by doctest)
+            CoSimIO::ModelPart imported_model_part(model_parts[i]->Name());
+            p_comm->ImportMesh(import_info, imported_model_part);
+            CheckModelPartsAreEqual(*model_parts[i], imported_model_part);
+        }
+
+        CoSimIO::Info disconnect_info;
+        p_comm->Disconnect(disconnect_info);
+
+        ext_thread.join();
     }
 }
 
