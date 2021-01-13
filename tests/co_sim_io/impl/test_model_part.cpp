@@ -83,7 +83,7 @@ TEST_CASE("node_ostream")
 TEST_CASE("element_basics")
 {
     const int id = 33;
-    const std::size_t type = 5;
+    const CoSimIO::ElementType type = CoSimIO::ElementType::VERTEX;
 
     Node node(1, 0,0,0);
 
@@ -97,7 +97,7 @@ TEST_CASE("element_basics")
 TEST_CASE("element_checks")
 {
     const int id = -33;
-    const std::size_t type = 5;
+    const CoSimIO::ElementType type = CoSimIO::ElementType::VERTEX;
     Node node(1, 0,0,0);
 
     SUBCASE("negative_id")
@@ -114,7 +114,7 @@ TEST_CASE("element_checks")
 TEST_CASE("element_nodes")
 {
     const int id = 33;
-    const std::size_t type = 5;
+    const CoSimIO::ElementType type = CoSimIO::ElementType::TRIANGLE;
 
     const int node_ids[] = {2, 159, 61};
 
@@ -144,7 +144,7 @@ TEST_CASE("element_ostream")
     Node node_2(22, dummy_coords);
     Node node_3(321, dummy_coords);
 
-    Element element(65, 5, {&node_1, &node_2, &node_3});
+    Element element(65, CoSimIO::ElementType::TRIANGLE, {&node_1, &node_2, &node_3});
 
     std::stringstream test_stream;
 
@@ -272,7 +272,7 @@ TEST_CASE("model_part_create_new_element")
     CHECK_EQ(model_part.NumberOfNodes(), 1);
 
     const int elem_id = 47;
-    const std::size_t type = 5;
+    const CoSimIO::ElementType type = CoSimIO::ElementType::VERTEX;
 
     const auto& new_elem = model_part.CreateNewElement(elem_id, type, {node_id});
 
@@ -302,8 +302,12 @@ TEST_CASE("model_part_create_new_elements")
     CHECK_EQ(model_part.NumberOfNodes(), 3);
 
     const int elem_ids[] = {21, 19, 961};
-    const std::size_t elem_types[] = {5, 5, 9};
     const std::size_t elem_num_nodes[] = {1,1,2};
+    const CoSimIO::ElementType elem_types[] = {
+        CoSimIO::ElementType::VERTEX,
+        CoSimIO::ElementType::VERTEX,
+        CoSimIO::ElementType::LINE
+    };
 
     model_part.CreateNewElement(elem_ids[0], elem_types[0], {node_ids[0]});
     model_part.CreateNewElement(elem_ids[1], elem_types[1], {node_ids[1]});
@@ -325,10 +329,10 @@ TEST_CASE("model_part_create_new_element_twice")
     ModelPart model_part("for_test");
 
     model_part.CreateNewNode(1, 0,0,0);
-    model_part.CreateNewElement(1, 5, {1});
+    model_part.CreateNewElement(1, CoSimIO::ElementType::VERTEX, {1});
     REQUIRE_EQ(model_part.NumberOfElements(), 1);
 
-    CHECK_THROWS_WITH(model_part.CreateNewElement(1, 5, {1}), "Error: The Element with Id 1 exists already!\n");
+    CHECK_THROWS_WITH(model_part.CreateNewElement(1, CoSimIO::ElementType::VERTEX, {1}), "Error: The Element with Id 1 exists already!\n");
 }
 
 TEST_CASE("model_part_get_element")
@@ -338,7 +342,8 @@ TEST_CASE("model_part_get_element")
     model_part.CreateNewNode(1, 0,0,0);
 
     const int elem_id = 6;
-    model_part.CreateNewElement(elem_id, 5, {1});
+    const CoSimIO::ElementType type = CoSimIO::ElementType::VERTEX;
+    model_part.CreateNewElement(elem_id, type, {1});
     REQUIRE_EQ(model_part.NumberOfElements(), 1);
 
     SUBCASE("existing")
@@ -346,7 +351,7 @@ TEST_CASE("model_part_get_element")
         const auto& r_elem = model_part.GetElement(elem_id);
 
         CHECK_EQ(r_elem.Id(), elem_id);
-        CHECK_EQ(r_elem.Type(), 5);
+        CHECK_EQ(r_elem.Type(), type);
         CHECK_EQ(r_elem.NumberOfNodes(), 1);
     }
 
@@ -355,7 +360,7 @@ TEST_CASE("model_part_get_element")
         const auto p_elem = model_part.pGetElement(elem_id);
 
         CHECK_EQ(p_elem->Id(), elem_id);
-        CHECK_EQ(p_elem->Type(), 5);
+        CHECK_EQ(p_elem->Type(), type);
         CHECK_EQ(p_elem->NumberOfNodes(), 1);
     }
 
@@ -384,7 +389,7 @@ TEST_CASE("model_part_ostream")
         model_part.CreateNewNode(node_ids[1], node_coords[1], node_coords[2], node_coords[0]);
         model_part.CreateNewNode(node_ids[2], node_coords[2], node_coords[0], node_coords[1]);
 
-        model_part.CreateNewElement(15, 1, {node_ids[0]});
+        model_part.CreateNewElement(15, CoSimIO::ElementType::VERTEX, {node_ids[0]});
 
         exp_string = "CoSimIO-ModelPart \"for_test\"\n    Number of Nodes: 3\n    Number of Elements: 1\n";
     }
