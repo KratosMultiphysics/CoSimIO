@@ -61,7 +61,7 @@ static void CheckStream(const T& rStream, const std::string& rFileName)
     CO_SIM_IO_ERROR_IF_NOT(rStream.is_open()) << rFileName << " could not be opened!" << std::endl;
 }
 
-static int GetNumNodesForVtkCellType(const int VtkCellType)
+/*deprecated*/static int GetNumNodesForVtkCellType(const int VtkCellType)
 {
     const std::unordered_map<int, int> vtk_cell_type_map {
         { /*Point3D,          */ 1 ,  1},
@@ -231,7 +231,6 @@ private:
         return Info(); // TODO use
     }
 
-
     Info ExportDataImpl(
         const Info& I_Info,
         const Internals::DataContainer<double>& rData) override
@@ -288,66 +287,92 @@ private:
 
         // reading file
         std::string current_line;
-        bool nodes_read = false;
-        bool cells_read = false;
+        std::vector<double> nodal_coords;
+        std::vector<IdType> nodal_ids;
+        std::vector<IdType> element_ids;
+        std::vector<ElementType> element_types;
+        std::vector<Element::ConnectivitiesType> element_connectivities;
 
         while (std::getline(input_file, current_line)) {
             // reading nodes
             if (current_line.find("POINTS") != std::string::npos) {
-                CO_SIM_IO_ERROR_IF(nodes_read) << "The nodes were read already!" << std::endl;
-                CO_SIM_IO_ERROR_IF(cells_read) << "The cells were read already!" << std::endl;
-                nodes_read = true;
+                std::size_t num_nodes;
+                current_line = current_line.substr(current_line.find("POINTS") + 7); // removing "POINTS"
+                std::istringstream line_stream(current_line);
+                line_stream >> num_nodes;
 
-                // int num_nodes;
-                // current_line = current_line.substr(current_line.find("POINTS") + 7); // removing "POINTS"
-                // std::istringstream line_stream(current_line);
-                // line_stream >> num_nodes;
+                CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Mesh contains " << num_nodes << " Nodes" << std::endl;
 
-                // CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Mesh contains " << num_nodes << " Nodes" << std::endl;
+                nodal_coords.resize(3*num_nodes);
+                nodal_ids.resize(num_nodes);
 
-        //         rNodalCoordinates.resize(3*num_nodes);
-
-        //         for (int i=0; i<num_nodes*3; ++i) {
-        //             input_file >> rNodalCoordinates[i];
-        //         }
+                for (std::size_t i=0; i<num_nodes*3; ++i) {
+                    input_file >> nodal_coords[i];
+                }
             }
 
-            // reading cells
+            // reading connectivities
             if (current_line.find("CELLS") != std::string::npos) {
-                CO_SIM_IO_ERROR_IF_NOT(nodes_read) << "The nodes were not yet read!" << std::endl;
-                CO_SIM_IO_ERROR_IF(cells_read) << "The cells were read already!" << std::endl;
-                cells_read = true;
+                std::size_t num_elems, num_nodes_per_elem;
+                current_line = current_line.substr(current_line.find("CELLS") + 6); // removing "CELLS"
+                std::istringstream line_stream(current_line);
+                line_stream >> num_elems;
 
-                // int num_nodes_per_cell, num_cells, elem_conn, cell_list_size;
-                // current_line = current_line.substr(current_line.find("CELLS") + 6); // removing "CELLS"
-                // std::istringstream line_stream(current_line);
-                // line_stream >> num_cells;
-                // line_stream >> cell_list_size;
+                element_ids.resize(num_elems);
+                element_types.resize(num_elems);
+                element_connectivities.resize(num_elems);
 
-        //         rElementConnectivities.resize(cell_list_size-num_cells); // the first in number in each line is the number of connectivities, which is not needed bcs it can be derived form the elements-type
-        //         rElementTypes.resize(num_cells);
+                CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Mesh contains " << num_elems << " Elements" << std::endl;
 
-        //         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Mesh contains " << num_cells << " Elements" << std::endl;
-
-        //         int counter=0;
-        //         for (int i=0; i<num_cells; ++i) {
-        //             input_file >> num_nodes_per_cell;
-        //             for (int j=0; j<num_nodes_per_cell; ++j) {
-        //                 input_file >> elem_conn;
-        //                 rElementConnectivities[counter++] = elem_conn;
-        //             }
-        //         }
-        //     }
-
-        //     // reading cell types
-        //     if (current_line.find("CELL_TYPES") != std::string::npos) {
-        //         CO_SIM_IO_ERROR_IF_NOT(nodes_read) << "The nodes were not yet read!" << std::endl;
-        //         CO_SIM_IO_ERROR_IF_NOT(cells_read) << "The cells were not yet read!" << std::endl;
-
-        //         for (std::size_t i=0; i<rElementTypes.size(); ++i) { // rElementTypes was resized to correct size above
-        //             input_file >> rElementTypes[i];
-        //         }
+                for (std::size_t i=0; i<num_elems; ++i) {
+                    input_file >> num_nodes_per_elem;
+                    element_connectivities[i].resize(num_nodes_per_elem);
+                    for (std::size_t j=0; j<num_nodes_per_elem; ++j) {
+                        input_file >> element_connectivities[i][j];
+                    }
+                }
             }
+
+            // reading cell types
+            if (current_line.find("CELL_TYPES") != std::string::npos) {
+                int enum_temp;
+                for (std::size_t i=0; i<element_types.size(); ++i) { // element_types was resized to correct size above
+                    input_file >> enum_temp; // using a temp variable as enums cannot be read directly
+                    element_types[i] = static_cast<CoSimIO::ElementType>(enum_temp);
+                }
+            }
+
+            // reading node Ids
+            if (current_line.find("NODE_ID") != std::string::npos) {
+                for (std::size_t i=0; i<nodal_ids.size(); ++i) { // nodal_ids was resized to correct size above
+                    input_file >> nodal_ids[i];
+                }
+            }
+
+            // reading element Ids
+            if (current_line.find("ELEMENT_ID") != std::string::npos) {
+                for (std::size_t i=0; i<element_ids.size(); ++i) { // element_ids was resized to correct size above
+                    input_file >> element_ids[i];
+                }
+            }
+        }
+
+        // filling ModelPart with read information
+        for (std::size_t i=0; i<nodal_ids.size(); ++i) {
+            O_ModelPart.CreateNewNode(
+                nodal_ids[i],
+                nodal_coords[i*3],
+                nodal_coords[i*3+1],
+                nodal_coords[i*3+2]);
+        }
+        for (std::size_t i=0; i<element_ids.size(); ++i) {
+            for (auto& conn : element_connectivities[i]) {
+                conn = nodal_ids[conn]; // transforming vtk Ids back to original Ids
+            }
+            O_ModelPart.CreateNewElement(
+                element_ids[i],
+                element_types[i],
+                element_connectivities[i]);
         }
 
         input_file.close();
@@ -381,7 +406,7 @@ private:
 
         // write file header
         output_file << "# vtk DataFile Version 4.0\n";
-        output_file << "vtk output\n";
+        output_file << "CoSimIO FileCommunication\n";
         output_file << "ASCII\n";
         output_file << "DATASET UNSTRUCTURED_GRID\n\n";
 
