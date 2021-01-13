@@ -43,7 +43,7 @@ void AddCoSimIOModelPartToPython(pybind11::module& m)
         ;
 
     py::class_<CoSimIO::Element, CoSimIO::ModelPart::ElementPointerType>(m,"Element")
-        .def(py::init<const CoSimIO::IdType, const CoSimIO::Element::ElementType, const CoSimIO::Element::NodesContainerType&>())
+        .def(py::init<const CoSimIO::IdType, const CoSimIO::ElementType, const CoSimIO::Element::NodesContainerType&>())
         .def("Id", &CoSimIO::Element::Id)
         .def("Type", &CoSimIO::Element::Type)
         .def("NumberOfNodes", &CoSimIO::Element::NumberOfNodes)
@@ -73,6 +73,15 @@ void AddCoSimIOModelPartToPython(pybind11::module& m)
             }, py::keep_alive<0, 1>()) /* Keep vector alive while iterator is used */
         .def("__str__",   [](const CoSimIO::ModelPart& I_ModelPart)
             { std::stringstream ss; ss << I_ModelPart; return ss.str(); } )
+        ;
+
+    py::enum_<CoSimIO::ElementType>(m,"ElementType")
+        .value("VERTEX",     CoSimIO::ElementType::VERTEX)
+        .value("LINE",       CoSimIO::ElementType::LINE)
+        .value("TRIANGLE",   CoSimIO::ElementType::TRIANGLE)
+        .value("QUAD",       CoSimIO::ElementType::QUAD)
+        .value("TETRA",      CoSimIO::ElementType::TETRA)
+        .value("HEXAHEDRON", CoSimIO::ElementType::HEXAHEDRON)
         ;
 }
 
