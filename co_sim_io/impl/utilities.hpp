@@ -15,7 +15,7 @@
 
 // System includes
 #include <string>
-#include <unordered_map>
+#include <map>
 
 // Project includes
 #include "define.hpp"
@@ -39,7 +39,7 @@ inline std::string CreateConnectionName(
 
 inline int GetNumberOfNodesForElementType(ElementType Type)
 {
-    const std::unordered_map<ElementType, int> vtk_cell_type_map {
+    const std::map<ElementType, int> vtk_cell_type_map {
         { ElementType::VERTEX,     1},
         { ElementType::LINE,       2},
         { ElementType::TRIANGLE,   3},
