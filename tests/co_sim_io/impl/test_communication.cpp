@@ -176,7 +176,46 @@ std::shared_ptr<CoSimIO::ModelPart> CreateVolumeModelPart()
 {
     std::shared_ptr<CoSimIO::ModelPart> p_model_part(std::make_shared<CoSimIO::ModelPart>("volume_model_part"));
 
-    CO_SIM_IO_ERROR << "not implemented!" << std::endl;
+    std::vector<std::tuple<int, std::array<double,3>>> node_coords {
+        {1,   {0,0,0}},
+        {2,   {1,0,0}},
+        {3,   {1,1,0}},
+        {4,   {0,1,0}},
+        {11,  {0,0,1.5}},
+        {12,  {1,0,1.5}},
+        {13,  {1,1,1.5}},
+        {14,  {0,1,1.5}},
+        {22,  {5,0,0}},
+        {23,  {5,1,0}},
+        {112, {5.5,0,1.5}},
+        {113, {5.5,1,1.5}},
+        {6,   {3,-1.5,5}}
+    };
+
+    // Id, type, connectivities
+    std::vector<std::tuple<int, CoSimIO::ElementType, CoSimIO::Element::ConnectivitiesType>> elem_info {
+        {10,  ElementType::HEXAHEDRON, {1,2,3,4,11,12,13,14}},
+        {3,   ElementType::HEXAHEDRON, {2,22,23,3,12,112,113,13}},
+        {26,  ElementType::TETRA, {11,12,13,6}},
+        {27,  ElementType::TETRA, {12,112,13,6}}
+    };
+
+   for (const auto& node_info : node_coords) {
+        p_model_part->CreateNewNode(
+            std::get<0>(node_info),
+            std::get<1>(node_info)[0],
+            std::get<1>(node_info)[1],
+            std::get<1>(node_info)[2]
+        );
+   }
+
+    for (const auto& el_info : elem_info) {
+        p_model_part->CreateNewElement(
+            std::get<0>(el_info),
+            std::get<1>(el_info),
+            std::get<2>(el_info)
+        );
+    }
 
     return p_model_part;
 }
