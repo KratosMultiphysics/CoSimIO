@@ -22,6 +22,8 @@
 
 namespace {
 
+using CoSimIO::ElementType;
+
 void CheckNodesAreEqual(
     const CoSimIO::Node& Node1,
     const CoSimIO::Node& Node2)
@@ -91,7 +93,7 @@ std::shared_ptr<CoSimIO::ModelPart> CreateLinesModelPart()
     }
 
     for (int i=0; i<num_nodes-1; ++i) {
-        p_model_part->CreateNewElement(i+1, 3, {i+i+1, i+i+3});
+        p_model_part->CreateNewElement(i+1, ElementType::LINE, {i+i+1, i+i+3});
     }
 
     return p_model_part;
@@ -108,12 +110,12 @@ std::shared_ptr<CoSimIO::ModelPart> CreateLinesAndPointElementsModelPart()
 
     // create line elements
     for (int i=0; i<num_nodes-1; ++i) {
-        p_model_part->CreateNewElement(i+1, 3, {i+i+1, i+i+3});
+        p_model_part->CreateNewElement(i+1, ElementType::LINE, {i+i+1, i+i+3});
     }
 
     // create point elements
     for (int i=0; i<5; ++i) {
-        p_model_part->CreateNewElement(i+100, 1, {i+i+1});
+        p_model_part->CreateNewElement(i+100, ElementType::VERTEX, {i+i+1});
     }
 
     return p_model_part;
@@ -138,16 +140,16 @@ std::shared_ptr<CoSimIO::ModelPart> CreateSurfaceModelPart()
     };
 
     // Id, type, connectivities
-    std::vector<std::tuple<int, CoSimIO::Element::ElementType, CoSimIO::Element::ConnectivitiesType>> elem_info {
-        {10,  9, {1,2,3,4}},
-        {3,   9, {3,2,9,10}},
-        {4,   9, {4,3,22,21}},
-        {6,   9, {3,10,23,22}},
-        {11,  5, {21,22,53}},
-        {12,  5, {22,55,53}},
-        {15,  5, {22,23,55}},
-        {26,  5, {4,21,53}},
-        {27,  5, {10,23,55}}
+    std::vector<std::tuple<int, CoSimIO::ElementType, CoSimIO::Element::ConnectivitiesType>> elem_info {
+        {10,  ElementType::QUAD, {1,2,3,4}},
+        {3,   ElementType::QUAD, {3,2,9,10}},
+        {4,   ElementType::QUAD, {4,3,22,21}},
+        {6,   ElementType::QUAD, {3,10,23,22}},
+        {11,  ElementType::TRIANGLE, {21,22,53}},
+        {12,  ElementType::TRIANGLE, {22,55,53}},
+        {15,  ElementType::TRIANGLE, {22,23,55}},
+        {26,  ElementType::TRIANGLE, {4,21,53}},
+        {27,  ElementType::TRIANGLE, {10,23,55}}
     };
 
    for (const auto& node_info : node_coords) {
