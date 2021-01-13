@@ -538,6 +538,7 @@ private:
             }
         }
 
+        input_file.close();
         RemoveFile(file_name);
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished receiving mesh" << std::endl;
