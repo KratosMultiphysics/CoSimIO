@@ -102,11 +102,9 @@ inline Info ImportData(
     std::vector<double>& rData)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    const std::string identifier = I_Info.Get<std::string>("identifier");
     using namespace CoSimIO::Internals;
     std::unique_ptr<DataContainer<double>> p_container(new DataContainerStdVector<double>(rData));
-    // TODO maybe pass the Info into the function (only changes under the hood necessary)
-    return GetConnection(connection_name).ImportData(identifier, *p_container);
+    return GetConnection(connection_name).ImportData(I_Info, *p_container);
 }
 
 // Version for C and fortran, there we already get a container
@@ -116,9 +114,7 @@ inline Info ImportData(
     CoSimIO::Internals::DataContainer<double>& rData)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    const std::string identifier = I_Info.Get<std::string>("identifier");
-    // TODO maybe pass the Info into the function (only changes under the hood necessary)
-    return Internals::GetConnection(connection_name).ImportData(identifier, rData);
+    return Internals::GetConnection(connection_name).ImportData(I_Info, rData);
 }
 
 // Version for C++, there this input is a std::vector, which we have to wrap before passing it on
@@ -128,11 +124,9 @@ inline Info ExportData(
     const std::vector<double>& rData)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    const std::string identifier = I_Info.Get<std::string>("identifier");
     using namespace CoSimIO::Internals;
     std::unique_ptr<DataContainer<double>> p_container(new DataContainerStdVectorReadOnly<double>(rData));
-    // TODO maybe pass the Info into the function (only changes under the hood necessary)
-    return GetConnection(connection_name).ExportData(identifier, *p_container);
+    return GetConnection(connection_name).ExportData(I_Info, *p_container);
 }
 
 // Version for C and fortran, there we already get a container
@@ -142,9 +136,7 @@ inline Info ExportData(
     const CoSimIO::Internals::DataContainer<double>& rData)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    const std::string identifier = I_Info.Get<std::string>("identifier");
-    // TODO maybe pass the Info into the function (only changes under the hood necessary)
-    return Internals::GetConnection(connection_name).ExportData(identifier, rData);
+    return Internals::GetConnection(connection_name).ExportData(I_Info, rData);
 }
 
 template<>
