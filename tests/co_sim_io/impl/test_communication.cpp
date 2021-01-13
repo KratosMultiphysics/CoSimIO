@@ -13,6 +13,8 @@
 // System includes
 #include <thread>
 #include <chrono>
+#include <tuple>
+#include <array>
 
 // Project includes
 #include "co_sim_io_testing.hpp"
@@ -98,8 +100,21 @@ std::shared_ptr<CoSimIO::ModelPart> CreateLinesModelPart()
 std::shared_ptr<CoSimIO::ModelPart> CreateLinesAndPointElementsModelPart()
 {
     std::shared_ptr<CoSimIO::ModelPart> p_model_part(std::make_shared<CoSimIO::ModelPart>("line_points_model_part"));
+    const int num_nodes = 25;
 
-    CO_SIM_IO_ERROR << "not implemented!" << std::endl;
+    for (int i=0; i<num_nodes; ++i) {
+        p_model_part->CreateNewNode(i+i+1, 0.1*i, 2.3*i, 0);
+    }
+
+    // create line elements
+    for (int i=0; i<num_nodes-1; ++i) {
+        p_model_part->CreateNewElement(i+1, 3, {i+i+1, i+i+3});
+    }
+
+    // create point elements
+    for (int i=0; i<5; ++i) {
+        p_model_part->CreateNewElement(i+100, 1, {i+i+1});
+    }
 
     return p_model_part;
 }
@@ -108,7 +123,49 @@ std::shared_ptr<CoSimIO::ModelPart> CreateSurfaceModelPart()
 {
     std::shared_ptr<CoSimIO::ModelPart> p_model_part(std::make_shared<CoSimIO::ModelPart>("surface_model_part"));
 
-    CO_SIM_IO_ERROR << "not implemented!" << std::endl;
+    std::vector<std::tuple<int, std::array<double,3>>> node_coords {
+        {1,  {0,0,0}},
+        {2,  {1,0,0}},
+        {3,  {1,2,0}},
+        {4,  {0,2,0}},
+        {9,  {2.5,0,0}},
+        {10, {2.5,2,0}},
+        {21, {0,3,0}},
+        {22, {1,3,0}},
+        {23, {2.5,3,0}},
+        {53, {0,3,-2}},
+        {55, {2.5,3,-2}}
+    };
+
+    // Id, type, connectivities
+    std::vector<std::tuple<int, CoSimIO::Element::ElementType, CoSimIO::Element::ConnectivitiesType>> elem_info {
+        {10,  9, {1,2,3,4}},
+        {3,   9, {3,2,9,10}},
+        {4,   9, {4,3,22,21}},
+        {6,   9, {3,10,23,22}},
+        {11,  5, {21,22,53}},
+        {12,  5, {22,55,53}},
+        {15,  5, {22,23,55}},
+        {26,  5, {4,21,53}},
+        {27,  5, {10,23,55}}
+    };
+
+   for (const auto& node_info : node_coords) {
+        p_model_part->CreateNewNode(
+            std::get<0>(node_info),
+            std::get<1>(node_info)[0],
+            std::get<1>(node_info)[1],
+            std::get<1>(node_info)[2]
+        );
+   }
+
+    for (const auto& el_info : elem_info) {
+        p_model_part->CreateNewElement(
+            std::get<0>(el_info),
+            std::get<1>(el_info),
+            std::get<2>(el_info)
+        );
+    }
 
     return p_model_part;
 }
