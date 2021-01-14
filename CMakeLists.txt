@@ -2,7 +2,8 @@ project(CoSimIO CXX C)
 cmake_minimum_required (VERSION 2.8.6)
 
 # this has to be specified BEFORE including CTest!
-set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track-origins=yes --tool=memcheck --error-exitcode=1")
+# suppressions file has to be included in the options, as using "MEMORYCHECK_SUPPRESSIONS_FILE" doesn't work on all systems
+set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track-origins=yes --tool=memcheck --error-exitcode=1 --suppressions=${CMAKE_SOURCE_DIR}/tests/valgrind_suppressions.supp")
 
 include(CTest)
 
@@ -26,6 +27,31 @@ message("    BUILD_PYTHON:     " ${BUILD_PYTHON})
 message("    BUILD_FORTRAN:    " ${BUILD_FORTRAN})
 message("")
 
+set( CO_SIM_IO_REQUIRES_BOOST OFF )
+set( CO_SIM_IO_REQUIRES_MPI OFF )
+
+if (ENABLE_SOCKETS)
+    set( CO_SIM_IO_REQUIRES_BOOST ON ) # Sockets Communication is implemented using Boost::ASIO
+    add_definitions( -DCO_SIM_IO_USING_SOCKETS )
+endif()
+if (ENABLE_MPI)
+    set( CO_SIM_IO_REQUIRES_MPI ON )
+    add_definitions( -DCO_SIM_IO_USING_MPI )
+endif()
+
+if (CO_SIM_IO_REQUIRES_BOOST)
+    find_package(Boost REQUIRED)
+    include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+endif()
+
+if (CO_SIM_IO_REQUIRES_MPI)
+    find_package(MPI REQUIRED)
+    # TODO check this, was copied from Kratos
+    # set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
+    # set(CMAKE_C_COMPILE_FLAGS ${CMAKE_C_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
+    # set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
+    include_directories(SYSTEM ${MPI_INCLUDE_PATH})
+endif()
 
 if(MSVC)
     # required such that "__cplusplus" is set to the correct value
@@ -71,8 +97,8 @@ if (BUILD_TESTING)
     if(CMAKE_MAJOR_VERSION LESS 3)
         message(FATAL_ERROR "Building the tests requires CMake 3")
     endif()
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "external_libraries/catch2")
-    include(Catch)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "external_libraries/doctest")
+    include(doctest)
     add_subdirectory(tests)
 endif()
 

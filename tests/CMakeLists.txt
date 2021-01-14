@@ -2,8 +2,10 @@ include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io )
 include_directories( ${CMAKE_SOURCE_DIR}/external_libraries )
 
 ### Test runner for tests of CoSimIO
+find_package (Threads REQUIRED)
 file( GLOB_RECURSE CO_SIM_IO_TEST_FILES co_sim_io/*.cpp)
 add_executable ( co_sim_io_tests ${CO_SIM_IO_TEST_FILES})
+target_link_libraries(co_sim_io_tests ${CMAKE_THREAD_LIBS_INIT})
 install( TARGETS co_sim_io_tests DESTINATION ${CMAKE_SOURCE_DIR}/bin )
 set_target_properties(co_sim_io_tests PROPERTIES
     CXX_STANDARD 11
@@ -11,8 +13,7 @@ set_target_properties(co_sim_io_tests PROPERTIES
     CXX_EXTENSIONS NO
 )
 
-catch_discover_tests(co_sim_io_tests)
-
+doctest_discover_tests(co_sim_io_tests)
 
 ### C++ tests ###
 function(add_cpp_executable TEST_SOURCE_FILE)
@@ -32,7 +33,7 @@ endforeach(cpp_test_file)
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run.sh  $1 & $2)
 
 add_test(hello_cpp_test hello_cpp_test)
-add_test(NAME connect_disconnect_cpp_test COMMAND sh run.sh $<TARGET_FILE:connect_disconnect_cpp_test>  $<TARGET_FILE:connect_disconnect_cpp_test>)
+add_test(NAME connect_disconnect_cpp_test COMMAND sh run.sh $<TARGET_FILE:connect_disconnect_a_cpp_test>  $<TARGET_FILE:connect_disconnect_b_cpp_test>)
 add_test(NAME import_export_data_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_data_cpp_test>  $<TARGET_FILE:import_data_cpp_test>)
 add_test(NAME import_export_mesh_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_mesh_cpp_test>  $<TARGET_FILE:import_mesh_cpp_test>)
 
@@ -70,9 +71,9 @@ if(BUILD_C)
     endforeach(c_integration_test_file)
 
     add_test(hello_c_test hello_c_test)
-    # add_test(NAME connect_disconnect_c_test COMMAND bash run.sh $<TARGET_FILE:connect_disconnect_c_test>  $<TARGET_FILE:connect_disconnect_c_test>)
-    # add_test(NAME import_export_data_c_test COMMAND bash run.sh $<TARGET_FILE:export_data_c_test>  $<TARGET_FILE:import_data_c_test>)
-    # add_test(NAME import_export_mesh_c_test COMMAND bash run.sh $<TARGET_FILE:export_mesh_c_test>  $<TARGET_FILE:import_mesh_c_test>)
+    add_test(NAME connect_disconnect_c_test COMMAND bash run.sh $<TARGET_FILE:connect_disconnect_a_c_test>  $<TARGET_FILE:connect_disconnect_b_c_test>)
+    add_test(NAME import_export_data_c_test COMMAND bash run.sh $<TARGET_FILE:export_data_c_test>  $<TARGET_FILE:import_data_c_test>)
+    add_test(NAME import_export_mesh_c_test COMMAND bash run.sh $<TARGET_FILE:export_mesh_c_test>  $<TARGET_FILE:import_mesh_c_test>)
 endif()
 
 

@@ -10,16 +10,20 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_DEFINE_H_INCLUDED
-#define CO_SIM_IO_DEFINE_H_INCLUDED
+#ifndef CO_SIM_IO_DEFINE_INCLUDED
+#define CO_SIM_IO_DEFINE_INCLUDED
 
 // System includes
-#include <string>
-#include <unordered_map>
+#include <cstddef>
+#include <memory>
+#include <array>
 
 namespace CoSimIO {
 
-typedef std::unordered_map<std::string, std::string> SettingsType;
+// signed integer type, 32 bit in 32 bit systems, but 64bit in 64 bit systems => like std::size_t but signed
+using IdType = std::ptrdiff_t;
+
+using CoordinatesType = std::array<double,3>;
 
 enum class ControlSignal
 {
@@ -51,6 +55,23 @@ enum ConnectionStatus
     DisconnectionError
 };
 
+// see https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf ; figure 2
+enum ElementType
+{
+    VERTEX     = 1,
+    LINE       = 3,
+    TRIANGLE   = 5,
+    QUAD       = 9,
+    TETRA      = 10,
+    HEXAHEDRON = 12
+};
+
+// Note: std::make_unique is C++14, this can be updated once we upgrade from C++11
+template<typename C, typename...Args>
+std::unique_ptr<C> make_unique(Args &&...args) {
+    return std::unique_ptr<C>(new C(std::forward<Args>(args)...));
+}
+
 } //namespace CoSimIO
 
-#endif // CO_SIM_IO_DEFINE_H_INCLUDED
+#endif // CO_SIM_IO_DEFINE_INCLUDED

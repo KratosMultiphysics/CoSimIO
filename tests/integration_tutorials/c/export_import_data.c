@@ -13,9 +13,15 @@
 // CoSimulation includes
 #include "c/co_sim_io_c.h"
 
-#define COSIMIO_CHECK_EQUAL(a, b)                                \
+#define COSIMIO_CHECK_EQUAL_INT(a, b)                            \
     if (a != b) {                                                \
         printf("in line %d : %d is not equalt to %d\n", __LINE__ , a, b); \
+        return 1;                                                \
+    }
+
+#define COSIMIO_CHECK_EQUAL_DOUBLE(a, b)                         \
+    if (a != b) {                                                \
+        printf("in line %d : %f is not equalt to %f\n", __LINE__ , a, b); \
         return 1;                                                \
     }
 
@@ -30,14 +36,14 @@ int main()
 
     // Connecting using the connection settings
     CoSimIO_Info connect_info = CoSimIO_Connect(connection_settings);
-    COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
-    CoSimIO_FreeInfo(connect_info); // Don't forget to free the connect_info 
+    COSIMIO_CHECK_EQUAL_INT(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
+    CoSimIO_FreeInfo(connect_info); // Don't forget to free the connect_info
 
     // After conneting we may export the data
     int data_size = 4;
     double data_to_send[] = {3, .1, .14, 3.14};
 
-    // Creatint the export_settings 
+    // Creatint the export_settings
     CoSimIO_Info export_settings=CoSimIO_CreateInfo();
     CoSimIO_Info_SetString(export_settings, "identifier", "data_exchange_1");
     CoSimIO_Info_SetString(export_settings, "connection_name", "im_exp_data");
@@ -45,7 +51,7 @@ int main()
     // Exporting the data
     CoSimIO_Info export_info = CoSimIO_ExportData(export_settings, data_size, data_to_send);
     // Freeing the export_info and export_settings
-    CoSimIO_FreeInfo(export_info); 
+    CoSimIO_FreeInfo(export_info);
     CoSimIO_FreeInfo(export_settings);
 
 
@@ -65,12 +71,12 @@ int main()
     CoSimIO_FreeInfo(import_settings);
 
     for(int i = 0 ; i < data_size ; i++)
-        COSIMIO_CHECK_EQUAL(data_to_send[i], data[i]);
+        COSIMIO_CHECK_EQUAL_DOUBLE(data_to_send[i], data[i]);
 
 
     // Disconnecting at the end
     CoSimIO_Info disconnect_info = CoSimIO_Disconnect(connection_settings); // disconnect afterwards
-    COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(disconnect_info, "connection_status"), CoSimIO_Disconnected);
+    COSIMIO_CHECK_EQUAL_INT(CoSimIO_Info_GetInt(disconnect_info, "connection_status"), CoSimIO_Disconnected);
 
     // Don't forget to release the settings and info
     CoSimIO_FreeInfo(connection_settings);

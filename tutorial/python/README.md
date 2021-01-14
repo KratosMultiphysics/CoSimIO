@@ -2,6 +2,21 @@
 
 This tutorial helps you through to integrate the _CoSimIO_ into a solver/software-tool using the Python interface.
 
+## Overview
+
+- [What you need](#what-you-need)
+- [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
+- [Tutorial 2: Hello CoSimIO](#tutorial-2-hello-cosimio)
+- [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
+- [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
+- [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
+- [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-CoSimulation-Library-Overview)
+- [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-Building-Kratos-with-CoSimulation)
+- [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-Connecting/Disconnecting-tofrom-Kratos)
+- [Tutorial 9: Data Exchange with Kratos](#tutorial-9-Data-Exchange-with-Kratos)
+- [Tutorial 10: Mesh Exchange with Kratos](#tutorial-10-Mesh-Exchange-with-Kratos)
+- [Tutorial 11: Mapping with Kratos](#tutorial-11-Mapping-with-Kratos)
+
 ## What you need
 - Downloading the _CosimIO_ from the repository:
 
@@ -13,7 +28,7 @@ git clone https://github.com/KratosMultiphysics/CoSimIO.git
 
 
 
-## Tutorial 1: Building
+## Tutorial 1: Building the CoSimIO
 The Python interface is located in [co_sim_io/python](https://github.com/KratosMultiphysics/CoSimIO/tree/master/co_sim_io/python) folder of the repository. It uses the [pybind11 library](https://github.com/pybind/pybind11) for exposing the C++ code to Python. It is provided in the [expternal_libraries/pybind11](https://github.com/KratosMultiphysics/CoSimIO/tree/master/external_libraries/pybind11) folder of this repo.
 
 Using cmake the compilation is straightforward. Just calling the following command from the _CoSimIO_ root:
@@ -25,6 +40,14 @@ sh scripts/build_python.sh
 This will compile the binaries in the build folder and installs them into the bin subfolder of _CoSimIO_.
 
 Please don't forget to add the binaries in the bin folder to your `PYTHONPATH`.
+
+Usually pybind automatically detects the Python installation. Sometimes it can however be necessary to explicitly specify the target Python version. This can be achieved through CMake by setting PYBIND11_PYTHON_VERSION or an exact Python installation can be specified with PYTHON_EXECUTABLE. For example:
+```cmake
+-DPYBIND11_PYTHON_VERSION=3.6
+# or
+-DPYTHON_EXECUTABLE=path/to/python
+```
+see also the corresponding [pybind documentstion](https://pybind11.readthedocs.io/en/stable/compiling.html#configuration-variables)
 
 
 
@@ -172,3 +195,27 @@ return_info, nodal_coords, element_connectivities, element_types = CoSimIO.Impor
 ```
 
 This example can be found in [integration_tutorials/python/export_mesh.py](../../tests/integration_tutorials/python/export_mesh.py) and [integration_tutorials/python/import_mesh.py](../../tests/integration_tutorials/python/import_mesh.py).
+
+
+## Tutorial 6: Kratos CoSimulation Library Overview
+The overview of the Kratos CoSimulation Library can be found [here](../README.md#kratos-cosimulation-library-overview).
+
+
+## Tutorial 7: Building Kratos with CoSimulation
+The building instructions for the Kratos CoSimulation Library can be found [here](../README.md#building-kratos-with-cosimulation).
+
+
+## Tutorial 8: Connecting/Disconnecting to/from Kratos
+coming soon!
+
+
+## Tutorial 9: Data Exchange with Kratos
+coming soon!
+
+
+## Tutorial 10: Mesh Exchange with Kratos
+coming soon!
+
+
+## Tutorial 11: Mapping with Kratos
+coming soon!

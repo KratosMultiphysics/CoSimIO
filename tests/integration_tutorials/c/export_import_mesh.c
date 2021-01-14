@@ -13,9 +13,15 @@
 // CoSimulation includes
 #include "c/co_sim_io_c.h"
 
-#define COSIMIO_CHECK_EQUAL(a, b)                                \
+#define COSIMIO_CHECK_EQUAL_INT(a, b)                            \
     if (a != b) {                                                \
         printf("in line %d : %d is not equalt to %d\n", __LINE__ , a, b); \
+        return 1;                                                \
+    }
+
+#define COSIMIO_CHECK_EQUAL_DOUBLE(a, b)                         \
+    if (a != b) {                                                \
+        printf("in line %d : %f is not equalt to %f\n", __LINE__ , a, b); \
         return 1;                                                \
     }
 
@@ -30,7 +36,7 @@ int main()
 
     // Connecting using the connection settings
     CoSimIO_Info connect_info = CoSimIO_Connect(connection_settings);
-    COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
+    COSIMIO_CHECK_EQUAL_INT(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
     CoSimIO_FreeInfo(connect_info); // Don't forget to free the connect_info
 
     int export_number_of_nodes=6;
@@ -61,7 +67,7 @@ int main()
 
     // Exporting the data
     CoSimIO_Info export_info = CoSimIO_ExportMesh(export_settings
-        , export_number_of_nodes*3,export_number_of_elements,export_number_of_elements_connectivities
+        , export_number_of_nodes,export_number_of_elements,export_number_of_elements_connectivities
         , export_nodal_coordinates, export_elements_connectivities, export_elements_types);
 
     // Freeing the export_info and export_settings
@@ -90,22 +96,22 @@ int main()
     CoSimIO_FreeInfo(import_info);
     CoSimIO_FreeInfo(import_settings);
 
-    COSIMIO_CHECK_EQUAL(export_number_of_nodes, import_number_of_nodes);
-    COSIMIO_CHECK_EQUAL(export_number_of_elements_connectivities, import_number_of_elements_connectivities);
-    COSIMIO_CHECK_EQUAL(export_number_of_elements, import_number_of_elements);
+    COSIMIO_CHECK_EQUAL_INT(export_number_of_nodes, import_number_of_nodes);
+    COSIMIO_CHECK_EQUAL_INT(export_number_of_elements_connectivities, import_number_of_elements_connectivities);
+    COSIMIO_CHECK_EQUAL_INT(export_number_of_elements, import_number_of_elements);
 
     for(int i = 0 ; i < import_number_of_nodes * 3 ; i++)
-        COSIMIO_CHECK_EQUAL(export_nodal_coordinates[i], import_nodal_coordinates[i]);
+        COSIMIO_CHECK_EQUAL_DOUBLE(export_nodal_coordinates[i], import_nodal_coordinates[i]);
 
     for(int i = 0 ; i < import_number_of_elements_connectivities ; i++)
-        COSIMIO_CHECK_EQUAL(export_elements_connectivities[i], import_elements_connectivities[i]);
+        COSIMIO_CHECK_EQUAL_INT(export_elements_connectivities[i], import_elements_connectivities[i]);
 
     for(int i = 0 ; i < import_number_of_elements ; i++)
-        COSIMIO_CHECK_EQUAL(export_elements_types[i], import_elements_types[i]);
+        COSIMIO_CHECK_EQUAL_INT(export_elements_types[i], import_elements_types[i]);
 
     // Disconnecting at the end
     CoSimIO_Info disconnect_info = CoSimIO_Disconnect(connection_settings); // disconnect afterwards
-    COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(disconnect_info, "connection_status"), CoSimIO_Disconnected);
+    COSIMIO_CHECK_EQUAL_INT(CoSimIO_Info_GetInt(disconnect_info, "connection_status"), CoSimIO_Disconnected);
 
     // Don't forget to release the settings and info
     CoSimIO_FreeInfo(connection_settings);
