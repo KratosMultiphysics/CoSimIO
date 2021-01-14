@@ -52,7 +52,7 @@ jobs:
         if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
           ctest -T memcheck
         else
-          ctest
+          ctest --verbose
         fi
 
     - name: Running tests (Python)
