@@ -17,14 +17,17 @@ def cosimio_check_equal(a, b):
 
 
 settings = CoSimIO.Info()
-settings.SetString("connection_name", "test_connection") # This must be unique for each connection between two solvers
-settings.SetString("solver_name", "my_solver") # Not to be confused with the connection name.
+settings.SetString("my_name", "py_connect_disconnect_b")
+settings.SetString("connect_to", "py_connect_disconnect_a")
 settings.SetInt("echo_level", 1)
-settings.SetString("solver_version", "1.25")
+settings.SetString("version", "1.25")
 
 info = CoSimIO.Connect(settings)
 cosimio_check_equal(info.GetInt("connection_status"), CoSimIO.ConnectionStatus.Connected)
+connection_name = info.GetString("connection_name")
 
-info = CoSimIO.Disconnect(settings)
+disconnect_settings = CoSimIO.Info()
+disconnect_settings.SetString("connection_name", connection_name)
+info = CoSimIO.Disconnect(disconnect_settings)
 cosimio_check_equal(info.GetInt("connection_status"), CoSimIO.ConnectionStatus.Disconnected)
 

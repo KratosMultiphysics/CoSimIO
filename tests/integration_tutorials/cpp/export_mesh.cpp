@@ -23,8 +23,8 @@
 int main()
 {
     CoSimIO::Info settings;
-    settings.Set("my_name", "mesh_export_solver");
-    settings.Set("connect_to", "mesh_import_solver");
+    settings.Set("my_name", "cpp_mesh_export_solver");
+    settings.Set("connect_to", "cpp_mesh_import_solver");
     settings.Set("echo_level", 1);
     settings.Set("version", "1.25");
 

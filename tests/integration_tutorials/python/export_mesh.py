@@ -17,14 +17,15 @@ def cosimio_check_equal(a, b):
 
 # Connection Settings
 settings = CoSimIO.Info()
-settings.SetString("connection_name", "test_connection") # This must be unique for each connection between two solvers
-settings.SetString("solver_name", "my_solver") # Not to be confused with the connection name.
+settings.SetString("my_name", "py_mesh_export_solver")
+settings.SetString("connect_to", "py_mesh_import_solver")
 settings.SetInt("echo_level", 1)
-settings.SetString("solver_version", "1.25")
+settings.SetString("version", "1.25")
 
 # Connecting
 return_info = CoSimIO.Connect(settings)
 cosimio_check_equal(return_info.GetInt("connection_status"), CoSimIO.ConnectionStatus.Connected)
+connection_name = return_info.GetString("connection_name")
 
 # Creating the mesh
 nodal_coords = [
@@ -47,14 +48,17 @@ element_types = [
     5,5,5,5 # VTK_TRIANGLE
 ]
 
-
 # Exporting mesh
 info = CoSimIO.Info()
 info.SetString("identifier", "fluid_mesh")
-info.SetString("connection_name", "test_connection")
+info.SetString("connection_name", connection_name)
 return_info = CoSimIO.ExportMesh(info, nodal_coords, element_connectivities, element_types)
 
-# Disconnecting
-return_info = CoSimIO.Disconnect(settings)
-cosimio_check_equal(return_info.GetInt("connection_status"), CoSimIO.ConnectionStatus.Disconnected)
+from time import sleep
+sleep(1) # temp until proper Connect for FileComm is implemented
 
+# Disconnecting
+disconnect_settings = CoSimIO.Info()
+disconnect_settings.SetString("connection_name", connection_name)
+return_info = CoSimIO.Disconnect(disconnect_settings)
+cosimio_check_equal(return_info.GetInt("connection_status"), CoSimIO.ConnectionStatus.Disconnected)
