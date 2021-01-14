@@ -355,7 +355,7 @@ void ExportMeshHelper(const std::vector<std::shared_ptr<CoSimIO::ModelPart>>& Mo
 }
 
 // neither of the tests should take more than 5.0 seconds. If it does it means that it hangs!
-TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(5.0), TCommType, COMM_TESTS)
+TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(25.0), TCommType, COMM_TESTS)
 {
     CoSimIO::Info settings;
 
