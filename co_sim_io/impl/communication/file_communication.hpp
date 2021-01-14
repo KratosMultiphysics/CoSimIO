@@ -98,13 +98,6 @@ public:
         mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", true);
     }
 
-    /*[[deprecated]]*/ explicit FileCommunication(const std::string& rName, const Info& I_Settings, const bool IsConnectionMaster)
-        : Communication(rName, I_Settings, IsConnectionMaster)
-    {
-        mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", false);
-        mCommFolder = GetWorkingDirectory();
-    }
-
     ~FileCommunication() override
     {
         if (GetIsConnected()) {
