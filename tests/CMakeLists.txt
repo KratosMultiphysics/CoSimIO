@@ -33,7 +33,7 @@ endforeach(cpp_test_file)
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run.sh  $1 & $2)
 
 add_test(hello_cpp_test hello_cpp_test)
-add_test(NAME connect_disconnect_cpp_test COMMAND sh run.sh $<TARGET_FILE:connect_disconnect_cpp_test>  $<TARGET_FILE:connect_disconnect_cpp_test>)
+add_test(NAME connect_disconnect_cpp_test COMMAND sh run.sh $<TARGET_FILE:connect_disconnect_a_cpp_test>  $<TARGET_FILE:connect_disconnect_b_cpp_test>)
 add_test(NAME import_export_data_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_data_cpp_test>  $<TARGET_FILE:import_data_cpp_test>)
 add_test(NAME import_export_mesh_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_mesh_cpp_test>  $<TARGET_FILE:import_mesh_cpp_test>)
 
@@ -71,7 +71,7 @@ if(BUILD_C)
     endforeach(c_integration_test_file)
 
     add_test(hello_c_test hello_c_test)
-    add_test(NAME connect_disconnect_c_test COMMAND bash run.sh $<TARGET_FILE:connect_disconnect_c_test>  $<TARGET_FILE:connect_disconnect_c_test>)
+    add_test(NAME connect_disconnect_c_test COMMAND bash run.sh $<TARGET_FILE:connect_disconnect_a_c_test>  $<TARGET_FILE:connect_disconnect_b_c_test>)
     add_test(NAME import_export_data_c_test COMMAND bash run.sh $<TARGET_FILE:export_data_c_test>  $<TARGET_FILE:import_data_c_test>)
     add_test(NAME import_export_mesh_c_test COMMAND bash run.sh $<TARGET_FILE:export_mesh_c_test>  $<TARGET_FILE:import_mesh_c_test>)
 endif()
