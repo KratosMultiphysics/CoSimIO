@@ -126,13 +126,13 @@ private:
         }
 
         // both partners write a file which contains some information
-        const std::string file_name_primary(GetFullPath("CoSimIO_primary_config_" + GetConnectionName()));
-        const std::string file_name_secondary(GetFullPath("CoSimIO_secondary_config_" + GetConnectionName()));
+        const std::string file_name_primary(GetFullPath("CoSimIO_primary_connect_" + GetConnectionName()));
+        const std::string file_name_secondary(GetFullPath("CoSimIO_secondary_connect_" + GetConnectionName()));
 
         if (GetIsPrimaryConnection()) {
-            ExchangeConfigWithPartner(file_name_primary, file_name_secondary);
+            ExchangeSyncFileWithPartner(file_name_primary, file_name_secondary);
         } else {
-            ExchangeConfigWithPartner(file_name_secondary, file_name_primary);
+            ExchangeSyncFileWithPartner(file_name_secondary, file_name_primary);
         }
 
         Info info;
@@ -140,7 +140,7 @@ private:
         return info;
     }
 
-    void ExchangeConfigWithPartner(
+    void ExchangeSyncFileWithPartner(
         const std::string& I_MyFileName,
         const std::string& I_PartnerFileName
         ) const
@@ -156,12 +156,24 @@ private:
         MakeFileVisible(I_MyFileName);
 
         WaitForFile(I_PartnerFileName);
-        // // TODO read configuration and do sth with it?
+        // TODO read configuration and do sth with it?
         RemoveFile(I_PartnerFileName);
+
+        WaitUntilFileIsRemoved(I_MyFileName);
     }
 
     Info DisconnectDetail(const Info& I_Info) override
     {
+        // both partners write a file which contains some information
+        const std::string file_name_primary(GetFullPath("CoSimIO_primary_disconnect_" + GetConnectionName()));
+        const std::string file_name_secondary(GetFullPath("CoSimIO_secondary_disconnect_" + GetConnectionName()));
+
+        if (GetIsPrimaryConnection()) {
+            ExchangeSyncFileWithPartner(file_name_primary, file_name_secondary);
+        } else {
+            ExchangeSyncFileWithPartner(file_name_secondary, file_name_primary);
+        }
+
         if (mCommInFolder && GetIsPrimaryConnection()) {
             // delete directory to remove potential leftovers
             fs::remove_all(mCommFolder);
