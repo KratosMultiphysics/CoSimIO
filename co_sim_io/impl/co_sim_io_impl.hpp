@@ -23,6 +23,7 @@ This file contains the implementation of the functions defined in "co_sim_io.hpp
 
 // Project includes
 #include "connection.hpp"
+#include "utilities.hpp"
 #include "version.hpp"
 
 namespace CoSimIO {
@@ -48,20 +49,6 @@ inline void SendControlSignal(
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
     Internals::GetConnection(connection_name).SendControlSignal("", Signal);
-}
-
-// Create the name for the connection
-// In a function bcs maybe in the future this will
-// need to be more elaborate
-inline std::string GetConnectionName(
-    const std::string& rName,
-    const std::string& rConnectTo)
-{
-    if (rName < rConnectTo) {
-        return rName + "_" + rConnectTo;
-    } else {
-        return rConnectTo + "_" + rName;
-    }
 }
 
 } // namespace Internals
@@ -94,7 +81,7 @@ inline Info Connect(const Info& I_Settings)
     const std::string connect_to = I_Settings.Get<std::string>("connect_to");
     CO_SIM_IO_ERROR_IF(my_name == connect_to) << "Connecting to self is not allowed!" << std::endl;
 
-    const std::string connection_name = GetConnectionName(my_name, connect_to);
+    const std::string connection_name = CreateConnectionName(my_name, connect_to);
 
     CO_SIM_IO_ERROR_IF(HasIO(connection_name)) << "A connection from \"" << my_name << "\" to \"" << connect_to << "\"already exists!" << std::endl;
 
