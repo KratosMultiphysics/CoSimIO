@@ -23,15 +23,20 @@
 int main()
 {
     CoSimIO::Info settings;
-    settings.Set("connection_name", "test_connection"); // This must be unique for each connection between two solvers
-    settings.Set("solver_name", "my_solver"); // Not to be confused with the connection name.
+    settings.Set("my_name", "connect_disconnect_a");
+    settings.Set("connect_to", "connect_disconnect_b");
     settings.Set("echo_level", 1);
-    settings.Set("solver_version", "1.25");
+    settings.Set("version", "1.25");
 
     auto info = CoSimIO::Connect(settings);
     COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
+    const std::string connection_name = info.Get<std::string>("connection_name");
 
-    info = CoSimIO::Disconnect(settings); // disconnect afterwards
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // temp until proper Connect for FileComm is implemented
+
+    CoSimIO::Info disconnect_settings;
+    disconnect_settings.Set("connection_name", connection_name);
+    info = CoSimIO::Disconnect(disconnect_settings); // disconnect afterwards
     COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Disconnected);
 
     return 0;

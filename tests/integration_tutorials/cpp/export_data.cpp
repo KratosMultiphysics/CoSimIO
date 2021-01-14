@@ -23,7 +23,7 @@
 int main()
 {
     CoSimIO::Info settings;
-    settings.Set("name", "export_solver");
+    settings.Set("my_name", "export_solver");
     settings.Set("connect_to", "import_solver");
     settings.Set("echo_level", 1);
     settings.Set("version", "1.25");
@@ -37,6 +37,8 @@ int main()
     info.Set("identifier", "vector_of_pi");
     info.Set("connection_name", connection_name);
     info = CoSimIO::ExportData(info, data_to_send);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // temp until proper Connect for FileComm is implemented
 
     CoSimIO::Info disconnect_settings;
     disconnect_settings.Set("connection_name", connection_name);
