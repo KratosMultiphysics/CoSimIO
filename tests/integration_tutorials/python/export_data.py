@@ -35,9 +35,6 @@ info.SetString("identifier", "vector_of_pi")
 info.SetString("connection_name", connection_name)
 return_info = CoSimIO.ExportData(info, data_to_be_send)
 
-from time import sleep
-sleep(1) # temp until proper Connect for FileComm is implemented
-
 # Disconnecting
 disconnect_settings = CoSimIO.Info()
 disconnect_settings.SetString("connection_name", connection_name)

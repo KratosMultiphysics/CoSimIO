@@ -32,8 +32,6 @@ int main()
     COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
     const std::string connection_name = info.Get<std::string>("connection_name");
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // temp until proper Connect for FileComm is implemented
-
     CoSimIO::Info disconnect_settings;
     disconnect_settings.Set("connection_name", connection_name);
     info = CoSimIO::Disconnect(disconnect_settings); // disconnect afterwards

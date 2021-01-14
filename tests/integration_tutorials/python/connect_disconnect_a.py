@@ -26,9 +26,6 @@ info = CoSimIO.Connect(settings)
 cosimio_check_equal(info.GetInt("connection_status"), CoSimIO.ConnectionStatus.Connected)
 connection_name = info.GetString("connection_name")
 
-from time import sleep
-sleep(1) # temp until proper Connect for FileComm is implemented
-
 disconnect_settings = CoSimIO.Info()
 disconnect_settings.SetString("connection_name", connection_name)
 info = CoSimIO.Disconnect(disconnect_settings)
