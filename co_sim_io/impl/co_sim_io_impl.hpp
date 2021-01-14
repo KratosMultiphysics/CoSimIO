@@ -23,6 +23,7 @@ This file contains the implementation of the functions defined in "co_sim_io.hpp
 
 // Project includes
 #include "connection.hpp"
+#include "utilities.hpp"
 #include "version.hpp"
 
 namespace CoSimIO {
@@ -76,11 +77,20 @@ inline Info Hello()
 inline Info Connect(const Info& I_Settings)
 {
     using namespace Internals;
-    const std::string connection_name = I_Settings.Get<std::string>("connection_name");
-    CO_SIM_IO_ERROR_IF(HasIO(connection_name)) << "A connection for \"" << connection_name << "\" already exists!" << std::endl;
+    const std::string my_name = I_Settings.Get<std::string>("my_name");
+    const std::string connect_to = I_Settings.Get<std::string>("connect_to");
+    CO_SIM_IO_ERROR_IF(my_name == connect_to) << "Connecting to self is not allowed!" << std::endl;
 
-    s_co_sim_connections[connection_name] = std::unique_ptr<Connection>(new Connection(connection_name, I_Settings));
-    return GetConnection(connection_name).Connect();
+    const std::string connection_name = CreateConnectionName(my_name, connect_to);
+
+    CO_SIM_IO_ERROR_IF(HasIO(connection_name)) << "A connection from \"" << my_name << "\" to \"" << connect_to << "\"already exists!" << std::endl;
+
+    s_co_sim_connections[connection_name] = std::unique_ptr<Connection>(new Connection(I_Settings));
+
+    auto info = GetConnection(connection_name).Connect();
+    info.Set<std::string>("connection_name", connection_name);
+
+    return info;
 }
 
 inline Info Disconnect(const Info& I_Info)
@@ -92,7 +102,7 @@ inline Info Disconnect(const Info& I_Info)
     auto info = GetConnection(connection_name).Disconnect();
     s_co_sim_connections.erase(connection_name);
 
-    return info; // TODO use this
+    return info;
 }
 
 // Version for C++, there this input is a std::vector, which we have to wrap before passing it on

@@ -96,14 +96,15 @@ CoSimIO_Info settings = CoSimIO_CreateInfo();
 It is important to mention that the `CoSimIO_Info` is a pointer to the cpp info class which is allocated by the `CoSimIO_CreateInfo()`. So it is don't forget to free it when is not needed anymore using `CoSimIO_FreeInfo()` function. This container can be used to pass additional information about the solver/software-tool or connection settings to the CoSimIO:
 
 ```c
-CoSimIO_Info_SetString(settings, "connection_name", "test_connection"); // The connection name must be unique for each connection between two solvers
-CoSimIO_Info_SetString(settings, "solver_name", "my_solver"); // Not to be confused with the connection name.
+CoSimIO_Info_SetString(settings, "my_name", "the_name_of_this_solver"); // The name of this solver
+CoSimIO_Info_SetString(settings, "connect_to", "the_other_solver_name"); // The name of the solver to connect to
 CoSimIO_Info_SetInt(settings, "echo_level", 1);
 CoSimIO_Info_SetString(settings, "solver_version", "1.25");
 ```
-This function returns a `Info` object containing information about the connection which can be queried using `CoSimIO_Info_GetInt` function:
+This function returns a `Info` object containing information about the connection which can be queried using `CoSimIO_Info_Get...` functions:
 
 ```c
+CoSimIO_Info_GetString(info, "connection_name");
 CoSimIO_Info_GetInt(info, "connection_status");
 ```
 
@@ -116,15 +117,22 @@ Now putting together everything:
 int main()
 {
     CoSimIO_Info settings=CoSimIO_CreateInfo();
-    CoSimIO_Info_SetString(settings, "connection_name", "test_connection"); // The connection name must be unique for each connection between two solvers/software-tools
-    CoSimIO_Info_SetString(settings, "solver_name", "my_solver"); // Not to be confused with the connection name.
+    CoSimIO_Info_SetString(settings, "my_name", "the_name_of_this_solver"); // The name of this solver
+    CoSimIO_Info_SetString(settings, "connect_to", "the_other_solver_name"); // The name of the solver to connect to
     CoSimIO_Info_SetInt(settings, "echo_level", 1);
     CoSimIO_Info_SetString(settings, "solver_version", "1.25");
 
     // The connect must be called before any CosimIO function called
     CoSimIO_Info connect_info = CoSimIO_Connect(settings);
+    CoSimIO_FreeInfo(settings);
 
-    if(CoSimIO_Info_GetInt(connect_info, "connection_status") != CoSimIO_Connected)
+    // The connect_info contains now:
+    // - The name of the connection ("connection_name") to be used for further calls to CoSimIO
+    // - The status of the connection ("connection_status")
+
+    const char* connection_name = CoSimIO_Info_GetString(connect_info, "connection_name");
+
+    if (CoSimIO_Info_GetInt(connect_info, "connection_status") != CoSimIO_Connected)
         return 1;
 
     // Don't forget to release the connect_info after getting your information
@@ -134,12 +142,14 @@ int main()
     // ...
 
     // Here you may use the info but cannot call any CoSimIO function anymore
-    CoSimIO_Info disconnect_info = CoSimIO_Disconnect(settings); // disconnect afterwards
+    CoSimIO_Info disconnect_settings=CoSimIO_CreateInfo();
+    CoSimIO_Info_SetString(settings, "connection_name", connection_name);
+    CoSimIO_Info disconnect_info = CoSimIO_Disconnect(disconnect_settings); // disconnect afterwards
     if(CoSimIO_Info_GetInt(disconnect_info, "connection_status") != CoSimIO_Disconnected)
         return 1;
 
     // Don't forget to release the settings and info
-    CoSimIO_FreeInfo(settings);
+    CoSimIO_FreeInfo(disconnect_settings);
     CoSimIO_FreeInfo(disconnect_info);
 
     return 0;

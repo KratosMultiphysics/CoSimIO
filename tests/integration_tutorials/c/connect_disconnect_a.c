@@ -22,30 +22,31 @@
 int main()
 {
     CoSimIO_Info settings=CoSimIO_CreateInfo();
-    CoSimIO_Info_SetString(settings, "connection_name", "test_connection"); // The connection name must be unique for each connection between two solvers
-    CoSimIO_Info_SetString(settings, "solver_name", "my_solver"); // Not to be confused with the connection name.
+    CoSimIO_Info_SetString(settings, "my_name", "c_connect_disconnect_a");
+    CoSimIO_Info_SetString(settings, "connect_to", "c_connect_disconnect_b");
     CoSimIO_Info_SetInt(settings, "echo_level", 1);
-    CoSimIO_Info_SetString(settings, "solver_version", "1.25");
+    CoSimIO_Info_SetString(settings, "version", "1.25");
 
     // The connect must be called before any CosimIO function called
     CoSimIO_Info connect_info = CoSimIO_Connect(settings);
+    const char* connection_name = CoSimIO_Info_GetString(connect_info, "connection_name");
 
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
-    
-    // Don't forget to release the connect_info after getting your information
-    CoSimIO_FreeInfo(connect_info);
 
-
-    // Now you may call any CoSimIO functions 
+    // Now you may call any CoSimIO functions
 
     // ...
 
     // You should free the info before getting a new one
-    CoSimIO_Info disconnect_info = CoSimIO_Disconnect(settings); // disconnect afterwards
+    CoSimIO_Info disconnect_settings=CoSimIO_CreateInfo();
+    CoSimIO_Info_SetString(disconnect_settings, "connection_name", connection_name);
+    CoSimIO_Info disconnect_info = CoSimIO_Disconnect(disconnect_settings); // disconnect afterwards
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(disconnect_info, "connection_status"), CoSimIO_Disconnected);
 
     // Don't forget to release the settings and info
     CoSimIO_FreeInfo(settings);
+    CoSimIO_FreeInfo(disconnect_settings);
+    CoSimIO_FreeInfo(connect_info);
     CoSimIO_FreeInfo(disconnect_info);
 
     return 0;

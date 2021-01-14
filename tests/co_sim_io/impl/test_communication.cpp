@@ -355,7 +355,7 @@ void ExportMeshHelper(const std::vector<std::shared_ptr<CoSimIO::ModelPart>>& Mo
 }
 
 // neither of the tests should take more than 5.0 seconds. If it does it means that it hangs!
-TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(5.0), TCommType, COMM_TESTS)
+TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(25.0), TCommType, COMM_TESTS)
 {
     CoSimIO::Info settings;
 
@@ -369,28 +369,30 @@ TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(5.0), TCommType, COM
 
     SUBCASE("connect_disconnect_once")
     {
+        std::thread ext_thread(ConnectDisconnect<TCommType>);
+
         CoSimIO::Info connect_info;
         p_comm->Connect(connect_info);
 
-        std::thread ext_thread(ConnectDisconnect<TCommType>);
-        ext_thread.join();
-
         CoSimIO::Info disconnect_info;
         p_comm->Disconnect(disconnect_info);
+
+        ext_thread.join();
     }
 
     SUBCASE("connect_disconnect_multiple")
     {
         // connecting and disconnecting three times
         for (std::size_t i=0; i<3; ++i) {
+            std::thread ext_thread(ConnectDisconnect<TCommType>);
+
             CoSimIO::Info connect_info;
             p_comm->Connect(connect_info);
 
-            std::thread ext_thread(ConnectDisconnect<TCommType>);
-            ext_thread.join();
-
             CoSimIO::Info disconnect_info;
             p_comm->Disconnect(disconnect_info);
+
+            ext_thread.join();
         }
     }
 

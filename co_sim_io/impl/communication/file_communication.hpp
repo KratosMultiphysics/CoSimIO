@@ -98,13 +98,6 @@ public:
         mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", true);
     }
 
-    /*[[deprecated]]*/ explicit FileCommunication(const std::string& rName, const Info& I_Settings, const bool IsConnectionMaster)
-        : Communication(rName, I_Settings, IsConnectionMaster)
-    {
-        mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", false);
-        mCommFolder = GetWorkingDirectory();
-    }
-
     ~FileCommunication() override
     {
         if (GetIsConnected()) {
@@ -132,14 +125,55 @@ private:
             }
         }
 
+        // both partners write a file which contains some information
+        const std::string file_name_primary(GetFullPath("CoSimIO_primary_connect_" + GetConnectionName()));
+        const std::string file_name_secondary(GetFullPath("CoSimIO_secondary_connect_" + GetConnectionName()));
+
+        if (GetIsPrimaryConnection()) {
+            ExchangeSyncFileWithPartner(file_name_primary, file_name_secondary);
+        } else {
+            ExchangeSyncFileWithPartner(file_name_secondary, file_name_primary);
+        }
+
         Info info;
         info.Set("is_connected", true);
-        return info; // nothing needed here for file-based communication (maybe do sth here?)
-        // master could write a file that gets deleted by slave to aknowledge connection... Probably not a bad idea! => slave returns once it found and deleted file, master waits for deletion of file
+        return info;
+    }
+
+    void ExchangeSyncFileWithPartner(
+        const std::string& I_MyFileName,
+        const std::string& I_PartnerFileName
+        ) const
+    {
+        std::ofstream my_config_file;
+        my_config_file.open(GetTempFileName(I_MyFileName));
+        CheckStream(my_config_file, I_MyFileName);
+
+        // TODO write configuration and do sth with it?
+        my_config_file << "Hello there\n";
+
+        my_config_file.close();
+        MakeFileVisible(I_MyFileName);
+
+        WaitForFile(I_PartnerFileName);
+        // TODO read configuration and do sth with it?
+        RemoveFile(I_PartnerFileName);
+
+        WaitUntilFileIsRemoved(I_MyFileName);
     }
 
     Info DisconnectDetail(const Info& I_Info) override
     {
+        // both partners write a file which contains some information
+        const std::string file_name_primary(GetFullPath("CoSimIO_primary_disconnect_" + GetConnectionName()));
+        const std::string file_name_secondary(GetFullPath("CoSimIO_secondary_disconnect_" + GetConnectionName()));
+
+        if (GetIsPrimaryConnection()) {
+            ExchangeSyncFileWithPartner(file_name_primary, file_name_secondary);
+        } else {
+            ExchangeSyncFileWithPartner(file_name_secondary, file_name_primary);
+        }
+
         if (mCommInFolder && GetIsPrimaryConnection()) {
             // delete directory to remove potential leftovers
             fs::remove_all(mCommFolder);

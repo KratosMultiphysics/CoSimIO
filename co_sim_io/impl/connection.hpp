@@ -45,7 +45,7 @@ public:
 
     using FunctionPointerType = std::function<Info(const Info&)>;
 
-    explicit Connection(const std::string& rName, const Info& I_Settings) : mConnectionName(rName)
+    explicit Connection(const Info& I_Settings)
     {
         Initialize(I_Settings);
     }
@@ -170,8 +170,6 @@ public:
 private:
     std::unique_ptr<Communication> mpComm; // handles communication (File, Sockets, MPI, ...)
 
-    std::string mConnectionName;
-
     bool mIsConnectionMaster = false;
 
     std::unordered_map<std::string, FunctionPointerType> mRegisteredFunctions;
@@ -183,23 +181,19 @@ private:
             comm_format = I_Settings.Get<std::string>("communication_format");
         }
 
-        if (I_Settings.Has("is_connection_master")) { // is_connection_master has been specified
-            mIsConnectionMaster = I_Settings.Get<bool>("is_connection_master");
-        }
-
-        CO_SIM_IO_INFO("CoSimIO") << "CoSimIO for \"" << mConnectionName << "\" uses communication format: " << comm_format << std::endl;
+        CO_SIM_IO_INFO("CoSimIO") << "CoSimIO from \"" << I_Settings.Get<std::string>("my_name") << "\" to \"" << I_Settings.Get<std::string>("connect_to") << "\" uses communication format: " << comm_format << std::endl;
 
         if (comm_format == "file") {
-            mpComm = std::unique_ptr<Communication>(new FileCommunication(mConnectionName, I_Settings, mIsConnectionMaster));
+            mpComm = std::unique_ptr<Communication>(new FileCommunication(I_Settings));
         } else if (comm_format == "sockets") {
             #ifdef CO_SIM_IO_USING_SOCKETS
-            mpComm = std::unique_ptr<Communication>(new SocketsCommunication(mConnectionName, I_Settings, mIsConnectionMaster));
+            mpComm = std::unique_ptr<Communication>(new SocketsCommunication(I_Settings));
             #else
             CO_SIM_IO_ERROR << "Support for Sockets was not compiled!" << std::endl;
             #endif // CO_SIM_IO_USING_SOCKETS
         } else if (comm_format == "mpi") {
             #ifdef CO_SIM_IO_USING_MPI
-            mpComm = std::unique_ptr<Communication>(new MPICommunication(mConnectionName, I_Settings, mIsConnectionMaster));
+            mpComm = std::unique_ptr<Communication>(new MPICommunication(I_Settings));
             #else
             CO_SIM_IO_ERROR << "Support for MPI was not compiled!" << std::endl;
             #endif // CO_SIM_IO_USING_MPI
