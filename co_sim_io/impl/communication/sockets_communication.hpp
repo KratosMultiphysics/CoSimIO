@@ -27,8 +27,7 @@ namespace Internals {
 class SocketsCommunication : public Communication
 {
 public:
-    explicit SocketsCommunication(const std::string& rName, SettingsType& rSettings, const bool IsConnectionMaster)
-        : Communication(rName, rSettings, IsConnectionMaster)
+    explicit SocketsCommunication(const Info& I_Settings) : Communication(I_Settings)
     {
        static_assert(false,"Sockets Communication is not implemented yet");
     }

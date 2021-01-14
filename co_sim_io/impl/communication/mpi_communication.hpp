@@ -25,8 +25,7 @@ namespace Internals {
 class MPICommunication : public Communication
 {
 public:
-    explicit MPICommunication(const std::string& rName, SettingsType& rSettings, const bool IsConnectionMaster)
-        : Communication(rName, rSettings, IsConnectionMaster)
+    explicit MPICommunication(const Info& I_Settings) : Communication(I_Settings)
     {
        static_assert(false,"MPI Communication is not implemented yet");
        /*
