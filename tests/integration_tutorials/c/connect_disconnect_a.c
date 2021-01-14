@@ -22,8 +22,8 @@
 int main()
 {
     CoSimIO_Info settings=CoSimIO_CreateInfo();
-    CoSimIO_Info_SetString(settings, "my_name", "c_connect_disconnect_b");
-    CoSimIO_Info_SetString(settings, "connect_to", "c_connect_disconnect_a");
+    CoSimIO_Info_SetString(settings, "my_name", "c_connect_disconnect_a");
+    CoSimIO_Info_SetString(settings, "connect_to", "c_connect_disconnect_b");
     CoSimIO_Info_SetInt(settings, "echo_level", 1);
     CoSimIO_Info_SetString(settings, "version", "1.25");
 
