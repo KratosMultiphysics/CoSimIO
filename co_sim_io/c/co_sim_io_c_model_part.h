@@ -14,6 +14,16 @@
 #define CO_SIM_IO_C_MODEL_PART_INCLUDED
 
 
+typedef struct CoSimIO_Node
+{
+    void* PtrCppInfo;
+} CoSimIO_Node;
+
+typedef struct CoSimIO_Element
+{
+    void* PtrCppInfo;
+} CoSimIO_Element;
+
 typedef struct CoSimIO_ModelPart
 {
     void* PtrCppInfo;
