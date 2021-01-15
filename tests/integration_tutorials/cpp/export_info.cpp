@@ -7,7 +7,7 @@
 //
 //  License:         BSD License, see license.txt
 //
-//  Main authors:    Pooyan Dadvand
+//  Main authors:    Philipp Bucher
 //
 
 // CoSimulation includes
@@ -23,8 +23,8 @@
 int main()
 {
     CoSimIO::Info settings;
-    settings.Set("my_name", "cpp_export_solver");
-    settings.Set("connect_to", "cpp_import_solver");
+    settings.Set("my_name", "cpp_export_info_solver");
+    settings.Set("connect_to", "cpp_import_info_solver");
     settings.Set("echo_level", 1);
     settings.Set("version", "1.25");
 
@@ -32,11 +32,13 @@ int main()
     COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
     const std::string connection_name = info.Get<std::string>("connection_name");
 
-    std::vector<double> data_to_send(4,3.14);
-    info.Clear();
-    info.Set("identifier", "vector_of_pi");
-    info.Set("connection_name", connection_name);
-    info = CoSimIO::ExportData(info, data_to_send);
+    CoSimIO::Info export_info;
+    export_info.Set<std::string>("connection_name", connection_name);
+    export_info.Set<std::string>("id", "convergence_information");
+    export_info.Set<bool>("is_converged", true);
+    export_info.Set<double>("tol", 0.008);
+    export_info.Set<int>("echo_level", 2);
+    info = CoSimIO::ExportInfo(export_info);
 
     CoSimIO::Info disconnect_settings;
     disconnect_settings.Set("connection_name", connection_name);

@@ -35,6 +35,9 @@ class PythonInterfaceTests(unittest.TestCase):
     def test_connect_disconnect(self):
         self.__RunScripts("connect_disconnect_a.py", "connect_disconnect_b.py")
 
+    def test_import_export_info(self):
+        self.__RunScripts("export_info.py", "import_info.py")
+
     def test_import_export_data(self):
         self.__RunScripts("export_data.py", "import_data.py")
 

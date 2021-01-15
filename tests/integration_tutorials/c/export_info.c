@@ -23,8 +23,8 @@ int main()
 {
     // Creating the connection settings
     CoSimIO_Info connection_settings=CoSimIO_CreateInfo();
-    CoSimIO_Info_SetString(connection_settings, "my_name", "c_import_data");
-    CoSimIO_Info_SetString(connection_settings, "connect_to", "c_export_data");
+    CoSimIO_Info_SetString(connection_settings, "my_name", "c_export_info");
+    CoSimIO_Info_SetString(connection_settings, "connect_to", "c_import_info");
     CoSimIO_Info_SetInt(connection_settings, "echo_level", 1);
     CoSimIO_Info_SetString(connection_settings, "version", "1.25");
 
@@ -33,23 +33,19 @@ int main()
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
     const char* connection_name = CoSimIO_Info_GetString(connect_info, "connection_name");
 
-    // After conneting we may import the data
-    double* data;
-    int data_allocated_size = 0;
+    // Creatinf the info to export
+    CoSimIO_Info info_to_export=CoSimIO_CreateInfo();
+    CoSimIO_Info_SetString(info_to_export, "connection_name", connection_name);
+    CoSimIO_Info_SetString(info_to_export, "id", "convergence_information");
+    CoSimIO_Info_SetBool(info_to_export, "is_converged", 1);
+    CoSimIO_Info_SetDouble(info_to_export, "tol", 0.23);
+    CoSimIO_Info_SetInt(info_to_export, "echo_level", 2);
 
-    // Creating the import_settings
-    CoSimIO_Info import_settings=CoSimIO_CreateInfo();
-    CoSimIO_Info_SetString(import_settings, "identifier", "vector_of_pi");
-    CoSimIO_Info_SetString(import_settings, "connection_name", connection_name);
-
-    // Importing the data
-    CoSimIO_Info import_info = CoSimIO_ImportData(import_settings, &data_allocated_size, &data);
-    // Freeing the import_info and import_settings
-    CoSimIO_FreeInfo(import_info);
-    CoSimIO_FreeInfo(import_settings);
-
-    // Freeing the data using CoSimIO_Free. (Not the standard free())
-    CoSimIO_Free(data);
+    // Exporting the Info
+    CoSimIO_Info export_info = CoSimIO_ExportInfo(info_to_export);
+    // Freeing the export_info and info_to_export
+    CoSimIO_FreeInfo(export_info);
+    CoSimIO_FreeInfo(info_to_export);
 
     // Disconnecting at the end
     CoSimIO_Info disconnect_settings=CoSimIO_CreateInfo();

@@ -151,37 +151,18 @@ public:
 
 
     // old interface, functions need to be removed before release
-    /*[[deprecated]]*/ void SendControlSignal(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal)
-    {
-        CheckConnection(); SendControlSignalDetail(rIdentifier, Signal);
-    }
-    /*[[deprecated]]*/ CoSimIO::ControlSignal RecvControlSignal(std::string& rIdentifier)
-    {
-        CheckConnection(); return RecvControlSignalDetail(rIdentifier);
-    }
-
     template<class... Args>
-    /*[[deprecated]]*/ void ImportMesh(Args&&... args)
+    /*[[deprecated]]*/ Info ImportMesh(Args&&... args)
     {
         CheckConnection(); ImportMeshImpl(std::forward<Args>(args)...);
+        return Info();
     }
 
     template<class... Args>
-    /*[[deprecated]]*/ void ExportMesh(Args&&... args)
+    /*[[deprecated]]*/ Info ExportMesh(Args&&... args)
     {
         CheckConnection(); ExportMeshImpl(std::forward<Args>(args)...);
-    }
-
-    template<class... Args>
-    /*[[deprecated]]*/ void ImportGeometry(Args&&... args)
-    {
-        CheckConnection(); // ImportGeometryImpl(std::forward<Args>(args)...);
-    }
-
-    template<class... Args>
-    /*[[deprecated]]*/ void ExportGeometry(Args&&... args)
-    {
-        CheckConnection(); // ExportGeometryImpl(std::forward<Args>(args)...);
+        return Info();
     }
 
 protected:
@@ -258,16 +239,6 @@ private:
     }
 
     // old interface, functions need to be removed before release
-    virtual /*[[deprecated]]*/ void SendControlSignalDetail(const std::string& rIdentifier, CoSimIO::ControlSignal Signal)
-    {
-        CO_SIM_IO_ERROR << "SendControlSignalDetail not implemented for this comm-type" << std::endl;
-    }
-    virtual /*[[deprecated]]*/ CoSimIO::ControlSignal RecvControlSignalDetail(std::string& rIdentifier)
-    {
-        CO_SIM_IO_ERROR << "RecvControlSignalDetail not implemented for this comm-type" << std::endl;
-        return CoSimIO::ControlSignal::Dummy;
-    }
-
     virtual /*[[deprecated]]*/ void ImportMeshImpl(
         const std::string& rIdentifier,
         CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,

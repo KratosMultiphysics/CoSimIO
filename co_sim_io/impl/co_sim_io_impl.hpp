@@ -43,14 +43,6 @@ static Connection& GetConnection(const std::string& rConnectionName)
     return *s_co_sim_connections.at(rConnectionName);
 }
 
-inline void SendControlSignal(
-    const Info& I_Info,
-    const CoSimIO::ControlSignal Signal)
-{
-    const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    Internals::GetConnection(connection_name).SendControlSignal("", Signal);
-}
-
 } // namespace Internals
 
 inline Info Hello()
@@ -213,25 +205,14 @@ inline Info ImportInfo(
     const Info& I_Info)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    // Internals::GetConnection(connection_name).ImportInfo(rInfo);
-    return Info(); // TODO use this
+    return Internals::GetConnection(connection_name).ImportInfo(I_Info);
 }
 
 inline Info ExportInfo(
     const Info& I_Info)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    // Internals::GetConnection(connection_name).ExportInfo(rInfo);
-    return Info(); // TODO use this
-}
-
-inline Info IsConverged(const Info& I_Info)
-{
-    const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    const bool is_converged = Internals::GetConnection(connection_name).IsConverged();
-    Info info;
-    info.Set<bool>("is_converged", is_converged);
-    return info;
+    return Internals::GetConnection(connection_name).ExportInfo(I_Info);
 }
 
 inline Info Run(const Info& I_Info)

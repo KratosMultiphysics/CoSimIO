@@ -70,7 +70,7 @@ CoSimIO_Info CoSimIO_ExportMesh(
     const int* O_ElementTypes);
 
 
-void CoSimIO_PrintInfo(FILE *Stream, 
+void CoSimIO_PrintInfo(FILE *Stream,
     const CoSimIO_Info I_Info);
 
 CoSimIO_Info CoSimIO_ImportInfo(
@@ -84,8 +84,6 @@ CoSimIO_Info CoSimIO_Register(
     CoSimIO_Info (*I_FunctionPointer)(const CoSimIO_Info I_Info));
 
 CoSimIO_Info CoSimIO_Run(const CoSimIO_Info I_Info);
-
-CoSimIO_Info CoSimIO_IsConverged(const CoSimIO_Info I_Info);
 
 void* CoSimIO_Malloc(size_t size);
 

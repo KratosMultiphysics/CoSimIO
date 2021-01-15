@@ -147,11 +147,6 @@ CoSimIO_Info CoSimIO_Run(const CoSimIO_Info I_Info)
     return ConvertInfo(CoSimIO::Run(ConvertInfo(I_Info)));
 }
 
-CoSimIO_Info CoSimIO_IsConverged(const CoSimIO_Info I_Info)
-{
-    return ConvertInfo(CoSimIO::IsConverged(ConvertInfo(I_Info)));
-}
-
 
 CoSimIO_Info CoSimIO_CreateInfo()
 {

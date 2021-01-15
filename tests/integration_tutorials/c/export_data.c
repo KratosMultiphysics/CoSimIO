@@ -33,11 +33,11 @@ int main()
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
     const char* connection_name = CoSimIO_Info_GetString(connect_info, "connection_name");
 
-    // After conneting we may export the data
+    // After connecting we may export the data
     int data_size = 4;
     double data_to_send[] = {3.14, 3.14, 3.14, 3.14};
 
-    // Creatint the export_settings
+    // Creating the export_settings
     CoSimIO_Info export_settings=CoSimIO_CreateInfo();
     CoSimIO_Info_SetString(export_settings, "identifier", "vector_of_pi");
     CoSimIO_Info_SetString(export_settings, "connection_name", connection_name);
