@@ -38,8 +38,6 @@ enum class ControlSignal
     FinalizeSolutionStep,
     OutputSolutionStep,
 
-    ImportGeometry,
-    ExportGeometry,
     ImportMesh,
     ExportMesh,
     ImportData,

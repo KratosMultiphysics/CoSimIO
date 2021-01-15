@@ -172,18 +172,6 @@ public:
         CheckConnection(); ExportMeshImpl(std::forward<Args>(args)...);
     }
 
-    template<class... Args>
-    /*[[deprecated]]*/ void ImportGeometry(Args&&... args)
-    {
-        CheckConnection(); // ImportGeometryImpl(std::forward<Args>(args)...);
-    }
-
-    template<class... Args>
-    /*[[deprecated]]*/ void ExportGeometry(Args&&... args)
-    {
-        CheckConnection(); // ExportGeometryImpl(std::forward<Args>(args)...);
-    }
-
 protected:
     std::string GetConnectionName() const {return mConnectionName;}
     fs::path GetWorkingDirectory() const  {return mWorkingDirectory;}
