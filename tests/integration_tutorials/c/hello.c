@@ -41,7 +41,7 @@ int main()
 
     COSIMIO_CHECK_EQUAL(major_version, 1);
     COSIMIO_CHECK_EQUAL(minor_version, 0);
-    COSIMIO_CHECK_STRING_EQUAL(patch_version, "patch_version");
+    COSIMIO_CHECK_STRING_EQUAL(patch_version, "0");
 
     CoSimIO_FreeInfo(hello_info);
 
