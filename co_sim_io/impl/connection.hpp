@@ -118,6 +118,17 @@ public:
 
 
     template<class... Args>
+    Info ImportInfo(Args&&... args)
+    {
+        return mpComm->ImportInfo(std::forward<Args>(args)...);
+    }
+
+    template<class... Args>
+    Info ExportInfo(Args&&... args)
+    {
+        return mpComm->ExportInfo(std::forward<Args>(args)...);
+    }
+    template<class... Args>
     Info ImportData(Args&&... args)
     {
         mpComm->ImportData(std::forward<Args>(args)...);

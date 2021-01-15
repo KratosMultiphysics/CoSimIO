@@ -213,16 +213,14 @@ inline Info ImportInfo(
     const Info& I_Info)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    // Internals::GetConnection(connection_name).ImportInfo(rInfo);
-    return Info(); // TODO use this
+    return Internals::GetConnection(connection_name).ImportInfo(I_Info);
 }
 
 inline Info ExportInfo(
     const Info& I_Info)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    // Internals::GetConnection(connection_name).ExportInfo(rInfo);
-    return Info(); // TODO use this
+    return Internals::GetConnection(connection_name).ExportInfo(I_Info);
 }
 
 inline Info IsConverged(const Info& I_Info)
