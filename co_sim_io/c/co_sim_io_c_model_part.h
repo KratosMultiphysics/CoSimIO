@@ -13,7 +13,6 @@
 #ifndef CO_SIM_IO_C_MODEL_PART_INCLUDED
 #define CO_SIM_IO_C_MODEL_PART_INCLUDED
 
-
 typedef struct CoSimIO_Node
 {
     void* PtrCppInfo;
@@ -29,24 +28,48 @@ typedef struct CoSimIO_ModelPart
     void* PtrCppInfo;
 } CoSimIO_ModelPart;
 
+// see https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf ; figure 2
+typedef enum
+{
+    CoSimIO_VERTEX     = 1,
+    CoSimIO_LINE       = 3,
+    CoSimIO_TRIANGLE   = 5,
+    CoSimIO_QUAD       = 9,
+    CoSimIO_TETRA      = 10,
+    CoSimIO_HEXAHEDRON = 12
+} CoSimIO_ElementType;
 
-CoSimIO_ModelPart CoSimIO_CreateModelPart();
+int CoSimIO_Node_Id(CoSimIO_Node I_Node);
+double CoSimIO_Node_X(CoSimIO_Node I_Node);
+double CoSimIO_Node_Y(CoSimIO_Node I_Node);
+double CoSimIO_Node_Z(CoSimIO_Node I_Node);
+
+
+int CoSimIO_Element_Id(CoSimIO_Element I_Element);
+CoSimIO_ElementType CoSimIO_Element_Type(CoSimIO_Element I_Element);
+int CoSimIO_Element_NumberOfNodes(CoSimIO_Element I_Element);
+
+
+CoSimIO_ModelPart CoSimIO_CreateModelPart(const char* I_Name);
 
 int CoSimIO_FreeModelPart(CoSimIO_ModelPart I_ModelPart);
 
-// int CoSimIO_Info_Has(const CoSimIO_ModelPart I_Info, const char* I_Key);
-// void CoSimIO_Info_Erase(const CoSimIO_ModelPart I_Info, const char* I_Key);
-// void CoSimIO_Info_Clear(const CoSimIO_ModelPart I_Info);
-// int CoSimIO_Info_Size(const CoSimIO_ModelPart I_Info);
+const char* CoSimIO_ModelPart_Name(CoSimIO_ModelPart I_ModelPart);
+int CoSimIO_ModelPart_NumberOfNodes(CoSimIO_ModelPart I_ModelPart);
+int CoSimIO_ModelPart_NumberOfElements(CoSimIO_ModelPart I_ModelPart);
 
-// int CoSimIO_Info_GetInt(const CoSimIO_ModelPart I_Info, const char* I_Key);
-// double CoSimIO_Info_GetDouble(const CoSimIO_ModelPart I_Info, const char* I_Key);
-// int CoSimIO_Info_GetBool(const CoSimIO_ModelPart I_Info, const char* I_Key);
-// const char* CoSimIO_Info_GetString(const CoSimIO_ModelPart I_Info, const char* I_Key);
+CoSimIO_Node CoSimIO_ModelPart_CreateNewNode(
+    CoSimIO_ModelPart I_ModelPart,
+    const int I_Id,
+    const double I_X,
+    const double I_Y,
+    const double I_Z);
 
-// void CoSimIO_Info_SetInt(CoSimIO_ModelPart I_Info, const char* I_Key, const int I_Value);
-// void CoSimIO_Info_SetDouble(CoSimIO_ModelPart I_Info, const char* I_Key, const double I_Value);
-// void CoSimIO_Info_SetBool(CoSimIO_ModelPart I_Info, const char* I_Key, const int I_Value);
-// void CoSimIO_Info_SetString(CoSimIO_ModelPart I_Info, const char* I_Key, const char* I_Value);
+CoSimIO_Element CoSimIO_ModelPart_CreateNewElement(
+    CoSimIO_ModelPart I_ModelPart,
+    const int I_Id,
+    const CoSimIO_ElementType I_Type,
+    const int* I_Connectivities);
+
 
 #endif // CO_SIM_IO_C_MODEL_PART_INCLUDED
