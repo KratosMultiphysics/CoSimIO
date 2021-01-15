@@ -104,8 +104,6 @@ PYBIND11_MODULE(CoSimIO, m)
     m.def("Connect", &CoSimIO::Connect);
     m.def("Disconnect", &CoSimIO::Disconnect);
 
-    m.def("IsConverged", &CoSimIO::IsConverged);
-
     m.def("ImportMesh", CoSimIO_Py_Wrappers::ImportMesh);
     m.def("ExportMesh", CoSimIO_Py_Wrappers::ExportMesh);
 

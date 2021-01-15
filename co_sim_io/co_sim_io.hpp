@@ -83,8 +83,6 @@ inline Info ExportInfo(
     const Info& I_Info);
 
 
-inline Info IsConverged(const Info& I_Info);
-
 inline Info Run(const Info& I_Info);
 
 template<typename TFunctionType>
