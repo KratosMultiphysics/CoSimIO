@@ -66,8 +66,8 @@ elseif(${CMAKE_COMPILER_IS_GNUCXX})
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wsuggest-override -Wignored-qualifiers")
     endif()
-else() # assumed to be CLANG
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wpedantic")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wpedantic")
 endif()
 
