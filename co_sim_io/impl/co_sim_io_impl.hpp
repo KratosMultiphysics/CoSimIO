@@ -43,14 +43,6 @@ static Connection& GetConnection(const std::string& rConnectionName)
     return *s_co_sim_connections.at(rConnectionName);
 }
 
-inline void SendControlSignal(
-    const Info& I_Info,
-    const CoSimIO::ControlSignal Signal)
-{
-    const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    Internals::GetConnection(connection_name).SendControlSignal("", Signal);
-}
-
 } // namespace Internals
 
 inline Info Hello()

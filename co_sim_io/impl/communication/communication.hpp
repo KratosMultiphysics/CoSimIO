@@ -151,15 +151,6 @@ public:
 
 
     // old interface, functions need to be removed before release
-    /*[[deprecated]]*/ void SendControlSignal(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal)
-    {
-        CheckConnection(); SendControlSignalDetail(rIdentifier, Signal);
-    }
-    /*[[deprecated]]*/ CoSimIO::ControlSignal RecvControlSignal(std::string& rIdentifier)
-    {
-        CheckConnection(); return RecvControlSignalDetail(rIdentifier);
-    }
-
     template<class... Args>
     /*[[deprecated]]*/ Info ImportMesh(Args&&... args)
     {
@@ -248,16 +239,6 @@ private:
     }
 
     // old interface, functions need to be removed before release
-    virtual /*[[deprecated]]*/ void SendControlSignalDetail(const std::string& rIdentifier, CoSimIO::ControlSignal Signal)
-    {
-        CO_SIM_IO_ERROR << "SendControlSignalDetail not implemented for this comm-type" << std::endl;
-    }
-    virtual /*[[deprecated]]*/ CoSimIO::ControlSignal RecvControlSignalDetail(std::string& rIdentifier)
-    {
-        CO_SIM_IO_ERROR << "RecvControlSignalDetail not implemented for this comm-type" << std::endl;
-        return CoSimIO::ControlSignal::Dummy;
-    }
-
     virtual /*[[deprecated]]*/ void ImportMeshImpl(
         const std::string& rIdentifier,
         CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,

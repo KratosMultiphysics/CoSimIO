@@ -684,48 +684,6 @@ private:
         CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Sending Mesh \"" << rIdentifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
     }
 
-    void SendControlSignalDetail(const std::string& rIdentifier, const CoSimIO::ControlSignal Signal) override
-    {
-        const std::string file_name(GetFullPath("CoSimIO_control_signal_" + GetConnectionName() + ".dat"));
-
-        WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
-
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to send control signal in file \"" << file_name << "\" ..." << std::endl;
-
-        std::ofstream output_file;
-        output_file.open(GetTempFileName(file_name));
-        CheckStream(output_file, file_name);
-
-        output_file << static_cast<int>(Signal) << " " << rIdentifier;
-
-        output_file.close();
-        MakeFileVisible(file_name);
-
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished sending control signal" << std::endl;
-    }
-
-    CoSimIO::ControlSignal RecvControlSignalDetail(std::string& rIdentifier) override
-    {
-        const std::string file_name(GetFullPath("CoSimIO_control_signal_" + GetConnectionName() + ".dat"));
-
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to receive control signal in file \"" << file_name << "\" ..." << std::endl;
-
-        WaitForFile(file_name);
-
-        std::ifstream input_file(file_name);
-        CheckStream(input_file, file_name);
-
-        int control_signal;
-        input_file >> control_signal;
-        input_file >> rIdentifier;
-
-        RemoveFile(file_name);
-
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished receiving control signal" << std::endl;
-
-        return static_cast<CoSimIO::ControlSignal>(control_signal);
-    }
-
     std::string GetTempFileName(const std::string& rFileName) const
     {
         if (mCommInFolder) {
