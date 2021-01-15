@@ -161,15 +161,17 @@ public:
     }
 
     template<class... Args>
-    /*[[deprecated]]*/ void ImportMesh(Args&&... args)
+    /*[[deprecated]]*/ Info ImportMesh(Args&&... args)
     {
         CheckConnection(); ImportMeshImpl(std::forward<Args>(args)...);
+        return Info();
     }
 
     template<class... Args>
-    /*[[deprecated]]*/ void ExportMesh(Args&&... args)
+    /*[[deprecated]]*/ Info ExportMesh(Args&&... args)
     {
         CheckConnection(); ExportMeshImpl(std::forward<Args>(args)...);
+        return Info();
     }
 
 protected:
