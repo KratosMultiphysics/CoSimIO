@@ -61,15 +61,18 @@ if(MSVC)
 
     set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
 elseif(${CMAKE_COMPILER_IS_GNUCXX})
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wpedantic")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wpedantic")
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wsuggest-override -Wignored-qualifiers")
     endif()
 else() # assumed to be CLANG
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wpedantic")
 endif()
 
 message("CMAKE_CXX_FLAGS:" ${CMAKE_CXX_FLAGS})
+message("CMAKE_C_FLAGS:" ${CMAKE_C_FLAGS})
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # to suppress warning "MACOSX_RPATH is not specified for the following targets"
