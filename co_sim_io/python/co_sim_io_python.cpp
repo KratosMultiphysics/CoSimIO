@@ -101,11 +101,14 @@ PYBIND11_MODULE(CoSimIO, m)
 
     m.def("Hello", & CoSimIO::Hello);
 
-    m.def("Connect", &CoSimIO::Connect);
+    m.def("Connect",    &CoSimIO::Connect);
     m.def("Disconnect", &CoSimIO::Disconnect);
 
     m.def("ImportMesh", CoSimIO_Py_Wrappers::ImportMesh);
     m.def("ExportMesh", CoSimIO_Py_Wrappers::ExportMesh);
+    // TODO uncomment when starting to use new Interface
+    // m.def("ImportMesh", &CoSimIO::ImportMesh);
+    // m.def("ExportMesh", &CoSimIO::ExportMesh);
 
     m.def("ImportData", CoSimIO_Py_Wrappers::ImportData);
     m.def("ExportData", CoSimIO_Py_Wrappers::ExportData);

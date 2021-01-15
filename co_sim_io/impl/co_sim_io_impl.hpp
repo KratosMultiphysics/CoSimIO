@@ -141,6 +141,22 @@ inline Info ExportData(
     return Internals::GetConnection(connection_name).ExportData(I_Info, rData);
 }
 
+inline Info ImportMesh(
+    const Info& I_Info,
+    ModelPart& O_ModelPart)
+{
+    const std::string connection_name = I_Info.Get<std::string>("connection_name");
+    return CoSimIO::Internals::GetConnection(connection_name).ImportMesh(I_Info, O_ModelPart);
+}
+
+inline Info ExportMesh(
+    const Info& I_Info,
+    const ModelPart& I_ModelPart)
+{
+    const std::string connection_name = I_Info.Get<std::string>("connection_name");
+    return CoSimIO::Internals::GetConnection(connection_name).ExportMesh(I_Info, I_ModelPart);
+}
+
 template<>
 inline Info ImportMesh(
     const Info& I_Info,

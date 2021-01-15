@@ -138,31 +138,15 @@ public:
     }
 
     template<class... Args>
-    Info ImportMesh_1X2(Args&&... args) // TODO fix name once other interface is removed
+    Info ImportMesh(Args&&... args)
     {
         CheckConnection(); return ImportMeshImpl(std::forward<Args>(args)...);
     }
 
     template<class... Args>
-    Info ExportMesh_1X2(Args&&... args) // TODO fix name once other interface is removed
+    Info ExportMesh(Args&&... args)
     {
         CheckConnection(); return ExportMeshImpl(std::forward<Args>(args)...);
-    }
-
-
-    // old interface, functions need to be removed before release
-    template<class... Args>
-    /*[[deprecated]]*/ Info ImportMesh(Args&&... args)
-    {
-        CheckConnection(); ImportMeshImpl(std::forward<Args>(args)...);
-        return Info();
-    }
-
-    template<class... Args>
-    /*[[deprecated]]*/ Info ExportMesh(Args&&... args)
-    {
-        CheckConnection(); ExportMeshImpl(std::forward<Args>(args)...);
-        return Info();
     }
 
 protected:
@@ -239,7 +223,7 @@ private:
     }
 
     // old interface, functions need to be removed before release
-    virtual /*[[deprecated]]*/ void ImportMeshImpl(
+    virtual /*[[deprecated]]*/ Info ImportMeshImpl(
         const std::string& rIdentifier,
         CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
         CoSimIO::Internals::DataContainer<int>& rElementConnectivities,
@@ -248,7 +232,7 @@ private:
         CO_SIM_IO_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
     }
 
-    virtual /*[[deprecated]]*/ void ExportMeshImpl(
+    virtual /*[[deprecated]]*/ Info ExportMeshImpl(
         const std::string& rIdentifier,
         const CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
         const CoSimIO::Internals::DataContainer<int>& rElementConnectivities,

@@ -37,6 +37,7 @@ Note that this introduces dependencies such as e.g. boost (header-only version) 
 // Project includes
 #include "impl/define.hpp"
 #include "impl/info.hpp"
+#include "impl/model_part.hpp"
 
 namespace CoSimIO {
 
@@ -60,6 +61,14 @@ inline Info ExportData(
     const Info& I_Info,
     const TContainerType& rData);
 
+
+inline Info ImportMesh(
+    const Info& I_Info,
+    ModelPart& O_ModelPart);
+
+inline Info ExportMesh(
+    const Info& I_Info,
+    const ModelPart& I_ModelPart);
 
 template<class TDoubleContainerType, class TIntContainerType>
 inline Info ImportMesh(

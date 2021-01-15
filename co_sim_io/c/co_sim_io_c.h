@@ -19,6 +19,7 @@
 #include <stdio.h>
 
 #include "co_sim_io_c_info.h"
+#include "co_sim_io_c_model_part.h"
 
 #ifdef __cplusplus
 extern "C" { // Define extern C if C++ compiler is used
@@ -50,6 +51,14 @@ CoSimIO_Info CoSimIO_ExportData(
     const CoSimIO_Info I_Info,
     const int I_Size,
     const double* I_Data);
+
+CoSimIO_Info CoSimIO_ImportMeshNEW(
+    const CoSimIO_Info I_Info,
+    CoSimIO_ModelPart O_ModelPart);
+
+CoSimIO_Info CoSimIO_ExportMeshNEW(
+    const CoSimIO_Info I_Info,
+    const CoSimIO_ModelPart I_ModelPart);
 
 CoSimIO_Info CoSimIO_ImportMesh(
     const CoSimIO_Info I_Info,

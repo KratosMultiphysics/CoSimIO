@@ -68,6 +68,24 @@ CoSimIO_Info CoSimIO_ExportData(
     return ConvertInfo(CoSimIO::ExportData(ConvertInfo(I_Info), *p_container));
 }
 
+CoSimIO_Info CoSimIO_ImportMeshNEW(
+    const CoSimIO_Info I_Info,
+    CoSimIO_ModelPart O_ModelPart)
+{
+    CoSimIO::ModelPart& cpp_model_part = *(static_cast<CoSimIO::ModelPart*>(O_ModelPart.PtrCppInfo));
+
+    return ConvertInfo(CoSimIO::ImportMesh(ConvertInfo(I_Info), cpp_model_part));
+}
+
+CoSimIO_Info CoSimIO_ExportMeshNEW(
+    const CoSimIO_Info I_Info,
+    const CoSimIO_ModelPart I_ModelPart)
+{
+    const CoSimIO::ModelPart& cpp_model_part = *(static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppInfo));
+
+    return ConvertInfo(CoSimIO::ExportMesh(ConvertInfo(I_Info), cpp_model_part));
+}
+
 CoSimIO_Info CoSimIO_ImportMesh(
     const CoSimIO_Info I_Info,
     int* I_NumberOfNodes,
