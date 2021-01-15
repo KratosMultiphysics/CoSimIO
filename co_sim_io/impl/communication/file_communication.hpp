@@ -515,7 +515,7 @@ private:
         return Info(); // TODO use
     }
 
-    void ImportMeshImpl(
+    Info ImportMeshImpl(
         const std::string& rIdentifier,
         CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
         CoSimIO::Internals::DataContainer<int>& rElementConnectivities,
@@ -603,9 +603,11 @@ private:
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished receiving mesh" << std::endl;
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Receiving Mesh \"" << file_name << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+
+        return Info();
     }
 
-    void ExportMeshImpl(
+    Info ExportMeshImpl(
         const std::string& rIdentifier,
         const CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
         const CoSimIO::Internals::DataContainer<int>& rElementConnectivities,
@@ -682,6 +684,8 @@ private:
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished sending mesh" << std::endl;
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Sending Mesh \"" << rIdentifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+
+        return Info();
     }
 
     std::string GetTempFileName(const std::string& rFileName) const
