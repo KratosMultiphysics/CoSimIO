@@ -23,8 +23,8 @@ int main()
 {
     // Creating the connection settings
     CoSimIO_Info connection_settings=CoSimIO_CreateInfo();
-    CoSimIO_Info_SetString(connection_settings, "my_name", "c_export_data");
-    CoSimIO_Info_SetString(connection_settings, "connect_to", "c_import_data");
+    CoSimIO_Info_SetString(connection_settings, "my_name", "c_export_info");
+    CoSimIO_Info_SetString(connection_settings, "connect_to", "c_import_info");
     CoSimIO_Info_SetInt(connection_settings, "echo_level", 1);
     CoSimIO_Info_SetString(connection_settings, "version", "1.25");
 
@@ -33,20 +33,19 @@ int main()
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
     const char* connection_name = CoSimIO_Info_GetString(connect_info, "connection_name");
 
-    // After connecting we may export the data
-    int data_size = 4;
-    double data_to_send[] = {3.14, 3.14, 3.14, 3.14};
+    // Creatinf the info to export
+    CoSimIO_Info info_to_export=CoSimIO_CreateInfo();
+    CoSimIO_Info_SetString(info_to_export, "connection_name", connection_name);
+    CoSimIO_Info_SetString(info_to_export, "id", "convergence_information");
+    CoSimIO_Info_SetBool(info_to_export, "is_converged", 1);
+    CoSimIO_Info_SetDouble(info_to_export, "tol", 0.23);
+    CoSimIO_Info_SetInt(info_to_export, "echo_level", 2);
 
-    // Creating the export_settings
-    CoSimIO_Info export_settings=CoSimIO_CreateInfo();
-    CoSimIO_Info_SetString(export_settings, "identifier", "vector_of_pi");
-    CoSimIO_Info_SetString(export_settings, "connection_name", connection_name);
-
-    // Exporting the data
-    CoSimIO_Info export_info = CoSimIO_ExportData(export_settings, data_size, data_to_send);
-    // Freeing the export_info and export_settings
+    // Exporting the Info
+    CoSimIO_Info export_info = CoSimIO_ExportInfo(info_to_export);
+    // Freeing the export_info and info_to_export
     CoSimIO_FreeInfo(export_info);
-    CoSimIO_FreeInfo(export_settings);
+    CoSimIO_FreeInfo(info_to_export);
 
     // Disconnecting at the end
     CoSimIO_Info disconnect_settings=CoSimIO_CreateInfo();
