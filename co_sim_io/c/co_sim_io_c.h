@@ -52,6 +52,14 @@ CoSimIO_Info CoSimIO_ExportData(
     const int I_Size,
     const double* I_Data);
 
+CoSimIO_Info CoSimIO_ImportMeshNEW(
+    const CoSimIO_Info I_Info,
+    CoSimIO_ModelPart O_ModelPart);
+
+CoSimIO_Info CoSimIO_ExportMeshNEW(
+    const CoSimIO_Info I_Info,
+    const CoSimIO_ModelPart I_ModelPart);
+
 CoSimIO_Info CoSimIO_ImportMesh(
     const CoSimIO_Info I_Info,
     int* I_NumberOfNodes,
