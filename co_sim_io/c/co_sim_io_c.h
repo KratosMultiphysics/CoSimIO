@@ -19,6 +19,7 @@
 #include <stdio.h>
 
 #include "co_sim_io_c_info.h"
+#include "co_sim_io_c_model_part.h"
 
 #ifdef __cplusplus
 extern "C" { // Define extern C if C++ compiler is used
