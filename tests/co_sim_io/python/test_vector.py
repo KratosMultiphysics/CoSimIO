@@ -25,31 +25,27 @@ class CoSimIO_Vector(unittest.TestCase):
     def test_basics(self):
         vec = CoSimIO.Vector()
         self.assertEqual(vec.size(), 0)
+        self.assertEqual(len(vec), 0)
 
         vec.append(15)
         self.assertEqual(vec.size(), 1)
+        self.assertEqual(len(vec), 1)
         self.assertAlmostEqual(vec[0], 15)
 
         vec.append(-1.45)
         self.assertEqual(vec.size(), 2)
+        self.assertEqual(len(vec), 2)
         self.assertAlmostEqual(vec[0], 15)
         self.assertAlmostEqual(vec[1], -1.45)
 
     def test_construction_from_objects(self):
         init_list = [1.0, 2.5, 3.3, -4.1, 17]
-        init_set = set(init_list)
 
         vec_from_list = CoSimIO.Vector(init_list)
         self.assertEqual(vec_from_list.size(), len(init_list))
 
-        vec_from_set = CoSimIO.Vector(init_set)
-        self.assertEqual(vec_from_set.size(), len(init_set))
-
         for l, v in zip(init_list, vec_from_list):
             self.assertAlmostEqual(l,v)
-
-        for s, v in zip(init_set, vec_from_list):
-            self.assertAlmostEqual(s,v)
 
     def test_copy_constructor(self):
         vec = CoSimIO.Vector()
@@ -67,7 +63,7 @@ class CoSimIO_Vector(unittest.TestCase):
         self.assertAlmostEqual(vec_copy[0], 0) # copy is unchanged
 
         vec.resize(5)
-        self.assertEqual(vec_copy.size(), 5)
+        self.assertEqual(vec_copy.size(), 10)
 
     def test_resize(self):
         vec = CoSimIO.Vector()
@@ -111,9 +107,9 @@ class CoSimIO_Vector(unittest.TestCase):
         self.assertEqual(counter, 23)
 
     def test_print(self):
-        vec = CoSimIO.Vector([1.0, 2.5, 3.3, -4.1, 17])
+        vec = CoSimIO.Vector([1.2, 2.5, 3.3, -4.1, 17])
 
-        self.assertMultiLineEqual(str(vec), "[1.0, 2.5, 3.3, -4.1, 17]\n")
+        self.assertMultiLineEqual(str(vec), "[1.2, 2.5, 3.3, -4.1, 17]")
 
 
 if __name__ == '__main__':
