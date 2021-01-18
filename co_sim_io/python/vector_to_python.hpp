@@ -43,6 +43,7 @@ public:
 private:
     std::vector<TDataType> mVector;
 };
+
 }
 
 void AddCoSimIOVectorToPython(pybind11::module& m)
