@@ -28,6 +28,7 @@
 #include "../co_sim_io.hpp"
 #include "info_to_python.hpp"
 #include "model_part_to_python.hpp"
+#include "vector_to_python.hpp"
 #include "connection_status_to_python.hpp"
 #include "version_to_python.hpp"
 
@@ -126,6 +127,7 @@ PYBIND11_MODULE(CoSimIO, m)
 
     AddCoSimIOInfoToPython(m);
     AddCoSimIOModelPartToPython(m);
+    AddCoSimIOVectorToPython(m);
     AddCoSimIOConnectionStatusToPython(m);
     AddCoSimIOVersionToPython(m);
 }
