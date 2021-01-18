@@ -14,8 +14,8 @@
 #define CO_SIM_IO_DEFINE_INCLUDED
 
 // System includes
-#include <cstddef>
-#include <memory>
+#include <cstddef> // std::ptrdiff_t
+#include <memory> // std::unique_ptr
 #include <array>
 
 namespace CoSimIO {

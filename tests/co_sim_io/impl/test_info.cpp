@@ -355,6 +355,10 @@ TEST_CASE("info_copy_constructor")
     CHECK_EQ(another_info.Get<std::string>("keyword"), "awesome");
     CHECK_UNARY(another_info.Get<bool>("is_converged"));
     CHECK_EQ(another_info.Get<double>("tol"), doctest::Approx(0.008));
+
+    // make sure it is a deep copy and the original info hasn't changed
+    another_info.Set<std::string>("keyword", "whatever");
+    CHECK_EQ(info.Get<std::string>("keyword"), "awesome");
 }
 
 TEST_CASE("info_assignment")

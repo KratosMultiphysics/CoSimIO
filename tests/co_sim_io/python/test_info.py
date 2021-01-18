@@ -260,6 +260,10 @@ class CoSimIO_Info(unittest.TestCase):
         self.assertEqual(copied_info.GetInt("echo_level"), 2)
         self.assertEqual(copied_info.GetInt("checking"), 22)
 
+        # make sure it is a deep copy and the original object hasn't changed
+        copied_info.SetString("keyword", "somethingElse")
+        self.assertEqual(info.GetString("keyword"), "awesome")
+
 
 if __name__ == '__main__':
     unittest.main()

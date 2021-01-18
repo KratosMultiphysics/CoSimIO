@@ -14,12 +14,8 @@
 #define CO_SIM_IO_DATA_CONTAINER_INCLUDED
 
 // System includes
-#include <iostream>
-#include <sstream>
-#include <fstream>
 #include <vector>
-#include <algorithm>
-#include <string>
+#include <ostream>
 
 // Project includes
 #include "define.hpp"
