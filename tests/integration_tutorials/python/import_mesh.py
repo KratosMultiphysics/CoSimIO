@@ -32,32 +32,42 @@ connection_name = return_info.GetString("connection_name")
 info = CoSimIO.Info()
 info.SetString("identifier", "fluid_mesh")
 info.SetString("connection_name", connection_name)
-return_info, nodal_coords, element_connectivities, element_types = CoSimIO.ImportMesh(info)
+
+model_part = CoSimIO.ModelPart("mp_exchange")
+return_info = CoSimIO.ImportMesh(info, model_part)
 
 # Checking the imported mesh
 expected_nodal_coords = [
-    0.0, 2.5, 1.0, # 0
-    2.0, 0.0, 1.5, # 1
-    2.0, 2.5, 1.5, # 2
-    4.0, 2.5, 1.7, # 3
-    4.0, 0.0, 1.7, # 4
-    6.0, 0.0, 1.8  # 5
+    (0.0, 2.5, 1.0),
+    (2.0, 0.0, 1.5),
+    (2.0, 2.5, 1.5),
+    (4.0, 2.5, 1.7),
+    (4.0, 0.0, 1.7),
+    (6.0, 0.0, 1.8)
 ]
 
 expected_element_connectivities = [
-    0, 1, 2, # 1
-    1, 3, 2, # 2
-    1, 4, 3, # 3
-    3, 4, 5, # 4
+    (1, 2, 3),
+    (2, 4, 3),
+    (2, 5, 4),
+    (4, 5, 6),
 ]
 
-expected_element_types = [
-    5,5,5,5 # VTK_TRIANGLE
-]
+cosimio_check_equal(model_part.NumberOfNodes(), len(expected_nodal_coords))
+cosimio_check_equal(model_part.NumberOfElements(), len(expected_element_connectivities))
 
-cosimio_check_equal(nodal_coords, expected_nodal_coords)
-cosimio_check_equal(element_connectivities, expected_element_connectivities)
-cosimio_check_equal(element_types, element_types)
+for i, (coords, node) in enumerate(zip(expected_nodal_coords, model_part.Nodes)):
+    cosimio_check_equal(i+1, node.Id())
+    cosimio_check_equal(coords[0], node.X())
+    cosimio_check_equal(coords[1], node.Y())
+    cosimio_check_equal(coords[2], node.Z())
+
+for i, (conn, elem) in enumerate(zip(expected_element_connectivities, model_part.Elements)):
+    cosimio_check_equal(i+1, elem.Id())
+    cosimio_check_equal(elem.Type(), CoSimIO.ElementType.TRIANGLE)
+    cosimio_check_equal(elem.NumberOfNodes(), 3)
+    for j, node in enumerate(elem.Nodes):
+        cosimio_check_equal(node.Id(), conn[j])
 
 # Disconnecting
 disconnect_settings = CoSimIO.Info()
