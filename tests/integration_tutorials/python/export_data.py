@@ -29,7 +29,7 @@ cosimio_check_equal(return_info.GetInt("connection_status"), CoSimIO.ConnectionS
 connection_name = return_info.GetString("connection_name")
 
 # Exporting data
-data_to_be_send=[3.14] * 4
+data_to_be_send=CoSimIO.DoubleVector([3.14] * 4)
 info = CoSimIO.Info()
 info.SetString("identifier", "vector_of_pi")
 info.SetString("connection_name", connection_name)
