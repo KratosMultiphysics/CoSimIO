@@ -44,32 +44,22 @@ using ImportDataReturnType = std::tuple<
     CoSimIO::Info,
     std::vector<double>>;
 
-ImportMeshReturnType ImportMesh(const CoSimIO::Info& I_Info)
+CoSimIO::Info ImportMesh(
+    const CoSimIO::Info& I_Info,
+    CoSimIO::ModelPart& rModelPart)
 {
-    std::vector<double> nodal_coordinates;
-    std::vector<int> element_connectivities;
-    std::vector<int> element_types;
-
-    auto info = CoSimIO::ImportMesh(
+    return CoSimIO::ImportMesh(
         I_Info,
-        nodal_coordinates,
-        element_connectivities,
-        element_types);
-
-    return std::make_tuple(info, nodal_coordinates, element_connectivities, element_types);
+        rModelPart);
 }
 
 CoSimIO::Info ExportMesh(
     const CoSimIO::Info& I_Info,
-    std::vector<double>& rNodalCoordinates,
-    std::vector<int>& rElementConnectivities,
-    std::vector<int>& rElementTypes)
+    const CoSimIO::ModelPart& rModelPart)
 {
     return CoSimIO::ExportMesh(
         I_Info,
-        rNodalCoordinates,
-        rElementConnectivities,
-        rElementTypes);
+        rModelPart);
 }
 
 ImportDataReturnType ImportData(

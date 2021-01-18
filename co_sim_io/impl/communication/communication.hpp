@@ -153,7 +153,6 @@ protected:
     std::string GetConnectionName() const {return mConnectionName;}
     fs::path GetWorkingDirectory() const  {return mWorkingDirectory;}
     int GetEchoLevel() const              {return mEchoLevel;}
-    bool GetIsConnectionMaster() const    {return mIsConnectionMaster;} // TODO remove
     bool GetIsPrimaryConnection() const   {return mIsPrimaryConnection;}
     bool GetPrintTiming() const           {return mPrintTiming;}
     bool GetIsConnected() const           {return mIsConnected;}
@@ -164,7 +163,6 @@ private:
     std::string mConnectTo;
     fs::path mWorkingDirectory;
     int mEchoLevel = 1;
-    bool mIsConnectionMaster = false; // TODO remove
     bool mIsPrimaryConnection;
     bool mPrintTiming = false;
     bool mIsConnected = false;
