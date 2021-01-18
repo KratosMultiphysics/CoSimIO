@@ -28,20 +28,11 @@
 #include "../co_sim_io.hpp"
 #include "info_to_python.hpp"
 #include "model_part_to_python.hpp"
+#include "vector_to_python.hpp"
 #include "connection_status_to_python.hpp"
 #include "version_to_python.hpp"
 
 namespace CoSimIO_Py_Wrappers {
-
-using ImportMeshReturnType = std::tuple<
-    CoSimIO::Info,
-    std::vector<double>,
-    std::vector<int>,
-    std::vector<int>>;
-
-using ImportDataReturnType = std::tuple<
-    CoSimIO::Info,
-    std::vector<double>>;
 
 CoSimIO::Info ImportMesh(
     const CoSimIO::Info& I_Info,
@@ -59,27 +50,6 @@ CoSimIO::Info ExportMesh(
     return CoSimIO::ExportMesh(
         I_Info,
         rModelPart);
-}
-
-ImportDataReturnType ImportData(
-    const CoSimIO::Info& I_Info)
-{
-    std::vector<double> values;
-
-    auto info = CoSimIO::ImportData(
-        I_Info,
-        values);
-
-    return std::make_tuple(info, values);
-}
-
-CoSimIO::Info ExportData(
-    const CoSimIO::Info& I_Info,
-    std::vector<double>& rValues)
-{
-    return CoSimIO::ExportData(
-        I_Info,
-        rValues);
 }
 
 } // namespace CoSimIO_Py_Wrappers
@@ -100,8 +70,16 @@ PYBIND11_MODULE(CoSimIO, m)
     // m.def("ImportMesh", &CoSimIO::ImportMesh);
     // m.def("ExportMesh", &CoSimIO::ExportMesh);
 
-    m.def("ImportData", CoSimIO_Py_Wrappers::ImportData);
-    m.def("ExportData", CoSimIO_Py_Wrappers::ExportData);
+    m.def("ImportData", [](const CoSimIO::Info& I_Info, std::vector<double>& rValues){
+        return CoSimIO::ImportData(
+        I_Info,
+        rValues);
+    });
+    m.def("ExportData", [](const CoSimIO::Info& I_Info, const std::vector<double>& rValues){
+        return CoSimIO::ExportData(
+        I_Info,
+        rValues);
+    });
 
     m.def("ImportInfo", &CoSimIO::ImportInfo);
     m.def("ExportInfo", &CoSimIO::ExportInfo);
@@ -116,6 +94,7 @@ PYBIND11_MODULE(CoSimIO, m)
 
     AddCoSimIOInfoToPython(m);
     AddCoSimIOModelPartToPython(m);
+    AddCoSimIOVectorToPython(m);
     AddCoSimIOConnectionStatusToPython(m);
     AddCoSimIOVersionToPython(m);
 }

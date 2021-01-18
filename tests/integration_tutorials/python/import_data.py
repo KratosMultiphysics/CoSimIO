@@ -28,15 +28,16 @@ return_info = CoSimIO.Connect(settings)
 cosimio_check_equal(return_info.GetInt("connection_status"), CoSimIO.ConnectionStatus.Connected)
 connection_name = return_info.GetString("connection_name")
 
-# Importing data
+# # Importing data
 info = CoSimIO.Info()
 info.SetString("identifier", "vector_of_pi")
 info.SetString("connection_name", connection_name)
-return_info, received_data = CoSimIO.ImportData(info)
+vec_to_import=CoSimIO.DoubleVector()
+return_info = CoSimIO.ImportData(info, vec_to_import)
 
-cosimio_check_equal(len(received_data), 4)
+cosimio_check_equal(len(vec_to_import), 4)
 
-for value in received_data:
+for value in vec_to_import:
     cosimio_check_equal(value, 3.14)
 
 # Disconnecting
