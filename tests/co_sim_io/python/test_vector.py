@@ -167,17 +167,5 @@ class CoSimIO_IntVector(CoSimIO_Vector.BaseTests):
             self.assertEqual(a,v)
 
 
-# test with numpy => See Kratos: add_matrix_to_python.cpp => buffer_info
-
-# strcpy for C-connection_name
-
-
-# Paper:
-# - Not restricted to data (should be serializable)
-# - data transer - mapping - orchestrator are separeted => each can be exchnaged independently => can be adapted easily for many usecases
-# - show case
-
-
-
 if __name__ == '__main__':
     unittest.main()
