@@ -44,7 +44,7 @@ enum class ControlSignal
     ExportData,
 };
 
-enum ConnectionStatus
+enum class ConnectionStatus
 {
     NotConnected,
     Connected,
@@ -53,15 +53,31 @@ enum ConnectionStatus
     DisconnectionError
 };
 
-// see https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf ; figure 2
-enum ElementType
+enum class ElementType
 {
-    VERTEX     = 1,
-    LINE       = 3,
-    TRIANGLE   = 5,
-    QUAD       = 9,
-    TETRA      = 10,
-    HEXAHEDRON = 12
+    Hexahedra3D20,
+    Hexahedra3D27,
+    Hexahedra3D8,
+    Prism3D15,
+    Prism3D6,
+    Quadrilateral2D4,
+    Quadrilateral2D8,
+    Quadrilateral2D9,
+    Quadrilateral3D4,
+    Quadrilateral3D8,
+    Quadrilateral3D9,
+    Tetrahedra3D10,
+    Tetrahedra3D4,
+    Triangle2D3,
+    Triangle2D6,
+    Triangle3D3,
+    Triangle3D6,
+    Line2D2,
+    Line2D3,
+    Line3D2,
+    Line3D3,
+    Point2D,
+    Point3D
 };
 
 // Note: std::make_unique is C++14, this can be updated once we upgrade from C++11
