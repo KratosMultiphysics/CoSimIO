@@ -83,7 +83,7 @@ TEST_CASE("node_ostream")
 TEST_CASE("element_basics")
 {
     const int id = 33;
-    const CoSimIO::ElementType type = CoSimIO::ElementType::VERTEX;
+    const CoSimIO::ElementType type = CoSimIO::ElementType::Point2D;
 
     Node node(1, 0,0,0);
 
@@ -97,7 +97,7 @@ TEST_CASE("element_basics")
 TEST_CASE("element_checks")
 {
     const int id = -33;
-    const CoSimIO::ElementType type = CoSimIO::ElementType::VERTEX;
+    const CoSimIO::ElementType type = CoSimIO::ElementType::Point2D;
     Node node(1, 0,0,0);
 
     SUBCASE("negative_id")
@@ -112,14 +112,14 @@ TEST_CASE("element_checks")
 
     SUBCASE("wrong_element_type")
     {
-        CHECK_THROWS_WITH(Element element(1, CoSimIO::ElementType::LINE, {&node}), "Error: Number of nodes (1) does not match expected number for element type (2)!\n");
+        CHECK_THROWS_WITH(Element element(1, CoSimIO::ElementType::Line2D2, {&node}), "Error: Number of nodes (1) does not match expected number for element type (2)!\n");
     }
 }
 
 TEST_CASE("element_nodes")
 {
     const int id = 33;
-    const CoSimIO::ElementType type = CoSimIO::ElementType::TRIANGLE;
+    const CoSimIO::ElementType type = CoSimIO::ElementType::Triangle2D3;
 
     const int node_ids[] = {2, 159, 61};
 
@@ -149,7 +149,7 @@ TEST_CASE("element_ostream")
     Node node_2(22, dummy_coords);
     Node node_3(321, dummy_coords);
 
-    Element element(65, CoSimIO::ElementType::TRIANGLE, {&node_1, &node_2, &node_3});
+    Element element(65, CoSimIO::ElementType::Triangle2D3, {&node_1, &node_2, &node_3});
 
     std::stringstream test_stream;
 
@@ -277,7 +277,7 @@ TEST_CASE("model_part_create_new_element")
     CHECK_EQ(model_part.NumberOfNodes(), 1);
 
     const int elem_id = 47;
-    const CoSimIO::ElementType type = CoSimIO::ElementType::VERTEX;
+    const CoSimIO::ElementType type = CoSimIO::ElementType::Point2D;
 
     const auto& new_elem = model_part.CreateNewElement(elem_id, type, {node_id});
 
@@ -309,9 +309,9 @@ TEST_CASE("model_part_create_new_elements")
     const int elem_ids[] = {21, 19, 961};
     const std::size_t elem_num_nodes[] = {1,1,2};
     const CoSimIO::ElementType elem_types[] = {
-        CoSimIO::ElementType::VERTEX,
-        CoSimIO::ElementType::VERTEX,
-        CoSimIO::ElementType::LINE
+        CoSimIO::ElementType::Point2D,
+        CoSimIO::ElementType::Point2D,
+        CoSimIO::ElementType::Line2D2
     };
 
     model_part.CreateNewElement(elem_ids[0], elem_types[0], {node_ids[0]});
@@ -334,10 +334,10 @@ TEST_CASE("model_part_create_new_element_twice")
     ModelPart model_part("for_test");
 
     model_part.CreateNewNode(1, 0,0,0);
-    model_part.CreateNewElement(1, CoSimIO::ElementType::VERTEX, {1});
+    model_part.CreateNewElement(1, CoSimIO::ElementType::Point2D, {1});
     REQUIRE_EQ(model_part.NumberOfElements(), 1);
 
-    CHECK_THROWS_WITH(model_part.CreateNewElement(1, CoSimIO::ElementType::VERTEX, {1}), "Error: The Element with Id 1 exists already!\n");
+    CHECK_THROWS_WITH(model_part.CreateNewElement(1, CoSimIO::ElementType::Point2D, {1}), "Error: The Element with Id 1 exists already!\n");
 }
 
 TEST_CASE("model_part_get_element")
@@ -347,7 +347,7 @@ TEST_CASE("model_part_get_element")
     model_part.CreateNewNode(1, 0,0,0);
 
     const int elem_id = 6;
-    const CoSimIO::ElementType type = CoSimIO::ElementType::VERTEX;
+    const CoSimIO::ElementType type = CoSimIO::ElementType::Point2D;
     model_part.CreateNewElement(elem_id, type, {1});
     REQUIRE_EQ(model_part.NumberOfElements(), 1);
 
@@ -394,7 +394,7 @@ TEST_CASE("model_part_ostream")
         model_part.CreateNewNode(node_ids[1], node_coords[1], node_coords[2], node_coords[0]);
         model_part.CreateNewNode(node_ids[2], node_coords[2], node_coords[0], node_coords[1]);
 
-        model_part.CreateNewElement(15, CoSimIO::ElementType::VERTEX, {node_ids[0]});
+        model_part.CreateNewElement(15, CoSimIO::ElementType::Point2D, {node_ids[0]});
 
         exp_string = "CoSimIO-ModelPart \"for_test\"\n    Number of Nodes: 3\n    Number of Elements: 1\n";
     }

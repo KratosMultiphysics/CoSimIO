@@ -53,7 +53,7 @@ class CoSimIO_ModelPart(unittest.TestCase):
 
     def test_element_basics(self):
         elem_id = 33
-        elem_type = CoSimIO.ElementType.VERTEX
+        elem_type = CoSimIO.ElementType.Point2D
 
         node = CoSimIO.Node(1, 0,0,0)
 
@@ -65,7 +65,7 @@ class CoSimIO_ModelPart(unittest.TestCase):
 
     def test_element_nodes(self):
         elem_id = 33
-        elem_type = CoSimIO.ElementType.TRIANGLE
+        elem_type = CoSimIO.ElementType.Triangle2D3
 
         node_ids = [2, 159, 61]
 
@@ -90,7 +90,7 @@ class CoSimIO_ModelPart(unittest.TestCase):
         node_2 = CoSimIO.Node(22, dummy_coords)
         node_3 = CoSimIO.Node(321, dummy_coords)
 
-        element = CoSimIO.Element(65, CoSimIO.ElementType.TRIANGLE, [node_1, node_2, node_3])
+        element = CoSimIO.Element(65, CoSimIO.ElementType.Triangle2D3, [node_1, node_2, node_3])
 
         exp_string = "CoSimIO-Element; Id: 65\n    Number of Nodes: 3\n    Node Ids: 1, 22, 321\n"
         self.assertMultiLineEqual(str(element), exp_string)
@@ -170,7 +170,7 @@ class CoSimIO_ModelPart(unittest.TestCase):
         self.assertEqual(model_part.NumberOfNodes(), 1)
 
         elem_id = 47
-        elem_type = CoSimIO.ElementType.VERTEX
+        elem_type = CoSimIO.ElementType.Point2D
 
         new_elem = model_part.CreateNewElement(elem_id, elem_type, [node_id])
 
@@ -196,9 +196,9 @@ class CoSimIO_ModelPart(unittest.TestCase):
 
         elem_ids = [21, 19, 961]
         elem_types = [
-            CoSimIO.ElementType.VERTEX,
-            CoSimIO.ElementType.VERTEX,
-            CoSimIO.ElementType.LINE]
+            CoSimIO.ElementType.Point2D,
+            CoSimIO.ElementType.Point2D,
+            CoSimIO.ElementType.Line2D2]
         elem_num_nodes = [1,1,2]
 
         model_part.CreateNewElement(elem_ids[0], elem_types[0], [node_ids[0]])
@@ -216,11 +216,11 @@ class CoSimIO_ModelPart(unittest.TestCase):
         model_part = CoSimIO.ModelPart("for_test")
 
         model_part.CreateNewNode(1, 0,0,0)
-        model_part.CreateNewElement(1, CoSimIO.ElementType.VERTEX, [1])
+        model_part.CreateNewElement(1, CoSimIO.ElementType.Point2D, [1])
         self.assertEqual(model_part.NumberOfElements(), 1)
 
         with self.assertRaisesRegex(Exception, 'Error: The Element with Id 1 exists already!'):
-            model_part.CreateNewElement(1, CoSimIO.ElementType.VERTEX, [1])
+            model_part.CreateNewElement(1, CoSimIO.ElementType.Point2D, [1])
 
     def test_model_part_get_element(self):
         model_part = CoSimIO.ModelPart("for_test")
@@ -228,13 +228,13 @@ class CoSimIO_ModelPart(unittest.TestCase):
         model_part.CreateNewNode(1, 0,0,0)
 
         elem_id = 6
-        model_part.CreateNewElement(elem_id, CoSimIO.ElementType.VERTEX, [1])
+        model_part.CreateNewElement(elem_id, CoSimIO.ElementType.Point2D, [1])
         self.assertEqual(model_part.NumberOfElements(), 1)
 
         with self.subTest("existing"):
             elem = model_part.GetElement(elem_id)
             self.assertEqual(elem.Id(), elem_id)
-            self.assertEqual(elem.Type(), CoSimIO.ElementType.VERTEX)
+            self.assertEqual(elem.Type(), CoSimIO.ElementType.Point2D)
             self.assertEqual(elem.NumberOfNodes(), 1)
 
         with self.subTest("non_existing"):
@@ -255,7 +255,7 @@ class CoSimIO_ModelPart(unittest.TestCase):
             model_part.CreateNewNode(node_ids[1], node_coords[1], node_coords[2], node_coords[0])
             model_part.CreateNewNode(node_ids[2], node_coords[2], node_coords[0], node_coords[1])
 
-            model_part.CreateNewElement(15, CoSimIO.ElementType.VERTEX, [node_ids[0]])
+            model_part.CreateNewElement(15, CoSimIO.ElementType.Point2D, [node_ids[0]])
 
             exp_string = "CoSimIO-ModelPart \"for_test\"\n    Number of Nodes: 3\n    Number of Elements: 1\n"
             self.assertMultiLineEqual(str(model_part), exp_string)
