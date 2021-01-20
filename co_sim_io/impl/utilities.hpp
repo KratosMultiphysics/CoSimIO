@@ -19,6 +19,7 @@
 
 // Project includes
 #include "define.hpp"
+#include "macros.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -39,7 +40,7 @@ inline std::string CreateConnectionName(
 
 inline int GetNumberOfNodesForElementType(ElementType Type)
 {
-    const std::map<ElementType, int> vtk_cell_type_map {
+    const std::map<ElementType, int> type_num_nodes_map {
         {ElementType::Hexahedra3D20,        20},
         {ElementType::Hexahedra3D27,        27},
         {ElementType::Hexahedra3D8,         8},
@@ -65,8 +66,8 @@ inline int GetNumberOfNodesForElementType(ElementType Type)
         {ElementType::Point3D,              1}
     };
 
-    auto type_iter = vtk_cell_type_map.find(Type);
-    CO_SIM_IO_ERROR_IF(type_iter == vtk_cell_type_map.end()) << "Unsupported cell type: " << Type << std::endl;
+    auto type_iter = type_num_nodes_map.find(Type);
+    CO_SIM_IO_ERROR_IF(type_iter == type_num_nodes_map.end()) << "Unsupported element type: " << Type << std::endl;
     return type_iter->second;
 }
 
