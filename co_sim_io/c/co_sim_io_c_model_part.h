@@ -28,7 +28,7 @@ typedef struct CoSimIO_ModelPart
     void* PtrCppModelPart;
 } CoSimIO_ModelPart;
 
-enum CoSimIO_ElementType
+typedef enum
 {
     CoSimIO_Hexahedra3D20,
     CoSimIO_Hexahedra3D27,
@@ -53,7 +53,7 @@ enum CoSimIO_ElementType
     CoSimIO_Line3D3,
     CoSimIO_Point2D,
     CoSimIO_Point3D
-};
+} CoSimIO_ElementType;
 
 int CoSimIO_Node_Id(CoSimIO_Node I_Node);
 double CoSimIO_Node_X(CoSimIO_Node I_Node);
