@@ -67,7 +67,7 @@ inline int GetNumberOfNodesForElementType(ElementType Type)
     };
 
     auto type_iter = type_num_nodes_map.find(Type);
-    CO_SIM_IO_ERROR_IF(type_iter == type_num_nodes_map.end()) << "Unsupported element type: " << Type << std::endl;
+    CO_SIM_IO_ERROR_IF(type_iter == type_num_nodes_map.end()) << "Unsupported element type: " << static_cast<int>(Type) << std::endl;
     return type_iter->second;
 }
 

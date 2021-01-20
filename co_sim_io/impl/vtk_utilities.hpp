@@ -10,11 +10,10 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_UTILITIES_INCLUDED
-#define CO_SIM_IO_UTILITIES_INCLUDED
+#ifndef CO_SIM_IO_VTK_UTILITIES_INCLUDED
+#define CO_SIM_IO_VTK_UTILITIES_INCLUDED
 
 // System includes
-#include <string>
 #include <map>
 
 // Project includes
@@ -73,7 +72,7 @@ inline ElementType GetElementTypeForVtkCellType(VtkCellType I_CellType)
     const auto cell_type_element_type_map = GetVtkCellTypeToElementTypeMap();
 
     auto type_iter = cell_type_element_type_map.find(I_CellType);
-    CO_SIM_IO_ERROR_IF(type_iter == cell_type_element_type_map.end()) << "Unsupported vtk cell type: " << I_CellType << std::endl;
+    CO_SIM_IO_ERROR_IF(type_iter == cell_type_element_type_map.end()) << "Unsupported vtk cell type: " << static_cast<int>(I_CellType) << std::endl;
     return type_iter->second;
 }
 
@@ -87,10 +86,10 @@ inline VtkCellType GetVtkCellTypeForElementType(ElementType I_ElementType)
         }
     }
 
-    CO_SIM_IO_ERROR << "Unsupported element type: " << I_ElementType << std::endl;
+    CO_SIM_IO_ERROR << "Unsupported element type: " << static_cast<int>(I_ElementType) << std::endl;
 }
 
 } // namespace Internals
 } // namespace CoSimIO
 
-#endif // CO_SIM_IO_UTILITIES_INCLUDED
+#endif // CO_SIM_IO_VTK_UTILITIES_INCLUDED
