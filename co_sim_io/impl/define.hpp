@@ -44,7 +44,7 @@ enum class ControlSignal
     ExportData,
 };
 
-enum class ConnectionStatus
+enum ConnectionStatus
 {
     NotConnected,
     Connected,
