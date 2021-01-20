@@ -22,6 +22,7 @@
 
 // Project includes
 #include "communication.hpp"
+#include "../vtk_utilities.hpp"
 #include "../filesystem_inc.hpp"
 // TODO refactor using fs::path for file-names!
 
@@ -372,7 +373,7 @@ private:
                 int enum_temp;
                 for (std::size_t i=0; i<element_types.size(); ++i) { // element_types was resized to correct size above
                     input_file >> enum_temp; // using a temp variable as enums cannot be read directly
-                    element_types[i] = static_cast<CoSimIO::ElementType>(enum_temp);
+                    element_types[i] = GetElementTypeForVtkCellType(static_cast<CoSimIO::Internals::VtkCellType>(enum_temp));
                 }
             }
 
@@ -482,7 +483,7 @@ private:
         // write cell types
         output_file << "CELL_TYPES " << I_ModelPart.NumberOfElements() << "\n";
         for (auto elem_it=I_ModelPart.ElementsBegin(); elem_it!=I_ModelPart.ElementsEnd(); ++elem_it) {
-            output_file << (*elem_it)->Type() << "\n";
+            output_file << static_cast<int>(GetVtkCellTypeForElementType((*elem_it)->Type())) << "\n";
         }
 
         output_file << "\n";
