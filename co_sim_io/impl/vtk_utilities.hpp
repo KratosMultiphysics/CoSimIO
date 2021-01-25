@@ -41,52 +41,33 @@ enum class VtkCellType {
     Quadratic_Hexahedron = 25,
 };
 
-// TODO make constexpr, static etc?
-inline std::map<VtkCellType, ElementType> GetVtkCellTypeToElementTypeMap()
-{
-    return {
-        {VtkCellType::Quadratic_Hexahedron,     ElementType::Hexahedra3D20},
-        {VtkCellType::Hexahedron,               ElementType::Hexahedra3D8},
-        {VtkCellType::Wedge,                    ElementType::Prism3D6},
-        {VtkCellType::Quad,                     ElementType::Quadrilateral2D4},
-        {VtkCellType::Quadratic_Quad,           ElementType::Quadrilateral2D8},
-        {VtkCellType::Quad,                     ElementType::Quadrilateral3D4},
-        {VtkCellType::Quadratic_Quad,           ElementType::Quadrilateral3D8},
-        {VtkCellType::Quadratic_Tetra,          ElementType::Tetrahedra3D10},
-        {VtkCellType::Tetra,                    ElementType::Tetrahedra3D4},
-        {VtkCellType::Triangle,                 ElementType::Triangle2D3},
-        {VtkCellType::Quadratic_Triangle,       ElementType::Triangle2D6},
-        {VtkCellType::Triangle,                 ElementType::Triangle3D3},
-        {VtkCellType::Quadratic_Triangle,       ElementType::Triangle3D6},
-        {VtkCellType::Line,                     ElementType::Line2D2},
-        {VtkCellType::Quadratic_Edge,           ElementType::Line2D3},
-        {VtkCellType::Line,                     ElementType::Line3D2},
-        {VtkCellType::Quadratic_Edge,           ElementType::Line3D3},
-        {VtkCellType::Vertex,                   ElementType::Point2D},
-        {VtkCellType::Vertex,                   ElementType::Point3D}
-    };
-}
-
-inline ElementType GetElementTypeForVtkCellType(VtkCellType I_CellType)
-{
-    const auto cell_type_element_type_map = GetVtkCellTypeToElementTypeMap();
-
-    auto type_iter = cell_type_element_type_map.find(I_CellType);
-    CO_SIM_IO_ERROR_IF(type_iter == cell_type_element_type_map.end()) << "Unsupported vtk cell type: " << static_cast<int>(I_CellType) << std::endl;
-    return type_iter->second;
-}
-
 inline VtkCellType GetVtkCellTypeForElementType(ElementType I_ElementType)
 {
-    const auto cell_type_element_type_map = GetVtkCellTypeToElementTypeMap();
+    const std::map<ElementType, VtkCellType> element_type_to_cell_Type_map = {
+        {ElementType::Hexahedra3D20,        VtkCellType::Quadratic_Hexahedron},
+        {ElementType::Hexahedra3D8,         VtkCellType::Hexahedron},
+        {ElementType::Prism3D6,             VtkCellType::Wedge},
+        {ElementType::Quadrilateral2D4,     VtkCellType::Quad},
+        {ElementType::Quadrilateral2D8,     VtkCellType::Quadratic_Quad},
+        {ElementType::Quadrilateral3D4,     VtkCellType::Quad},
+        {ElementType::Quadrilateral3D8,     VtkCellType::Quadratic_Quad},
+        {ElementType::Tetrahedra3D10,       VtkCellType::Quadratic_Tetra},
+        {ElementType::Tetrahedra3D4,        VtkCellType::Tetra},
+        {ElementType::Triangle2D3,          VtkCellType::Triangle},
+        {ElementType::Triangle2D6,          VtkCellType::Quadratic_Triangle},
+        {ElementType::Triangle3D3,          VtkCellType::Triangle},
+        {ElementType::Triangle3D6,          VtkCellType::Quadratic_Triangle},
+        {ElementType::Line2D2,              VtkCellType::Line},
+        {ElementType::Line2D3,              VtkCellType::Quadratic_Edge},
+        {ElementType::Line3D2,              VtkCellType::Line},
+        {ElementType::Line3D3,              VtkCellType::Quadratic_Edge},
+        {ElementType::Point2D,              VtkCellType::Vertex},
+        {ElementType::Point3D,              VtkCellType::Vertex}
+    };
 
-    for (auto it=cell_type_element_type_map.begin(); it!=cell_type_element_type_map.end(); ++it) {
-        if (it->second == I_ElementType) {
-            return it->first;
-        }
-    }
-
-    CO_SIM_IO_ERROR << "Unsupported element type: " << static_cast<int>(I_ElementType) << std::endl;
+    auto type_iter = element_type_to_cell_Type_map.find(I_ElementType);
+    CO_SIM_IO_ERROR_IF(type_iter == element_type_to_cell_Type_map.end()) << "Unsupported element type: " << static_cast<int>(I_ElementType) << std::endl; // TODO maybe return -1 or so here in the future. This way also types not supported by vtk/Paraview could be used with CoSomIO (but not visualized in Paraview)
+    return type_iter->second;
 }
 
 } // namespace Internals
