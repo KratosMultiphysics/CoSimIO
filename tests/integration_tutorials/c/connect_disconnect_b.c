@@ -10,6 +10,9 @@
 //  Main authors:    Pooyan Dadvand
 //
 
+// System includes
+#include <string.h>
+
 // CoSimulation includes
 #include "c/co_sim_io_c.h"
 
@@ -29,9 +32,10 @@ int main()
 
     // The connect must be called before any CosimIO function called
     CoSimIO_Info connect_info = CoSimIO_Connect(settings);
-    const char* connection_name = CoSimIO_Info_GetString(connect_info, "connection_name");
-
+    char connection_name[BUFSIZ];
+    strcpy(connection_name, CoSimIO_Info_GetString(connect_info, "connection_name"));
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
+    CoSimIO_FreeInfo(connect_info); // Don't forget to free the connect_info
 
     // Now you may call any CoSimIO functions
 
@@ -46,7 +50,6 @@ int main()
     // Don't forget to release the settings and info
     CoSimIO_FreeInfo(settings);
     CoSimIO_FreeInfo(disconnect_settings);
-    CoSimIO_FreeInfo(connect_info);
     CoSimIO_FreeInfo(disconnect_info);
 
     return 0;

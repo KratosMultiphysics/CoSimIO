@@ -10,6 +10,9 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
+// System includes
+#include <string.h>
+
 // CoSimulation includes
 #include "c/co_sim_io_c.h"
 
@@ -36,8 +39,10 @@ int main()
 
     // Connecting using the connection settings
     CoSimIO_Info connect_info = CoSimIO_Connect(connection_settings);
+    char connection_name[BUFSIZ];
+    strcpy(connection_name, CoSimIO_Info_GetString(connect_info, "connection_name"));
     COSIMIO_CHECK_EQUAL_INT(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
-    const char* connection_name = CoSimIO_Info_GetString(connect_info, "connection_name");
+    CoSimIO_FreeInfo(connect_info); // Don't forget to free the connect_info
 
     // After conneting we may import the mesh
     double* nodal_coordinates;
@@ -106,7 +111,6 @@ int main()
     // Don't forget to release the settings and info
     CoSimIO_FreeInfo(connection_settings);
     CoSimIO_FreeInfo(disconnect_settings);
-    CoSimIO_FreeInfo(connect_info); // Don't forget to free the connect_info
     CoSimIO_FreeInfo(disconnect_info);
 
     return 0;
