@@ -22,6 +22,7 @@
 
 // Project includes
 #include "communication.hpp"
+#include "../vtk_utilities.hpp"
 #include "../filesystem_inc.hpp"
 // TODO refactor using fs::path for file-names!
 
@@ -367,15 +368,6 @@ private:
                 }
             }
 
-            // reading cell types
-            if (current_line.find("CELL_TYPES") != std::string::npos) {
-                int enum_temp;
-                for (std::size_t i=0; i<element_types.size(); ++i) { // element_types was resized to correct size above
-                    input_file >> enum_temp; // using a temp variable as enums cannot be read directly
-                    element_types[i] = static_cast<CoSimIO::ElementType>(enum_temp);
-                }
-            }
-
             // reading node Ids
             if (current_line.find("NODE_ID") != std::string::npos) {
                 for (std::size_t i=0; i<nodal_ids.size(); ++i) { // nodal_ids was resized to correct size above
@@ -387,6 +379,15 @@ private:
             if (current_line.find("ELEMENT_ID") != std::string::npos) {
                 for (std::size_t i=0; i<element_ids.size(); ++i) { // element_ids was resized to correct size above
                     input_file >> element_ids[i];
+                }
+            }
+
+            // reading element types
+            if (current_line.find("ELEMENT_TYPE") != std::string::npos) {
+                int enum_temp;
+                for (std::size_t i=0; i<element_types.size(); ++i) { // element_types was resized to correct size above
+                    input_file >> enum_temp; // using a temp variable as enums cannot be read directly
+                    element_types[i] = static_cast<CoSimIO::ElementType>(enum_temp);
                 }
             }
         }
@@ -476,15 +477,13 @@ private:
             }
             output_file << "\n";
         }
-
         output_file << "\n";
 
         // write cell types
         output_file << "CELL_TYPES " << I_ModelPart.NumberOfElements() << "\n";
         for (auto elem_it=I_ModelPart.ElementsBegin(); elem_it!=I_ModelPart.ElementsEnd(); ++elem_it) {
-            output_file << (*elem_it)->Type() << "\n";
+            output_file << static_cast<int>(GetVtkCellTypeForElementType((*elem_it)->Type())) << "\n";
         }
-
         output_file << "\n";
 
         // writing node Ids
@@ -494,7 +493,6 @@ private:
         for (auto node_it=I_ModelPart.NodesBegin(); node_it!=I_ModelPart.NodesEnd(); ++node_it) {
             output_file << (*node_it)->Id() << "\n";
         }
-
         output_file << "\n";
 
         // writing element Ids
@@ -503,6 +501,15 @@ private:
         output_file << "ELEMENT_ID 1 " << I_ModelPart.NumberOfElements() << " int\n";
         for (auto elem_it=I_ModelPart.ElementsBegin(); elem_it!=I_ModelPart.ElementsEnd(); ++elem_it) {
             output_file << (*elem_it)->Id() << "\n";
+        }
+        output_file << "\n";
+
+        // writing element types
+        output_file << "CELL_DATA " << I_ModelPart.NumberOfElements() << "\n";
+        output_file << "FIELD FieldData 1" << "\n";
+        output_file << "ELEMENT_TYPE 1 " << I_ModelPart.NumberOfElements() << " int\n";
+        for (auto elem_it=I_ModelPart.ElementsBegin(); elem_it!=I_ModelPart.ElementsEnd(); ++elem_it) {
+            output_file << static_cast<int>((*elem_it)->Type()) << "\n";
         }
 
         output_file.close();

@@ -15,28 +15,44 @@
 
 typedef struct CoSimIO_Node
 {
-    void* PtrCppInfo;
+    void* PtrCppNode;
 } CoSimIO_Node;
 
 typedef struct CoSimIO_Element
 {
-    void* PtrCppInfo;
+    void* PtrCppElement;
 } CoSimIO_Element;
 
 typedef struct CoSimIO_ModelPart
 {
-    void* PtrCppInfo;
+    void* PtrCppModelPart;
 } CoSimIO_ModelPart;
 
-// see https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf ; figure 2
 typedef enum
 {
-    CoSimIO_VERTEX     = 1,
-    CoSimIO_LINE       = 3,
-    CoSimIO_TRIANGLE   = 5,
-    CoSimIO_QUAD       = 9,
-    CoSimIO_TETRA      = 10,
-    CoSimIO_HEXAHEDRON = 12
+    CoSimIO_Hexahedra3D20,
+    CoSimIO_Hexahedra3D27,
+    CoSimIO_Hexahedra3D8,
+    CoSimIO_Prism3D15,
+    CoSimIO_Prism3D6,
+    CoSimIO_Quadrilateral2D4,
+    CoSimIO_Quadrilateral2D8,
+    CoSimIO_Quadrilateral2D9,
+    CoSimIO_Quadrilateral3D4,
+    CoSimIO_Quadrilateral3D8,
+    CoSimIO_Quadrilateral3D9,
+    CoSimIO_Tetrahedra3D10,
+    CoSimIO_Tetrahedra3D4,
+    CoSimIO_Triangle2D3,
+    CoSimIO_Triangle2D6,
+    CoSimIO_Triangle3D3,
+    CoSimIO_Triangle3D6,
+    CoSimIO_Line2D2,
+    CoSimIO_Line2D3,
+    CoSimIO_Line3D2,
+    CoSimIO_Line3D3,
+    CoSimIO_Point2D,
+    CoSimIO_Point3D
 } CoSimIO_ElementType;
 
 int CoSimIO_Node_Id(CoSimIO_Node I_Node);

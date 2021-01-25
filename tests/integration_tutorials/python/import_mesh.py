@@ -64,7 +64,7 @@ for i, (coords, node) in enumerate(zip(expected_nodal_coords, model_part.Nodes))
 
 for i, (conn, elem) in enumerate(zip(expected_element_connectivities, model_part.Elements)):
     cosimio_check_equal(i+1, elem.Id())
-    cosimio_check_equal(elem.Type(), CoSimIO.ElementType.TRIANGLE)
+    cosimio_check_equal(elem.Type(), CoSimIO.ElementType.Triangle2D3)
     cosimio_check_equal(elem.NumberOfNodes(), 3)
     for j, node in enumerate(elem.Nodes):
         cosimio_check_equal(node.Id(), conn[j])

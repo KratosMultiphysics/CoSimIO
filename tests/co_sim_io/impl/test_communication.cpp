@@ -93,7 +93,7 @@ std::shared_ptr<CoSimIO::ModelPart> CreateLinesModelPart()
     }
 
     for (int i=0; i<num_nodes-1; ++i) {
-        p_model_part->CreateNewElement(i+1, ElementType::LINE, {i+i+1, i+i+3});
+        p_model_part->CreateNewElement(i+1, ElementType::Line2D2, {i+i+1, i+i+3});
     }
 
     return p_model_part;
@@ -110,12 +110,12 @@ std::shared_ptr<CoSimIO::ModelPart> CreateLinesAndPointElementsModelPart()
 
     // create line elements
     for (int i=0; i<num_nodes-1; ++i) {
-        p_model_part->CreateNewElement(i+1, ElementType::LINE, {i+i+1, i+i+3});
+        p_model_part->CreateNewElement(i+1, ElementType::Line2D2, {i+i+1, i+i+3});
     }
 
     // create point elements
     for (int i=0; i<5; ++i) {
-        p_model_part->CreateNewElement(i+100, ElementType::VERTEX, {i+i+1});
+        p_model_part->CreateNewElement(i+100, ElementType::Point2D, {i+i+1});
     }
 
     return p_model_part;
@@ -141,15 +141,15 @@ std::shared_ptr<CoSimIO::ModelPart> CreateSurfaceModelPart()
 
     // Id, type, connectivities
     std::vector<std::tuple<int, CoSimIO::ElementType, CoSimIO::Element::ConnectivitiesType>> elem_info {
-        {10,  ElementType::QUAD, {1,2,3,4}},
-        {3,   ElementType::QUAD, {3,2,9,10}},
-        {4,   ElementType::QUAD, {4,3,22,21}},
-        {6,   ElementType::QUAD, {3,10,23,22}},
-        {11,  ElementType::TRIANGLE, {21,22,53}},
-        {12,  ElementType::TRIANGLE, {22,55,53}},
-        {15,  ElementType::TRIANGLE, {22,23,55}},
-        {26,  ElementType::TRIANGLE, {4,21,53}},
-        {27,  ElementType::TRIANGLE, {10,23,55}}
+        {10,  ElementType::Quadrilateral2D4, {1,2,3,4}},
+        {3,   ElementType::Quadrilateral2D4, {3,2,9,10}},
+        {4,   ElementType::Quadrilateral2D4, {4,3,22,21}},
+        {6,   ElementType::Quadrilateral2D4, {3,10,23,22}},
+        {11,  ElementType::Triangle2D3, {21,22,53}},
+        {12,  ElementType::Triangle2D3, {22,55,53}},
+        {15,  ElementType::Triangle2D3, {22,23,55}},
+        {26,  ElementType::Triangle2D3, {4,21,53}},
+        {27,  ElementType::Triangle2D3, {10,23,55}}
     };
 
    for (const auto& node_info : node_coords) {
@@ -194,10 +194,10 @@ std::shared_ptr<CoSimIO::ModelPart> CreateVolumeModelPart()
 
     // Id, type, connectivities
     std::vector<std::tuple<int, CoSimIO::ElementType, CoSimIO::Element::ConnectivitiesType>> elem_info {
-        {10,  ElementType::HEXAHEDRON, {1,2,3,4,11,12,13,14}},
-        {3,   ElementType::HEXAHEDRON, {2,22,23,3,12,112,113,13}},
-        {26,  ElementType::TETRA, {11,12,13,6}},
-        {27,  ElementType::TETRA, {12,112,13,6}}
+        {10,  ElementType::Hexahedra3D8, {1,2,3,4,11,12,13,14}},
+        {3,   ElementType::Hexahedra3D8, {2,22,23,3,12,112,113,13}},
+        {26,  ElementType::Tetrahedra3D4, {11,12,13,6}},
+        {27,  ElementType::Tetrahedra3D4, {12,112,13,6}}
     };
 
    for (const auto& node_info : node_coords) {
