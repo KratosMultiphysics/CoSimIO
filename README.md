@@ -23,8 +23,8 @@ The tests are contained in [tests](tests)
 - The _CoSimIO_ is implemented as a standalone tool in C++. The only dependency is C++11. This includes most of the major C++ compilers in Windows, Linux, and Mac. A detailed list of C++11 compatible compilers under https://en.cppreference.com/w/cpp/compiler_support#cpp11.
 - Dependency on Kratos: There is **NO** dependency on Kratos. The _CoSimIO_ can be used completely without including or linking against Kratos.
 - _CoSimIO_ is **header-only**, no compiling/linking is required.
-- Different means of communication / data-exchange are available. Communication through files is the default, others (e.g. through Sockets or MPI) can be enabled at compile time (and selected at run time). This can introduce other dependencies such as boost or MPI. Except MPI, all these dependencies are header-only.
-- The CoSimIO uses [std::filesystem](https://en.cppreference.com/w/cpp/filesystem) which is part of C++17. Until moving to C++17, the [C++11 compatible version of std::filesystem](https://github.com/gulrak/filesystem) is used.
+- The CoSimIO uses [std::filesystem](https://en.cppreference.com/w/cpp/filesystem) which is part of C++17. When compiling with C++11, the [C++11 compatible version of std::filesystem](https://github.com/gulrak/filesystem) is used.
+   Note that in Windows this includes the `windows.h` header. For details check [here](co_sim_io/impl/filesystem_inc.hpp).
 
 ## Available languages
 Besides the native C++ interface, the _CoSimIO_ also provides interfaces to other languages. Currently the following languages are supported:
