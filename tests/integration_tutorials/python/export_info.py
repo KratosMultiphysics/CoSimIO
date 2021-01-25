@@ -31,6 +31,7 @@ connection_name = return_info.GetString("connection_name")
 # Exporting CoSimIO.Info
 info_to_export = CoSimIO.Info()
 info_to_export.SetString("connection_name", connection_name)
+info_to_export.SetString("identifier", "info_exchange")
 info_to_export.SetString("id", "convergence_information")
 info_to_export.SetBool("is_converged", True)
 info_to_export.SetDouble("tol", 0.008)

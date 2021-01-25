@@ -36,6 +36,7 @@ int main()
     // Creatinf the info to export
     CoSimIO_Info info_to_export=CoSimIO_CreateInfo();
     CoSimIO_Info_SetString(info_to_export, "connection_name", connection_name);
+    CoSimIO_Info_SetString(info_to_export, "identifier", "c_info_exchange");
     CoSimIO_Info_SetString(info_to_export, "id", "convergence_information");
     CoSimIO_Info_SetBool(info_to_export, "is_converged", 1);
     CoSimIO_Info_SetDouble(info_to_export, "tol", 0.23);
