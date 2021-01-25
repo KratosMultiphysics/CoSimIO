@@ -269,6 +269,7 @@ void ExportInfoHelper(const std::size_t NumExports)
     CHECK_UNARY(ret_info_connect.Get<bool>("is_connected"));
 
     CoSimIO::Info info_for_export;
+    info_for_export.Set<std::string>("identifier", "info_exchange");
     info_for_export.Set<std::string>("some_random_name", "the_CoSimIO");
     info_for_export.Set<bool>("is_converged", true);
 
@@ -341,6 +342,7 @@ void ExportMeshHelper(const std::vector<std::shared_ptr<CoSimIO::ModelPart>>& Mo
     CHECK_UNARY(ret_info_connect.Get<bool>("is_connected"));
 
     CoSimIO::Info export_info;
+    export_info.Set<std::string>("identifier", "test_mesh_exchange");
 
     for (const auto& model_part : ModelPartsToExport) {
         p_comm->ExportMesh(export_info, *model_part);
@@ -404,6 +406,7 @@ TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(25.0), TCommType, CO
         p_comm->Connect(connect_info);
 
         CoSimIO::Info import_info;
+        import_info.Set<std::string>("identifier", "info_exchange");
         auto imported_info = p_comm->ImportInfo(import_info);
 
         CHECK_UNARY(imported_info.Has("some_random_name"));
@@ -432,6 +435,7 @@ TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(25.0), TCommType, CO
 
         for (std::size_t i=0; i<num_exports; ++i) {
             CoSimIO::Info import_info;
+            import_info.Set<std::string>("identifier", "info_exchange");
             auto imported_info = p_comm->ImportInfo(import_info);
 
             CHECK_UNARY(imported_info.Has("some_random_name"));
@@ -518,6 +522,8 @@ TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(25.0), TCommType, CO
         p_comm->Connect(connect_info);
 
         CoSimIO::Info import_info;
+        import_info.Set<std::string>("identifier", "test_mesh_exchange");
+
         CoSimIO::ModelPart imported_model_part(model_parts[0]->Name());
         p_comm->ImportMesh(import_info, imported_model_part);
 
@@ -544,6 +550,7 @@ TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(25.0), TCommType, CO
         p_comm->Connect(connect_info);
 
         CoSimIO::Info import_info;
+        import_info.Set<std::string>("identifier", "test_mesh_exchange");
         for (std::size_t i=0; i<model_parts.size(); ++i) {
             CAPTURE(i); // log the current input data (done manually as not fully supported yet by doctest)
             CoSimIO::ModelPart imported_model_part(model_parts[i]->Name());

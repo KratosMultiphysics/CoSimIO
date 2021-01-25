@@ -34,6 +34,7 @@ int main()
 
     CoSimIO::Info exp_info;
     exp_info.Set<std::string>("connection_name", connection_name);
+    exp_info.Set<std::string>("identifier", "cpp_info_exchange");
     auto imported_info = CoSimIO::ImportInfo(exp_info);
 
     COSIMIO_CHECK_EQUAL(imported_info.Get<std::string>("id"), "convergence_information");

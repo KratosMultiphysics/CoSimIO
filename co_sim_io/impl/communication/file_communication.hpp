@@ -187,7 +187,8 @@ private:
 
     Info ImportInfoImpl(const Info& I_Info) override
     {
-        const std::string file_name(GetFullPath("CoSimIO_info_" + GetConnectionName() + ".dat"));
+        const std::string identifier = I_Info.Get<std::string>("identifier");
+        const std::string file_name(GetFullPath("CoSimIO_info_" + GetConnectionName() + "_" + identifier + ".dat"));
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import Info in file \"" << file_name << "\" ..." << std::endl;
 
@@ -209,7 +210,8 @@ private:
 
     Info ExportInfoImpl(const Info& I_Info) override
     {
-        const std::string file_name(GetFullPath("CoSimIO_info_" + GetConnectionName() + ".dat"));
+        const std::string identifier = I_Info.Get<std::string>("identifier");
+        const std::string file_name(GetFullPath("CoSimIO_info_" + GetConnectionName() + "_" + identifier + ".dat"));
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export Info in file \"" << file_name << "\" ..." << std::endl;
 
@@ -308,7 +310,7 @@ private:
         const Info& I_Info,
         ModelPart& O_ModelPart) override
     {
-        const std::string identifier = O_ModelPart.Name();
+        const std::string identifier = I_Info.Get<std::string>("identifier");
         const std::string file_name(GetFullPath("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + ".vtk"));
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import mesh \"" << identifier << "\" in file \"" << file_name << "\" ..." << std::endl;
@@ -424,7 +426,7 @@ private:
         const Info& I_Info,
         const ModelPart& I_ModelPart) override
     {
-        const std::string identifier = I_ModelPart.Name();
+        const std::string identifier = I_Info.Get<std::string>("identifier");
         const std::string file_name(GetFullPath("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + ".vtk"));
 
         WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender

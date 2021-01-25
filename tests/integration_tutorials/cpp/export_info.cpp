@@ -34,6 +34,7 @@ int main()
 
     CoSimIO::Info export_info;
     export_info.Set<std::string>("connection_name", connection_name);
+    export_info.Set<std::string>("identifier", "cpp_info_exchange");
     export_info.Set<std::string>("id", "convergence_information");
     export_info.Set<bool>("is_converged", true);
     export_info.Set<double>("tol", 0.008);

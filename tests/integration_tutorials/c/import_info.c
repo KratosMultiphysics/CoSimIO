@@ -53,6 +53,7 @@ int main()
     // Creating the info for export
     CoSimIO_Info export_info=CoSimIO_CreateInfo();
     CoSimIO_Info_SetString(export_info, "connection_name", connection_name);
+    CoSimIO_Info_SetString(export_info, "identifier", "c_info_exchange");
 
     // import the info
     CoSimIO_Info imported_info = CoSimIO_ImportInfo(export_info);
