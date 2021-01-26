@@ -1,6 +1,6 @@
 # should be called with "sh scripts/build.sh" from the root-directory
 
-rm -r build/
+# rm -r build/
 
 cmake -H"." -B"build" \
     -DBUILD_C=ON \
@@ -9,5 +9,4 @@ cmake -H"." -B"build" \
     -DENABLE_SOCKETS=OFF \
     -DENABLE_MPI=OFF \
     -DCMAKE_BUILD_TYPE=Debug
-cmake --build "build" --target install
-
+cmake --build "build" --target install -- -j$(nproc)
