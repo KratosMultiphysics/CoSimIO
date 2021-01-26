@@ -140,7 +140,7 @@ std::shared_ptr<CoSimIO::ModelPart> CreateSurfaceModelPart()
     };
 
     // Id, type, connectivities
-    std::vector<std::tuple<int, CoSimIO::ElementType, CoSimIO::Element::ConnectivitiesType>> elem_info {
+    std::vector<std::tuple<int, CoSimIO::ElementType, CoSimIO::ConnectivitiesType>> elem_info {
         {10,  ElementType::Quadrilateral2D4, {1,2,3,4}},
         {3,   ElementType::Quadrilateral2D4, {3,2,9,10}},
         {4,   ElementType::Quadrilateral2D4, {4,3,22,21}},
@@ -193,7 +193,7 @@ std::shared_ptr<CoSimIO::ModelPart> CreateVolumeModelPart()
     };
 
     // Id, type, connectivities
-    std::vector<std::tuple<int, CoSimIO::ElementType, CoSimIO::Element::ConnectivitiesType>> elem_info {
+    std::vector<std::tuple<int, CoSimIO::ElementType, CoSimIO::ConnectivitiesType>> elem_info {
         {10,  ElementType::Hexahedra3D8, {1,2,3,4,11,12,13,14}},
         {3,   ElementType::Hexahedra3D8, {2,22,23,3,12,112,113,13}},
         {26,  ElementType::Tetrahedra3D4, {11,12,13,6}},

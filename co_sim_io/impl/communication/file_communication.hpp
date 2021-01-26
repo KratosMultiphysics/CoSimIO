@@ -328,7 +328,7 @@ private:
         std::vector<IdType> nodal_ids;
         std::vector<IdType> element_ids;
         std::vector<ElementType> element_types;
-        std::vector<Element::ConnectivitiesType> element_connectivities;
+        std::vector<ConnectivitiesType> element_connectivities;
 
         while (std::getline(input_file, current_line)) {
             // reading nodes

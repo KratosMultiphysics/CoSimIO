@@ -43,7 +43,7 @@ jobs:
           -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
           -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
 
-        cmake --build "build" --target install
+        cmake --build "build" --target install -- -j2
 
     - name: Running tests (Ctest)
       if: ${{ matrix.python-version == '3.8' }} # only run for one py version, not necessary for all of them
