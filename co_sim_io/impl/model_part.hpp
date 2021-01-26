@@ -93,7 +93,6 @@ class Element
 {
 public:
     using NodesContainerType = std::vector<Node*>;
-    using ConnectivitiesType = std::vector<IdType>;
 
     Element(
         const IdType I_Id,
@@ -187,7 +186,7 @@ public:
     Element& CreateNewElement(
         const IdType I_Id,
         const ElementType I_Type,
-        const Element::ConnectivitiesType& I_Connectivities)
+        const ConnectivitiesType& I_Connectivities)
     {
         CO_SIM_IO_ERROR_IF(HasElement(I_Id)) << "The Element with Id " << I_Id << " exists already!" << std::endl;
 
