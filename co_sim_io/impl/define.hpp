@@ -16,6 +16,7 @@
 // System includes
 #include <cstddef> // std::ptrdiff_t
 #include <memory> // std::unique_ptr
+#include <vector>
 #include <array>
 
 namespace CoSimIO {
@@ -24,6 +25,7 @@ namespace CoSimIO {
 using IdType = std::ptrdiff_t;
 
 using CoordinatesType = std::array<double,3>;
+using ConnectivitiesType = std::vector<IdType>;
 
 enum class ControlSignal
 {
