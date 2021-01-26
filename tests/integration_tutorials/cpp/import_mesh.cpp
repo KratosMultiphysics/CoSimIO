@@ -10,7 +10,11 @@
 //  Main authors:    Pooyan Dadvand
 //
 
-// CoSimulation includes
+// System includes
+#include <vector>
+#include <array>
+
+// Project includes
 #include "co_sim_io.hpp"
 
 #define COSIMIO_CHECK_EQUAL(a, b)                                \
@@ -32,44 +36,53 @@ int main()
     COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
     const std::string connection_name = info.Get<std::string>("connection_name");
 
-    std::vector<double> expected_nodal_coordinates{
-        0.0, 2.5, 1.0, /*0*/
-        2.0, 0.0, 1.5, /*1*/
-        2.0, 2.5, 1.5, /*2*/
-        4.0, 2.5, 1.7, /*3*/
-        4.0, 0.0, 1.7, /*4*/
-        6.0, 0.0, 1.8  /*5*/
+    const std::vector<std::array<double,3>> expected_nodal_coords {
+        {0.0, 2.5, 1.0},
+        {2.0, 0.0, 1.5},
+        {2.0, 2.5, 1.5},
+        {4.0, 2.5, 1.7},
+        {4.0, 0.0, 1.7},
+        {6.0, 0.0, 1.8}
     };
 
-    std::vector<int> expected_elements_connectivities = {
-        0, 1, 2, /*1*/
-        1, 3, 2, /*2*/
-        1, 4, 3, /*3*/
-        3, 4, 5, /*4*/
+    const std::vector<CoSimIO::ConnectivitiesType> expected_element_connectivities {
+        {1, 2, 3},
+        {2, 4, 3},
+        {2, 5, 4},
+        {4, 5, 6},
     };
-
-    std::vector<int> expected_elements_types = {5,5,5,5}; // VTK_TRIANGLE
 
     info.Clear();
     info.Set("identifier", "fluid_mesh");
     info.Set("connection_name", connection_name);
 
-    std::vector<double> nodal_coordinates;
-    std::vector<int> elements_connectivities;
-    std::vector<int> elements_types;
+    CoSimIO::ModelPart model_part("mp_exchange");
 
-    info = CoSimIO::ImportMesh(info,nodal_coordinates, elements_connectivities, elements_types);
+    info = CoSimIO::ImportMesh(info, model_part);
 
-    COSIMIO_CHECK_EQUAL(nodal_coordinates.size(), expected_nodal_coordinates.size());
-    COSIMIO_CHECK_EQUAL(elements_connectivities.size(), expected_elements_connectivities.size());
-    COSIMIO_CHECK_EQUAL(elements_types.size(), elements_types.size());
+    COSIMIO_CHECK_EQUAL(model_part.NumberOfNodes(), expected_nodal_coords.size());
+    COSIMIO_CHECK_EQUAL(model_part.NumberOfElements(), expected_element_connectivities.size());
 
-    for(std::size_t i = 0 ; i < nodal_coordinates.size() ; i++)
-        COSIMIO_CHECK_EQUAL(nodal_coordinates[i], expected_nodal_coordinates[i])
-    for(std::size_t i = 0 ; i < elements_connectivities.size() ; i++)
-        COSIMIO_CHECK_EQUAL(elements_connectivities[i], expected_elements_connectivities[i])
-    for(std::size_t i = 0 ; i < elements_types.size() ; i++)
-        COSIMIO_CHECK_EQUAL(elements_types[i], expected_elements_types[i])
+    int counter=0;
+    for (auto node_it=model_part.NodesBegin(); node_it!=model_part.NodesEnd(); ++node_it) {
+        COSIMIO_CHECK_EQUAL((*node_it)->Id(), counter+1);
+        for (std::size_t i=0; i<3; ++i) {
+            COSIMIO_CHECK_EQUAL((*node_it)->Coordinates()[i], expected_nodal_coords[counter][i]);
+        }
+        counter++;
+    }
+
+    counter=0;
+    for (auto elem_it=model_part.ElementsBegin(); elem_it!=model_part.ElementsEnd(); ++elem_it) {
+        COSIMIO_CHECK_EQUAL((*elem_it)->Id(), counter+1);
+        COSIMIO_CHECK_EQUAL(static_cast<int>((*elem_it)->Type()), static_cast<int>(CoSimIO::ElementType::Triangle3D3));
+        COSIMIO_CHECK_EQUAL((*elem_it)->NumberOfNodes(), 3);
+        int node_counter=0;
+        for (auto node_it=(*elem_it)->NodesBegin(); node_it!=(*elem_it)->NodesEnd(); ++node_it) {
+            COSIMIO_CHECK_EQUAL((*node_it)->Id(), expected_element_connectivities[counter][node_counter++]);
+        }
+        counter++;
+    }
 
     CoSimIO::Info disconnect_settings;
     disconnect_settings.Set("connection_name", connection_name);

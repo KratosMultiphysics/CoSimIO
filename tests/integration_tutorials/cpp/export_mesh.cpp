@@ -10,7 +10,11 @@
 //  Main authors:    Pooyan Dadvand
 //
 
-// CoSimulation includes
+// System includes
+#include <vector>
+#include <array>
+
+// Project includes
 #include "co_sim_io.hpp"
 
 #define COSIMIO_CHECK_EQUAL(a, b)                                \
@@ -32,28 +36,40 @@ int main()
     COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
     const std::string connection_name = info.Get<std::string>("connection_name");
 
-    std::vector<double> nodal_coordinates{
-        0.0, 2.5, 1.0, /*0*/
-        2.0, 0.0, 1.5, /*1*/
-        2.0, 2.5, 1.5, /*2*/
-        4.0, 2.5, 1.7, /*3*/
-        4.0, 0.0, 1.7, /*4*/
-        6.0, 0.0, 1.8  /*5*/
+    // Creating the mesh
+    const std::vector<std::array<double,3>> nodal_coords {
+        {0.0, 2.5, 1.0},
+        {2.0, 0.0, 1.5},
+        {2.0, 2.5, 1.5},
+        {4.0, 2.5, 1.7},
+        {4.0, 0.0, 1.7},
+        {6.0, 0.0, 1.8}
     };
 
-    std::vector<int> elements_connectivities = {
-        0, 1, 2, /*1*/
-        1, 3, 2, /*2*/
-        1, 4, 3, /*3*/
-        3, 4, 5, /*4*/
+    const std::vector<CoSimIO::ConnectivitiesType> element_connectivities {
+        {1, 2, 3},
+        {2, 4, 3},
+        {2, 5, 4},
+        {4, 5, 6},
     };
 
-    std::vector<int> elements_types = {5,5,5,5}; // VTK_TRIANGLE
+    CoSimIO::ModelPart model_part("mp_exchange");
+
+    int id_counter=0;
+    for (const auto& coords : nodal_coords) {
+        model_part.CreateNewNode(++id_counter, coords[0], coords[1], coords[2]);
+    }
+
+    id_counter=0;
+    for (const auto& conn : element_connectivities) {
+        model_part.CreateNewElement(++id_counter, CoSimIO::ElementType::Triangle3D3, conn);
+    }
+
     info.Clear();
     info.Set("identifier", "fluid_mesh");
     info.Set("connection_name", connection_name);
 
-    info = CoSimIO::ExportMesh(info,nodal_coordinates, elements_connectivities, elements_types);
+    info = CoSimIO::ExportMesh(info, model_part);
 
     CoSimIO::Info disconnect_settings;
     disconnect_settings.Set("connection_name", connection_name);
