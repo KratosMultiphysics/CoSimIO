@@ -267,7 +267,7 @@ CoSimIO_Node CoSimIO_ModelPart_CreateNewNode(
 
 int CoSimIO_Node_Id(CoSimIO_Node I_Node)
 {
-    return static_cast<CoSimIO::Node*>(I_Node.PtrCppNode)->Id();
+    return static_cast<int>(static_cast<CoSimIO::Node*>(I_Node.PtrCppNode)->Id());
 }
 
 double CoSimIO_Node_X(CoSimIO_Node I_Node)
