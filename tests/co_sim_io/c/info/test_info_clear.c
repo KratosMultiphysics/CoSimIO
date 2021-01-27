@@ -13,7 +13,7 @@
 // Project includes
 #include "c/co_sim_io_c.h"
 
-#include "checks.h"
+#include "../checks.h"
 
 int main()
 {
