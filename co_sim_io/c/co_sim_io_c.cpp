@@ -166,6 +166,7 @@ CoSimIO_Info CoSimIO_Run(const CoSimIO_Info I_Info)
 }
 
 
+// Info functions
 CoSimIO_Info CoSimIO_CreateInfo()
 {
     CoSimIO_Info info;
@@ -240,6 +241,57 @@ void CoSimIO_Info_SetString(CoSimIO_Info I_Info, const char* I_Key, const char* 
 {
     static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Set<std::string>(I_Key, I_Value);
 }
+
+
+// ModelPart functions
+CoSimIO_ModelPart CoSimIO_CreateModelPart(const char* I_Name)
+{
+    CoSimIO_ModelPart model_part;
+    model_part.PtrCppModelPart = new CoSimIO::ModelPart(I_Name);
+    return model_part;
+}
+
+CoSimIO_Node CoSimIO_ModelPart_CreateNewNode(
+    CoSimIO_ModelPart I_ModelPart,
+    const int I_Id,
+    const double I_X,
+    const double I_Y,
+    const double I_Z)
+{
+    CoSimIO::Node& cpp_node = static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->CreateNewNode(I_Id, I_X, I_Y, I_Z);
+    CoSimIO_Node node;
+    node.PtrCppNode = &cpp_node;
+    return node;
+}
+
+
+int CoSimIO_Node_Id(CoSimIO_Node I_Node)
+{
+    return static_cast<CoSimIO::Node*>(I_Node.PtrCppNode)->Id();
+}
+
+double CoSimIO_Node_X(CoSimIO_Node I_Node)
+{
+    return static_cast<CoSimIO::Node*>(I_Node.PtrCppNode)->X();
+}
+
+double CoSimIO_Node_Y(CoSimIO_Node I_Node)
+{
+    return static_cast<CoSimIO::Node*>(I_Node.PtrCppNode)->Y();
+}
+
+double CoSimIO_Node_Z(CoSimIO_Node I_Node)
+{
+    return static_cast<CoSimIO::Node*>(I_Node.PtrCppNode)->Z();
+}
+
+
+int CoSimIO_FreeModelPart(CoSimIO_ModelPart I_ModelPart)
+{
+    delete static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart);
+    return 0;
+}
+
 
 void* CoSimIO_Malloc(size_t size){
     // Todo: Add a register of allocated memory: [pointer, size]

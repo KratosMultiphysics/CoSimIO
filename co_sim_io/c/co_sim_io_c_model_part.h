@@ -55,17 +55,23 @@ typedef enum
     CoSimIO_Point3D
 } CoSimIO_ElementType;
 
+
+// Node functions
 int CoSimIO_Node_Id(CoSimIO_Node I_Node);
 double CoSimIO_Node_X(CoSimIO_Node I_Node);
 double CoSimIO_Node_Y(CoSimIO_Node I_Node);
 double CoSimIO_Node_Z(CoSimIO_Node I_Node);
+// double* CoSimIO_Coordinates(CoSimIO_Node I_Node);
 
 
+// Element functions
 int CoSimIO_Element_Id(CoSimIO_Element I_Element);
 CoSimIO_ElementType CoSimIO_Element_Type(CoSimIO_Element I_Element);
 int CoSimIO_Element_NumberOfNodes(CoSimIO_Element I_Element);
+// CoSimIO_Node* CoSimIO_Element_Nodes(CoSimIO_Element I_Element);
 
 
+// ModelPart functions
 CoSimIO_ModelPart CoSimIO_CreateModelPart(const char* I_Name);
 
 int CoSimIO_FreeModelPart(CoSimIO_ModelPart I_ModelPart);
@@ -73,6 +79,8 @@ int CoSimIO_FreeModelPart(CoSimIO_ModelPart I_ModelPart);
 const char* CoSimIO_ModelPart_Name(CoSimIO_ModelPart I_ModelPart);
 int CoSimIO_ModelPart_NumberOfNodes(CoSimIO_ModelPart I_ModelPart);
 int CoSimIO_ModelPart_NumberOfElements(CoSimIO_ModelPart I_ModelPart);
+// CoSimIO_Node* CoSimIO_ModelPart_Nodes(CoSimIO_ModelPart I_ModelPart);
+// CoSimIO_Element* CoSimIO_ModelPart_Elements(CoSimIO_ModelPart I_ModelPart);
 
 CoSimIO_Node CoSimIO_ModelPart_CreateNewNode(
     CoSimIO_ModelPart I_ModelPart,
