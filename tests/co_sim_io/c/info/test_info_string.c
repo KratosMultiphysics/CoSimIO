@@ -12,23 +12,20 @@
 
 // Project includes
 #include "c/co_sim_io_c.h"
-#include <string.h>
 
-#include "checks.h"
+#include "../checks.h"
 
 int main()
 {
     CoSimIO_Info info = CoSimIO_CreateInfo();
 
-    CoSimIO_Info_SetInt(info, "echo_level", 6);
+    COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "identifier"));
 
-    char buffer[BUFSIZ];
-    setbuf(stdout, buffer);
+    CoSimIO_Info_SetString(info, "identifier", "field_pressure_interface");
 
-    // CoSimIO_PrintInfo(stdout, info);
+    COSIMIO_CHECK_TRUE(CoSimIO_Info_Has(info, "identifier"));
 
-    // int comparison = strcmp(buffer, "CoSimIO-Info; containing 1 entries\n  name: echo_level | value: 6 | type: int\n\n");
-    // COSIMIO_CHECK_INT_EQUAL(comparison,0);
+    COSIMIO_CHECK_STRING_EQUAL(CoSimIO_Info_GetString(info, "identifier"), "field_pressure_interface");
 
     CoSimIO_FreeInfo(info);
 

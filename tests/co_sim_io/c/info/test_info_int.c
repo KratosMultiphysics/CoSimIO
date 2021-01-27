@@ -13,19 +13,19 @@
 // Project includes
 #include "c/co_sim_io_c.h"
 
-#include "checks.h"
+#include "../checks.h"
 
 int main()
 {
     CoSimIO_Info info = CoSimIO_CreateInfo();
 
-    COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "tolerance"));
+    COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "echo_level"));
 
-    CoSimIO_Info_SetDouble(info, "tolerance", 0.0086);
+    CoSimIO_Info_SetInt(info, "echo_level", 6);
 
-    COSIMIO_CHECK_TRUE(CoSimIO_Info_Has(info, "tolerance"));
+    COSIMIO_CHECK_TRUE(CoSimIO_Info_Has(info, "echo_level"));
 
-    COSIMIO_CHECK_DOUBLE_EQUAL(CoSimIO_Info_GetDouble(info, "tolerance"), 0.0086);
+    COSIMIO_CHECK_INT_EQUAL(CoSimIO_Info_GetInt(info, "echo_level"), 6);
 
     CoSimIO_FreeInfo(info);
 

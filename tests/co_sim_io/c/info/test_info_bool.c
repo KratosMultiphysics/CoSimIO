@@ -13,19 +13,19 @@
 // Project includes
 #include "c/co_sim_io_c.h"
 
-#include "checks.h"
+#include "../checks.h"
 
 int main()
 {
     CoSimIO_Info info = CoSimIO_CreateInfo();
 
-    COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "identifier"));
+    COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "is_converged"));
 
-    CoSimIO_Info_SetString(info, "identifier", "field_pressure_interface");
+    CoSimIO_Info_SetBool(info, "is_converged", 1);
 
-    COSIMIO_CHECK_TRUE(CoSimIO_Info_Has(info, "identifier"));
+    COSIMIO_CHECK_TRUE(CoSimIO_Info_Has(info, "is_converged"));
 
-    COSIMIO_CHECK_STRING_EQUAL(CoSimIO_Info_GetString(info, "identifier"), "field_pressure_interface");
+    COSIMIO_CHECK_TRUE(CoSimIO_Info_GetBool(info, "is_converged"));
 
     CoSimIO_FreeInfo(info);
 

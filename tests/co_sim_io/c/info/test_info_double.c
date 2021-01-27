@@ -13,19 +13,19 @@
 // Project includes
 #include "c/co_sim_io_c.h"
 
-#include "checks.h"
+#include "../checks.h"
 
 int main()
 {
     CoSimIO_Info info = CoSimIO_CreateInfo();
 
-    COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "is_converged"));
+    COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "tolerance"));
 
-    CoSimIO_Info_SetBool(info, "is_converged", 1);
+    CoSimIO_Info_SetDouble(info, "tolerance", 0.0086);
 
-    COSIMIO_CHECK_TRUE(CoSimIO_Info_Has(info, "is_converged"));
+    COSIMIO_CHECK_TRUE(CoSimIO_Info_Has(info, "tolerance"));
 
-    COSIMIO_CHECK_TRUE(CoSimIO_Info_GetBool(info, "is_converged"));
+    COSIMIO_CHECK_DOUBLE_EQUAL(CoSimIO_Info_GetDouble(info, "tolerance"), 0.0086);
 
     CoSimIO_FreeInfo(info);
 
