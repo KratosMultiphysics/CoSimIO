@@ -43,6 +43,21 @@ static Connection& GetConnection(const std::string& rConnectionName)
     return *s_co_sim_connections.at(rConnectionName);
 }
 
+inline void CheckName(const std::string& rName, const std::string& rKey)
+{
+    // the names are internally used e.g. for the folder creation and other things
+    // hence they are a little bit restricted to avoid unfortunate failures in rare cases
+
+    const std::size_t max_allowed_size = 1000;
+    CO_SIM_IO_ERROR_IF(rName.empty()) << "Using an empty entry for \"" << rKey << "\" is not allowed!" << std::endl;
+    CO_SIM_IO_ERROR_IF(rName.length() > max_allowed_size) << "Entry for \"" << rKey << "\" is too long! Maximum allowed length: " << max_allowed_size << " characters!" << std::endl;
+
+    const char disallowed_chars[] = {'.', ',', ':', ';', '>', '<', '/', '\'', '|', '*', '!', '"', ' '};
+    for (const auto ch : disallowed_chars) {
+        CO_SIM_IO_ERROR_IF_NOT(rName.find(ch) == std::string::npos) << "Entry for \"" << rKey << "\" contains a character that is not allowed: \"" << std::string(1,ch) << "\"!" << std::endl;
+    }
+}
+
 } // namespace Internals
 
 inline Info Hello()
@@ -71,6 +86,10 @@ inline Info Connect(const Info& I_Settings)
     using namespace Internals;
     const std::string my_name = I_Settings.Get<std::string>("my_name");
     const std::string connect_to = I_Settings.Get<std::string>("connect_to");
+
+    // perform some checks
+    CheckName(my_name, "my_name");
+    CheckName(connect_to, "connect_to");
     CO_SIM_IO_ERROR_IF(my_name == connect_to) << "Connecting to self is not allowed!" << std::endl;
 
     const std::string connection_name = CreateConnectionName(my_name, connect_to);
