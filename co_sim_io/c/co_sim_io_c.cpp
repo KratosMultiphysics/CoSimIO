@@ -259,12 +259,12 @@ const char* CoSimIO_ModelPart_Name(CoSimIO_ModelPart I_ModelPart)
 
 int CoSimIO_ModelPart_NumberOfNodes(CoSimIO_ModelPart I_ModelPart)
 {
-    return static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->NumberOfNodes();
+    return static_cast<int>(static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->NumberOfNodes());
 }
 
 int CoSimIO_ModelPart_NumberOfElements(CoSimIO_ModelPart I_ModelPart)
 {
-    return static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->NumberOfElements();
+    return static_cast<int>(static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->NumberOfElements());
 }
 
 
