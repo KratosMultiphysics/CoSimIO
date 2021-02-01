@@ -188,6 +188,8 @@ private:
     Info ImportInfoImpl(const Info& I_Info) override
     {
         const std::string identifier = I_Info.Get<std::string>("identifier");
+        CheckEntry(identifier, "identifier");
+
         const std::string file_name(GetFullPath("CoSimIO_info_" + GetConnectionName() + "_" + identifier + ".dat"));
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import Info in file \"" << file_name << "\" ..." << std::endl;
@@ -211,6 +213,8 @@ private:
     Info ExportInfoImpl(const Info& I_Info) override
     {
         const std::string identifier = I_Info.Get<std::string>("identifier");
+        CheckEntry(identifier, "identifier");
+
         const std::string file_name(GetFullPath("CoSimIO_info_" + GetConnectionName() + "_" + identifier + ".dat"));
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export Info in file \"" << file_name << "\" ..." << std::endl;
@@ -236,6 +240,8 @@ private:
         Internals::DataContainer<double>& rData) override
     {
         const std::string identifier = I_Info.Get<std::string>("identifier");
+        CheckEntry(identifier, "identifier");
+
         const std::string file_name(GetFullPath("CoSimIO_data_" + GetConnectionName() + "_" + identifier + ".dat"));
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import array \"" << identifier << "\" in file \"" << file_name << "\" ..." << std::endl;
@@ -273,6 +279,8 @@ private:
         const Internals::DataContainer<double>& rData) override
     {
         const std::string identifier = I_Info.Get<std::string>("identifier");
+        CheckEntry(identifier, "identifier");
+
         const std::string file_name(GetFullPath("CoSimIO_data_" + GetConnectionName() + "_" + identifier + ".dat"));
 
         WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
@@ -311,6 +319,8 @@ private:
         ModelPart& O_ModelPart) override
     {
         const std::string identifier = I_Info.Get<std::string>("identifier");
+        CheckEntry(identifier, "identifier");
+
         const std::string file_name(GetFullPath("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + ".vtk"));
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import mesh \"" << identifier << "\" in file \"" << file_name << "\" ..." << std::endl;
@@ -427,6 +437,8 @@ private:
         const ModelPart& I_ModelPart) override
     {
         const std::string identifier = I_Info.Get<std::string>("identifier");
+        CheckEntry(identifier, "identifier");
+
         const std::string file_name(GetFullPath("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + ".vtk"));
 
         WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
