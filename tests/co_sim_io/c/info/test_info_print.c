@@ -12,22 +12,23 @@
 
 // Project includes
 #include "c/co_sim_io_c.h"
+#include <string.h>
 
-#include "checks.h"
+#include "../checks.h"
 
 int main()
 {
     CoSimIO_Info info = CoSimIO_CreateInfo();
 
-    COSIMIO_CHECK_INT_EQUAL(CoSimIO_Info_Size(info), 0);
-
     CoSimIO_Info_SetInt(info, "echo_level", 6);
-    CoSimIO_Info_SetString(info, "iter", "15");
-    CoSimIO_Info_SetInt(info, "error_code", 0);
-    CoSimIO_Info_SetBool(info, "is_converged", 1);
-    CoSimIO_Info_SetDouble(info, "tolerance", 0.00331);
 
-    COSIMIO_CHECK_INT_EQUAL(CoSimIO_Info_Size(info), 5);
+    char buffer[BUFSIZ];
+    setbuf(stdout, buffer);
+
+    // CoSimIO_PrintInfo(stdout, info);
+
+    // int comparison = strcmp(buffer, "CoSimIO-Info; containing 1 entries\n  name: echo_level | value: 6 | type: int\n\n");
+    // COSIMIO_CHECK_INT_EQUAL(comparison,0);
 
     CoSimIO_FreeInfo(info);
 

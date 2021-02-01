@@ -59,7 +59,7 @@ if(BUILD_C)
         install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_c")
     endfunction()
 
-    file(GLOB c_test_files "co_sim_io/c/*.c")
+    file(GLOB_RECURSE c_test_files "co_sim_io/c/*.c")
 
     foreach(c_test_file ${c_test_files})
     add_c_test(${c_test_file})
