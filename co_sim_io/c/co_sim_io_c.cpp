@@ -285,6 +285,30 @@ double CoSimIO_Node_Z(CoSimIO_Node I_Node)
     return static_cast<CoSimIO::Node*>(I_Node.PtrCppNode)->Z();
 }
 
+double CoSimIO_Node_Coordinate(CoSimIO_Node I_Node, const int I_Index)
+{
+    // add debug error if I_Index is out of bound (admissible values: 0,1,2)
+    return static_cast<CoSimIO::Node*>(I_Node.PtrCppNode)->Coordinates()[I_Index];
+}
+
+
+CoSimIO_Node CoSimIO_ModelPart_GetNodeByIndex(CoSimIO_ModelPart I_ModelPart, const int I_Index)
+{
+    CoSimIO::Node& cpp_node = **(static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->NodesBegin()+I_Index);
+    CoSimIO_Node node;
+    node.PtrCppNode = &cpp_node;
+    return node;
+}
+
+CoSimIO_Node CoSimIO_ModelPart_GetNodeById(CoSimIO_ModelPart I_ModelPart, const int I_Id)
+{
+    CoSimIO::Node& cpp_node = static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->GetNode(I_Id);
+    CoSimIO_Node node;
+    node.PtrCppNode = &cpp_node;
+    return node;
+}
+
+
 
 int CoSimIO_FreeModelPart(CoSimIO_ModelPart I_ModelPart)
 {
