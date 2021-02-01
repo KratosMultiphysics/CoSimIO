@@ -68,8 +68,7 @@ double CoSimIO_Node_Coordinate(CoSimIO_Node I_Node, const int I_Index);
 int CoSimIO_Element_Id(CoSimIO_Element I_Element);
 CoSimIO_ElementType CoSimIO_Element_Type(CoSimIO_Element I_Element);
 int CoSimIO_Element_NumberOfNodes(CoSimIO_Element I_Element);
-CoSimIO_Node CoSimIO_Element_GetNodeByIndex(CoSimIO_ModelPart I_ModelPart, const int I_Index);
-CoSimIO_Node CoSimIO_Element_GetNodeById(CoSimIO_ModelPart I_ModelPart, const int I_Id);
+CoSimIO_Node CoSimIO_Element_GetNodeByIndex(CoSimIO_Element I_Element, const int I_Index);
 
 // ModelPart functions
 CoSimIO_ModelPart CoSimIO_CreateModelPart(const char* I_Name);

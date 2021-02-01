@@ -343,6 +343,47 @@ CoSimIO_Node CoSimIO_ModelPart_GetNodeById(CoSimIO_ModelPart I_ModelPart, const 
 }
 
 
+int CoSimIO_Element_Id(CoSimIO_Element I_Element)
+{
+    return static_cast<int>(static_cast<CoSimIO::Element*>(I_Element.PtrCppElement)->Id());
+}
+
+CoSimIO_ElementType CoSimIO_Element_Type(CoSimIO_Element I_Element)
+{
+    return static_cast<CoSimIO_ElementType>(static_cast<CoSimIO::Element*>(I_Element.PtrCppElement)->Type());
+}
+
+int CoSimIO_Element_NumberOfNodes(CoSimIO_Element I_Element)
+{
+    return static_cast<int>(static_cast<CoSimIO::Element*>(I_Element.PtrCppElement)->NumberOfNodes());
+}
+
+CoSimIO_Node CoSimIO_Element_GetNodeByIndex(CoSimIO_Element I_Element, const int I_Index)
+{
+    CoSimIO::Node& cpp_node = **(static_cast<CoSimIO::Element*>(I_Element.PtrCppElement)->NodesBegin()+I_Index);
+    CoSimIO_Node node;
+    node.PtrCppNode = &cpp_node;
+    return node;
+}
+
+
+
+CoSimIO_Element CoSimIO_ModelPart_GetElementByIndex(CoSimIO_ModelPart I_ModelPart, const int I_Index)
+{
+    CoSimIO::Element& cpp_elem = **(static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->ElementsBegin()+I_Index);
+    CoSimIO_Element elem;
+    elem.PtrCppElement = &cpp_elem;
+    return elem;
+}
+
+CoSimIO_Element CoSimIO_ModelPart_GetElementById(CoSimIO_ModelPart I_ModelPart, const int I_Id)
+{
+    CoSimIO::Element& cpp_elem = static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->GetElement(I_Id);
+    CoSimIO_Element elem;
+    elem.PtrCppElement = &cpp_elem;
+    return elem;
+}
+
 
 int CoSimIO_FreeModelPart(CoSimIO_ModelPart I_ModelPart)
 {
