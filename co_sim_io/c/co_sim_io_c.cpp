@@ -173,6 +173,13 @@ CoSimIO_Info CoSimIO_CreateInfo()
     return info;
 }
 
+CoSimIO_Info CoSimIO_CopyInfo(const CoSimIO_Info I_Info)
+{
+    CoSimIO_Info info;
+    info.PtrCppInfo = new CoSimIO::Info(*static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)); // calling C++ copy constructor
+    return info;
+}
+
 int CoSimIO_FreeInfo(CoSimIO_Info I_Info)
 {
     delete static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo);
