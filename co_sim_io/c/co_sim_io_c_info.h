@@ -22,6 +22,8 @@ typedef struct CoSimIO_Info
 
 CoSimIO_Info CoSimIO_CreateInfo();
 
+CoSimIO_Info CoSimIO_CopyInfo(const CoSimIO_Info I_Info);
+
 int CoSimIO_FreeInfo(CoSimIO_Info I_Info);
 
 int CoSimIO_Info_Has(const CoSimIO_Info I_Info, const char* I_Key);
