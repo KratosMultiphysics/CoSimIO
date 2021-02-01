@@ -251,6 +251,23 @@ CoSimIO_ModelPart CoSimIO_CreateModelPart(const char* I_Name)
     return model_part;
 }
 
+
+const char* CoSimIO_ModelPart_Name(CoSimIO_ModelPart I_ModelPart)
+{
+    return static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->Name().c_str();
+}
+
+int CoSimIO_ModelPart_NumberOfNodes(CoSimIO_ModelPart I_ModelPart)
+{
+    return static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->NumberOfNodes();
+}
+
+int CoSimIO_ModelPart_NumberOfElements(CoSimIO_ModelPart I_ModelPart)
+{
+    return static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->NumberOfElements();
+}
+
+
 CoSimIO_Node CoSimIO_ModelPart_CreateNewNode(
     CoSimIO_ModelPart I_ModelPart,
     const int I_Id,
@@ -262,6 +279,23 @@ CoSimIO_Node CoSimIO_ModelPart_CreateNewNode(
     CoSimIO_Node node;
     node.PtrCppNode = &cpp_node;
     return node;
+}
+
+CoSimIO_Element CoSimIO_ModelPart_CreateNewElement(
+    CoSimIO_ModelPart I_ModelPart,
+    const int I_Id,
+    const CoSimIO_ElementType I_Type,
+    const int* I_Connectivities)
+{
+    const CoSimIO::ElementType cpp_element_type = static_cast<CoSimIO::ElementType>(I_Type);
+    const std::size_t num_nodes = CoSimIO::Internals::GetNumberOfNodesForElementType(cpp_element_type);
+    // convert the C-connectivities to C++ connectivities
+    CoSimIO::ConnectivitiesType connectivities(I_Connectivities, I_Connectivities+num_nodes);
+
+    CoSimIO::Element& cpp_elem = static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->CreateNewElement(I_Id, cpp_element_type, connectivities);
+    CoSimIO_Element elem;
+    elem.PtrCppElement = &cpp_elem;
+    return elem;
 }
 
 
