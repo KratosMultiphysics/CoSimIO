@@ -238,7 +238,7 @@ inline Info ExportInfo(
 inline Info Run(const Info& I_Info)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    return Internals::GetConnection(connection_name).Run();
+    return Internals::GetConnection(connection_name).Run(I_Info);
 }
 
 

@@ -72,8 +72,6 @@ public:
     {
         CO_SIM_IO_INFO("CoSimIO") << "Registering function for: " << rFunctionName << std::endl;
 
-        CO_SIM_IO_ERROR_IF(mIsConnectionMaster) << "This function can only be called as the Connection-Slave!" << std::endl;
-
         CheckIfFunctionNameIsValid(rFunctionName);
 
         CO_SIM_IO_ERROR_IF((mRegisteredFunctions.count(rFunctionName)>0)) << "A function was already registered for " << rFunctionName << "!" << std::endl;
@@ -82,10 +80,9 @@ public:
         return Info(); // TODO use this
     }
 
-    Info Run()
+    Info Run(const Info& I_Info)
     {
         CO_SIM_IO_ERROR << "This function is currently not working!!!" << std::endl;
-        CO_SIM_IO_ERROR_IF(mIsConnectionMaster) << "This function can only be called as the Connection-Slave!" << std::endl;
 
         // CoSimIO::ControlSignal control_signal;
         // std::string identifier;
@@ -143,8 +140,6 @@ public:
 
 private:
     std::unique_ptr<Communication> mpComm; // handles communication (File, Sockets, MPI, ...)
-
-    bool mIsConnectionMaster = false;
 
     std::unordered_map<std::string, FunctionPointerType> mRegisteredFunctions;
 
