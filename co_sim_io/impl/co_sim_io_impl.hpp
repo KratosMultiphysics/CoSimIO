@@ -71,6 +71,10 @@ inline Info Connect(const Info& I_Settings)
     using namespace Internals;
     const std::string my_name = I_Settings.Get<std::string>("my_name");
     const std::string connect_to = I_Settings.Get<std::string>("connect_to");
+
+    // perform some checks
+    CheckEntry(my_name, "my_name");
+    CheckEntry(connect_to, "connect_to");
     CO_SIM_IO_ERROR_IF(my_name == connect_to) << "Connecting to self is not allowed!" << std::endl;
 
     const std::string connection_name = CreateConnectionName(my_name, connect_to);
