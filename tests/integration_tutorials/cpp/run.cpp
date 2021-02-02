@@ -10,7 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-// CoSimulation includes
+// Project includes
 #include "co_sim_io.hpp"
 
 #define COSIMIO_CHECK_EQUAL(a, b)                                \
@@ -169,6 +169,8 @@ int main()
     fct_info.Set("function_name", "ExportMesh");
     CoSimIO::Register(fct_info,   &ExportMesh);
 
+    // running the simulation
+    // externally orchestrated
     CoSimIO::Info run_info;
     run_info.Set("connection_name", s_connection_name);
     CoSimIO::Run(run_info);
