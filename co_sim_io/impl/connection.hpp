@@ -82,24 +82,23 @@ public:
 
     Info Run(const Info& I_Info)
     {
-        CO_SIM_IO_ERROR << "This function is currently not working!!!" << std::endl;
+        CoSimIO::Info ctrl_info;
+        ctrl_info.Set("identifier", "run_control");
 
-        // CoSimIO::ControlSignal control_signal;
-        // std::string identifier;
-        // while(true) {
-        //     // TODO replace with ImportInfo
-        //     // control_signal = RecvControlSignal(identifier);
-        //     //TODO check if received signal is valid
-        //     if (control_signal == CoSimIO::ControlSignal::BreakSolutionLoop) {
-        //         break; // coupled simulation is done
-        //     } else {
-        //         const std::string function_name(ControlSignalName(control_signal));
-        //         CO_SIM_IO_ERROR_IF_NOT((mRegisteredFunctions.count(function_name)>0)) << "No function was registered for \"" << function_name << "\"!" << std::endl;
-        //         Info info;
-        //         mRegisteredFunctions.at(function_name)(info);
-        //     }
-        // }
-        // return Info(); // TODO use this
+        while(true) {
+            auto info = ImportInfo(ctrl_info);
+            const std::string control_signal = info.Get<std::string>("control_signal");
+            CheckIfFunctionNameIsValid(control_signal);
+            if (control_signal == "end") {
+                break;
+            } else {
+                // TODO use find
+                CO_SIM_IO_ERROR_IF_NOT((mRegisteredFunctions.count(control_signal)>0)) << "No function was registered for \"" << control_signal << "\"!" << std::endl; // TODO print registered functions!(and "end")
+                Info info;
+                mRegisteredFunctions.at(control_signal)(info);
+            }
+        }
+        return Info(); // TODO use this
     }
 
 
