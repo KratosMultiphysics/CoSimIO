@@ -29,7 +29,7 @@ int ControlOtherCode(const std::string& I_FunctionName)
     ctrl_info.Set("connection_name", s_connection_name);
     ctrl_info.Set("identifier", "run_control");
 
-    ctrl_info.Set("function_name", I_FunctionName);
+    ctrl_info.Set("control_signal", I_FunctionName);
     CoSimIO::ExportInfo(ctrl_info); // here we tell the other code which function to call
 
     // this is for testing to make sure the function
@@ -57,33 +57,33 @@ int main()
     // we tell the other code what to do
 
     // initial mesh exchange
-    COSIMIO_CHECK_EQUAL(ControlOtherCode("ExportMesh"),0);
-    COSIMIO_CHECK_EQUAL(ControlOtherCode("ImportMesh"),0);
-    COSIMIO_CHECK_EQUAL(ControlOtherCode("ExportMesh"),0);
-    COSIMIO_CHECK_EQUAL(ControlOtherCode("ImportMesh"),0);
+    COSIMIO_CHECK_EQUAL(ControlOtherCode("ExportMesh"),1);
+    COSIMIO_CHECK_EQUAL(ControlOtherCode("ImportMesh"),1);
+    COSIMIO_CHECK_EQUAL(ControlOtherCode("ExportMesh"),1);
+    COSIMIO_CHECK_EQUAL(ControlOtherCode("ImportMesh"),1);
 
     // "solution loop"
     const std::size_t num_time_steps = 5;
     const std::size_t inner_iterations = 3;
     for (std::size_t i=0; i<num_time_steps; ++i) {
-        COSIMIO_CHECK_EQUAL(ControlOtherCode("AdvanceInTime"),0);
-        COSIMIO_CHECK_EQUAL(ControlOtherCode("InitializeSolutionStep"),0);
-        COSIMIO_CHECK_EQUAL(ControlOtherCode("Predict"),0);
+        COSIMIO_CHECK_EQUAL(ControlOtherCode("AdvanceInTime"),1);
+        COSIMIO_CHECK_EQUAL(ControlOtherCode("InitializeSolutionStep"),1);
+        COSIMIO_CHECK_EQUAL(ControlOtherCode("Predict"),1);
         for (std::size_t j=0; j<inner_iterations; ++j) {
-            COSIMIO_CHECK_EQUAL(ControlOtherCode("ImportData"),0);
-            COSIMIO_CHECK_EQUAL(ControlOtherCode("ImportData"),0);
-            COSIMIO_CHECK_EQUAL(ControlOtherCode("SolveSolutionStep"),0);
-            COSIMIO_CHECK_EQUAL(ControlOtherCode("ExportData"),0);
+            COSIMIO_CHECK_EQUAL(ControlOtherCode("ImportData"),1);
+            COSIMIO_CHECK_EQUAL(ControlOtherCode("ImportData"),1);
+            COSIMIO_CHECK_EQUAL(ControlOtherCode("SolveSolutionStep"),1);
+            COSIMIO_CHECK_EQUAL(ControlOtherCode("ExportData"),1);
         }
-        COSIMIO_CHECK_EQUAL(ControlOtherCode("FinalizeSolutionStep"),0);
-        COSIMIO_CHECK_EQUAL(ControlOtherCode("OutputSolutionStep"),0);
+        COSIMIO_CHECK_EQUAL(ControlOtherCode("FinalizeSolutionStep"),1);
+        COSIMIO_CHECK_EQUAL(ControlOtherCode("OutputSolutionStep"),1);
     }
 
     CoSimIO::Info ctrl_info;
     ctrl_info.Set("connection_name", s_connection_name);
     ctrl_info.Set("identifier", "run_control");
 
-    ctrl_info.Set("function_name", "end"); // TODO improve
+    ctrl_info.Set("control_signal", "end"); // TODO improve
     CoSimIO::ExportInfo(ctrl_info); // here we tell the other code which function to call
 
     CoSimIO::Info disconnect_settings;
