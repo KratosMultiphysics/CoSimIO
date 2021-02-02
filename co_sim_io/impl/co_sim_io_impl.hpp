@@ -249,15 +249,9 @@ inline Info Register(
 {
     using namespace CoSimIO::Internals;
 
-    auto fct_callback = [I_FunctionPointer](const Info& I_Info)
-    {
-        Info info = I_FunctionPointer(I_Info);
-        return info;
-    };
-
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
     const std::string function_name = I_Info.Get<std::string>("function_name");
-    Internals::GetConnection(connection_name).Register(function_name, fct_callback);
+    Internals::GetConnection(connection_name).Register(function_name, I_FunctionPointer);
 
     return Info(); // TODO use this
 }

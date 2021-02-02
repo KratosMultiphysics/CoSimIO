@@ -145,24 +145,21 @@ private:
 
     void Initialize(const Info& I_Settings)
     {
-        std::string comm_format = "file"; // default is file-communication
-        if (I_Settings.Has("communication_format")) { // communication format has been specified
-            comm_format = I_Settings.Get<std::string>("communication_format");
-        }
+        const std::string comm_format = I_Settings.Get<std::string>("communication_format", "file"); // default is file-communication
 
         CO_SIM_IO_INFO("CoSimIO") << "CoSimIO from \"" << I_Settings.Get<std::string>("my_name") << "\" to \"" << I_Settings.Get<std::string>("connect_to") << "\" uses communication format: " << comm_format << std::endl;
 
         if (comm_format == "file") {
-            mpComm = std::unique_ptr<Communication>(new FileCommunication(I_Settings));
+            mpComm = CoSimIO::make_unique<FileCommunication>(I_Settings);
         } else if (comm_format == "sockets") {
             #ifdef CO_SIM_IO_USING_SOCKETS
-            mpComm = std::unique_ptr<Communication>(new SocketsCommunication(I_Settings));
+            mpComm = CoSimIO::make_unique<SocketsCommunication>(I_Settings);
             #else
             CO_SIM_IO_ERROR << "Support for Sockets was not compiled!" << std::endl;
             #endif // CO_SIM_IO_USING_SOCKETS
         } else if (comm_format == "mpi") {
             #ifdef CO_SIM_IO_USING_MPI
-            mpComm = std::unique_ptr<Communication>(new MPICommunication(I_Settings));
+            mpComm = CoSimIO::make_unique<MPICommunication>(I_Settings);
             #else
             CO_SIM_IO_ERROR << "Support for MPI was not compiled!" << std::endl;
             #endif // CO_SIM_IO_USING_MPI
@@ -171,7 +168,7 @@ private:
         }
     }
 
-    void CheckIfFunctionNameIsValid(const std::string rFunctionName) const
+    void CheckIfFunctionNameIsValid(const std::string& rFunctionName) const
     {
         // could use set but that would require another include just for this
         const static std::vector<std::string> allowed_function_names {
@@ -188,27 +185,6 @@ private:
         };
 
         CO_SIM_IO_ERROR_IF(std::find(allowed_function_names.begin(), allowed_function_names.end(), rFunctionName) == allowed_function_names.end()) << "The function name \"" << rFunctionName << "\" is not allowed!\nOnly the following names are allowed:\n"; // TODO print the names
-    }
-
-    std::string ControlSignalName(const ControlSignal Signal) const
-    {
-        switch (Signal) {
-            // first two should not be needed here, this is intended to be used in "Run"
-            // case ControlSignal::Dummy:                  return "Dummy";
-            // case ControlSignal::ConvergenceAchieved:    return "ConvergenceAchieved";
-            case ControlSignal::BreakSolutionLoop:      return "BreakSolutionLoop";
-            case ControlSignal::AdvanceInTime:          return "AdvanceInTime";
-            case ControlSignal::InitializeSolutionStep: return "InitializeSolutionStep";
-            case ControlSignal::Predict:                return "Predict";
-            case ControlSignal::SolveSolutionStep:      return "SolveSolutionStep";
-            case ControlSignal::FinalizeSolutionStep:   return "FinalizeSolutionStep";
-            case ControlSignal::OutputSolutionStep:     return "OutputSolutionStep";
-            case ControlSignal::ImportMesh:             return "ImportMesh";
-            case ControlSignal::ExportMesh:             return "ExportMesh";
-            case ControlSignal::ImportData:             return "ImportData";
-            case ControlSignal::ExportData:             return "ExportData";
-            default: CO_SIM_IO_ERROR << "Signal is unknown: " << static_cast<int>(Signal); return "";
-        }
     }
 
 }; // class Connection
