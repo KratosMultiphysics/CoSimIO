@@ -158,10 +158,10 @@ int main()
     CoSimIO::Register(fct_info,   &OutputSolutionStep);
 
     fct_info.Set("function_name", "ImportData");
-    CoSimIO::Register(fct_info,   &ImportMesh);
+    CoSimIO::Register(fct_info,   &ImportData);
 
     fct_info.Set("function_name", "ExportData");
-    CoSimIO::Register(fct_info,   &ExportMesh);
+    CoSimIO::Register(fct_info,   &ExportData);
 
     fct_info.Set("function_name", "ImportMesh");
     CoSimIO::Register(fct_info,   &ImportMesh);
