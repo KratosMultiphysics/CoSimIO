@@ -718,7 +718,7 @@ private:
     {
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: \"" << rPath << "\"" << std::endl;
         while(!PathExists(rPath)) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1)); // wait 0.001s before next check
+            std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
         }
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found: \"" << rPath << "\"" << std::endl;
     }
@@ -728,7 +728,7 @@ private:
         if (PathExists(rPath)) { // only issue the wating message if the file exists initially
             CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: \"" << rPath << "\" to be removed" << std::endl;
             while(PathExists(rPath)) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1)); // wait 0.001s before next check
+                std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
             }
             CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "\"" << rPath << "\" was removed" << std::endl;
         }
