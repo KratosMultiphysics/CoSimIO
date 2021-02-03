@@ -72,7 +72,7 @@ public:
     {
         CO_SIM_IO_INFO("CoSimIO") << "Registering function for: " << rFunctionName << std::endl;
 
-        CheckIfFunctionNameIsValid(rFunctionName);
+        CheckIfNameIsValid(rFunctionName);
 
         CO_SIM_IO_ERROR_IF((mRegisteredFunctions.count(rFunctionName)>0)) << "A function was already registered for " << rFunctionName << "!" << std::endl;
 
@@ -88,14 +88,22 @@ public:
         while(true) {
             auto info = ImportInfo(ctrl_info);
             const std::string control_signal = info.Get<std::string>("control_signal");
-            CheckIfFunctionNameIsValid(control_signal);
+            CheckIfNameIsValid(control_signal);
             if (control_signal == "end") {
                 break;
             } else {
-                // TODO use find
-                CO_SIM_IO_ERROR_IF_NOT((mRegisteredFunctions.count(control_signal)>0)) << "No function was registered for \"" << control_signal << "\"!" << std::endl; // TODO print registered functions!(and "end")
+                auto it_fct = mRegisteredFunctions.find(control_signal);
+                if (it_fct == mRegisteredFunctions.end()) {
+                    std::stringstream err_msg;
+                    err_msg << "Nothing was registered for \"" << control_signal << "\"!\nOnly the following names are currently registered:";
+                    for (const auto& reg : mRegisteredFunctions) {
+                        err_msg << "\n    " << reg.first;
+                    }
+                    err_msg << "\n    end" << std::endl;
+                    CO_SIM_IO_ERROR << err_msg.str();
+                }
                 Info info;
-                mRegisteredFunctions.at(control_signal)(info);
+                it_fct->second(info);
             }
         }
         return Info(); // TODO use this
@@ -167,10 +175,10 @@ private:
         }
     }
 
-    void CheckIfFunctionNameIsValid(const std::string& rFunctionName) const
+    void CheckIfNameIsValid(const std::string& rName) const
     {
         // could use set but that would require another include just for this
-        const static std::vector<std::string> allowed_function_names {
+        const static std::vector<std::string> allowed_names {
             "AdvanceInTime",
             "InitializeSolutionStep",
             "Predict",
@@ -184,7 +192,15 @@ private:
             "end"
         };
 
-        CO_SIM_IO_ERROR_IF(std::find(allowed_function_names.begin(), allowed_function_names.end(), rFunctionName) == allowed_function_names.end()) << "The function name \"" << rFunctionName << "\" is not allowed!\nOnly the following names are allowed:\n"; // TODO print the names
+        if (std::find(allowed_names.begin(), allowed_names.end(), rName) == allowed_names.end()) {
+            std::stringstream err_msg;
+            err_msg << "The name \"" << rName << "\" is not allowed!\nOnly the following names are allowed:";
+            for (const auto& name : allowed_names) {
+                err_msg << "\n    " << name;
+            }
+            err_msg << std::endl;
+            CO_SIM_IO_ERROR << err_msg.str();
+        }
     }
 
 }; // class Connection
