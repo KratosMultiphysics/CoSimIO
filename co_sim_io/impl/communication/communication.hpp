@@ -99,20 +99,6 @@ public:
         }
     }
 
-    /*[[deprecated]]*/ bool Connect()
-    {
-        Info temp_info;
-        this->Connect(temp_info);
-        return mIsConnected;
-    }
-
-    /*[[deprecated]]*/ bool Disconnect()
-    {
-        Info temp_info;
-        this->Disconnect(temp_info);
-        return mIsConnected;
-    }
-
     template<class... Args>
     Info ExportInfo(Args&&... args)
     {
