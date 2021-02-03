@@ -50,18 +50,16 @@ public:
         Initialize(I_Settings);
     }
 
-    Info Connect()
+    Info Connect(const Info& I_Info)
     {
-        /*const bool is_connected = */mpComm->Connect();
-        Info info; // TODO in the future probably it makes more sense that the mpComm can directly return the Info to potentionally populate it e.g. with error codes
+        Info info = mpComm->Connect(I_Info);
         info.Set<int>("connection_status", ConnectionStatus::Connected);
         return info;
     }
 
-    Info Disconnect()
+    Info Disconnect(const Info& I_Info)
     {
-        /*const bool is_disconnected = */mpComm->Disconnect();
-        Info info; // TODO in the future probably it makes more sense that the mpComm can directly return the Info to potentionally populate it e.g. with error codes
+        Info info = mpComm->Disconnect(I_Info);
         info.Set<int>("connection_status", ConnectionStatus::Disconnected);
         return info;
     }
@@ -82,7 +80,7 @@ public:
         return Info(); // TODO use this
     }
 
-    Info Run()
+    Info Run(const Info& I_Info)
     {
         CO_SIM_IO_ERROR << "This function is currently not working!!!" << std::endl;
         CO_SIM_IO_ERROR_IF(mIsConnectionMaster) << "This function can only be called as the Connection-Slave!" << std::endl;
@@ -102,7 +100,7 @@ public:
         //         mRegisteredFunctions.at(function_name)(info);
         //     }
         // }
-        // return Info(); // TODO use this
+        return Info(); // TODO use this
     }
 
 
