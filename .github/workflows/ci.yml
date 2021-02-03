@@ -108,8 +108,7 @@ jobs:
       shell: cmd
       run: |
         set PATH=%PATH%;%GITHUB_WORKSPACE%/bin
-        cd bin
-        Debug\co_sim_io_tests.exe "--test-case=Communication<FileCommunication>"
+        D:\a\CoSimIO\CoSimIO\build\tests\Debug\co_sim_io_tests.exe "--test-case=Communication<FileCommunication>"
 
     - name: Running tests (Python)
       env:
