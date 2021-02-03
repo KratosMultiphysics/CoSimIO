@@ -50,18 +50,16 @@ public:
         Initialize(I_Settings);
     }
 
-    Info Connect()
+    Info Connect(const Info& I_Info)
     {
-        /*const bool is_connected = */mpComm->Connect();
-        Info info; // TODO in the future probably it makes more sense that the mpComm can directly return the Info to potentionally populate it e.g. with error codes
+        Info info = mpComm->Connect(I_Info);
         info.Set<int>("connection_status", ConnectionStatus::Connected);
         return info;
     }
 
-    Info Disconnect()
+    Info Disconnect(const Info& I_Info)
     {
-        /*const bool is_disconnected = */mpComm->Disconnect();
-        Info info; // TODO in the future probably it makes more sense that the mpComm can directly return the Info to potentionally populate it e.g. with error codes
+        Info info = mpComm->Disconnect(I_Info);
         info.Set<int>("connection_status", ConnectionStatus::Disconnected);
         return info;
     }

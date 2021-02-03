@@ -83,7 +83,7 @@ inline Info Connect(const Info& I_Settings)
 
     s_co_sim_connections[connection_name] = std::unique_ptr<Connection>(new Connection(I_Settings));
 
-    auto info = GetConnection(connection_name).Connect();
+    auto info = GetConnection(connection_name).Connect(I_Settings);
     info.Set<std::string>("connection_name", connection_name);
 
     return info;
@@ -95,7 +95,7 @@ inline Info Disconnect(const Info& I_Info)
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
     CO_SIM_IO_ERROR_IF_NOT(HasIO(connection_name)) << "Trying to disconnect connection \"" << connection_name << "\" which does not exist!" << std::endl;
 
-    auto info = GetConnection(connection_name).Disconnect();
+    auto info = GetConnection(connection_name).Disconnect(I_Info);
     s_co_sim_connections.erase(connection_name);
 
     return info;
