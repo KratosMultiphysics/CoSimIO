@@ -148,24 +148,21 @@ private:
 
     void Initialize(const Info& I_Settings)
     {
-        std::string comm_format = "file"; // default is file-communication
-        if (I_Settings.Has("communication_format")) { // communication format has been specified
-            comm_format = I_Settings.Get<std::string>("communication_format");
-        }
+        const std::string comm_format = I_Settings.Get<std::string>("communication_format", "file"); // default is file-communication
 
         CO_SIM_IO_INFO("CoSimIO") << "CoSimIO from \"" << I_Settings.Get<std::string>("my_name") << "\" to \"" << I_Settings.Get<std::string>("connect_to") << "\" uses communication format: " << comm_format << std::endl;
 
         if (comm_format == "file") {
-            mpComm = std::unique_ptr<Communication>(new FileCommunication(I_Settings));
+            mpComm = CoSimIO::make_unique<FileCommunication>(I_Settings);
         } else if (comm_format == "sockets") {
             #ifdef CO_SIM_IO_USING_SOCKETS
-            mpComm = std::unique_ptr<Communication>(new SocketsCommunication(I_Settings));
+            mpComm = CoSimIO::make_unique<SocketsCommunication>(I_Settings);
             #else
             CO_SIM_IO_ERROR << "Support for Sockets was not compiled!" << std::endl;
             #endif // CO_SIM_IO_USING_SOCKETS
         } else if (comm_format == "mpi") {
             #ifdef CO_SIM_IO_USING_MPI
-            mpComm = std::unique_ptr<Communication>(new MPICommunication(I_Settings));
+            mpComm = CoSimIO::make_unique<MPICommunication>(I_Settings);
             #else
             CO_SIM_IO_ERROR << "Support for MPI was not compiled!" << std::endl;
             #endif // CO_SIM_IO_USING_MPI
