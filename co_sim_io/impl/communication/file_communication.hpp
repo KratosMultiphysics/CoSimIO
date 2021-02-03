@@ -50,9 +50,8 @@ static bool FolderExists(const fs::path& rFolderName)
 
 static void RemoveFile(const std::string& rFileName)
 {
-    // TODO probably better to turn into error
     if (std::remove(rFileName.c_str()) != 0) {
-        CO_SIM_IO_INFO("CoSimIO") << "Warning: \"" << rFileName << "\" could not be deleted!" << std::endl;
+        CO_SIM_IO_ERROR << "\"" << rFileName << "\" could not be deleted!" << std::endl;
     }
 }
 
