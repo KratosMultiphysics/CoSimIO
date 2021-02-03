@@ -42,14 +42,6 @@ static bool PathExists(const fs::path& rPath)
     return fs::exists(rPath);
 }
 
-static void RemovePath(const fs::path& rPath)
-{
-    std::error_code ec;
-    if (!fs::remove(rPath, ec)) {
-        CO_SIM_IO_ERROR << "\"" << rPath << "\" could not be deleted!\nError code: " << ec.message() << std::endl;
-    }
-}
-
 template <typename T>
 static void CheckStream(const T& rStream, const fs::path& rPath)
 {
@@ -748,6 +740,27 @@ private:
         fs::rename(GetTempFileName(rPath), rPath, ec);
         if (ec) {
             CO_SIM_IO_ERROR << "\"" << rPath << "\" could not be made visible!\nError code: " << ec.message() << std::endl;
+        }
+    }
+
+    void HideFile(const fs::path& rPath) const
+    {
+        std::error_code ec;
+        fs::rename(rPath, GetTempFileName(rPath), ec);
+        if (ec) {
+            CO_SIM_IO_ERROR << "\"" << rPath << "\" could not be made visible!\nError code: " << ec.message() << std::endl;
+        }
+    }
+
+    void RemovePath(const fs::path& rPath) const
+    {
+        // rename aka hide first and then remove?
+        // => this should fix the issue in case another process tries to write to a (new) file while this one is being deleted
+        // afair the rename is "atomic" aka can only be done by one process at the same time (ensured by OS)
+        std::error_code ec;
+        HideFile(rPath);
+        if (!fs::remove(GetTempFileName(rPath), ec)) {
+            CO_SIM_IO_ERROR << "\"" << rPath << "\" could not be deleted!\nError code: " << ec.message() << std::endl;
         }
     }
 
