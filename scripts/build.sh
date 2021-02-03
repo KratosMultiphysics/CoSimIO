@@ -9,4 +9,4 @@ cmake -H"." -B"build" \
     -DENABLE_SOCKETS=OFF \
     -DENABLE_MPI=OFF \
     -DCMAKE_BUILD_TYPE=Debug
-cmake --build "build" --target install -- -j10
+cmake --build "build" --target install -- -j$(nproc)
