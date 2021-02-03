@@ -42,14 +42,6 @@ static bool PathExists(const fs::path& rPath)
     return fs::exists(rPath);
 }
 
-static void RemovePath(const fs::path& rPath)
-{
-    std::error_code ec;
-    if (!fs::remove(rPath, ec)) {
-        CO_SIM_IO_ERROR << "\"" << rPath << "\" could not be deleted!\nError code: " << ec.message() << std::endl;
-    }
-}
-
 template <typename T>
 static void CheckStream(const T& rStream, const fs::path& rPath)
 {
@@ -726,7 +718,7 @@ private:
     {
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: \"" << rPath << "\"" << std::endl;
         while(!PathExists(rPath)) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1)); // wait 0.001s before next check
+            std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
         }
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found: \"" << rPath << "\"" << std::endl;
     }
@@ -736,7 +728,7 @@ private:
         if (PathExists(rPath)) { // only issue the wating message if the file exists initially
             CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: \"" << rPath << "\" to be removed" << std::endl;
             while(PathExists(rPath)) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1)); // wait 0.001s before next check
+                std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
             }
             CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "\"" << rPath << "\" was removed" << std::endl;
         }
@@ -748,6 +740,27 @@ private:
         fs::rename(GetTempFileName(rPath), rPath, ec);
         if (ec) {
             CO_SIM_IO_ERROR << "\"" << rPath << "\" could not be made visible!\nError code: " << ec.message() << std::endl;
+        }
+    }
+
+    void HideFile(const fs::path& rPath) const
+    {
+        std::error_code ec;
+        fs::rename(rPath, GetTempFileName(rPath), ec);
+        if (ec) {
+            CO_SIM_IO_ERROR << "\"" << rPath << "\" could not be made visible!\nError code: " << ec.message() << std::endl;
+        }
+    }
+
+    void RemovePath(const fs::path& rPath) const
+    {
+        // rename aka hide first and then remove?
+        // => this should fix the issue in case another process tries to write to a (new) file while this one is being deleted
+        // afair the rename is "atomic" aka can only be done by one process at the same time (ensured by OS)
+        std::error_code ec;
+        HideFile(rPath);
+        if (!fs::remove(GetTempFileName(rPath), ec)) {
+            CO_SIM_IO_ERROR << "\"" << rPath << "\" could not be deleted!\nError code: " << ec.message() << std::endl;
         }
     }
 
