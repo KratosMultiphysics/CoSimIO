@@ -732,7 +732,6 @@ private:
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for file: \"" << rFileName << "\"" << std::endl;
         while(!FileExists(rFileName)) {
             std::this_thread::sleep_for(std::chrono::milliseconds(1)); // wait 0.001s before next check
-            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>2) << "    Waiting" << std::endl;
         }
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found file: \"" << rFileName << "\"" << std::endl;
     }
@@ -743,7 +742,6 @@ private:
             CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for file: \"" << rFileName << "\" to be removed" << std::endl;
             while(FileExists(rFileName)) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(1)); // wait 0.001s before next check
-                CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>2) << "    Waiting" << std::endl;
             }
             CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "File: \"" << rFileName << "\" was removed" << std::endl;
         }
@@ -752,7 +750,7 @@ private:
     void MakeFileVisible(const std::string& rFinalFileName) const
     {
         if (std::rename(GetTempFileName(rFinalFileName).c_str(), rFinalFileName.c_str()) != 0) {
-            CO_SIM_IO_INFO("CoSimIO") << "Warning: \"" << rFinalFileName << "\" could not be made visible!" << std::endl;
+            CO_SIM_IO_ERROR << "\"" << rFinalFileName << "\" could not be made visible!" << std::endl;
         }
     }
 
@@ -761,7 +759,6 @@ private:
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for folder: \"" << rFolderName << "\"" << std::endl;
         while(!FolderExists(rFolderName)) {
             std::this_thread::sleep_for(std::chrono::milliseconds(1)); // wait 0.001s before next check
-            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>2) << "    Waiting" << std::endl;
         }
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found folder: \"" << rFolderName << "\"" << std::endl;
     }
