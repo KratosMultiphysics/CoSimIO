@@ -180,7 +180,8 @@ private:
             "ImportMesh",
             "ExportMesh",
             "ImportData",
-            "ExportData"
+            "ExportData",
+            "end"
         };
 
         CO_SIM_IO_ERROR_IF(std::find(allowed_function_names.begin(), allowed_function_names.end(), rFunctionName) == allowed_function_names.end()) << "The function name \"" << rFunctionName << "\" is not allowed!\nOnly the following names are allowed:\n"; // TODO print the names
