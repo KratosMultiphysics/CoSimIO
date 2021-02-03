@@ -731,7 +731,7 @@ private:
     {
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for file: \"" << rFileName << "\"" << std::endl;
         while(!FileExists(rFileName)) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(50)); // wait 0.05s before next check
+            std::this_thread::sleep_for(std::chrono::milliseconds(1)); // wait 0.001s before next check
             CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>2) << "    Waiting" << std::endl;
         }
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found file: \"" << rFileName << "\"" << std::endl;
@@ -742,7 +742,7 @@ private:
         if (FileExists(rFileName)) { // only issue the wating message if the file exists initially
             CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for file: \"" << rFileName << "\" to be removed" << std::endl;
             while(FileExists(rFileName)) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(50)); // wait 0.05s before next check
+                std::this_thread::sleep_for(std::chrono::milliseconds(1)); // wait 0.001s before next check
                 CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>2) << "    Waiting" << std::endl;
             }
             CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "File: \"" << rFileName << "\" was removed" << std::endl;
@@ -760,7 +760,7 @@ private:
     {
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for folder: \"" << rFolderName << "\"" << std::endl;
         while(!FolderExists(rFolderName)) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(50)); // wait 0.05s before next check
+            std::this_thread::sleep_for(std::chrono::milliseconds(1)); // wait 0.001s before next check
             CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>2) << "    Waiting" << std::endl;
         }
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found folder: \"" << rFolderName << "\"" << std::endl;
