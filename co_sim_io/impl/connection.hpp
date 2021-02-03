@@ -70,9 +70,7 @@ public:
     {
         CO_SIM_IO_INFO("CoSimIO") << "Registering function for: " << rFunctionName << std::endl;
 
-        CO_SIM_IO_ERROR_IF(mIsConnectionMaster) << "This function can only be called as the Connection-Slave!" << std::endl;
-
-        CheckIfFunctionNameIsValid(rFunctionName);
+        CheckIfNameIsValid(rFunctionName);
 
         CO_SIM_IO_ERROR_IF((mRegisteredFunctions.count(rFunctionName)>0)) << "A function was already registered for " << rFunctionName << "!" << std::endl;
 
@@ -82,24 +80,30 @@ public:
 
     Info Run(const Info& I_Info)
     {
-        CO_SIM_IO_ERROR << "This function is currently not working!!!" << std::endl;
-        CO_SIM_IO_ERROR_IF(mIsConnectionMaster) << "This function can only be called as the Connection-Slave!" << std::endl;
+        CoSimIO::Info ctrl_info;
+        ctrl_info.Set("identifier", "run_control");
 
-        // CoSimIO::ControlSignal control_signal;
-        // std::string identifier;
-        // while(true) {
-        //     // TODO replace with ImportInfo
-        //     // control_signal = RecvControlSignal(identifier);
-        //     //TODO check if received signal is valid
-        //     if (control_signal == CoSimIO::ControlSignal::BreakSolutionLoop) {
-        //         break; // coupled simulation is done
-        //     } else {
-        //         const std::string function_name(ControlSignalName(control_signal));
-        //         CO_SIM_IO_ERROR_IF_NOT((mRegisteredFunctions.count(function_name)>0)) << "No function was registered for \"" << function_name << "\"!" << std::endl;
-        //         Info info;
-        //         mRegisteredFunctions.at(function_name)(info);
-        //     }
-        // }
+        while(true) {
+            auto info = ImportInfo(ctrl_info);
+            const std::string control_signal = info.Get<std::string>("control_signal");
+            CheckIfNameIsValid(control_signal);
+            if (control_signal == "end") {
+                break;
+            } else {
+                auto it_fct = mRegisteredFunctions.find(control_signal);
+                if (it_fct == mRegisteredFunctions.end()) {
+                    std::stringstream err_msg;
+                    err_msg << "Nothing was registered for \"" << control_signal << "\"!\nOnly the following names are currently registered:";
+                    for (const auto& reg : mRegisteredFunctions) {
+                        err_msg << "\n    " << reg.first;
+                    }
+                    err_msg << "\n    end" << std::endl;
+                    CO_SIM_IO_ERROR << err_msg.str();
+                }
+                Info info;
+                it_fct->second(info);
+            }
+        }
         return Info(); // TODO use this
     }
 
@@ -142,8 +146,6 @@ public:
 private:
     std::unique_ptr<Communication> mpComm; // handles communication (File, Sockets, MPI, ...)
 
-    bool mIsConnectionMaster = false;
-
     std::unordered_map<std::string, FunctionPointerType> mRegisteredFunctions;
 
     void Initialize(const Info& I_Settings)
@@ -171,10 +173,10 @@ private:
         }
     }
 
-    void CheckIfFunctionNameIsValid(const std::string rFunctionName) const
+    void CheckIfNameIsValid(const std::string& rName) const
     {
         // could use set but that would require another include just for this
-        const static std::vector<std::string> allowed_function_names {
+        const static std::vector<std::string> allowed_names {
             "AdvanceInTime",
             "InitializeSolutionStep",
             "Predict",
@@ -184,30 +186,18 @@ private:
             "ImportMesh",
             "ExportMesh",
             "ImportData",
-            "ExportData"
+            "ExportData",
+            "end"
         };
 
-        CO_SIM_IO_ERROR_IF(std::find(allowed_function_names.begin(), allowed_function_names.end(), rFunctionName) == allowed_function_names.end()) << "The function name \"" << rFunctionName << "\" is not allowed!\nOnly the following names are allowed:\n"; // TODO print the names
-    }
-
-    std::string ControlSignalName(const ControlSignal Signal) const
-    {
-        switch (Signal) {
-            // first two should not be needed here, this is intended to be used in "Run"
-            // case ControlSignal::Dummy:                  return "Dummy";
-            // case ControlSignal::ConvergenceAchieved:    return "ConvergenceAchieved";
-            case ControlSignal::BreakSolutionLoop:      return "BreakSolutionLoop";
-            case ControlSignal::AdvanceInTime:          return "AdvanceInTime";
-            case ControlSignal::InitializeSolutionStep: return "InitializeSolutionStep";
-            case ControlSignal::Predict:                return "Predict";
-            case ControlSignal::SolveSolutionStep:      return "SolveSolutionStep";
-            case ControlSignal::FinalizeSolutionStep:   return "FinalizeSolutionStep";
-            case ControlSignal::OutputSolutionStep:     return "OutputSolutionStep";
-            case ControlSignal::ImportMesh:             return "ImportMesh";
-            case ControlSignal::ExportMesh:             return "ExportMesh";
-            case ControlSignal::ImportData:             return "ImportData";
-            case ControlSignal::ExportData:             return "ExportData";
-            default: CO_SIM_IO_ERROR << "Signal is unknown: " << static_cast<int>(Signal); return "";
+        if (std::find(allowed_names.begin(), allowed_names.end(), rName) == allowed_names.end()) {
+            std::stringstream err_msg;
+            err_msg << "The name \"" << rName << "\" is not allowed!\nOnly the following names are allowed:";
+            for (const auto& name : allowed_names) {
+                err_msg << "\n    " << name;
+            }
+            err_msg << std::endl;
+            CO_SIM_IO_ERROR << err_msg.str();
         }
     }
 

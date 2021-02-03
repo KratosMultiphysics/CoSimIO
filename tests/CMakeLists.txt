@@ -37,6 +37,7 @@ add_test(NAME connect_disconnect_cpp_test COMMAND sh run.sh $<TARGET_FILE:connec
 add_test(NAME import_export_info_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_info_cpp_test>  $<TARGET_FILE:import_info_cpp_test>)
 add_test(NAME import_export_data_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_data_cpp_test>  $<TARGET_FILE:import_data_cpp_test>)
 add_test(NAME import_export_mesh_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_mesh_cpp_test>  $<TARGET_FILE:import_mesh_cpp_test>)
+add_test(NAME run_runner_cpp_test COMMAND sh run.sh $<TARGET_FILE:run_cpp_test>  $<TARGET_FILE:runner_cpp_test>)
 
 ### C tests ###
 if(BUILD_C)
