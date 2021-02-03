@@ -31,8 +31,6 @@ bool ControlOtherCode(const std::string& I_FunctionName)
 
     ctrl_info.Set("control_signal", I_FunctionName);
 
-    std::cout << ">>> I_FunctionName: " << I_FunctionName << std::endl;
-
     CoSimIO::ExportInfo(ctrl_info); // here we tell the other code which function to call
 
     // this is for testing to make sure the function
@@ -41,9 +39,6 @@ bool ControlOtherCode(const std::string& I_FunctionName)
     import_info.Set("connection_name", s_connection_name);
     import_info.Set("identifier", "info_for_test");
     auto check_info = CoSimIO::ImportInfo(import_info);
-
-    std::cout << "GOT NAME: " << std::endl;
-    std::cout << check_info << std::endl<< std::endl<< std::endl;
 
     return check_info.Get<std::string>("name_for_check") == I_FunctionName;
 }
