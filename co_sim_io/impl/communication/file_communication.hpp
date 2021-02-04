@@ -19,12 +19,12 @@
 #include <iomanip>
 #include <algorithm>
 #include <limits>
+#include <system_error>
 
 // Project includes
 #include "communication.hpp"
 #include "../vtk_utilities.hpp"
 #include "../filesystem_inc.hpp"
-// TODO refactor using fs::path for file-names!
 
 namespace CoSimIO {
 namespace Internals {
@@ -37,29 +37,15 @@ static double ElapsedSeconds(const std::chrono::steady_clock::time_point& rStart
     return duration_cast<duration<double>>(steady_clock::now() - rStartTime).count();
 }
 
-static bool FileExists(const std::string& rFileName)
+static bool PathExists(const fs::path& rPath)
 {
-    std::ifstream infile(rFileName);
-    return infile.good(); // no need to close manually
-}
-
-static bool FolderExists(const fs::path& rFolderName)
-{
-    return fs::exists(rFolderName);
-}
-
-static void RemoveFile(const std::string& rFileName)
-{
-    // TODO probably better to turn into error
-    if (std::remove(rFileName.c_str()) != 0) {
-        CO_SIM_IO_INFO("CoSimIO") << "Warning: \"" << rFileName << "\" could not be deleted!" << std::endl;
-    }
+    return fs::exists(rPath);
 }
 
 template <typename T>
-static void CheckStream(const T& rStream, const std::string& rFileName)
+static void CheckStream(const T& rStream, const fs::path& rPath)
 {
-    CO_SIM_IO_ERROR_IF_NOT(rStream.is_open()) << rFileName << " could not be opened!" << std::endl;
+    CO_SIM_IO_ERROR_IF_NOT(rStream.is_open()) << rPath << " could not be opened!" << std::endl;
 }
 
 /*deprecated*/static int GetNumNodesForVtkCellType(const int VtkCellType)
@@ -103,7 +89,8 @@ public:
     {
         if (GetIsConnected()) {
             CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not performed, attempting automatic disconnection!" << std::endl;
-            Disconnect();
+            Info tmp;
+            Disconnect(tmp);
         }
     }
 
@@ -122,13 +109,13 @@ private:
             } else {
                 // secondary connection waits until folder is created, otherwise it will crash
                 // when trying to create files in a non-existing folder
-                WaitForFolder(mCommFolder);
+                WaitForPath(mCommFolder);
             }
         }
 
         // both partners write a file which contains some information
-        const std::string file_name_primary(GetFullPath("CoSimIO_primary_connect_" + GetConnectionName()));
-        const std::string file_name_secondary(GetFullPath("CoSimIO_secondary_connect_" + GetConnectionName()));
+        const fs::path file_name_primary(GetFullPath("CoSimIO_primary_connect_" + GetConnectionName()));
+        const fs::path file_name_secondary(GetFullPath("CoSimIO_secondary_connect_" + GetConnectionName()));
 
         if (GetIsPrimaryConnection()) {
             ExchangeSyncFileWithPartner(file_name_primary, file_name_secondary);
@@ -142,8 +129,8 @@ private:
     }
 
     void ExchangeSyncFileWithPartner(
-        const std::string& I_MyFileName,
-        const std::string& I_PartnerFileName
+        const fs::path& I_MyFileName,
+        const fs::path& I_PartnerFileName
         ) const
     {
         std::ofstream my_config_file;
@@ -156,9 +143,9 @@ private:
         my_config_file.close();
         MakeFileVisible(I_MyFileName);
 
-        WaitForFile(I_PartnerFileName);
+        WaitForPath(I_PartnerFileName);
         // TODO read configuration and do sth with it?
-        RemoveFile(I_PartnerFileName);
+        RemovePath(I_PartnerFileName);
 
         WaitUntilFileIsRemoved(I_MyFileName);
     }
@@ -166,8 +153,8 @@ private:
     Info DisconnectDetail(const Info& I_Info) override
     {
         // both partners write a file which contains some information
-        const std::string file_name_primary(GetFullPath("CoSimIO_primary_disconnect_" + GetConnectionName()));
-        const std::string file_name_secondary(GetFullPath("CoSimIO_secondary_disconnect_" + GetConnectionName()));
+        const fs::path file_name_primary(GetFullPath("CoSimIO_primary_disconnect_" + GetConnectionName()));
+        const fs::path file_name_secondary(GetFullPath("CoSimIO_secondary_disconnect_" + GetConnectionName()));
 
         if (GetIsPrimaryConnection()) {
             ExchangeSyncFileWithPartner(file_name_primary, file_name_secondary);
@@ -190,11 +177,11 @@ private:
         const std::string identifier = I_Info.Get<std::string>("identifier");
         CheckEntry(identifier, "identifier");
 
-        const std::string file_name(GetFullPath("CoSimIO_info_" + GetConnectionName() + "_" + identifier + ".dat"));
+        const fs::path file_name(GetFullPath("CoSimIO_info_" + GetConnectionName() + "_" + identifier + ".dat"));
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import Info in file \"" << file_name << "\" ..." << std::endl;
 
-        WaitForFile(file_name);
+        WaitForPath(file_name);
 
         std::ifstream input_file(file_name);
         CheckStream(input_file, file_name);
@@ -203,7 +190,7 @@ private:
         imported_info.Load(input_file);
 
         input_file.close(); // TODO check return value?
-        RemoveFile(file_name);
+        RemovePath(file_name);
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing Info" << std::endl;
 
@@ -215,7 +202,7 @@ private:
         const std::string identifier = I_Info.Get<std::string>("identifier");
         CheckEntry(identifier, "identifier");
 
-        const std::string file_name(GetFullPath("CoSimIO_info_" + GetConnectionName() + "_" + identifier + ".dat"));
+        const fs::path file_name(GetFullPath("CoSimIO_info_" + GetConnectionName() + "_" + identifier + ".dat"));
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export Info in file \"" << file_name << "\" ..." << std::endl;
 
@@ -242,11 +229,11 @@ private:
         const std::string identifier = I_Info.Get<std::string>("identifier");
         CheckEntry(identifier, "identifier");
 
-        const std::string file_name(GetFullPath("CoSimIO_data_" + GetConnectionName() + "_" + identifier + ".dat"));
+        const fs::path file_name(GetFullPath("CoSimIO_data_" + GetConnectionName() + "_" + identifier + ".dat"));
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import array \"" << identifier << "\" in file \"" << file_name << "\" ..." << std::endl;
 
-        WaitForFile(file_name);
+        WaitForPath(file_name);
 
         const auto start_time(std::chrono::steady_clock::now());
 
@@ -265,7 +252,7 @@ private:
         }
 
         input_file.close();
-        RemoveFile(file_name);
+        RemovePath(file_name);
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing array with size: " << size_read << std::endl;
 
@@ -281,7 +268,7 @@ private:
         const std::string identifier = I_Info.Get<std::string>("identifier");
         CheckEntry(identifier, "identifier");
 
-        const std::string file_name(GetFullPath("CoSimIO_data_" + GetConnectionName() + "_" + identifier + ".dat"));
+        const fs::path file_name(GetFullPath("CoSimIO_data_" + GetConnectionName() + "_" + identifier + ".dat"));
 
         WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
@@ -321,11 +308,11 @@ private:
         const std::string identifier = I_Info.Get<std::string>("identifier");
         CheckEntry(identifier, "identifier");
 
-        const std::string file_name(GetFullPath("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + ".vtk"));
+        const fs::path file_name(GetFullPath("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + ".vtk"));
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import mesh \"" << identifier << "\" in file \"" << file_name << "\" ..." << std::endl;
 
-        WaitForFile(file_name);
+        WaitForPath(file_name);
 
         const auto start_time(std::chrono::steady_clock::now());
 
@@ -423,7 +410,7 @@ private:
         }
 
         input_file.close();
-        RemoveFile(file_name);
+        RemovePath(file_name);
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing mesh" << std::endl;
 
@@ -439,7 +426,7 @@ private:
         const std::string identifier = I_Info.Get<std::string>("identifier");
         CheckEntry(identifier, "identifier");
 
-        const std::string file_name(GetFullPath("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + ".vtk"));
+        const fs::path file_name(GetFullPath("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + ".vtk"));
 
         WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
@@ -546,7 +533,7 @@ private:
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to receive mesh \"" << rIdentifier << "\" in file \"" << file_name << "\" ..." << std::endl;
 
-        WaitForFile(file_name);
+        WaitForPath(file_name);
 
         const auto start_time(std::chrono::steady_clock::now());
 
@@ -619,7 +606,7 @@ private:
         }
 
         input_file.close();
-        RemoveFile(file_name);
+        RemovePath(file_name);
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished receiving mesh" << std::endl;
 
@@ -718,52 +705,63 @@ private:
         }
     }
 
-    std::string GetFullPath(const std::string& rFileName) const
+    fs::path GetFullPath(const fs::path& rPath) const
     {
         if (mCommInFolder) {
-            return mCommFolder / rFileName;
+            return mCommFolder / rPath;
         } else {
-            return rFileName;
+            return rPath;
         }
     }
 
-    void WaitForFile(const std::string& rFileName) const
+    void WaitForPath(const fs::path& rPath) const
     {
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for file: \"" << rFileName << "\"" << std::endl;
-        while(!FileExists(rFileName)) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(50)); // wait 0.05s before next check
-            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>2) << "    Waiting" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: \"" << rPath << "\"" << std::endl;
+        while(!PathExists(rPath)) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
         }
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found file: \"" << rFileName << "\"" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found: \"" << rPath << "\"" << std::endl;
     }
 
-    void WaitUntilFileIsRemoved(const std::string& rFileName) const
+    void WaitUntilFileIsRemoved(const fs::path& rPath) const
     {
-        if (FileExists(rFileName)) { // only issue the wating message if the file exists initially
-            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for file: \"" << rFileName << "\" to be removed" << std::endl;
-            while(FileExists(rFileName)) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(50)); // wait 0.05s before next check
-                CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>2) << "    Waiting" << std::endl;
+        if (PathExists(rPath)) { // only issue the wating message if the file exists initially
+            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: \"" << rPath << "\" to be removed" << std::endl;
+            while(PathExists(rPath)) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
             }
-            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "File: \"" << rFileName << "\" was removed" << std::endl;
+            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "\"" << rPath << "\" was removed" << std::endl;
         }
     }
 
-    void MakeFileVisible(const std::string& rFinalFileName) const
+    void MakeFileVisible(const fs::path& rPath) const
     {
-        if (std::rename(GetTempFileName(rFinalFileName).c_str(), rFinalFileName.c_str()) != 0) {
-            CO_SIM_IO_INFO("CoSimIO") << "Warning: \"" << rFinalFileName << "\" could not be made visible!" << std::endl;
+        std::error_code ec;
+        fs::rename(GetTempFileName(rPath), rPath, ec);
+        if (ec) {
+            CO_SIM_IO_ERROR << "\"" << rPath << "\" could not be made visible!\nError code: " << ec.message() << std::endl;
         }
     }
 
-    void WaitForFolder(const std::string& rFolderName) const
+    void HideFile(const fs::path& rPath) const
     {
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for folder: \"" << rFolderName << "\"" << std::endl;
-        while(!FolderExists(rFolderName)) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(50)); // wait 0.05s before next check
-            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>2) << "    Waiting" << std::endl;
+        std::error_code ec;
+        fs::rename(rPath, GetTempFileName(rPath), ec);
+        if (ec) {
+            CO_SIM_IO_ERROR << "\"" << rPath << "\" could not be made visible!\nError code: " << ec.message() << std::endl;
         }
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found folder: \"" << rFolderName << "\"" << std::endl;
+    }
+
+    void RemovePath(const fs::path& rPath) const
+    {
+        // rename aka hide first and then remove?
+        // => this should fix the issue in case another process tries to write to a (new) file while this one is being deleted
+        // afair the rename is "atomic" aka can only be done by one process at the same time (ensured by OS)
+        std::error_code ec;
+        HideFile(rPath);
+        if (!fs::remove(GetTempFileName(rPath), ec)) {
+            CO_SIM_IO_ERROR << "\"" << rPath << "\" could not be deleted!\nError code: " << ec.message() << std::endl;
+        }
     }
 
 };
