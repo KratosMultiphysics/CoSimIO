@@ -167,7 +167,7 @@ public:
     ModelPart(const ModelPart&) = delete;
     ModelPart& operator=(ModelPart const&) = delete;
 
-    std::string Name() const { return mName; }
+    const std::string& Name() const { return mName; }
     std::size_t NumberOfNodes() const { return mNodes.size(); }
     std::size_t NumberOfElements() const { return mElements.size(); }
 

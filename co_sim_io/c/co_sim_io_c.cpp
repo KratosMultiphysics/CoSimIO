@@ -166,6 +166,7 @@ CoSimIO_Info CoSimIO_Run(const CoSimIO_Info I_Info)
 }
 
 
+// Info functions
 CoSimIO_Info CoSimIO_CreateInfo()
 {
     CoSimIO_Info info;
@@ -247,6 +248,156 @@ void CoSimIO_Info_SetString(CoSimIO_Info I_Info, const char* I_Key, const char* 
 {
     static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Set<std::string>(I_Key, I_Value);
 }
+
+
+// ModelPart functions
+CoSimIO_ModelPart CoSimIO_CreateModelPart(const char* I_Name)
+{
+    CoSimIO_ModelPart model_part;
+    model_part.PtrCppModelPart = new CoSimIO::ModelPart(I_Name);
+    return model_part;
+}
+
+
+const char* CoSimIO_ModelPart_Name(CoSimIO_ModelPart I_ModelPart)
+{
+    return static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->Name().c_str();
+}
+
+int CoSimIO_ModelPart_NumberOfNodes(CoSimIO_ModelPart I_ModelPart)
+{
+    return static_cast<int>(static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->NumberOfNodes());
+}
+
+int CoSimIO_ModelPart_NumberOfElements(CoSimIO_ModelPart I_ModelPart)
+{
+    return static_cast<int>(static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->NumberOfElements());
+}
+
+
+CoSimIO_Node CoSimIO_ModelPart_CreateNewNode(
+    CoSimIO_ModelPart I_ModelPart,
+    const int I_Id,
+    const double I_X,
+    const double I_Y,
+    const double I_Z)
+{
+    CoSimIO::Node& cpp_node = static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->CreateNewNode(I_Id, I_X, I_Y, I_Z);
+    CoSimIO_Node node;
+    node.PtrCppNode = &cpp_node;
+    return node;
+}
+
+CoSimIO_Element CoSimIO_ModelPart_CreateNewElement(
+    CoSimIO_ModelPart I_ModelPart,
+    const int I_Id,
+    const CoSimIO_ElementType I_Type,
+    const int* I_Connectivities)
+{
+    const CoSimIO::ElementType cpp_element_type = static_cast<CoSimIO::ElementType>(I_Type);
+    const std::size_t num_nodes = CoSimIO::Internals::GetNumberOfNodesForElementType(cpp_element_type);
+    // convert the C-connectivities to C++ connectivities
+    CoSimIO::ConnectivitiesType connectivities(I_Connectivities, I_Connectivities+num_nodes);
+
+    CoSimIO::Element& cpp_elem = static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->CreateNewElement(I_Id, cpp_element_type, connectivities);
+    CoSimIO_Element elem;
+    elem.PtrCppElement = &cpp_elem;
+    return elem;
+}
+
+
+int CoSimIO_Node_Id(CoSimIO_Node I_Node)
+{
+    return static_cast<int>(static_cast<CoSimIO::Node*>(I_Node.PtrCppNode)->Id());
+}
+
+double CoSimIO_Node_X(CoSimIO_Node I_Node)
+{
+    return static_cast<CoSimIO::Node*>(I_Node.PtrCppNode)->X();
+}
+
+double CoSimIO_Node_Y(CoSimIO_Node I_Node)
+{
+    return static_cast<CoSimIO::Node*>(I_Node.PtrCppNode)->Y();
+}
+
+double CoSimIO_Node_Z(CoSimIO_Node I_Node)
+{
+    return static_cast<CoSimIO::Node*>(I_Node.PtrCppNode)->Z();
+}
+
+double CoSimIO_Node_Coordinate(CoSimIO_Node I_Node, const int I_Index)
+{
+    // add debug error if I_Index is out of bound (admissible values: 0,1,2)
+    return static_cast<CoSimIO::Node*>(I_Node.PtrCppNode)->Coordinates()[I_Index];
+}
+
+
+CoSimIO_Node CoSimIO_ModelPart_GetNodeByIndex(CoSimIO_ModelPart I_ModelPart, const int I_Index)
+{
+    CoSimIO::Node& cpp_node = **(static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->NodesBegin()+I_Index);
+    CoSimIO_Node node;
+    node.PtrCppNode = &cpp_node;
+    return node;
+}
+
+CoSimIO_Node CoSimIO_ModelPart_GetNodeById(CoSimIO_ModelPart I_ModelPart, const int I_Id)
+{
+    CoSimIO::Node& cpp_node = static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->GetNode(I_Id);
+    CoSimIO_Node node;
+    node.PtrCppNode = &cpp_node;
+    return node;
+}
+
+
+int CoSimIO_Element_Id(CoSimIO_Element I_Element)
+{
+    return static_cast<int>(static_cast<CoSimIO::Element*>(I_Element.PtrCppElement)->Id());
+}
+
+CoSimIO_ElementType CoSimIO_Element_Type(CoSimIO_Element I_Element)
+{
+    return static_cast<CoSimIO_ElementType>(static_cast<CoSimIO::Element*>(I_Element.PtrCppElement)->Type());
+}
+
+int CoSimIO_Element_NumberOfNodes(CoSimIO_Element I_Element)
+{
+    return static_cast<int>(static_cast<CoSimIO::Element*>(I_Element.PtrCppElement)->NumberOfNodes());
+}
+
+CoSimIO_Node CoSimIO_Element_GetNodeByIndex(CoSimIO_Element I_Element, const int I_Index)
+{
+    CoSimIO::Node& cpp_node = **(static_cast<CoSimIO::Element*>(I_Element.PtrCppElement)->NodesBegin()+I_Index);
+    CoSimIO_Node node;
+    node.PtrCppNode = &cpp_node;
+    return node;
+}
+
+
+
+CoSimIO_Element CoSimIO_ModelPart_GetElementByIndex(CoSimIO_ModelPart I_ModelPart, const int I_Index)
+{
+    CoSimIO::Element& cpp_elem = **(static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->ElementsBegin()+I_Index);
+    CoSimIO_Element elem;
+    elem.PtrCppElement = &cpp_elem;
+    return elem;
+}
+
+CoSimIO_Element CoSimIO_ModelPart_GetElementById(CoSimIO_ModelPart I_ModelPart, const int I_Id)
+{
+    CoSimIO::Element& cpp_elem = static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->GetElement(I_Id);
+    CoSimIO_Element elem;
+    elem.PtrCppElement = &cpp_elem;
+    return elem;
+}
+
+
+int CoSimIO_FreeModelPart(CoSimIO_ModelPart I_ModelPart)
+{
+    delete static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart);
+    return 0;
+}
+
 
 void* CoSimIO_Malloc(size_t size){
     // Todo: Add a register of allocated memory: [pointer, size]
