@@ -23,12 +23,6 @@
         return 1;                                                \
     }
 
-#define COSIMIO_CHECK_STRING_EQUAL(a, b)                             \
-    if (strcmp(a,b)) {                                               \
-        printf("in line %d: %s is not equal to %s", __LINE__, a, b); \
-        return 1;                                                    \
-    }
-
 int main()
 {
     CoSimIO_Info hello_info = CoSimIO_Hello();
@@ -37,11 +31,11 @@ int main()
 
     int major_version = CoSimIO_Info_GetInt(hello_info, "major_version");
     int minor_version = CoSimIO_Info_GetInt(hello_info, "minor_version");
-    const char* patch_version = CoSimIO_Info_GetString(hello_info, "patch_version");
+    // const char* patch_version = CoSimIO_Info_GetString(hello_info, "patch_version");
 
-    // COSIMIO_CHECK_EQUAL(major_version, 1);
-    // COSIMIO_CHECK_EQUAL(minor_version, 0);
-    // COSIMIO_CHECK_STRING_EQUAL(patch_version, "0");
+    COSIMIO_CHECK_EQUAL((major_version>0), 1);
+    COSIMIO_CHECK_EQUAL((minor_version>=0), 1);
+
 
     CoSimIO_FreeInfo(hello_info);
 

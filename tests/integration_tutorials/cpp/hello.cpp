@@ -30,8 +30,8 @@ int main()
     int minor_version = info.Get<int>("minor_version");
     std::string patch_version = info.Get<std::string>("patch_version");
 
-    // COSIMIO_CHECK_EQUAL(major_version, 1);
-    // COSIMIO_CHECK_EQUAL(minor_version, 0);
+    COSIMIO_CHECK_EQUAL((major_version>0), 1);
+    COSIMIO_CHECK_EQUAL((minor_version>=0), 1);
 
     return 0;
 }
