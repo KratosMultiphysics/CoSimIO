@@ -33,26 +33,49 @@ int main()
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
     const char* connection_name = CoSimIO_Info_GetString(connect_info, "connection_name");
 
+    CoSimIO_ModelPart model_part = CoSimIO_CreateModelPart("fluid_mesh");
+
     int number_of_nodes=6;
     double nodal_coordinates[] = {
-        0.0, 2.5, 1.0, /*0*/
-        2.0, 0.0, 1.5, /*1*/
-        2.0, 2.5, 1.5, /*2*/
-        4.0, 2.5, 1.7, /*3*/
-        4.0, 0.0, 1.7, /*4*/
-        6.0, 0.0, 1.8  /*5*/
+        0.0, 2.5, 1.0, /*1*/
+        2.0, 0.0, 1.5, /*2*/
+        2.0, 2.5, 1.5, /*3*/
+        4.0, 2.5, 1.7, /*4*/
+        4.0, 0.0, 1.7, /*5*/
+        6.0, 0.0, 1.8  /*6*/
     };
 
-    int number_of_elements_connectivities = 12;
-    int elements_connectivities[] = {
-        0, 1, 2, /*1*/
-        1, 3, 2, /*2*/
-        1, 4, 3, /*3*/
-        3, 4, 5, /*4*/
-    };
+    for (int i=0; i<number_of_nodes; ++i) {
+        CoSimIO_ModelPart_CreateNewNode(
+            model_part,
+            i+1, // Id
+            nodal_coordinates[i*3],   // X
+            nodal_coordinates[i*3+1], // Y
+            nodal_coordinates[i*3+2]  // Z
+        );
+    }
 
     int number_of_elements = 4;
-    int elements_types[] = {5,5,5,5}; // VTK_TRIANGLE
+    int elements_connectivities[] = {
+        1, 2, 3, /*1*/
+        2, 4, 3, /*2*/
+        2, 5, 4, /*3*/
+        4, 5, 6, /*4*/
+    };
+
+    int num_nodes_per_element = 3;
+    int connectivity[num_nodes_per_element];
+    for (int i=0; i<number_of_elements; ++i) {
+        for (int j=0; j<num_nodes_per_element; ++j) {
+            connectivity[j] = elements_connectivities[i*3+j];
+        }
+        CoSimIO_ModelPart_CreateNewElement(
+            model_part,
+            i+1, // Id
+            CoSimIO_Triangle3D3,
+            connectivity
+        );
+    }
 
     // Creatint the export_settings
     CoSimIO_Info export_settings=CoSimIO_CreateInfo();
@@ -60,9 +83,7 @@ int main()
     CoSimIO_Info_SetString(export_settings, "connection_name", connection_name);
 
     // Exporting the data
-    CoSimIO_Info export_info = CoSimIO_ExportMesh(export_settings
-        , number_of_nodes,number_of_elements,number_of_elements_connectivities
-        , nodal_coordinates, elements_connectivities, elements_types);
+    CoSimIO_Info export_info = CoSimIO_ExportMesh(export_settings, model_part);
 
     // Freeing the export_info and export_settings
     CoSimIO_FreeInfo(export_info);

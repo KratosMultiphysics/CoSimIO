@@ -40,12 +40,7 @@ int main()
     const char* connection_name = CoSimIO_Info_GetString(connect_info, "connection_name");
 
     // After conneting we may import the mesh
-    double* nodal_coordinates;
-    int number_of_nodes = 0;
-    int* elements_connectivities;
-    int number_of_elements_connectivities = 0;
-    int* elements_types;
-    int number_of_elements = 0;
+    CoSimIO_ModelPart model_part = CoSimIO_CreateModelPart("fluid_mesh");
 
     // Creating the import_settings
     CoSimIO_Info import_settings=CoSimIO_CreateInfo();
@@ -53,49 +48,54 @@ int main()
     CoSimIO_Info_SetString(import_settings, "connection_name", connection_name);
 
     // Importing the mesh
-    CoSimIO_Info import_info = CoSimIO_ImportMesh(import_settings
-        , &number_of_nodes,&number_of_elements,&number_of_elements_connectivities
-        , &nodal_coordinates, &elements_connectivities, &elements_types);
+    CoSimIO_Info import_info = CoSimIO_ImportMesh(import_settings, model_part);
 
     // Freeing the import_info and import_settings
     CoSimIO_FreeInfo(import_info);
     CoSimIO_FreeInfo(import_settings);
 
     // Checking the imported mesh
-    int expected_number_of_nodes=6;
+    int expected_number_of_nodes = 6;
     double expected_nodal_coordinates[] = {
-        0.0, 2.5, 1.0, /*0*/
-        2.0, 0.0, 1.5, /*1*/
-        2.0, 2.5, 1.5, /*2*/
-        4.0, 2.5, 1.7, /*3*/
-        4.0, 0.0, 1.7, /*4*/
-        6.0, 0.0, 1.8  /*5*/
+        0.0, 2.5, 1.0, /*1*/
+        2.0, 0.0, 1.5, /*2*/
+        2.0, 2.5, 1.5, /*3*/
+        4.0, 2.5, 1.7, /*4*/
+        4.0, 0.0, 1.7, /*5*/
+        6.0, 0.0, 1.8  /*6*/
     };
 
-    int expected_number_of_elements_connectivities = 12;
     int expected_elements_connectivities[] = {
-        0, 1, 2, /*1*/
-        1, 3, 2, /*2*/
-        1, 4, 3, /*3*/
-        3, 4, 5, /*4*/
+        1, 2, 3, /*1*/
+        2, 4, 3, /*2*/
+        2, 5, 4, /*3*/
+        4, 5, 6, /*4*/
     };
 
     int expected_number_of_elements = 4;
-    int expected_elements_types[] = {5,5,5,5}; // VTK_TRIANGLE
 
-    COSIMIO_CHECK_EQUAL_INT(expected_number_of_nodes,  number_of_nodes);
-    COSIMIO_CHECK_EQUAL_INT(expected_number_of_elements_connectivities,  number_of_elements_connectivities);
-    COSIMIO_CHECK_EQUAL_INT(expected_number_of_elements,  number_of_elements);
+    COSIMIO_CHECK_EQUAL_INT(CoSimIO_ModelPart_NumberOfNodes(model_part), expected_number_of_nodes);
+    COSIMIO_CHECK_EQUAL_INT(CoSimIO_ModelPart_NumberOfElements(model_part), expected_number_of_elements);
 
-    for(int i = 0 ; i <  number_of_nodes * 3 ; i++)
-        COSIMIO_CHECK_EQUAL_DOUBLE(expected_nodal_coordinates[i],  nodal_coordinates[i]);
+    for (int i=0; i<expected_number_of_nodes; ++i) {
+        CoSimIO_Node node = CoSimIO_ModelPart_GetNodeByIndex(model_part, i);
+        COSIMIO_CHECK_EQUAL_INT(CoSimIO_Node_Id(node), i+1);
+        COSIMIO_CHECK_EQUAL_DOUBLE(CoSimIO_Node_X(node), expected_nodal_coordinates[i*3]);
+        COSIMIO_CHECK_EQUAL_DOUBLE(CoSimIO_Node_Y(node), expected_nodal_coordinates[i*3+1]);
+        COSIMIO_CHECK_EQUAL_DOUBLE(CoSimIO_Node_Z(node), expected_nodal_coordinates[i*3+2]);
+    }
 
-    for(int i = 0 ; i <  number_of_elements_connectivities ; i++)
-        COSIMIO_CHECK_EQUAL_INT(expected_elements_connectivities[i],  elements_connectivities[i]);
-
-    for(int i = 0 ; i <  number_of_elements ; i++)
-        COSIMIO_CHECK_EQUAL_INT(expected_elements_types[i],  elements_types[i]);
-
+    for (int i=0; i<expected_number_of_elements; ++i) {
+        CoSimIO_Element elem = CoSimIO_ModelPart_GetElementByIndex(model_part, i);
+        COSIMIO_CHECK_EQUAL_INT(CoSimIO_Element_Id(elem), i+1);
+        COSIMIO_CHECK_EQUAL_INT(CoSimIO_Element_Type(elem), CoSimIO_Triangle2D3);
+        COSIMIO_CHECK_EQUAL_INT(CoSimIO_Element_NumberOfNodes(elem), 3);
+        // checking connectivities
+        for (int j=0; j<CoSimIO_Element_NumberOfNodes(elem); ++j) {
+            int exp_node_id = expected_elements_connectivities[i*3+j];
+            COSIMIO_CHECK_EQUAL_INT(exp_node_id, CoSimIO_Node_Id(CoSimIO_Element_GetNodeByIndex(elem, j)));
+        }
+    }
 
     // Disconnecting at the end
     CoSimIO_Info disconnect_settings=CoSimIO_CreateInfo();
