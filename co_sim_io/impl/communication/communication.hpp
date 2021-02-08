@@ -64,7 +64,7 @@ public:
         Info connect_detail_info = ConnectDetail(I_Info);
         mIsConnected = connect_detail_info.Get<bool>("is_connected");
         connect_detail_info.Set<int>("connection_status", ConnectionStatus::Connected);
-        connect_detail_info.Set<std::string>("working_directory", mWorkingDirectory);
+        connect_detail_info.Set<std::string>("working_directory", mWorkingDirectory.string());
 
         CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "Connection was not successful!" << std::endl;
 
