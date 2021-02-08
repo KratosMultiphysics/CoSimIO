@@ -64,7 +64,7 @@ int main()
     };
 
     const int num_nodes_per_element = 3;
-    int connectivity[num_nodes_per_element];
+    int connectivity[3];
     for (int i=0; i<number_of_elements; ++i) {
         for (int j=0; j<num_nodes_per_element; ++j) {
             connectivity[j] = elements_connectivities[i*3+j];
