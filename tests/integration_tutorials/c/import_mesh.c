@@ -88,7 +88,7 @@ int main()
     for (int i=0; i<expected_number_of_elements; ++i) {
         CoSimIO_Element elem = CoSimIO_ModelPart_GetElementByIndex(model_part, i);
         COSIMIO_CHECK_EQUAL_INT(CoSimIO_Element_Id(elem), i+1);
-        COSIMIO_CHECK_EQUAL_INT(CoSimIO_Element_Type(elem), CoSimIO_Triangle2D3);
+        COSIMIO_CHECK_EQUAL_INT(CoSimIO_Element_Type(elem), CoSimIO_Triangle3D3);
         COSIMIO_CHECK_EQUAL_INT(CoSimIO_Element_NumberOfNodes(elem), 3);
         // checking connectivities
         for (int j=0; j<CoSimIO_Element_NumberOfNodes(elem); ++j) {
