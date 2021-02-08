@@ -50,7 +50,7 @@ for i, coords in enumerate(nodal_coords):
     model_part.CreateNewNode(i+1, *coords)
 
 for i, conn in enumerate(element_connectivities):
-    model_part.CreateNewElement(i+1, CoSimIO.ElementType.Triangle2D3, conn)
+    model_part.CreateNewElement(i+1, CoSimIO.ElementType.Triangle3D3, conn)
 
 # Exporting mesh
 info = CoSimIO.Info()
