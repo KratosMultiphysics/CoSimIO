@@ -32,28 +32,6 @@
 #include "connection_status_to_python.hpp"
 #include "version_to_python.hpp"
 
-namespace CoSimIO_Py_Wrappers {
-
-CoSimIO::Info ImportMesh(
-    const CoSimIO::Info& I_Info,
-    CoSimIO::ModelPart& rModelPart)
-{
-    return CoSimIO::ImportMesh(
-        I_Info,
-        rModelPart);
-}
-
-CoSimIO::Info ExportMesh(
-    const CoSimIO::Info& I_Info,
-    const CoSimIO::ModelPart& rModelPart)
-{
-    return CoSimIO::ExportMesh(
-        I_Info,
-        rModelPart);
-}
-
-} // namespace CoSimIO_Py_Wrappers
-
 
 PYBIND11_MODULE(CoSimIO, m)
 {
@@ -64,11 +42,8 @@ PYBIND11_MODULE(CoSimIO, m)
     m.def("Connect",    &CoSimIO::Connect);
     m.def("Disconnect", &CoSimIO::Disconnect);
 
-    m.def("ImportMesh", CoSimIO_Py_Wrappers::ImportMesh);
-    m.def("ExportMesh", CoSimIO_Py_Wrappers::ExportMesh);
-    // TODO uncomment when starting to use new Interface
-    // m.def("ImportMesh", &CoSimIO::ImportMesh);
-    // m.def("ExportMesh", &CoSimIO::ExportMesh);
+    m.def("ImportMesh", &CoSimIO::ImportMesh);
+    m.def("ExportMesh", &CoSimIO::ExportMesh);
 
     m.def("ImportData", [](const CoSimIO::Info& I_Info, std::vector<double>& rValues){
         return CoSimIO::ImportData(
