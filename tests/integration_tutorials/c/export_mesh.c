@@ -63,7 +63,7 @@ int main()
         4, 5, 6, /*4*/
     };
 
-    int num_nodes_per_element = 3;
+    const int num_nodes_per_element = 3;
     int connectivity[num_nodes_per_element];
     for (int i=0; i<number_of_elements; ++i) {
         for (int j=0; j<num_nodes_per_element; ++j) {
