@@ -52,31 +52,13 @@ CoSimIO_Info CoSimIO_ExportData(
     const int I_Size,
     const double* I_Data);
 
-CoSimIO_Info CoSimIO_ImportMeshNEW(
+CoSimIO_Info CoSimIO_ImportMesh(
     const CoSimIO_Info I_Info,
     CoSimIO_ModelPart O_ModelPart);
 
-CoSimIO_Info CoSimIO_ExportMeshNEW(
-    const CoSimIO_Info I_Info,
-    const CoSimIO_ModelPart I_ModelPart);
-
-CoSimIO_Info CoSimIO_ImportMesh(
-    const CoSimIO_Info I_Info,
-    int* I_NumberOfNodes,
-    int* I_NumberOfElements,
-    int* I_NumberOfElementConnectivities,
-    double** I_NodalCoordinates,
-    int** I_ElementConnectivities,
-    int** I_ElementTypes);
-
 CoSimIO_Info CoSimIO_ExportMesh(
     const CoSimIO_Info I_Info,
-    const int O_NumberOfNodes,
-    const int O_NumberOfElements,
-    const int O_NumberOfElementConnectivities,
-    const double* O_NodalCoordinates,
-    const int* O_ElementConnectivities,
-    const int* O_ElementTypes);
+    const CoSimIO_ModelPart I_ModelPart);
 
 
 void CoSimIO_PrintInfo(FILE *Stream,

@@ -70,21 +70,6 @@ inline Info ExportMesh(
     const Info& I_Info,
     const ModelPart& I_ModelPart);
 
-template<class TDoubleContainerType, class TIntContainerType>
-inline Info ImportMesh(
-    const Info& I_Info,
-    TDoubleContainerType& rNodalCoordinates,
-    TIntContainerType& rElementConnectivities,
-    TIntContainerType& rElementTypes);
-
-template<class TDoubleContainerType, class TIntContainerType>
-inline Info ExportMesh(
-    const Info& I_Info,
-    const TDoubleContainerType& rNodalCoordinates,
-    const TIntContainerType& rElementConnectivities,
-    const TIntContainerType& rElementTypes);
-
-
 inline Info ImportInfo(
     const Info& I_Info);
 

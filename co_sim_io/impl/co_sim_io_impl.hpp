@@ -161,32 +161,6 @@ inline Info ExportMesh(
     return CoSimIO::Internals::GetConnection(connection_name).ExportMesh(I_Info, I_ModelPart);
 }
 
-template<>
-inline Info ImportMesh(
-    const Info& I_Info,
-    CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
-    CoSimIO::Internals::DataContainer<int>& rElementConnectivities,
-    CoSimIO::Internals::DataContainer<int>& rElementTypes)
-{
-    const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    const std::string identifier = I_Info.Get<std::string>("identifier");
-    // TODO maybe pass the Info into the function (only changes under the hood necessary)
-    return Internals::GetConnection(connection_name).ImportMesh(identifier, rNodalCoordinates, rElementConnectivities, rElementTypes);
-}
-
-template<>
-inline Info ExportMesh(
-    const Info& I_Info,
-    const CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
-    const CoSimIO::Internals::DataContainer<int>& rElementConnectivities,
-    const CoSimIO::Internals::DataContainer<int>& rElementTypes)
-{
-    const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    const std::string identifier = I_Info.Get<std::string>("identifier");
-    // TODO maybe pass the Info into the function (only changes under the hood necessary)
-    return Internals::GetConnection(connection_name).ExportMesh(identifier, rNodalCoordinates, rElementConnectivities, rElementTypes);
-}
-
 inline Info ImportInfo(
     const Info& I_Info)
 {
