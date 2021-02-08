@@ -502,6 +502,7 @@ private:
 
     std::string GetTempFileName(const std::string& rFileName) const
     {
+        // TODO refactor with fs::path
         if (mCommInFolder) {
             return std::string(rFileName).insert(std::string(mCommFolder).length()+1, ".");
         } else {
@@ -513,8 +514,6 @@ private:
     {
         fs::path local_copy(rPath);
         local_copy += "_" + std::to_string(mFileIndex++) + "." + rExtension;
-
-        std::cout << "<<<< FILE INDEX >>>>" << local_copy << std::endl;
 
         if (mCommInFolder) {
             return mCommFolder / local_copy;
