@@ -386,13 +386,17 @@ TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(25.0), TCommType, CO
     {
         // connecting and disconnecting three times
         for (std::size_t i=0; i<3; ++i) {
+            // need to make a fresh obj of "Communication" each time we connect again
+            // (because the same is done in the ext thread)
+            std::unique_ptr<Communication> p_internal_comm(CoSimIO::make_unique<TCommType>(settings));
+
             std::thread ext_thread(ConnectDisconnect<TCommType>);
 
             CoSimIO::Info connect_info;
-            p_comm->Connect(connect_info);
+            p_internal_comm->Connect(connect_info);
 
             CoSimIO::Info disconnect_info;
-            p_comm->Disconnect(disconnect_info);
+            p_internal_comm->Disconnect(disconnect_info);
 
             ext_thread.join();
         }
