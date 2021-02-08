@@ -74,6 +74,7 @@ private:
 
     fs::path mCommFolder;
     bool mCommInFolder = true;
+    mutable int mFileIndex = 0;
 
     Info ConnectDetail(const Info& I_Info) override
     {
@@ -90,8 +91,8 @@ private:
         }
 
         // both partners write a file which contains some information
-        const fs::path file_name_primary(GetFullPath("CoSimIO_primary_connect_" + GetConnectionName()));
-        const fs::path file_name_secondary(GetFullPath("CoSimIO_secondary_connect_" + GetConnectionName()));
+        const fs::path file_name_primary(GetFileName("CoSimIO_primary_connect_" + GetConnectionName(), "sync"));
+        const fs::path file_name_secondary(GetFileName("CoSimIO_secondary_connect_" + GetConnectionName(), "sync"));
 
         if (GetIsPrimaryConnection()) {
             ExchangeSyncFileWithPartner(file_name_primary, file_name_secondary);
@@ -129,8 +130,8 @@ private:
     Info DisconnectDetail(const Info& I_Info) override
     {
         // both partners write a file which contains some information
-        const fs::path file_name_primary(GetFullPath("CoSimIO_primary_disconnect_" + GetConnectionName()));
-        const fs::path file_name_secondary(GetFullPath("CoSimIO_secondary_disconnect_" + GetConnectionName()));
+        const fs::path file_name_primary(GetFileName("CoSimIO_primary_disconnect_" + GetConnectionName(), "sync"));
+        const fs::path file_name_secondary(GetFileName("CoSimIO_secondary_disconnect_" + GetConnectionName(), "sync"));
 
         if (GetIsPrimaryConnection()) {
             ExchangeSyncFileWithPartner(file_name_primary, file_name_secondary);
@@ -153,7 +154,7 @@ private:
         const std::string identifier = I_Info.Get<std::string>("identifier");
         CheckEntry(identifier, "identifier");
 
-        const fs::path file_name(GetFullPath("CoSimIO_info_" + GetConnectionName() + "_" + identifier + ".dat"));
+        const fs::path file_name(GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, "dat"));
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import Info in file \"" << file_name << "\" ..." << std::endl;
 
@@ -178,7 +179,7 @@ private:
         const std::string identifier = I_Info.Get<std::string>("identifier");
         CheckEntry(identifier, "identifier");
 
-        const fs::path file_name(GetFullPath("CoSimIO_info_" + GetConnectionName() + "_" + identifier + ".dat"));
+        const fs::path file_name(GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, "dat"));
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export Info in file \"" << file_name << "\" ..." << std::endl;
 
@@ -205,7 +206,7 @@ private:
         const std::string identifier = I_Info.Get<std::string>("identifier");
         CheckEntry(identifier, "identifier");
 
-        const fs::path file_name(GetFullPath("CoSimIO_data_" + GetConnectionName() + "_" + identifier + ".dat"));
+        const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier, "dat"));
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import array \"" << identifier << "\" in file \"" << file_name << "\" ..." << std::endl;
 
@@ -244,7 +245,7 @@ private:
         const std::string identifier = I_Info.Get<std::string>("identifier");
         CheckEntry(identifier, "identifier");
 
-        const fs::path file_name(GetFullPath("CoSimIO_data_" + GetConnectionName() + "_" + identifier + ".dat"));
+        const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier, "dat"));
 
         WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
@@ -284,7 +285,7 @@ private:
         const std::string identifier = I_Info.Get<std::string>("identifier");
         CheckEntry(identifier, "identifier");
 
-        const fs::path file_name(GetFullPath("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + ".vtk"));
+        const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier, "vtk"));
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import mesh \"" << identifier << "\" in file \"" << file_name << "\" ..." << std::endl;
 
@@ -402,7 +403,7 @@ private:
         const std::string identifier = I_Info.Get<std::string>("identifier");
         CheckEntry(identifier, "identifier");
 
-        const fs::path file_name(GetFullPath("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + ".vtk"));
+        const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier, "vtk"));
 
         WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
@@ -501,6 +502,7 @@ private:
 
     std::string GetTempFileName(const std::string& rFileName) const
     {
+        // TODO refactor with fs::path
         if (mCommInFolder) {
             return std::string(rFileName).insert(std::string(mCommFolder).length()+1, ".");
         } else {
@@ -508,12 +510,15 @@ private:
         }
     }
 
-    fs::path GetFullPath(const fs::path& rPath) const
+    fs::path GetFileName(const fs::path& rPath, const std::string& rExtension) const
     {
+        fs::path local_copy(rPath);
+        local_copy += "_" + std::to_string((mFileIndex++)%100) + "." + rExtension;
+
         if (mCommInFolder) {
-            return mCommFolder / rPath;
+            return mCommFolder / local_copy;
         } else {
-            return rPath;
+            return local_copy;
         }
     }
 
@@ -546,25 +551,18 @@ private:
         }
     }
 
-    void HideFile(const fs::path& rPath) const
-    {
-        std::error_code ec;
-        fs::rename(rPath, GetTempFileName(rPath), ec);
-        if (ec) {
-            CO_SIM_IO_ERROR << "\"" << rPath << "\" could not be made visible!\nError code: " << ec.message() << std::endl;
-        }
-    }
-
     void RemovePath(const fs::path& rPath) const
     {
-        // rename aka hide first and then remove?
-        // => this should fix the issue in case another process tries to write to a (new) file while this one is being deleted
-        // afair the rename is "atomic" aka can only be done by one process at the same time (ensured by OS)
+        // In windows the file cannot be removed if another file handle is using it
+        // this can be the case here if the partner checks if the file (still) exists
+        // hence we try multiple times to delete it
         std::error_code ec;
-        HideFile(rPath);
-        if (!fs::remove(GetTempFileName(rPath), ec)) {
-            CO_SIM_IO_ERROR << "\"" << rPath << "\" could not be deleted!\nError code: " << ec.message() << std::endl;
+        for (std::size_t i=0; i<5; ++i) {
+            if (fs::remove(rPath, ec)) {
+                return; // if file could be removed succesfully then return
+            }
         }
+        CO_SIM_IO_ERROR << "\"" << rPath << "\" could not be deleted!\nError code: " << ec.message() << std::endl;
     }
 
 };
