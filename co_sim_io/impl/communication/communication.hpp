@@ -205,25 +205,6 @@ private:
         CO_SIM_IO_ERROR << "ExportMeshImpl not implemented for this comm-type!" << std::endl;
         return Info();
     }
-
-    // old interface, functions need to be removed before release
-    virtual /*[[deprecated]]*/ Info ImportMeshImpl(
-        const std::string& rIdentifier,
-        CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
-        CoSimIO::Internals::DataContainer<int>& rElementConnectivities,
-        CoSimIO::Internals::DataContainer<int>& rElementTypes)
-    {
-        CO_SIM_IO_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
-    }
-
-    virtual /*[[deprecated]]*/ Info ExportMeshImpl(
-        const std::string& rIdentifier,
-        const CoSimIO::Internals::DataContainer<double>& rNodalCoordinates,
-        const CoSimIO::Internals::DataContainer<int>& rElementConnectivities,
-        const CoSimIO::Internals::DataContainer<int>& rElementTypes)
-    {
-        CO_SIM_IO_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
-    }
 };
 
 } // namespace Internals
