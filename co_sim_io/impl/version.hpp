@@ -19,7 +19,7 @@
 namespace CoSimIO {
 
 constexpr int GetMajorVersion() {
-    return 1;
+    return 2;
 }
 
 constexpr int GetMinorVersion() {
