@@ -513,7 +513,7 @@ private:
     fs::path GetFileName(const fs::path& rPath, const std::string& rExtension) const
     {
         fs::path local_copy(rPath);
-        local_copy += "_" + std::to_string(mFileIndex++) + "." + rExtension;
+        local_copy += "_" + std::to_string((mFileIndex++)%100) + "." + rExtension;
 
         if (mCommInFolder) {
             return mCommFolder / local_copy;
