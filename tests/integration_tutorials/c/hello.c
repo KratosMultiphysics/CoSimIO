@@ -39,9 +39,9 @@ int main()
     int minor_version = CoSimIO_Info_GetInt(hello_info, "minor_version");
     const char* patch_version = CoSimIO_Info_GetString(hello_info, "patch_version");
 
-    COSIMIO_CHECK_EQUAL(major_version, 1);
-    COSIMIO_CHECK_EQUAL(minor_version, 0);
-    COSIMIO_CHECK_STRING_EQUAL(patch_version, "0");
+    // COSIMIO_CHECK_EQUAL(major_version, 1);
+    // COSIMIO_CHECK_EQUAL(minor_version, 0);
+    // COSIMIO_CHECK_STRING_EQUAL(patch_version, "0");
 
     CoSimIO_FreeInfo(hello_info);
 
