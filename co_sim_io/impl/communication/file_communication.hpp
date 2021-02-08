@@ -25,6 +25,7 @@
 #include "communication.hpp"
 #include "../vtk_utilities.hpp"
 #include "../filesystem_inc.hpp"
+#include "../version.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -115,13 +116,31 @@ private:
         CheckStream(my_config_file, I_MyFileName);
 
         // TODO write configuration and do sth with it?
-        my_config_file << "Hello there\n";
+        // Maybe in the future use Import/ExportInfo here...
+        my_config_file << GetMajorVersion() << "\n";
+        my_config_file << GetMinorVersion() << "\n";
+        my_config_file << GetPatchVersion() << "\n";
 
         my_config_file.close();
         MakeFileVisible(I_MyFileName);
 
         WaitForPath(I_PartnerFileName);
+
+        std::ifstream partner_config_file(I_PartnerFileName);
+        CheckStream(partner_config_file, I_PartnerFileName);
+
         // TODO read configuration and do sth with it?
+        int partner_major_version;
+        int partner_minor_version;
+
+        partner_config_file >> partner_major_version;
+        partner_config_file >> partner_minor_version;
+
+        partner_config_file.close();
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetMajorVersion() != partner_major_version) << "Major version mismatch!" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetMinorVersion() != partner_minor_version) << "Minor version mismatch!" << std::endl;
+
         RemovePath(I_PartnerFileName);
 
         WaitUntilFileIsRemoved(I_MyFileName);
