@@ -42,7 +42,7 @@ public:
         }
         mConnectionName = CreateConnectionName(mMyName, mConnectTo);
 
-        mWorkingDirectory = I_Settings.Get<std::string>("working_directory", fs::current_path());
+        mWorkingDirectory = I_Settings.Get<std::string>("working_directory", fs::current_path().string());
 
         mEchoLevel = I_Settings.Get<int>("echo_level", 0);
         mPrintTiming = I_Settings.Get<bool>("print_timing", false);
