@@ -44,6 +44,9 @@ class PythonInterfaceTests(unittest.TestCase):
     def test_import_export_mesh(self):
         self.__RunScripts("export_mesh.py", "import_mesh.py")
 
+    def test_run(self):
+        self.__RunScripts("run.py", "runner.py")
+
     def __RunScript(self, script_name):
         p = subprocess.Popen([PythonInterfaceTests.PYTHON_CMD, script_name], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD, shell=PythonInterfaceTests.USE_SHELL)
         p.wait(5)
