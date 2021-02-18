@@ -519,13 +519,12 @@ private:
         return Info(); // TODO use
     }
 
-    std::string GetTempFileName(const std::string& rFileName) const
+    fs::path GetTempFileName(const fs::path& rPath) const
     {
-        // TODO refactor with fs::path
         if (mCommInFolder) {
-            return std::string(rFileName).insert(std::string(mCommFolder).length()+1, ".");
+            return rPath.string().insert(mCommFolder.string().length()+1, ".");
         } else {
-            return "." + rFileName;
+            return "." + rPath.string();
         }
     }
 
