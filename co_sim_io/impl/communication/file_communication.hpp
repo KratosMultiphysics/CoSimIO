@@ -522,9 +522,9 @@ private:
     fs::path GetTempFileName(const fs::path& rPath) const
     {
         if (mCommInFolder) {
-            return fs::path(std::string(rPath).insert(std::string(mCommFolder).length()+1, "."));
+            return rPath.string().insert(mCommFolder.string().length()+1, ".");
         } else {
-            return fs::path("." + std::string(rPath));
+            return "." + rPath.string();
         }
     }
 
