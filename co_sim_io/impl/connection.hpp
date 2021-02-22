@@ -87,7 +87,7 @@ public:
             auto info = ImportInfo(ctrl_info);
             const std::string control_signal = info.Get<std::string>("control_signal");
             CheckIfNameIsValid(control_signal);
-            if (control_signal == "end") {
+            if (control_signal == "exit") {
                 break;
             } else {
                 auto it_fct = mRegisteredFunctions.find(control_signal);
@@ -187,7 +187,7 @@ private:
             "ExportMesh",
             "ImportData",
             "ExportData",
-            "end"
+            "exit"
         };
 
         if (std::find(allowed_names.begin(), allowed_names.end(), rName) == allowed_names.end()) {
