@@ -49,18 +49,29 @@ class PythonInterfaceTests(unittest.TestCase):
 
     def __RunScript(self, script_name):
         p = subprocess.Popen([PythonInterfaceTests.PYTHON_CMD, script_name], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD, shell=PythonInterfaceTests.USE_SHELL)
-        p.wait(5)
-        p_out = p.communicate()
+        try:
+            p_out = p.communicate(timeout=5)
+        except subprocess.TimeoutExpired: # Timeout reached
+            p_out = [None, None]
+            p.kill()
+
         self.assertEqual(p.returncode, 0, msg=GetErrMsg(script_name, p_out))
 
     def __RunScripts(self, script_name_1, script_name_2):
         p1 = subprocess.Popen([PythonInterfaceTests.PYTHON_CMD, script_name_1], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD, shell=PythonInterfaceTests.USE_SHELL)
         p2 = subprocess.Popen([PythonInterfaceTests.PYTHON_CMD, script_name_2], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD, shell=PythonInterfaceTests.USE_SHELL)
-        p1.wait(5)
-        p2.wait(5)
 
-        p1_out = p1.communicate()
-        p2_out = p2.communicate()
+        try:
+            p1_out = p1.communicate(timeout=5)
+        except subprocess.TimeoutExpired: # Timeout reached
+            p1_out = [None, None]
+            p1.kill()
+
+        try:
+            p2_out = p2.communicate(timeout=5)
+        except subprocess.TimeoutExpired: # Timeout reached
+            p2_out = [None, None]
+            p2.kill()
 
         self.assertEqual(p1.returncode, 0, msg=GetErrMsg(script_name_1, p1_out))
         self.assertEqual(p2.returncode, 0, msg=GetErrMsg(script_name_2, p2_out))
