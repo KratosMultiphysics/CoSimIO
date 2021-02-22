@@ -81,12 +81,12 @@ int main()
         COSIMIO_CHECK_TRUE(ControlOtherCode("OutputSolutionStep"));
     }
 
+    // tell the other code to exit the Run function
     CoSimIO::Info ctrl_info;
     ctrl_info.Set("connection_name", s_connection_name);
     ctrl_info.Set("identifier", "run_control");
-
-    ctrl_info.Set("control_signal", "end"); // TODO improve
-    CoSimIO::ExportInfo(ctrl_info); // here we tell the other code which function to call
+    ctrl_info.Set("control_signal", "exit");
+    CoSimIO::ExportInfo(ctrl_info);
 
     CoSimIO::Info disconnect_settings;
     disconnect_settings.Set("connection_name", s_connection_name);
