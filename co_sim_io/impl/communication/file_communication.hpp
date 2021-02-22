@@ -175,7 +175,7 @@ private:
 
         const fs::path file_name(GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, "dat"));
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import Info in file \"" << file_name << "\" ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import Info in file " << file_name << " ..." << std::endl;
 
         WaitForPath(file_name);
 
@@ -200,7 +200,7 @@ private:
 
         const fs::path file_name(GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, "dat"));
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export Info in file \"" << file_name << "\" ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export Info in file " << file_name << " ..." << std::endl;
 
         WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
@@ -227,7 +227,7 @@ private:
 
         const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier, "dat"));
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import array \"" << identifier << "\" in file \"" << file_name << "\" ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import array \"" << identifier << "\" in file " << file_name << " ..." << std::endl;
 
         WaitForPath(file_name);
 
@@ -269,7 +269,7 @@ private:
         WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
         const std::size_t size = rData.size();
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export array \"" << identifier << "\" with size: " << size << " in file \"" << file_name << "\" ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export array \"" << identifier << "\" with size: " << size << " in file " << file_name << " ..." << std::endl;
 
         const auto start_time(std::chrono::steady_clock::now());
 
@@ -306,7 +306,7 @@ private:
 
         const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier, "vtk"));
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import mesh \"" << identifier << "\" in file \"" << file_name << "\" ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import mesh \"" << identifier << "\" in file " << file_name << " ..." << std::endl;
 
         WaitForPath(file_name);
 
@@ -426,7 +426,7 @@ private:
 
         WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export mesh \"" << identifier << "\" with " << I_ModelPart.NumberOfNodes() << " Nodes | " << I_ModelPart.NumberOfElements() << " Elements in file \"" << file_name << "\" ..." << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export mesh \"" << identifier << "\" with " << I_ModelPart.NumberOfNodes() << " Nodes | " << I_ModelPart.NumberOfElements() << " Elements in file " << file_name << " ..." << std::endl;
 
         const auto start_time(std::chrono::steady_clock::now());
 
@@ -542,21 +542,21 @@ private:
 
     void WaitForPath(const fs::path& rPath) const
     {
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: \"" << rPath << "\"" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << std::endl;
         while(!PathExists(rPath)) {
             std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
         }
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found: \"" << rPath << "\"" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found: " << rPath << std::endl;
     }
 
     void WaitUntilFileIsRemoved(const fs::path& rPath) const
     {
         if (PathExists(rPath)) { // only issue the wating message if the file exists initially
-            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: \"" << rPath << "\" to be removed" << std::endl;
+            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << " to be removed" << std::endl;
             while(PathExists(rPath)) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
             }
-            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "\"" << rPath << "\" was removed" << std::endl;
+            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << rPath << " was removed" << std::endl;
         }
     }
 
@@ -565,7 +565,7 @@ private:
         std::error_code ec;
         fs::rename(GetTempFileName(rPath), rPath, ec);
         if (ec) {
-            CO_SIM_IO_ERROR << "\"" << rPath << "\" could not be made visible!\nError code: " << ec.message() << std::endl;
+            CO_SIM_IO_ERROR << rPath << " could not be made visible!\nError code: " << ec.message() << std::endl;
         }
     }
 
@@ -580,7 +580,7 @@ private:
                 return; // if file could be removed succesfully then return
             }
         }
-        CO_SIM_IO_ERROR << "\"" << rPath << "\" could not be deleted!\nError code: " << ec.message() << std::endl;
+        CO_SIM_IO_ERROR << rPath << " could not be deleted!\nError code: " << ec.message() << std::endl;
     }
 
 };
