@@ -48,7 +48,7 @@ class PythonInterfaceTests(unittest.TestCase):
         self.__RunScripts("run.py", "runner.py")
 
     def __RunScript(self, script_name):
-        p = subprocess.Popen([PythonInterfaceTests.PYTHON_CMD, script_name], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD, shell=PythonInterfaceTests.USE_SHELL)
+        p = subprocess.Popen([PythonInterfaceTests.PYTHON_CMD, script_name], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD)
         try:
             p_out = p.communicate(timeout=5)
         except subprocess.TimeoutExpired: # Timeout reached
@@ -58,8 +58,8 @@ class PythonInterfaceTests(unittest.TestCase):
         self.assertEqual(p.returncode, 0, msg=GetErrMsg(script_name, p_out))
 
     def __RunScripts(self, script_name_1, script_name_2):
-        p1 = subprocess.Popen([PythonInterfaceTests.PYTHON_CMD, script_name_1], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD, shell=PythonInterfaceTests.USE_SHELL)
-        p2 = subprocess.Popen([PythonInterfaceTests.PYTHON_CMD, script_name_2], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD, shell=PythonInterfaceTests.USE_SHELL)
+        p1 = subprocess.Popen([PythonInterfaceTests.PYTHON_CMD, script_name_1], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD)
+        p2 = subprocess.Popen([PythonInterfaceTests.PYTHON_CMD, script_name_2], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD)
 
         try:
             p1_out = p1.communicate(timeout=5)
@@ -80,6 +80,8 @@ def GetErrMsg(script_name, p_out):
     err_msg = '\nRunning script "{}" was not successful!'.format(script_name)
     p_stdout = p_out[0]
     p_stderr = p_out[1]
+
+    print("p_stderr", p_stderr)
     if p_stdout:
         err_msg += "\nSTDOUT:\n" + p_stdout.decode('ascii')
     if p_stderr:
