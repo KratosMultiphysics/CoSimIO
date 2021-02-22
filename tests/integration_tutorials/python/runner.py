@@ -76,7 +76,7 @@ for _ in range(num_time_steps):
         cosimio_check_true(control_other_code("ExportData"))
     cosimio_check_true(control_other_code("FinalizeSolutionStep"))
     cosimio_check_true(control_other_code("OutputSolutionStep"))
-eeee
+
 # tell the other code to exit the Run function
 ctrl_info = CoSimIO.Info()
 ctrl_info.SetString("connection_name", s_connection_name)
