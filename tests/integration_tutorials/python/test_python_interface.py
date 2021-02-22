@@ -64,14 +64,14 @@ class PythonInterfaceTests(unittest.TestCase):
         try:
             p1_out = p1.communicate(timeout=5)
         except subprocess.TimeoutExpired: # Timeout reached
-            p1_out = [None, None]
             p1.kill()
+            p1_out = p1.communicate()
 
         try:
             p2_out = p2.communicate(timeout=5)
         except subprocess.TimeoutExpired: # Timeout reached
-            p2_out = [None, None]
             p2.kill()
+            p2_out = p2.communicate()
 
         self.assertEqual(p1.returncode, 0, msg=GetErrMsg(script_name_1, p1_out))
         self.assertEqual(p2.returncode, 0, msg=GetErrMsg(script_name_2, p2_out))
