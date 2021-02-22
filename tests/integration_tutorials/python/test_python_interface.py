@@ -18,7 +18,7 @@ import subprocess
 
 class PythonInterfaceTests(unittest.TestCase):
     CWD = os.path.dirname(os.path.realpath(__file__))
-    USE_SHELL = False #os.name=="nt" # using shell on win
+    USE_SHELL = False
     PYTHON_CMD = os.getenv("PYTHON_CMD", sys.executable)
     if not PYTHON_CMD:
         raise Exception("Python command could not be determined!")
@@ -45,6 +45,8 @@ class PythonInterfaceTests(unittest.TestCase):
         self.__RunScripts("export_mesh.py", "import_mesh.py")
 
     def test_run(self):
+        if os.name=="nt":
+            self.skipTest("This test does not yet work in Win")
         self.__RunScripts("run.py", "runner.py")
 
     def __RunScript(self, script_name):
