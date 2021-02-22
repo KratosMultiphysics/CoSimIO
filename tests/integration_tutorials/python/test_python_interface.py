@@ -18,7 +18,7 @@ import subprocess
 
 class PythonInterfaceTests(unittest.TestCase):
     CWD = os.path.dirname(os.path.realpath(__file__))
-    USE_SHELL = os.name=="nt" # using shell on win
+    USE_SHELL = False #os.name=="nt" # using shell on win
     PYTHON_CMD = os.getenv("PYTHON_CMD", sys.executable)
     if not PYTHON_CMD:
         raise Exception("Python command could not be determined!")
@@ -52,8 +52,8 @@ class PythonInterfaceTests(unittest.TestCase):
         try:
             p_out = p.communicate(timeout=5)
         except subprocess.TimeoutExpired: # Timeout reached
-            p_out = [None, None]
             p.kill()
+            p_out = p.communicate()
 
         self.assertEqual(p.returncode, 0, msg=GetErrMsg(script_name, p_out))
 
