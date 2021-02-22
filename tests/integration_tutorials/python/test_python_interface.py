@@ -18,7 +18,6 @@ import subprocess
 
 class PythonInterfaceTests(unittest.TestCase):
     CWD = os.path.dirname(os.path.realpath(__file__))
-    USE_SHELL = False
     PYTHON_CMD = os.getenv("PYTHON_CMD", sys.executable)
     if not PYTHON_CMD:
         raise Exception("Python command could not be determined!")
