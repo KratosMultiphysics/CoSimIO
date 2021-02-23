@@ -16,7 +16,7 @@
 # python imports
 import unittest
 from abc import ABCMeta, abstractmethod
-
+import numpy
 try:
     import numpy as np
     numpy_available = True
