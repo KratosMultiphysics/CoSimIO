@@ -25,7 +25,6 @@
 #include "communication.hpp"
 #include "../vtk_utilities.hpp"
 #include "../filesystem_inc.hpp"
-#include "../version.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -100,6 +99,24 @@ private:
         return info;
     }
 
+    Info DisconnectDetail(const Info& I_Info) override
+    {
+        ExchangeSyncFileWithPartner();
+
+        if (mCommInFolder && GetIsPrimaryConnection()) {
+            // delete directory to remove potential leftovers
+            std::error_code ec;
+            fs::remove_all(mCommFolder, ec);
+            if (ec) {
+                CO_SIM_IO_INFO("CoSimIO") << "Warning, communication directory (" << mCommFolder << ")could not be deleted!\nError code: " << ec.message() << std::endl;
+            }
+        }
+
+        Info info;
+        info.Set("is_connected", false);
+        return info;
+    }
+
     void ExchangeSyncFileWithPartner() const
     {
         const fs::path file_name_primary(GetFileName("CoSimIO_primary_connect_" + GetConnectionName(), "sync"));
@@ -128,64 +145,6 @@ private:
 
             WaitUntilFileIsRemoved(file_name_secondary);
         }
-    }
-
-    // void ExchangeSyncFileWithPartner(
-    //     const fs::path& I_MyFileName,
-    //     const fs::path& I_PartnerFileName
-    //     ) const
-    // {
-    //     std::ofstream my_config_file;
-    //     my_config_file.open(GetTempFileName(I_MyFileName));
-    //     CheckStream(my_config_file, I_MyFileName);
-
-    //     // TODO write configuration and do sth with it?
-    //     // Maybe in the future use Import/ExportInfo here...
-    //     my_config_file << GetMajorVersion() << "\n";
-    //     my_config_file << GetMinorVersion() << "\n";
-    //     my_config_file << GetPatchVersion() << "\n";
-
-    //     my_config_file.close();
-    //     MakeFileVisible(I_MyFileName);
-
-    //     WaitForPath(I_PartnerFileName);
-
-    //     std::ifstream partner_config_file(I_PartnerFileName);
-    //     CheckStream(partner_config_file, I_PartnerFileName);
-
-    //     // TODO read configuration and do sth with it?
-    //     int partner_major_version;
-    //     int partner_minor_version;
-
-    //     partner_config_file >> partner_major_version;
-    //     partner_config_file >> partner_minor_version;
-
-    //     partner_config_file.close();
-
-    //     CO_SIM_IO_INFO_IF("CoSimIO", GetMajorVersion() != partner_major_version) << "Major version mismatch!" << std::endl;
-    //     CO_SIM_IO_INFO_IF("CoSimIO", GetMinorVersion() != partner_minor_version) << "Minor version mismatch!" << std::endl;
-
-    //     RemovePath(I_PartnerFileName);
-
-    //     WaitUntilFileIsRemoved(I_MyFileName);
-    // }
-
-    Info DisconnectDetail(const Info& I_Info) override
-    {
-        ExchangeSyncFileWithPartner();
-
-        if (mCommInFolder && GetIsPrimaryConnection()) {
-            // delete directory to remove potential leftovers
-            std::error_code ec;
-            fs::remove_all(mCommFolder, ec);
-            if (ec) {
-                CO_SIM_IO_INFO("CoSimIO") << "Warning, communication directory (" << mCommFolder << ")could not be deleted!\nError code: " << ec.message() << std::endl;
-            }
-        }
-
-        Info info;
-        info.Set("is_connected", false);
-        return info;
     }
 
     Info ImportInfoImpl(const Info& I_Info) override
