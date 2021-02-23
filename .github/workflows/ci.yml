@@ -27,11 +27,15 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Installing dependencies
+    - name: Install Valgrind
       if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.8' }}
       run: |
         sudo apt-get update && sudo apt-get install valgrind
-        sudo pip install numpy
+
+    - name: Installing dependencies
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+      run: |
+        sudo pip3 install numpy
 
     - name: Build CoSimIO
       run: |
