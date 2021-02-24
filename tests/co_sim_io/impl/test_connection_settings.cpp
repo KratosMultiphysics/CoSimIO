@@ -71,6 +71,16 @@ TEST_CASE("disallowed_chars")
     }
 }
 
+TEST_CASE("non_existing_working_dir")
+{
+    Info info;
+    info.Set<std::string>("my_name", "def");
+    info.Set<std::string>("connect_to", "abc");
+    info.Set<std::string>("working_directory", "some_stupid_and_evil_name_that_hopefully_never_exists");
+
+    CHECK_THROWS_WITH(CoSimIO::Connect(info), "Error: The working directory \"some_stupid_and_evil_name_that_hopefully_never_exists\" does not exist!\n");
+}
+
 } // TEST_SUITE("ConnectionSettings")
 
 } // namespace CoSimIO
