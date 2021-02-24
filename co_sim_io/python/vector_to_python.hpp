@@ -26,10 +26,6 @@
 //
 #include "../impl/define.hpp"
 
-// has to be done outside of any namespace!
-PYBIND11_MAKE_OPAQUE(std::vector<int>)
-PYBIND11_MAKE_OPAQUE(std::vector<double>)
-
 namespace {
 
 template<typename TDataType>
