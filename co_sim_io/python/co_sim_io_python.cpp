@@ -22,7 +22,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/numpy.h>
-#include <pybind11/stl.h>
 
 // CoSimIO includes
 #include "../co_sim_io.hpp"
@@ -45,15 +44,15 @@ PYBIND11_MODULE(CoSimIO, m)
     m.def("ImportMesh", &CoSimIO::ImportMesh);
     m.def("ExportMesh", &CoSimIO::ExportMesh);
 
-    m.def("ImportData", [](const CoSimIO::Info& I_Info, std::vector<double>& rValues){
+    m.def("ImportData", [](const CoSimIO::Info& I_Info, CoSimIO::VectorWrapper<double>& rValues){
         return CoSimIO::ImportData(
         I_Info,
-        rValues);
+        rValues.Vector());
     });
-    m.def("ExportData", [](const CoSimIO::Info& I_Info, const std::vector<double>& rValues){
+    m.def("ExportData", [](const CoSimIO::Info& I_Info, const CoSimIO::VectorWrapper<double>& rValues){
         return CoSimIO::ExportData(
         I_Info,
-        rValues);
+        rValues.Vector());
     });
 
     m.def("ImportInfo", &CoSimIO::ImportInfo);
@@ -67,9 +66,9 @@ PYBIND11_MODULE(CoSimIO, m)
         std::function<CoSimIO::Info(const CoSimIO::Info&)> FunctionPointer)
         { return CoSimIO::Register(I_Info, FunctionPointer); } );
 
-    AddCoSimIOInfoToPython(m);
-    AddCoSimIOModelPartToPython(m);
-    AddCoSimIOVectorToPython(m);
-    AddCoSimIOConnectionStatusToPython(m);
-    AddCoSimIOVersionToPython(m);
+    CoSimIO::AddCoSimIOInfoToPython(m);
+    CoSimIO::AddCoSimIOModelPartToPython(m);
+    CoSimIO::AddCoSimIOVectorToPython(m);
+    CoSimIO::AddCoSimIOConnectionStatusToPython(m);
+    CoSimIO::AddCoSimIOVersionToPython(m);
 }

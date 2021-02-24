@@ -26,6 +26,8 @@
 // CoSimIO include
 #include "../impl/model_part.hpp"
 
+namespace CoSimIO {
+
 void AddCoSimIOModelPartToPython(pybind11::module& m)
 {
     namespace py = pybind11;
@@ -101,5 +103,7 @@ void AddCoSimIOModelPartToPython(pybind11::module& m)
         .value("Point3D",              CoSimIO::ElementType::Point3D)
         ;
 }
+
+} // namespace CoSimIO
 
 #endif // CO_SIM_IO_MODEL_PART_TO_PYHON_INCLUDED
