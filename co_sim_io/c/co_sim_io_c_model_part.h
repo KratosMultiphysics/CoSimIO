@@ -1,14 +1,14 @@
-//     ______     _____ _           ________
-//    / ____/___ / ___/(_)___ ___  /  _/ __ |
-//   / /   / __ \\__ \/ / __ `__ \ / // / / /
-//  / /___/ /_/ /__/ / / / / / / // // /_/ /
-//  \____/\____/____/_/_/ /_/ /_/___/\____/
-//  Kratos CoSimulationApplication
-//
-//  License:         BSD License, see license.txt
-//
-//  Main authors:    Philipp Bucher (https://github.com/philbucher)
-//
+/*   ______     _____ _           ________
+    / ____/___ / ___/(_)___ ___  /  _/ __ |
+   / /   / __ \\__ \/ / __ `__ \ / // / / /
+  / /___/ /_/ /__/ / / / / / / // // /_/ /
+  \____/\____/____/_/_/ /_/ /_/___/\____/
+  Kratos CoSimulationApplication
+
+  License:         BSD License, see license.txt
+
+  Main authors:    Philipp Bucher (https://github.com/philbucher)
+*/
 
 #ifndef CO_SIM_IO_C_MODEL_PART_INCLUDED
 #define CO_SIM_IO_C_MODEL_PART_INCLUDED
@@ -56,7 +56,7 @@ typedef enum
 } CoSimIO_ElementType;
 
 
-// Node functions
+/* Node functions */
 int CoSimIO_Node_Id(CoSimIO_Node I_Node);
 double CoSimIO_Node_X(CoSimIO_Node I_Node);
 double CoSimIO_Node_Y(CoSimIO_Node I_Node);
@@ -64,13 +64,13 @@ double CoSimIO_Node_Z(CoSimIO_Node I_Node);
 double CoSimIO_Node_Coordinate(CoSimIO_Node I_Node, const int I_Index);
 
 
-// Element functions
+/* Element functions */
 int CoSimIO_Element_Id(CoSimIO_Element I_Element);
 CoSimIO_ElementType CoSimIO_Element_Type(CoSimIO_Element I_Element);
 int CoSimIO_Element_NumberOfNodes(CoSimIO_Element I_Element);
 CoSimIO_Node CoSimIO_Element_GetNodeByIndex(CoSimIO_Element I_Element, const int I_Index);
 
-// ModelPart functions
+/* ModelPart functions */
 CoSimIO_ModelPart CoSimIO_CreateModelPart(const char* I_Name);
 
 int CoSimIO_FreeModelPart(CoSimIO_ModelPart I_ModelPart);
@@ -97,4 +97,4 @@ CoSimIO_Element CoSimIO_ModelPart_CreateNewElement(
     const int* I_Connectivities);
 
 
-#endif // CO_SIM_IO_C_MODEL_PART_INCLUDED
+#endif /* CO_SIM_IO_C_MODEL_PART_INCLUDED */
