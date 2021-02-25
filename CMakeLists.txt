@@ -68,7 +68,7 @@ elseif(${CMAKE_COMPILER_IS_GNUCXX})
     endif()
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wpedantic")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wpedantic")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c89 -Wall -Wpedantic")
 endif()
 
 message("CMAKE_CXX_FLAGS:" ${CMAKE_CXX_FLAGS})
