@@ -133,6 +133,9 @@ jobs:
     container:
       image: kratosmultiphysics/kratos-image-ci-centos7-python35:latest
 
+    steps:
+    - uses: actions/checkout@v2
+
     - name: Build CoSimIO
       run: |
         cmake -H"." -B"build"        \
