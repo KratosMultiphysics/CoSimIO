@@ -142,7 +142,6 @@ jobs:
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_C=ON               \
           -DBUILD_PYTHON=ON          \
-          -DBUILD_FORTRAN=OFF        \
           -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
           -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
 
@@ -158,4 +157,4 @@ jobs:
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
-        python run_python_tests.py
+        python3 run_python_tests.py
