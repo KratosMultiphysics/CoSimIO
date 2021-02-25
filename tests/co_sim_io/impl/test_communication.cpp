@@ -125,31 +125,33 @@ std::shared_ptr<CoSimIO::ModelPart> CreateSurfaceModelPart()
 {
     std::shared_ptr<CoSimIO::ModelPart> p_model_part(std::make_shared<CoSimIO::ModelPart>("surface_model_part"));
 
-    std::vector<std::tuple<int, std::array<double,3>>> node_coords {
-        {1,  {0,0,0}},
-        {2,  {1,0,0}},
-        {3,  {1,2,0}},
-        {4,  {0,2,0}},
-        {9,  {2.5,0,0}},
-        {10, {2.5,2,0}},
-        {21, {0,3,0}},
-        {22, {1,3,0}},
-        {23, {2.5,3,0}},
-        {53, {0,3,-2}},
-        {55, {2.5,3,-2}}
+    using tup = std::tuple<int, std::array<double,3>>; // workaround for older compilers
+    std::vector<tup> node_coords {
+        tup{1,  {0,0,0}},
+        tup{2,  {1,0,0}},
+        tup{3,  {1,2,0}},
+        tup{4,  {0,2,0}},
+        tup{9,  {2.5,0,0}},
+        tup{10, {2.5,2,0}},
+        tup{21, {0,3,0}},
+        tup{22, {1,3,0}},
+        tup{23, {2.5,3,0}},
+        tup{53, {0,3,-2}},
+        tup{55, {2.5,3,-2}}
     };
 
     // Id, type, connectivities
+    using tup2 = std::tuple<int, CoSimIO::ElementType, CoSimIO::ConnectivitiesType>; // workaround for older compilers
     std::vector<std::tuple<int, CoSimIO::ElementType, CoSimIO::ConnectivitiesType>> elem_info {
-        {10,  ElementType::Quadrilateral2D4, {1,2,3,4}},
-        {3,   ElementType::Quadrilateral2D4, {3,2,9,10}},
-        {4,   ElementType::Quadrilateral2D4, {4,3,22,21}},
-        {6,   ElementType::Quadrilateral2D4, {3,10,23,22}},
-        {11,  ElementType::Triangle2D3, {21,22,53}},
-        {12,  ElementType::Triangle2D3, {22,55,53}},
-        {15,  ElementType::Triangle2D3, {22,23,55}},
-        {26,  ElementType::Triangle2D3, {4,21,53}},
-        {27,  ElementType::Triangle2D3, {10,23,55}}
+        tup2{10,  ElementType::Quadrilateral2D4, {1,2,3,4}},
+        tup2{3,   ElementType::Quadrilateral2D4, {3,2,9,10}},
+        tup2{4,   ElementType::Quadrilateral2D4, {4,3,22,21}},
+        tup2{6,   ElementType::Quadrilateral2D4, {3,10,23,22}},
+        tup2{11,  ElementType::Triangle2D3, {21,22,53}},
+        tup2{12,  ElementType::Triangle2D3, {22,55,53}},
+        tup2{15,  ElementType::Triangle2D3, {22,23,55}},
+        tup2{26,  ElementType::Triangle2D3, {4,21,53}},
+        tup2{27,  ElementType::Triangle2D3, {10,23,55}}
     };
 
    for (const auto& node_info : node_coords) {
@@ -176,28 +178,30 @@ std::shared_ptr<CoSimIO::ModelPart> CreateVolumeModelPart()
 {
     std::shared_ptr<CoSimIO::ModelPart> p_model_part(std::make_shared<CoSimIO::ModelPart>("volume_model_part"));
 
-    std::vector<std::tuple<int, std::array<double,3>>> node_coords {
-        {1,   {0,0,0}},
-        {2,   {1,0,0}},
-        {3,   {1,1,0}},
-        {4,   {0,1,0}},
-        {11,  {0,0,1.5}},
-        {12,  {1,0,1.5}},
-        {13,  {1,1,1.5}},
-        {14,  {0,1,1.5}},
-        {22,  {5,0,0}},
-        {23,  {5,1,0}},
-        {112, {5.5,0,1.5}},
-        {113, {5.5,1,1.5}},
-        {6,   {3,-1.5,5}}
+    using tup = std::tuple<int, std::array<double,3>>; // workaround for older compilers
+    std::vector<tup> node_coords {
+        tup{1,   {0,0,0}},
+        tup{2,   {1,0,0}},
+        tup{3,   {1,1,0}},
+        tup{4,   {0,1,0}},
+        tup{11,  {0,0,1.5}},
+        tup{12,  {1,0,1.5}},
+        tup{13,  {1,1,1.5}},
+        tup{14,  {0,1,1.5}},
+        tup{22,  {5,0,0}},
+        tup{23,  {5,1,0}},
+        tup{112, {5.5,0,1.5}},
+        tup{113, {5.5,1,1.5}},
+        tup{6,   {3,-1.5,5}}
     };
 
     // Id, type, connectivities
+    using tup2 = std::tuple<int, CoSimIO::ElementType, CoSimIO::ConnectivitiesType>; // workaround for older compilers
     std::vector<std::tuple<int, CoSimIO::ElementType, CoSimIO::ConnectivitiesType>> elem_info {
-        {10,  ElementType::Hexahedra3D8, {1,2,3,4,11,12,13,14}},
-        {3,   ElementType::Hexahedra3D8, {2,22,23,3,12,112,113,13}},
-        {26,  ElementType::Tetrahedra3D4, {11,12,13,6}},
-        {27,  ElementType::Tetrahedra3D4, {12,112,13,6}}
+        tup2{10,  ElementType::Hexahedra3D8, {1,2,3,4,11,12,13,14}},
+        tup2{3,   ElementType::Hexahedra3D8, {2,22,23,3,12,112,113,13}},
+        tup2{26,  ElementType::Tetrahedra3D4, {11,12,13,6}},
+        tup2{27,  ElementType::Tetrahedra3D4, {12,112,13,6}}
     };
 
    for (const auto& node_info : node_coords) {
