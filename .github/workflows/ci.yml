@@ -148,3 +148,15 @@ jobs:
           -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
 
         cmake --build "build" --target install -- -j2
+
+    - name: Running tests (Ctest)
+      run: |
+        cd build
+        ctest
+
+    - name: Running tests (Python)
+      run: |
+        export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
+        cd tests
+        # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
+        python run_python_tests.py
