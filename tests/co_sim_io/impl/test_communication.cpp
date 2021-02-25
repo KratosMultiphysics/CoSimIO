@@ -176,20 +176,21 @@ std::shared_ptr<CoSimIO::ModelPart> CreateVolumeModelPart()
 {
     std::shared_ptr<CoSimIO::ModelPart> p_model_part(std::make_shared<CoSimIO::ModelPart>("volume_model_part"));
 
-    std::vector<std::tuple<int, std::array<double,3>>> node_coords {
-        {{1,   {0,0,0}}},
-        {{2,   {1,0,0}}},
-        {{3,   {1,1,0}}},
-        {{4,   {0,1,0}}},
-        {{11,  {0,0,1.5}}},
-        {{12,  {1,0,1.5}}},
-        {{13,  {1,1,1.5}}},
-        {{14,  {0,1,1.5}}},
-        {{22,  {5,0,0}}},
-        {{23,  {5,1,0}}},
-        {{112, {5.5,0,1.5}}},
-        {{113, {5.5,1,1.5}}},
-        {{6,   {3,-1.5,5}}}
+    using tup = std::tuple<int, std::array<double,3>>;
+    std::vector<tup> node_coords {
+        tup{1,   {0,0,0}},
+        tup{2,   {1,0,0}},
+        tup{3,   {1,1,0}},
+        tup{4,   {0,1,0}},
+        tup{11,  {0,0,1.5}},
+        tup{12,  {1,0,1.5}},
+        tup{13,  {1,1,1.5}},
+        tup{14,  {0,1,1.5}},
+        tup{22,  {5,0,0}},
+        tup{23,  {5,1,0}},
+        tup{112, {5.5,0,1.5}},
+        tup{113, {5.5,1,1.5}},
+        tup{6,   {3,-1.5,5}}
     };
 
     // Id, type, connectivities
