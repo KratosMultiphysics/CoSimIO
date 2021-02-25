@@ -1,18 +1,18 @@
-//     ______     _____ _           ________
-//    / ____/___ / ___/(_)___ ___  /  _/ __ |
-//   / /   / __ \\__ \/ / __ `__ \ / // / / /
-//  / /___/ /_/ /__/ / / / / / / // // /_/ /
-//  \____/\____/____/_/_/ /_/ /_/___/\____/
-//  Kratos CoSimulationApplication
-//
-//  License:         BSD License, see license.txt
-//
-//  Main authors:    Philipp Bucher (https://github.com/philbucher)
-//
+/*   ______     _____ _           ________
+    / ____/___ / ___/(_)___ ___  /  _/ __ |
+   / /   / __ \\__ \/ / __ `__ \ / // / / /
+  / /___/ /_/ /__/ / / / / / / // // /_/ /
+  \____/\____/____/_/_/ /_/ /_/___/\____/
+  Kratos CoSimulationApplication
 
-// this file contains some test-macros
+  License:         BSD License, see license.txt
 
-// System includes
+  Main authors:    Philipp Bucher (https://github.com/philbucher)
+*/
+
+/* this file contains some test-macros */
+
+/* System includes */
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
