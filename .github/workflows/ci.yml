@@ -78,7 +78,7 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
-        
+
     - name: Installing dependencies
       shell: cmd
       run: |
@@ -125,3 +125,23 @@ jobs:
         cd tests
         rem TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
         python run_python_tests.py
+
+
+  centos:
+    runs-on: ubuntu-latest
+
+    container:
+      image: kratosmultiphysics/kratos-image-ci-centos7-python35:latest
+
+    - name: Build CoSimIO
+      run: |
+        cmake -H"." -B"build"        \
+          -DCMAKE_BUILD_TYPE="Debug" \
+          -DBUILD_C=ON               \
+          -DBUILD_PYTHON=ON          \
+          -DBUILD_FORTRAN=OFF        \
+          -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }} \
+          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
+          -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
+
+        cmake --build "build" --target install -- -j2
