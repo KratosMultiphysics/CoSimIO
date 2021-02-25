@@ -1,20 +1,21 @@
-//     ______     _____ _           ________
-//    / ____/___ / ___/(_)___ ___  /  _/ __ |
-//   / /   / __ \\__ \/ / __ `__ \ / // / / /
-//  / /___/ /_/ /__/ / / / / / / // // /_/ /
-//  \____/\____/____/_/_/ /_/ /_/___/\____/
-//  Kratos CoSimulationApplication
-//
-//  License:         BSD License, see license.txt
-//
-//  Main authors:    Philipp Bucher (https://github.com/philbucher)
-//
+/*   ______     _____ _           ________
+    / ____/___ / ___/(_)___ ___  /  _/ __ |
+   / /   / __ \\__ \/ / __ `__ \ / // / / /
+  / /___/ /_/ /__/ / / / / / / // // /_/ /
+  \____/\____/____/_/_/ /_/ /_/___/\____/
+  Kratos CoSimulationApplication
+
+  License:         BSD License, see license.txt
+
+  Main authors:    Philipp Bucher (https://github.com/philbucher)
+*/
 
 #ifndef CO_SIM_IO_C_INCLUDED
 #define CO_SIM_IO_C_INCLUDED
 
-// C Interface for CoSimulation
-// see "co_sim_io.hpp"
+/* C Interface for CoSimulation
+   see "co_sim_io.hpp"
+*/
 
 #include <stdio.h>
 
@@ -22,7 +23,7 @@
 #include "co_sim_io_c_model_part.h"
 
 #ifdef __cplusplus
-extern "C" { // Define extern C if C++ compiler is used
+extern "C" { /* Define extern C if C++ compiler is used */
 #endif
 
 enum CoSimIO_ConnectionStatus
@@ -84,4 +85,4 @@ void CoSimIO_Free (void* ptr);
 }
 #endif
 
-#endif // CO_SIM_IO_C_INCLUDED
+#endif /* CO_SIM_IO_C_INCLUDED */
