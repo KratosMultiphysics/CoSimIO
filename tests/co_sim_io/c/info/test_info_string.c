@@ -1,23 +1,26 @@
-//     ______     _____ _           ________
-//    / ____/___ / ___/(_)___ ___  /  _/ __ |
-//   / /   / __ \\__ \/ / __ `__ \ / // / / /
-//  / /___/ /_/ /__/ / / / / / / // // /_/ /
-//  \____/\____/____/_/_/ /_/ /_/___/\____/
-//  Kratos CoSimulationApplication
-//
-//  License:         BSD License, see license.txt
-//
-//  Main authors:    Philipp Bucher (https://github.com/philbucher)
-//
+/*   ______     _____ _           ________
+    / ____/___ / ___/(_)___ ___  /  _/ __ |
+   / /   / __ \\__ \/ / __ `__ \ / // / / /
+  / /___/ /_/ /__/ / / / / / / // // /_/ /
+  \____/\____/____/_/_/ /_/ /_/___/\____/
+  Kratos CoSimulationApplication
 
-// Project includes
+  License:         BSD License, see license.txt
+
+  Main authors:    Philipp Bucher (https://github.com/philbucher)
+*/
+
+/* Project includes */
 #include "c/co_sim_io_c.h"
 
 #include "../checks.h"
 
 int main()
 {
-    CoSimIO_Info info = CoSimIO_CreateInfo();
+    /* declaring variables */
+    CoSimIO_Info info;
+
+    info = CoSimIO_CreateInfo();
 
     COSIMIO_CHECK_FALSE(CoSimIO_Info_Has(info, "identifier"));
 
