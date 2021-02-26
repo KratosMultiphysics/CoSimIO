@@ -101,7 +101,6 @@ CoSimIO_Info_SetString(settings, "connect_to", "the_other_solver_name"); // to w
 CoSimIO_Info_SetInt(settings, "echo_level", 1);
 CoSimIO_Info_SetString(settings, "version", "1.25");
 ```
-This function returns a `Info` object containing information about the connection which can be queried using `CoSimIO_Info_Get...` functions:
 
 This method returns a `Info` object containing information about the connection which can be queried using `CoSimIO_Info_Get...` method. For further calls to `CoSimIO` it is necessary to get the `connection_name`:
 ```c
