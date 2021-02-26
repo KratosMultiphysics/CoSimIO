@@ -1,6 +1,6 @@
 # Tutorial for integrating the _CoSimIO_ using the C interface
 
-This tutorial helps you through to integrate the _CoSimIO_ into a solver/software-tool using the C interface.
+This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool using the C interface.
 
 ## Overview
 
@@ -96,13 +96,13 @@ CoSimIO_Info settings = CoSimIO_CreateInfo();
 It is important to mention that the `CoSimIO_Info` is a pointer to the cpp info class which is allocated by the `CoSimIO_CreateInfo()`. So it is don't forget to free it when is not needed anymore using `CoSimIO_FreeInfo()` function. This container can be used to pass additional information about the solver/software-tool or connection settings to the CoSimIO:
 
 ```c
-CoSimIO_Info_SetString(settings, "my_name", "the_name_of_this_solver"); // The name of this solver
-CoSimIO_Info_SetString(settings, "connect_to", "the_other_solver_name"); // The name of the solver to connect to
+CoSimIO_Info_SetString(settings, "my_name", "the_name_of_this_solver"); // my name
+CoSimIO_Info_SetString(settings, "connect_to", "the_other_solver_name"); // to whom I want to connect toto
 CoSimIO_Info_SetInt(settings, "echo_level", 1);
-CoSimIO_Info_SetString(settings, "solver_version", "1.25");
+CoSimIO_Info_SetString(settings, "version", "1.25");
 ```
-This function returns a `Info` object containing information about the connection which can be queried using `CoSimIO_Info_Get...` functions:
 
+This method returns a `Info` object containing information about the connection which can be queried using `CoSimIO_Info_Get...` method. For further calls to `CoSimIO` it is necessary to get the `connection_name`:
 ```c
 CoSimIO_Info_GetString(info, "connection_name");
 CoSimIO_Info_GetInt(info, "connection_status");
@@ -117,10 +117,10 @@ Now putting together everything:
 int main()
 {
     CoSimIO_Info settings=CoSimIO_CreateInfo();
-    CoSimIO_Info_SetString(settings, "my_name", "the_name_of_this_solver"); // The name of this solver
-    CoSimIO_Info_SetString(settings, "connect_to", "the_other_solver_name"); // The name of the solver to connect to
+    CoSimIO_Info_SetString(settings, "my_name", "c_connect_disconnect_a");
+    CoSimIO_Info_SetString(settings, "connect_to", "c_connect_disconnect_b");
     CoSimIO_Info_SetInt(settings, "echo_level", 1);
-    CoSimIO_Info_SetString(settings, "solver_version", "1.25");
+    CoSimIO_Info_SetString(settings, "version", "1.25");
 
     // The connect must be called before any CosimIO function called
     CoSimIO_Info connect_info = CoSimIO_Connect(settings);
@@ -130,25 +130,23 @@ int main()
     // - The name of the connection ("connection_name") to be used for further calls to CoSimIO
     // - The status of the connection ("connection_status")
 
-    const char* connection_name = CoSimIO_Info_GetString(connect_info, "connection_name");
+    const char* connection_name = CoSimIO_Info_GetString(connect_info, "connection_name"); // getting name of connection for future calls
 
     if (CoSimIO_Info_GetInt(connect_info, "connection_status") != CoSimIO_Connected)
         return 1;
-
-    // Don't forget to release the connect_info after getting your information
-    CoSimIO_FreeInfo(connect_info);
 
     // Now you may call any CoSimIO functions
     // ...
 
     // Here you may use the info but cannot call any CoSimIO function anymore
     CoSimIO_Info disconnect_settings=CoSimIO_CreateInfo();
-    CoSimIO_Info_SetString(settings, "connection_name", connection_name);
+    CoSimIO_Info_SetString(settings, "connection_name", connection_name); // connection_name is obtained from calling "Connect"
     CoSimIO_Info disconnect_info = CoSimIO_Disconnect(disconnect_settings); // disconnect afterwards
     if(CoSimIO_Info_GetInt(disconnect_info, "connection_status") != CoSimIO_Disconnected)
         return 1;
 
     // Don't forget to release the settings and info
+    CoSimIO_FreeInfo(connect_info);
     CoSimIO_FreeInfo(disconnect_settings);
     CoSimIO_FreeInfo(disconnect_info);
 
@@ -156,7 +154,7 @@ int main()
 }
 ```
 
-This example can be found in [integration_tutorials/c/connect_disconnect.c](../../tests/integration_tutorials/c/connect_disconnect.c).
+This example can be found in [integration_tutorials/c/connect_disconnect_a.c](../../tests/integration_tutorials/c/connect_disconnect_a.c) and [integration_tutorials/c/connect_disconnect_b.c](../../tests/integration_tutorials/c/connect_disconnect_b.c).
 
 
 ## Tutorial 4: Data Exchange
@@ -171,7 +169,7 @@ First we should create a setting which provides an identifier (like "velocity_of
 // Creatint the export_settings
 CoSimIO_Info export_settings = CoSimIO_CreateInfo();
 CoSimIO_Info_SetString(export_settings, "identifier", "vector_of_pi");
-CoSimIO_Info_SetString(export_settings, "connection_name", "test_connection");
+CoSimIO_Info_SetString(export_settings, "connection_name", connection_name); // connection_name is obtained from calling "Connect"
 ```
 And then use it to export the data:
 ```c
@@ -195,7 +193,7 @@ int data_allocated_size = 0;
 // Creatint the import_settings
 CoSimIO_Info import_settings = CoSimIO_CreateInfo();
 CoSimIO_Info_SetString(import_settings, "identifier", "vector_of_pi");
-CoSimIO_Info_SetString(import_settings, "connection_name", "test_connection");
+CoSimIO_Info_SetString(import_settings, "connection_name", connection_name); // connection_name is obtained from calling "Connect"
 ```
 
 In this case we just pass an empty pointer and specifying to the `ImportData()` that should allocate the data by itself. So, in order to ensure the memory coherance, the `CoSimIO_Free()` function should be used instead of standard `free()` function:
@@ -216,42 +214,40 @@ After seeing how we transfer raw data between solvers/software-tools, it is time
 ```c
 CoSimIO_Info export_settings = CoSimIO_CreateInfo();
 CoSimIO_Info_SetString(export_settings, "identifier", "fluid_mesh");
-CoSimIO_Info_SetString(export_settings, "connection_name", "test_connection");
-CoSimIO_Info export_info = CoSimIO_ExportMesh(export_settings
-        , number_of_nodes,number_of_elements,number_of_elements_connectivities
-        , nodal_coordinates, elements_connectivities, elements_types);
+CoSimIO_Info_SetString(export_settings, "connection_name", connection_name); // connection_name is obtained from calling "Connect"
+CoSimIO_Info export_info = CoSimIO_ExportMesh(export_settings, model_part);
 ```
 
-The arguments are:
+The argument `model_part` is a container for mesh, it contains nodes and elements. Check the [implementation](../../co_sim_io/c/co_sim_io_c_model_part.h) and the [tests](../../tests/co_sim_io/c/model_part/test_model_part.c) for details of `CoSimIO::ModelPart`.
 
-* `number_of_nodes`: Number of Nodes (== size(`nodal_coordinates`)/3)
-* `number_of_elements`: Number of Elements (== size(`elements_types`))
-* `number_of_elements_connectivities`: Number of Elements connectivities (== size(`elements_connectivities`))
+Nodes can be created like this:
+```c
+CoSimIO_ModelPart model_part = CoSimIO_CreateModelPart("my_model_part");
 
-* `nodal_coordinates`: A vector of doubles of 3D coordinates of each node in x1,y1,z1,x2,y2,z2,... format:
-```c
-double nodal_coordinates[] = {
-    0.0, 2.5, 1.0, /*0*/
-    2.0, 0.0, 1.5, /*1*/
-    2.0, 2.5, 1.5, /*2*/
-    4.0, 2.5, 1.7, /*3*/
-    4.0, 0.0, 1.7, /*4*/
-    6.0, 0.0, 1.8  /*5*/
-};
-```
-* `elements_connectivities`: A vector of int containing the zero based index of each node in e1_1,e1_2,...,e2_1, e2_2,... format:
-```c
-int elements_connectivities[] = {
-    0, 1, 2, /*1*/
-    1, 3, 2, /*2*/
-    1, 4, 3, /*3*/
-    3, 4, 5, /*4*/
-};
+CoSimIO_ModelPart_CreateNewNode(
+    model_part,
+    1,    // Id
+    0.0,  // X-Coordinate
+    1.5,  // Y-Coordinate
+    -4.22 // Z-Coordinate
+);
 ```
 
-* `elements_types`: A vector of int containing the type of the elements. They are according to the vtk cell types, see [this link](https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf), page 9 & 10.
+Elements can be created after nodes were created:
 ```c
-int elements_types[] = {5,5,5,5}; // VTK_TRIANGLE
+int connectivity[2] = {1,2};
+
+CoSimIO_ModelPart_CreateNewElement(
+    model_part,
+    2, // Id
+    CoSimIO_Line2D2, // Type of element, see "co_sim_io/c/co_sim_io_c_model_part.h"
+    connectivity // Connectivity information, i.e. Ids of nodes that the element has
+);
+```
+
+Don't forget to free the `CoSimIO_ModelPart` after using it with
+```c
+CoSimIO_FreeModelPart(model_part);
 ```
 
 On the other side one can use the `ImportMesh()` method to get the mesh sent by the export:
@@ -259,11 +255,9 @@ On the other side one can use the `ImportMesh()` method to get the mesh sent by 
 ```c
 CoSimIO_Info import_settings=CoSimIO_CreateInfo();
 CoSimIO_Info_SetString(import_settings, "identifier", "fluid_mesh");
-CoSimIO_Info_SetString(import_settings, "connection_name", "test_connection");
+CoSimIO_Info_SetString(import_settings, "connection_name", connection_name); // connection_name is obtained from calling "Connect"
 
-CoSimIO_Info import_info = CoSimIO_ImportMesh(import_settings
-    , &number_of_nodes,&number_of_elements,&number_of_elements_connectivities
-    , &nodal_coordinates, &elements_connectivities, &elements_types);
+CoSimIO_Info import_info = CoSimIO_ImportMesh(import_settings, model_part);
 ```
 
 This example can be found in [integration_tutorials/c/export_mesh.c](../../tests/integration_tutorials/c/export_mesh.c) and [integration_tutorials/c/import_mesh.c](../../tests/integration_tutorials/c/import_mesh.c).
@@ -276,7 +270,8 @@ The overview of the Kratos CoSimulation Library can be found [here](../README.md
 The building instructions for the Kratos CoSimulation Library can be found [here](../README.md#building-kratos-with-cosimulation).
 
 ## Tutorial 8: Connecting/Disconnecting to/from Kratos
-For connecting to Kratos it is very important to have in mind that Kratos also uses *CoSimIO* for interprocess communication so its python interface reflects the CoSimIO. So we may create a python script for connecting and disconnecting in the same way described in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
+coming soon!
+<!-- For connecting to Kratos it is very important to have in mind that Kratos also uses *CoSimIO* for interprocess communication so its python interface reflects the CoSimIO. So we may create a python script for connecting and disconnecting in the same way described in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
 
 ```Python
 from KratosMultiphysics.CoSimulationApplication import CoSimIO
@@ -302,10 +297,11 @@ Then you may run your executable with python script of Kratos from your working 
 
 ```shell
 path/to/bin/tests_c/connect_disconnect_c_test & python3 path/to/connect_disconnect.py
-```
+``` -->
 
 ## Tutorial 9: Data Exchange with Kratos
-Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one descirbed in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
+coming soon!
+<!-- Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one descirbed in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
 
 
 ```python
@@ -379,10 +375,11 @@ Now for running the test:
 
 ```shell
 path/to/bin/tests_c/export_import_data_c_test & python3 path/to/import_export_data.py
-```
+``` -->
 
 ## Tutorial 10: Mesh Exchange with Kratos
-In this step we send a mesh to Kratos and receive it back and we will check if they are the same. (like previous tutorial with data).
+coming soon!
+<!-- In this step we send a mesh to Kratos and receive it back and we will check if they are the same. (like previous tutorial with data).
 
 Recalling from what we had in tutorial 5 we just merge the export mesh and import mesh codes into one as we did for data exchage in previous tutorial:
 
@@ -508,10 +505,11 @@ Now for running the test:
 
 ```shell
 path/to/bin/tests_c/export_import_mesh_c_test & python3 path/to/import_export_mesh.py
-```
+``` -->
 
 ## Tutorial 11: Mapping with Kratos
-This tutorial shows how to map data between (non matching) meshes with Kratos. It is based on tutorials 9 & 10.
+coming soon!
+<!-- This tutorial shows how to map data between (non matching) meshes with Kratos. It is based on tutorials 9 & 10.
 
 In this tutorial we first send two meshes based on the same geometry but with different discretizations to Kratos. Those meshes are used as basis for the mapping. In Kratos teminology those are the origin and the destination.
 
@@ -809,4 +807,4 @@ disconnect_settings.SetString("connection_name", "mesh_mapping")
 info = CoSimIO.Disconnect(disconnect_settings)
 if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
     raise Exception("Disconnecting failed")
-```
+``` -->

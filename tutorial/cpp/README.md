@@ -1,6 +1,6 @@
 # Tutorial for integrating the _CoSimIO_ using C++ interface
 
-This tutorial helps you through to integrate the _CoSimIO_ into a solver/software-tool using the C++ interface.
+This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool using the C++ interface.
 
 ## Overview
 
@@ -77,15 +77,15 @@ First of all, you may notice that `Connect()` method takes an `Info` as its argu
 
 ```c++
 CoSimIO::Info settings;
-settings.Set("connection_name", "test_connection"); // This must be unique for each connection between two solvers
-settings.Set("solver_name", "my_solver"); // Not to be confused with the connection name.
+settings.Set("my_name", "cpp_connect_disconnect_a"); // my name
+settings.Set("connect_to", "cpp_connect_disconnect_b"); // to whom I want to connect to
 settings.Set("echo_level", 1);
-settings.Set("solver_version", "1.25");
+settings.Set("version", "1.25");
 ```
-This method returns a `Info` object containing information about the connection which can be queried using Get method:
+This method returns a `Info` object containing information about the connection which can be queried using Get method. For further calls to `CoSimIO` it is necessary to get the `connection_name`:
 
 ```c++
-int connection_status = info.Get<int>("connection_status");
+std::string connection_name = info.Get<std::string>("connection_name");
 ```
 
 Now putting together everything:
@@ -95,18 +95,21 @@ Now putting together everything:
 #include "co_sim_io.hpp"
 int main(){
     CoSimIO::Info settings;
-    settings.Set("connection_name", "test_connection"); // This must be unique for each connection between two solvers
-    settings.Set("solver_name", "my_solver"); // Not to be confused with the connection name.
+    settings.Set("my_name", "cpp_connect_disconnect_a"); // my name
+    settings.Set("connect_to", "cpp_connect_disconnect_b"); // to whom I want to connect to
     settings.Set("echo_level", 1);
-    settings.Set("solver_version", "1.25");
+    settings.Set("version", "1.25");
 
     auto info = CoSimIO::Connect(settings);
+    std::string connection_name = info.Get<std::string>("connection_name"); // getting name of connection for future calls
     if(info.Get<int>("connection_status") != CoSimIO::ConnectionStatus::Connected)
         return 1;
     // Now you may call any CoSimIO methods like ImportData, ExportData, etc.
 
     // ...
-    info = CoSimIO::Disconnect(settings); // disconnect afterwards
+    CoSimIO::Info disconnect_settings;
+    disconnect_settings.Set("connection_name", connection_name);
+    info = CoSimIO::Disconnect(disconnect_settings); // disconnect afterwards
     // Here you may use the info but cannot call any CoSimIO method anymore
     if(info.Get<int>("connection_status") != CoSimIO::ConnectionStatus::Disconnected)
         return 1;
@@ -115,7 +118,7 @@ int main(){
 }
 ```
 
-This example can be found in [integration_tutorials/cpp/connect_disconnect.cpp](../../tests/integration_tutorials/cpp/connect_disconnect.cpp).
+This example can be found in [integration_tutorials/cpp/connect_disconnect_a.cpp](../../tests/integration_tutorials/cpp/connect_disconnect_a.cpp) and [integration_tutorials/cpp/connect_disconnect_b.cpp](../../tests/integration_tutorials/cpp/connect_disconnect_b.cpp).
 
 
 ## Tutorial 4: Data Exchange
@@ -125,7 +128,7 @@ One of the important missions of the CoSimIO is to send and recieve data between
 std::vector<double> data_to_send(4,3.14);
 CoSimIO::Info info;
 info.Set("identifier", "vector_of_pi");
-info.Set("connection_name", "test_connection");
+info.Set("connection_name", connection_name); // connection_name is obtained from calling "Connect"
 info = CoSimIO::ExportData(info, data_to_send);
 ```
 The `ImportData()` should be used on the other side to recieve data:
@@ -134,7 +137,7 @@ The `ImportData()` should be used on the other side to recieve data:
 std::vector<double> receive_data;
 CoSimIO::Info info;
 info.Set("identifier", "vector_of_pi");
-info.Set("connection_name", "test_connection");
+info.Set("connection_name", connection_name); // connection_name is obtained from calling "Connect"
 info = CoSimIO::ImportData(info, receive_data);
 ```
 
@@ -150,36 +153,31 @@ After seeing how we transfer raw data between solvers/software-tools, it is time
 ```c++
 CoSimIO::Info info;
 info.Set("identifier", "fluid_mesh");
-info.Set("connection_name", "test_connection");
-info = CoSimIO::ExportMesh(info,nodal_coordinates, elements_connectivities, elements_types);
+info.Set("connection_name", connection_name); // connection_name is obtained from calling "Connect"
+info = CoSimIO::ExportMesh(info, model_part);
 ```
 
-The arguments are:
+The argument `model_part` is a container for mesh, it contains nodes and elements. Check the [implementation](../../co_sim_io/impl/model_part.hpp) and the [tests](../../tests/co_sim_io/impl/test_model_part.cpp) for details of `CoSimIO::ModelPart`.
 
-* `nodal_coordinates`: A vector of doubles of 3D coordinates of each node in x1,y1,z1,x2,y2,z2,... format:
+Nodes can be created like this:
 ```c++
-std::vector<double> nodal_coordinates{
-    0.0, 2.5, 1.0, /*0*/
-    2.0, 0.0, 1.5, /*1*/
-    2.0, 2.5, 1.5, /*2*/
-    4.0, 2.5, 1.7, /*3*/
-    4.0, 0.0, 1.7, /*4*/
-    6.0, 0.0, 1.8  /*5*/
-    };
-```
-* `elements_connectivities`: A vector of int containing the zero based index of each node in e1_1,e1_2,...,e2_1, e2_2,... format:
-```c++
-std::vector<int> elements_connectivities = {
-    0, 1, 2, /*1*/
-    1, 3, 2, /*2*/
-    1, 4, 3, /*3*/
-    3, 4, 5, /*4*/
-};
+CoSimIO::ModelPart model_part("name_of_this_model_part");
+
+model_part.CreateNewNode(
+    1,    // Id
+    0.0,  // X-Coordinate
+    1.5,  // Y-Coordinate
+    -4.22 // Z-Coordinate
+);
 ```
 
-* `elements_types`: A vector of int containing the type of the elements. They are according to the vtk cell types, see [this link](https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf), page 9 & 10.
+Elements can be created after nodes were created:
 ```c++
-std::vector<int> elements_types = {5,5,5,5}; // VTK_TRIANGLE
+model_part.CreateNewElement(
+    2, // Id
+    CoSimIO::ElementType::Line2D2,  // Type of element, see "co_sim_io/impl/define.hpp"
+    {1,2} // Connectivity information, i.e. Ids of nodes that the element has
+);
 ```
 
 On the other side one can use the `ImportMesh()` method to get the mesh sent by the export:
@@ -187,13 +185,11 @@ On the other side one can use the `ImportMesh()` method to get the mesh sent by 
 ```c++
 info.Clear();
 info.Set("identifier", "fluid_mesh");
-info.Set("connection_name", "test_connection");
+info.Set("connection_name", connection_name); // connection_name is obtained from calling "Connect"
 
-std::vector<double> nodal_coordinates;
-std::vector<int> elements_connectivities;
-std::vector<int> elements_types;
+CoSimIO::ModelPart model_part("name_of_imported_model_part");
 
-info = CoSimIO::ImportMesh(info,nodal_coordinates, elements_connectivities, elements_types);
+info = CoSimIO::ImportMesh(info, model_part);
 ```
 
 This example can be found in [integration_tutorials/cpp/export_mesh.cpp](../../tests/integration_tutorials/cpp/export_mesh.cpp) and [integration_tutorials/cpp/import_mesh.cpp](../../tests/integration_tutorials/cpp/import_mesh.cpp).

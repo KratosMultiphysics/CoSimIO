@@ -1,6 +1,6 @@
 # Tutorials for integrating the _CoSimIO_
 
-This folder contains step-by-step instructions on how to integrate the _CoSimIO_ into a solver/software-tool. Since the _CoSimIO_ is independent of Kratos, this can be done completely standalone.
+This folder contains step-by-step instructions on how to integrate the _CoSimIO_ into a solver/software-tool. Since the _CoSimIO_ is independent of Kratos, this is done completely standalone.
 
 Each subfolder has the tutorial for an specific language:
 * **C++ Interface**: Is the natural interface of the _CoSimIO_ providing its full capabilities.
