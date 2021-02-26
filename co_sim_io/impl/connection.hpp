@@ -14,11 +14,6 @@
 #define CO_SIM_IO_CONNECTION_INCLUDED
 
 // Optional includes
-#ifdef CO_SIM_IO_USING_SOCKETS
-#include "communication/sockets_communication.hpp"
-#endif // CO_SIM_IO_USING_SOCKETS
-
-
 #ifdef CO_SIM_IO_USING_MPI
 #include "communication/mpi_communication.hpp"
 #endif // CO_SIM_IO_USING_MPI
@@ -34,6 +29,7 @@
 
 // Project includes
 #include "communication/file_communication.hpp"
+#include "communication/sockets_communication.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -157,11 +153,7 @@ private:
         if (comm_format == "file") {
             mpComm = CoSimIO::make_unique<FileCommunication>(I_Settings);
         } else if (comm_format == "sockets") {
-            #ifdef CO_SIM_IO_USING_SOCKETS
             mpComm = CoSimIO::make_unique<SocketsCommunication>(I_Settings);
-            #else
-            CO_SIM_IO_ERROR << "Support for Sockets was not compiled!" << std::endl;
-            #endif // CO_SIM_IO_USING_SOCKETS
         } else if (comm_format == "mpi") {
             #ifdef CO_SIM_IO_USING_MPI
             mpComm = CoSimIO::make_unique<MPICommunication>(I_Settings);

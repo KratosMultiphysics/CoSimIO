@@ -7,7 +7,6 @@ set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track
 
 include(CTest)
 
-OPTION ( ENABLE_SOCKETS "Enable sockets communication"              OFF )
 OPTION ( ENABLE_MPI     "Enable MPI communication and MPI examples" OFF )
 OPTION ( BUILD_C        "Building the CoSimIO for C"                OFF )
 OPTION ( BUILD_PYTHON   "Building the CoSimIO for Python"           OFF )
@@ -19,7 +18,6 @@ endif()
 
 message("Building the CoSimIO with the following configuration:")
 message("    CMAKE_BUILD_TYPE: " ${CMAKE_BUILD_TYPE})
-message("    ENABLE_SOCKETS:   " ${ENABLE_SOCKETS})
 message("    ENABLE_MPI:       " ${ENABLE_MPI})
 message("    BUILD_TESTING:    " ${BUILD_TESTING})
 message("    BUILD_C:          " ${BUILD_C})
@@ -27,22 +25,14 @@ message("    BUILD_PYTHON:     " ${BUILD_PYTHON})
 message("    BUILD_FORTRAN:    " ${BUILD_FORTRAN})
 message("")
 
-set( CO_SIM_IO_REQUIRES_BOOST OFF )
 set( CO_SIM_IO_REQUIRES_MPI OFF )
 
-if (ENABLE_SOCKETS)
-    set( CO_SIM_IO_REQUIRES_BOOST ON ) # Sockets Communication is implemented using Boost::ASIO
-    add_definitions( -DCO_SIM_IO_USING_SOCKETS )
-endif()
 if (ENABLE_MPI)
     set( CO_SIM_IO_REQUIRES_MPI ON )
     add_definitions( -DCO_SIM_IO_USING_MPI )
 endif()
 
-if (CO_SIM_IO_REQUIRES_BOOST)
-    find_package(Boost REQUIRED)
-    include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
-endif()
+include_directories(SYSTEM "external_libraries/asio/include")
 
 if (CO_SIM_IO_REQUIRES_MPI)
     find_package(MPI REQUIRED)

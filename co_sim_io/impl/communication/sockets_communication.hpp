@@ -16,7 +16,7 @@
 // System includes
 
 // External includes
-#include <boost/asio.hpp>
+#include <asio.hpp>
 
 // Project includes
 #include "communication.hpp"
@@ -29,8 +29,16 @@ class SocketsCommunication : public Communication
 public:
     explicit SocketsCommunication(const Info& I_Settings) : Communication(I_Settings)
     {
-       static_assert(false,"Sockets Communication is not implemented yet");
     }
+    Info ConnectDetail(const Info& I_Info) override
+    {
+        return Info();
+    };
+
+    Info DisconnectDetail(const Info& I_Info) override
+    {
+        return Info();
+    };
 };
 
 } // namespace Internals
