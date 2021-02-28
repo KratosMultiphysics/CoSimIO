@@ -99,6 +99,7 @@ jobs:
           -B"build"                   ^
           -DBUILD_C=ON                ^
           -DBUILD_PYTHON=ON           ^
+          -DCMAKE_UNITY_BUILD=ON      ^
           -DCMAKE_CXX_FLAGS="/WX"     || goto :error
 
         cmake --build "build" --target install -- /p:Platform=x64 || goto :error
@@ -144,7 +145,8 @@ jobs:
           -DBUILD_C=ON               \
           -DBUILD_PYTHON=ON          \
           -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
-          -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
+          -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror" \
+          -DCMAKE_UNITY_BUILD=ON
 
         cmake --build "build" --target install -- -j2
 
