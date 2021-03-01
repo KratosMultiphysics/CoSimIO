@@ -95,26 +95,46 @@
 #define GHC_EXPAND_IMPL
 #define GHC_INLINE
 #ifdef GHC_OS_WINDOWS
+#ifndef GHC_FS_API
 #define GHC_FS_API
+#endif
+#ifndef GHC_FS_API_CLASS
 #define GHC_FS_API_CLASS
+#endif
 #else
+#ifndef GHC_FS_API
 #define GHC_FS_API __attribute__((visibility("default")))
+#endif
+#ifndef GHC_FS_API_CLASS
 #define GHC_FS_API_CLASS __attribute__((visibility("default")))
+#endif
 #endif
 #elif defined(GHC_FILESYSTEM_FWD)
 #define GHC_INLINE
 #ifdef GHC_OS_WINDOWS
+#ifndef GHC_FS_API
 #define GHC_FS_API extern
+#endif
+#ifndef GHC_FS_API_CLASS
 #define GHC_FS_API_CLASS
+#endif
 #else
+#ifndef GHC_FS_API
 #define GHC_FS_API extern
+#endif
+#ifndef GHC_FS_API_CLASS
 #define GHC_FS_API_CLASS
+#endif
 #endif
 #else
 #define GHC_EXPAND_IMPL
 #define GHC_INLINE inline
+#ifndef GHC_FS_API
 #define GHC_FS_API
+#endif
+#ifndef GHC_FS_API_CLASS
 #define GHC_FS_API_CLASS
+#endif
 #endif
 
 #ifdef GHC_EXPAND_IMPL
@@ -198,6 +218,31 @@
 #endif
 #endif  // GHC_EXPAND_IMPL
 
+// After standard library includes.
+// Standard library support for std::string_view.
+#if defined(__cpp_lib_string_view)
+#define GHC_HAS_STD_STRING_VIEW
+#elif defined(_LIBCPP_VERSION) && (_LIBCPP_VERSION >= 4000) && (__cplusplus >= 201402)
+#define GHC_HAS_STD_STRING_VIEW
+#elif defined(_GLIBCXX_RELEASE) && (_GLIBCXX_RELEASE >= 7) && (__cplusplus >= 201703)
+#define GHC_HAS_STD_STRING_VIEW
+#elif defined(_MSC_VER) && (_MSC_VER >= 1910 && _MSVC_LANG >= 201703)
+#define GHC_HAS_STD_STRING_VIEW
+#endif
+
+// Standard library support for std::experimental::string_view.
+#if defined(_LIBCPP_VERSION) && (_LIBCPP_VERSION >= 3700 && _LIBCPP_VERSION < 7000) && (__cplusplus >= 201402)
+#define GHC_HAS_STD_EXPERIMENTAL_STRING_VIEW
+#elif defined(__GNUC__) && (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)) && (__cplusplus >= 201402)
+#define GHC_HAS_STD_EXPERIMENTAL_STRING_VIEW
+#endif
+
+#if defined(GHC_HAS_STD_STRING_VIEW)
+#include <string_view>
+#elif defined(GHC_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+#include <experimental/string_view>
+#endif
+
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Behaviour Switches (see README.md, should match the config in test/filesystem_test.cpp):
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -245,7 +290,7 @@
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // ghc::filesystem version in decimal (major * 10000 + minor * 100 + patch)
-#define GHC_FILESYSTEM_VERSION 10500L
+#define GHC_FILESYSTEM_VERSION 10502L
 
 #if !defined(GHC_WITH_EXCEPTIONS) && (defined(__EXCEPTIONS) || defined(__cpp_exceptions) || defined(_CPPUNWIND))
 #define GHC_WITH_EXCEPTIONS
@@ -256,6 +301,16 @@
 
 namespace ghc {
 namespace filesystem {
+
+#if defined(GHC_HAS_CUSTOM_STRING_VIEW)
+#define GHC_WITH_STRING_VIEW
+#elif defined(GHC_HAS_STD_STRING_VIEW)
+#define GHC_WITH_STRING_VIEW
+using std::basic_string_view;
+#elif defined(GHC_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+#define GHC_WITH_STRING_VIEW
+using std::experimental::basic_string_view;
+#endif
 
 // temporary existing exception type for yet unimplemented parts
 class GHC_FS_API_CLASS not_implemented_exception : public std::logic_error
@@ -334,28 +389,25 @@ public:
     struct _is_basic_string<std::basic_string<CharT, std::char_traits<CharT>, std::allocator<CharT>>> : std::true_type
     {
     };
-#ifdef __cpp_lib_string_view
+#ifdef GHC_WITH_STRING_VIEW
+    template <class CharT, class Traits>
+    struct _is_basic_string<basic_string_view<CharT, Traits>> : std::true_type
+    {
+    };
     template <class CharT>
-    struct _is_basic_string<std::basic_string_view<CharT>> : std::true_type
+    struct _is_basic_string<basic_string_view<CharT, std::char_traits<CharT>>> : std::true_type
     {
     };
 #endif
 
     template <typename T1, typename T2 = void>
     using path_type = typename std::enable_if<!std::is_same<path, T1>::value, path>::type;
-#ifdef GHC_USE_WCHAR_T
     template <typename T>
     using path_from_string = typename std::enable_if<_is_basic_string<T>::value || std::is_same<char const*, typename std::decay<T>::type>::value || std::is_same<char*, typename std::decay<T>::type>::value ||
                                                          std::is_same<wchar_t const*, typename std::decay<T>::type>::value || std::is_same<wchar_t*, typename std::decay<T>::type>::value,
                                                      path>::type;
     template <typename T>
-    using path_type_EcharT = typename std::enable_if<std::is_same<T, char>::value || std::is_same<T, char16_t>::value || std::is_same<T, char32_t>::value, path>::type;
-#else
-    template <typename T>
-    using path_from_string = typename std::enable_if<_is_basic_string<T>::value || std::is_same<char const*, typename std::decay<T>::type>::value || std::is_same<char*, typename std::decay<T>::type>::value, path>::type;
-    template <typename T>
     using path_type_EcharT = typename std::enable_if<std::is_same<T, char>::value || std::is_same<T, char16_t>::value || std::is_same<T, char32_t>::value || std::is_same<T, wchar_t>::value, path>::type;
-#endif
     // 30.10.8.4.1 constructors and destructor
     path() noexcept;
     path(const path& p);
@@ -397,8 +449,8 @@ public:
     // 30.10.8.4.4 concatenation
     path& operator+=(const path& x);
     path& operator+=(const string_type& x);
-#ifdef __cpp_lib_string_view
-    path& operator+=(std::basic_string_view<value_type> x);
+#ifdef GHC_WITH_STRING_VIEW
+    path& operator+=(basic_string_view<value_type> x);
 #endif
     path& operator+=(const value_type* x);
     path& operator+=(value_type x);
@@ -451,8 +503,8 @@ public:
     // 30.10.8.4.8 compare
     int compare(const path& p) const noexcept;
     int compare(const string_type& s) const;
-#ifdef __cpp_lib_string_view
-    int compare(std::basic_string_view<value_type> s) const;
+#ifdef GHC_WITH_STRING_VIEW
+    int compare(basic_string_view<value_type> s) const;
 #endif
     int compare(const value_type* s) const;
 
@@ -1501,8 +1553,8 @@ inline StringType fromUtf8(const Utf8String& utf8String, const typename StringTy
 template <class StringType, typename charT, std::size_t N>
 inline StringType fromUtf8(const charT (&utf8String)[N])
 {
-#ifdef __cpp_lib_string_view
-    return fromUtf8<StringType>(std::basic_string_view<charT>(utf8String, N - 1));
+#ifdef GHC_WITH_STRING_VIEW
+    return fromUtf8<StringType>(basic_string_view<charT>(utf8String, N - 1));
 #else
     return fromUtf8<StringType>(std::basic_string<charT>(utf8String, N - 1));
 #endif
@@ -1556,7 +1608,11 @@ inline std::string toUtf8(const strT& unicodeString)
 template <typename charT>
 inline std::string toUtf8(const charT* unicodeString)
 {
+#ifdef GHC_WITH_STRING_VIEW
+    return toUtf8(basic_string_view<charT, std::char_traits<charT>>(unicodeString));
+#else
     return toUtf8(std::basic_string<charT, std::char_traits<charT>>(unicodeString));
+#endif
 }
 
 #ifdef GHC_USE_WCHAR_T
@@ -1602,7 +1658,11 @@ inline std::wstring toWChar(const strT& unicodeString)
 template <typename charT>
 inline std::wstring toWChar(const charT* unicodeString)
 {
+#ifdef GHC_WITH_STRING_VIEW
+    return toWChar(basic_string_view<charT, std::char_traits<charT>>(unicodeString));
+#else
     return toWChar(std::basic_string<charT, std::char_traits<charT>>(unicodeString));
+#endif
 }
 #endif // GHC_USE_WCHAR_T
 
@@ -2159,12 +2219,12 @@ GHC_INLINE file_status status_ex(const path& p, std::error_code& ec, file_status
     if (result == 0) {
         ec.clear();
         file_status fs = detail::file_status_from_st_mode(st.st_mode);
+        if (sls) {
+            *sls = fs;
+        }
         if (fs.type() == file_type::symlink) {
             result = ::stat(p.c_str(), &st);
             if (result == 0) {
-                if (sls) {
-                    *sls = fs;
-                }
                 fs = detail::file_status_from_st_mode(st.st_mode);
             }
         }
@@ -2413,7 +2473,7 @@ inline path& path::operator/=(const Source& source)
 template <class Source>
 inline path& path::append(const Source& source)
 {
-    return this->operator/=(path(detail::toUtf8(source)));
+    return this->operator/=(path(source));
 }
 
 template <>
@@ -2444,8 +2504,8 @@ GHC_INLINE path& path::operator+=(const string_type& x)
     return concat(x);
 }
 
-#ifdef __cpp_lib_string_view
-GHC_INLINE path& path::operator+=(std::basic_string_view<value_type> x)
+#ifdef GHC_WITH_STRING_VIEW
+GHC_INLINE path& path::operator+=(basic_string_view<value_type> x)
 {
     return concat(x);
 }
@@ -2453,7 +2513,12 @@ GHC_INLINE path& path::operator+=(std::basic_string_view<value_type> x)
 
 GHC_INLINE path& path::operator+=(const value_type* x)
 {
-    return concat(string_type(x));
+#ifdef GHC_WITH_STRING_VIEW
+    basic_string_view<value_type> part(x);
+#else
+    string_type part(x);
+#endif
+    return concat(part);
 }
 
 GHC_INLINE path& path::operator+=(value_type x)
@@ -2481,8 +2546,12 @@ inline path::path_from_string<Source>& path::operator+=(const Source& x)
 template <class EcharT>
 inline path::path_type_EcharT<EcharT>& path::operator+=(EcharT x)
 {
+#ifdef GHC_WITH_STRING_VIEW
+    basic_string_view<EcharT> part(&x, 1);
+#else
     std::basic_string<EcharT> part(1, x);
-    concat(detail::toUtf8(part));
+#endif
+    concat(part);
     return *this;
 }
 
@@ -2779,8 +2848,8 @@ GHC_INLINE int path::compare(const string_type& s) const
     return compare(path(s));
 }
 
-#ifdef __cpp_lib_string_view
-GHC_INLINE int path::compare(std::basic_string_view<value_type> s) const
+#ifdef GHC_WITH_STRING_VIEW
+GHC_INLINE int path::compare(basic_string_view<value_type> s) const
 {
     return compare(path(s));
 }
@@ -5411,7 +5480,7 @@ public:
                 if (_entry) {
                     _current = _base;
                     _current.append_name(_entry->d_name);
-                    _dir_entry = directory_entry(_current, ec);
+                    _dir_entry.assign(_current, ec);
                     if (ec && (ec.value() == EACCES || ec.value() == EPERM) && (_options & directory_options::skip_permission_denied) == directory_options::skip_permission_denied) {
                         ec.clear();
                         skip = true;
@@ -5654,28 +5723,26 @@ GHC_INLINE recursive_directory_iterator& recursive_directory_iterator::operator+
 
 GHC_INLINE recursive_directory_iterator& recursive_directory_iterator::increment(std::error_code& ec) noexcept
 {
-    auto status = (*this)->status(ec);
-    if (ec)
-        return *this;
-    auto symlink_status = (*this)->symlink_status(ec);
-    if (ec)
-        return *this;
-    if (recursion_pending() && is_directory(status) && (!is_symlink(symlink_status) || (options() & directory_options::follow_directory_symlink) != directory_options::none)) {
-        _impl->_dir_iter_stack.push(directory_iterator((*this)->path(), _impl->_options, ec));
-    }
-    else {
-        _impl->_dir_iter_stack.top().increment(ec);
-    }
-    if (!ec) {
-        while (depth() && _impl->_dir_iter_stack.top() == directory_iterator()) {
-            _impl->_dir_iter_stack.pop();
+    bool isDir = (*this)->is_directory(ec);
+    bool isSymLink = !ec && (*this)->is_symlink(ec);
+    if(!ec) {
+        if (recursion_pending() && isDir && (!isSymLink || (options() & directory_options::follow_directory_symlink) != directory_options::none)) {
+            _impl->_dir_iter_stack.push(directory_iterator((*this)->path(), _impl->_options, ec));
+        }
+        else {
             _impl->_dir_iter_stack.top().increment(ec);
         }
+        if (!ec) {
+            while (depth() && _impl->_dir_iter_stack.top() == directory_iterator()) {
+                _impl->_dir_iter_stack.pop();
+                _impl->_dir_iter_stack.top().increment(ec);
+            }
+        }
+        else if (!_impl->_dir_iter_stack.empty()) {
+            _impl->_dir_iter_stack.pop();
+        }
+        _impl->_recursion_pending = true;
     }
-    else if (!_impl->_dir_iter_stack.empty()) {
-        _impl->_dir_iter_stack.pop();
-    }
-    _impl->_recursion_pending = true;
     return *this;
 }
 
