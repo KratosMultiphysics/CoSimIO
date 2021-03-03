@@ -31,17 +31,6 @@ namespace Internals {
 
 namespace { // helpers namespace
 
-static double ElapsedSeconds(const std::chrono::steady_clock::time_point& rStartTime)
-{
-    using namespace std::chrono;
-    return duration_cast<duration<double>>(steady_clock::now() - rStartTime).count();
-}
-
-static bool PathExists(const fs::path& rPath)
-{
-    return fs::exists(rPath);
-}
-
 template <typename T>
 static void CheckStream(const T& rStream, const fs::path& rPath)
 {
@@ -522,7 +511,7 @@ private:
     void WaitForPath(const fs::path& rPath) const
     {
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << std::endl;
-        while(!PathExists(rPath)) {
+        while(!fs::exists(rPath)) {
             std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
         }
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found: " << rPath << std::endl;
@@ -530,9 +519,9 @@ private:
 
     void WaitUntilFileIsRemoved(const fs::path& rPath) const
     {
-        if (PathExists(rPath)) { // only issue the wating message if the file exists initially
+        if (fs::exists(rPath)) { // only issue the wating message if the file exists initially
             CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << " to be removed" << std::endl;
-            while(PathExists(rPath)) {
+            while(fs::exists(rPath)) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
             }
             CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << rPath << " was removed" << std::endl;
