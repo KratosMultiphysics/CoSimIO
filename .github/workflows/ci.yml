@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macOS-latest]
-        python-version: [3.5, 3.6, 3.7, 3.8]
+        python-version: [3.5, 3.6, 3.7, 3.8, 3.9]
     timeout-minutes: 15
     env:
       FC: gfortran-9
@@ -28,7 +28,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install Valgrind
-      if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.8' }}
+      if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9' }}
       run: |
         sudo apt-get update && sudo apt-get install valgrind
 
@@ -46,7 +46,7 @@ jobs:
         cmake --build "build" --target install -- -j2
 
     - name: Running tests (Ctest)
-      if: ${{ matrix.python-version == '3.8' }} # only run for one py version, not necessary for all of them
+      if: ${{ matrix.python-version == '3.9' }} # only run for one py version, not necessary for all of them
       run: |
         cd build
         if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
@@ -68,7 +68,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.5, 3.6, 3.7, 3.8]
+        python-version: [3.5, 3.6, 3.7, 3.8, 3.9]
     timeout-minutes: 5
 
     steps:
@@ -109,7 +109,7 @@ jobs:
         exit /b %errorlevel%
 
     - name: Running tests (Ctest)
-      if: ${{ matrix.python-version == '3.8' }} # only run for one py version, not necessary for all of them
+      if: ${{ matrix.python-version == '3.9' }} # only run for one py version, not necessary for all of them
       shell: cmd
       run: |
         set PATH=%PATH%;%GITHUB_WORKSPACE%/bin
