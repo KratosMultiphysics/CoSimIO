@@ -81,7 +81,7 @@ private:
             }
         }
 
-        ExchangeSyncFileWithPartner();
+        ExchangeSyncFileWithPartner("connect");
 
         Info info;
         info.Set("is_connected", true);
@@ -90,7 +90,7 @@ private:
 
     Info DisconnectDetail(const Info& I_Info) override
     {
-        ExchangeSyncFileWithPartner();
+        ExchangeSyncFileWithPartner("disconnect");
 
         if (mCommInFolder && GetIsPrimaryConnection()) {
             // delete directory to remove potential leftovers
@@ -106,10 +106,10 @@ private:
         return info;
     }
 
-    void ExchangeSyncFileWithPartner() const
+    void ExchangeSyncFileWithPartner(const std::string& rIdentifier) const
     {
-        const fs::path file_name_primary(GetFileName("CoSimIO_primary_connect_" + GetConnectionName(), "sync"));
-        const fs::path file_name_secondary(GetFileName("CoSimIO_secondary_connect_" + GetConnectionName(), "sync"));
+        const fs::path file_name_primary(GetFileName("CoSimIO_primary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
+        const fs::path file_name_secondary(GetFileName("CoSimIO_secondary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
 
         if (GetIsPrimaryConnection()) {
             std::ofstream sync_file;
