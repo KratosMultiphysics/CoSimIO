@@ -66,6 +66,15 @@ public:
     double Z() const { return mZ; }
     CoordinatesType Coordinates() const { return {mX, mY, mZ}; }
 
+    void Save(std::ostream& O_OutStream) const
+    {
+        CO_SIM_IO_ERROR << "NotImplementedError" << std::endl;
+    }
+    void Load(std::istream& I_InStream)
+    {
+        CO_SIM_IO_ERROR << "NotImplementedError" << std::endl;
+    }
+
     void Print(std::ostream& rOStream) const
     {
         rOStream << "CoSimIO-Node; Id: " << Id() << "\n";
@@ -117,6 +126,15 @@ public:
     std::size_t NumberOfNodes() const { return mNodes.size(); }
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
     NodesContainerType::const_iterator NodesEnd() const { return mNodes.end(); }
+
+    void Save(std::ostream& O_OutStream) const
+    {
+        CO_SIM_IO_ERROR << "NotImplementedError" << std::endl;
+    }
+    void Load(std::istream& I_InStream)
+    {
+        CO_SIM_IO_ERROR << "NotImplementedError" << std::endl;
+    }
 
     void Print(std::ostream& rOStream) const
     {
@@ -245,6 +263,15 @@ public:
         auto it_elem = FindElement(I_Id);
         CO_SIM_IO_ERROR_IF(it_elem == mElements.end()) << "Element with Id " << I_Id << " does not exist!" << std::endl;
         return *it_elem;
+    }
+
+    void Save(std::ostream& O_OutStream) const
+    {
+        CO_SIM_IO_ERROR << "NotImplementedError" << std::endl;
+    }
+    void Load(std::istream& I_InStream)
+    {
+        CO_SIM_IO_ERROR << "NotImplementedError" << std::endl;
     }
 
     void Print(std::ostream& rOStream) const
