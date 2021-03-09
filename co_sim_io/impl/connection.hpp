@@ -34,6 +34,7 @@
 
 // Project includes
 #include "communication/file_communication.hpp"
+#include "communication/pipe_communication.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -156,6 +157,8 @@ private:
 
         if (comm_format == "file") {
             mpComm = CoSimIO::make_unique<FileCommunication>(I_Settings);
+        } else if (comm_format == "pipe") {
+            mpComm = CoSimIO::make_unique<PipeCommunication>(I_Settings);
         } else if (comm_format == "sockets") {
             #ifdef CO_SIM_IO_USING_SOCKETS
             mpComm = CoSimIO::make_unique<SocketsCommunication>(I_Settings);
