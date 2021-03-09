@@ -58,6 +58,7 @@ private:
     fs::path mCommFolder;
     fs::path mPipeName;
     bool mCommInFolder = true;
+    int mPipe;
 
     Info ConnectDetail(const Info& I_Info) override
     {
@@ -81,6 +82,12 @@ private:
             CO_SIM_IO_ERROR_IF(mkfifo(mPipeName.c_str(), 0666) != 0) << "Pipe " << mPipeName << " could not be created!" << std::endl;
         }
 
+        if (GetIsPrimaryConnection()) {
+            CO_SIM_IO_ERROR_IF((mPipe = open(mPipeName.c_str(), O_WRONLY)) < 0) << "Pipe " << mPipeName << " could not be opened!" << std::endl;
+        } else {
+            CO_SIM_IO_ERROR_IF((mPipe = open(mPipeName.c_str(), O_RDONLY)) < 0) << "Pipe " << mPipeName << " could not be opened!" << std::endl;
+        }
+
         // ExchangeSyncFileWithPartner();
 
         Info info;
@@ -91,6 +98,8 @@ private:
     Info DisconnectDetail(const Info& I_Info) override
     {
         // ExchangeSyncFileWithPartner();
+
+        close(mPipe);
 
         if (GetIsPrimaryConnection()) {
             // fs::remove(mPipeName);
@@ -124,6 +133,17 @@ private:
         std::size_t received_size_2 = ReceiveSize();
         std::cout << "received size 2: " << received_size_2 << std::endl;
 
+
+        std::vector<char> buffer(received_size);
+        // char buffer[25600];
+        std::cout << "BEFORE read (size: " << received_size << ")" << std::endl;
+        read(mPipe, buffer.data(), received_size);
+        std::cout << "Afterread" << std::endl;
+
+        std::stringstream conv_stream(std::string(buffer.begin(), buffer.end()));
+        std::cout << "Received info: " << conv_stream.str() << std::endl;
+
+
         // open pipe in readonly mode
         // int pipe;
         // CO_SIM_IO_ERROR_IF((pipe = open(mPipeName.c_str(), O_RDONLY)) < 0) << "Pipe " << mPipeName << " could not be opened!" << std::endl;
@@ -136,7 +156,6 @@ private:
         // std::cout << "after READING" << std::endl;
         // close(pipe);
 
-        // std::stringstream conv_stream(&buffer);
 
         // std::cout << "Received info: " << conv_stream.str() << std::endl;
 
@@ -159,14 +178,14 @@ private:
         // CheckStream(input_file, file_name);
 
         Info imported_info;
-        // imported_info.Load(conv_stream);
+        imported_info.Load(conv_stream);
+
+        std::cout << "The importted INFO: " << imported_info << std::endl;
 
         // input_file.close(); // TODO check return value?
         // RemovePath(file_name);
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing Info" << std::endl;
-
-        // close(pipe);
 
         return imported_info;
     }
@@ -179,7 +198,8 @@ private:
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export Info ..." << std::endl;
 
         std::stringstream info_stream;
-        info_stream << I_Info;
+        I_Info.Save(info_stream);
+
         std::size_t sending_size = info_stream.str().length();
 
         std::cout << "sending size of: " << sending_size << std::endl;
@@ -187,13 +207,16 @@ private:
         std::cout << "sending size of: " << 1234 << std::endl;
         SendSize(1234);
 
+
+        std::cout << "BEFORE write (size: " << sending_size << ")" << std::endl;
+        write(mPipe, info_stream.str().c_str(), sending_size);
+        std::cout << "Afterwrite" << std::endl;
+
         // open pipe in write mode
         // int pipe;
         // CO_SIM_IO_ERROR_IF((pipe = open(mPipeName.c_str(), O_WRONLY)) < 0) << "Pipe " << mPipeName << " could not be opened!" << std::endl;
 
-        // std::cout << "BEFORE write" << std::endl;
         // write(pipe, info_stream.str().c_str(), sending_size);
-        // std::cout << "Afterwrite" << std::endl;
         // close(pipe);
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting Info " << std::endl;
@@ -201,30 +224,19 @@ private:
         return Info(); // TODO use
     }
 
-    void SendSize(const std::size_t Size)
+    void SendSize(const std::uint64_t Size)
     {
-        // open pipe in write mode
-        int pipe;
-        CO_SIM_IO_ERROR_IF((pipe = open(mPipeName.c_str(), O_WRONLY)) < 0) << "Pipe " << mPipeName << " could not be opened!" << std::endl;
-
         std::cout << "preparing to send size: " << Size << " (sizeof: " << sizeof(Size) << ")" << std::endl;
 
-        write(pipe, &Size, sizeof(Size));
-        close(pipe);
+        write(mPipe, &Size, sizeof(Size));
     }
 
-    std::size_t ReceiveSize()
+    std::uint64_t ReceiveSize()
     {
-        std::cout << "trying to open pipe for receiving" << std::endl;
-        // open pipe in readonly mode
-        int pipe;
-        CO_SIM_IO_ERROR_IF((pipe = open(mPipeName.c_str(), O_RDONLY)) < 0) << "Pipe " << mPipeName << " could not be opened!" << std::endl;
-
-        std::size_t imp_size_u;
+        std::uint64_t imp_size_u;
         std::cout << "preparing to receive size (sizeof: " << sizeof(imp_size_u) << ")" << std::endl;
 
-        read(pipe, &imp_size_u, sizeof(imp_size_u));
-        close(pipe);
+        read(mPipe, &imp_size_u, sizeof(imp_size_u));
 
         return imp_size_u;
     }
