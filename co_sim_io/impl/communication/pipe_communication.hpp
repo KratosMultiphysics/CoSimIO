@@ -40,7 +40,7 @@ public:
     {
         mCommFolder = GetWorkingDirectory();
         mCommFolder /= ".CoSimIOFileComm_" + GetConnectionName();
-        mPipeName = "myFIDO";//mCommInFolder ? mCommFolder / GetConnectionName() : fs::path(GetConnectionName());
+        mPipeName = mCommInFolder ? mCommFolder / GetConnectionName() : fs::path(GetConnectionName());
         mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", true);
     }
 
