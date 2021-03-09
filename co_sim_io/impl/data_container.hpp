@@ -54,6 +54,15 @@ public:
     {
         return this->data()[Index];
     }
+
+    void Save(std::ostream& O_OutStream) const
+    {
+        CO_SIM_IO_ERROR << "NotImplementedError" << std::endl;
+    }
+    void Load(std::istream& I_InStream)
+    {
+        CO_SIM_IO_ERROR << "NotImplementedError" << std::endl;
+    }
 };
 
 /// output stream function
