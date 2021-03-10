@@ -68,11 +68,12 @@ public:
 
     void Save(std::ostream& O_OutStream) const
     {
-        CO_SIM_IO_ERROR << "NotImplementedError" << std::endl;
+        O_OutStream << mId << " " << mX << " " << mY << " " << mZ << "\n";
     }
+
     void Load(std::istream& I_InStream)
     {
-        CO_SIM_IO_ERROR << "NotImplementedError" << std::endl;
+        I_InStream >> mId >> mX >> mY >> mZ;
     }
 
     void Print(std::ostream& rOStream) const

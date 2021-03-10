@@ -267,7 +267,7 @@ TEST_CASE("DataContainer_save_load_double")
 
     std::stringstream test_stream;
 
-    p_save_container->Save(test_stream);
+    const_ref.Save(test_stream);
 
     DataContainerBasePointer p_load_container(CoSimIO::make_unique<DataContainerStdVector<double>>(load_values));
 
@@ -290,7 +290,7 @@ TEST_CASE("DataContainer_save_load_int")
 
     std::stringstream test_stream;
 
-    p_save_container->Save(test_stream);
+    const_ref.Save(test_stream);
 
     DataContainerIntBasePointer p_load_container(CoSimIO::make_unique<DataContainerStdVector<int>>(load_values));
 

@@ -80,6 +80,26 @@ TEST_CASE("node_ostream")
     CHECK_EQ(test_stream.str(), exp_string);
 }
 
+TEST_CASE("node_save_load")
+{
+    Node node(85, 0.2, -33.4, 647);
+    Node loaded_node(1, 0,0,0);
+
+    std::stringstream test_stream;
+
+    node.Save(test_stream);
+
+    std::cerr << "Node save: " << test_stream.str();
+
+    loaded_node.Load(test_stream);
+
+    CHECK_EQ(node.Id(), loaded_node.Id());
+
+    CHECK_EQ(node.X(), doctest::Approx(loaded_node.X()));
+    CHECK_EQ(node.Y(), doctest::Approx(loaded_node.Y()));
+    CHECK_EQ(node.Z(), doctest::Approx(loaded_node.Z()));
+}
+
 TEST_CASE("element_basics")
 {
     const int id = 33;
