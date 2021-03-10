@@ -23,6 +23,14 @@ for (std::size_t _i=0; _i<a.size(); ++_i) {       \
 }                                                 \
 }
 
+#define CO_SIM_IO_CHECK_VECTOR_EQUAL(a, b) {      \
+REQUIRE_EQ(a.size(), b.size());                   \
+for (std::size_t _i=0; _i<a.size(); ++_i) {       \
+   CHECK_MESSAGE(a[_i] == b[_i],                  \
+   "Mismatch in component: " << _i);              \
+}                                                 \
+}
+
 #define CO_SIM_IO_CHECK_VECTOR_NEAR_SIZE(a, b, s) { \
 REQUIRE_GE(a.size(), s);                            \
 REQUIRE_GE(b.size(), s);                            \
@@ -30,4 +38,13 @@ for (std::size_t _i=0; _i<s; ++_i) {                \
    CHECK_MESSAGE(a[_i] == doctest::Approx(b[_i]),   \
    "Mismatch in component: " << _i);                \
 }                                                   \
+}
+
+#define CO_SIM_IO_CHECK_VECTOR_EQUAL_SIZE(a, b, s) { \
+REQUIRE_GE(a.size(), s);                             \
+REQUIRE_GE(b.size(), s);                             \
+for (std::size_t _i=0; _i<s; ++_i) {                 \
+   CHECK_MESSAGE(a[_i] == b[_i],                     \
+   "Mismatch in component: " << _i);                 \
+}                                                    \
 }
