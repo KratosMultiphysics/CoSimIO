@@ -58,11 +58,9 @@ public:
     void Save(std::ostream& O_OutStream) const
     {
         O_OutStream << size() << "\n";
-
-        for (std::size_t i=0; i<size()-1; ++i) {
+        for (std::size_t i=0; i<size(); ++i) {
             O_OutStream << data()[i] << " ";
         }
-        O_OutStream << data()[size()-1]; // outside to not have trailing whitespace
     }
 
     void Load(std::istream& I_InStream)
@@ -70,10 +68,7 @@ public:
         std::size_t size_data;
         I_InStream >> size_data; // the first number in the file is the size of the data
 
-        if (size() != size_data) {
-            resize(size_data);
-        }
-
+        if (size() != size_data) {resize(size_data);}
         for (std::size_t i=0; i<size_data; ++i) {
             I_InStream >> data()[i];
         }
