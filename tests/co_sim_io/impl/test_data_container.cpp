@@ -12,6 +12,7 @@
 
 // System includes
 #include <memory>
+#include <sstream>
 #include <algorithm>
 
 // Project includes
@@ -23,7 +24,9 @@ namespace CoSimIO {
 namespace Internals { // DataContainer is in the Internals namespace
 
 using DataContainerBase = DataContainer<double>;
+using DataContainerIntBase = DataContainer<int>;
 using DataContainerBasePointer = std::unique_ptr<DataContainerBase>;
+using DataContainerIntBasePointer = std::unique_ptr<DataContainerIntBase>;
 using DataContainerStdVectorType = DataContainerStdVector<double>;
 using DataContainerRawMemoryType = DataContainerRawMemory<double>;
 using DataContainerStdVectorReadOnlyType = DataContainerStdVectorReadOnly<double>;
@@ -249,6 +252,50 @@ TEST_CASE("DataContainer_RawMemory_multiple_resizes")
 
     // deallocating memory
     free(data);
+}
+
+TEST_CASE("DataContainer_save_load_double")
+{
+    const std::vector<double> save_values {
+        1.0, -2.333, 15.88, 14.7, -99.6
+    };
+
+    std::vector<double> load_values;
+
+    const DataContainerBasePointer p_save_container(CoSimIO::make_unique<DataContainerStdVectorReadOnly<double>>(save_values));
+
+    std::stringstream test_stream;
+
+    p_save_container->Save(test_stream);
+
+    DataContainerBasePointer p_load_container(CoSimIO::make_unique<DataContainerStdVector<double>>(load_values));
+
+    p_load_container->Load(test_stream);
+
+    CO_SIM_IO_CHECK_VECTOR_NEAR(save_values, load_values);
+    CO_SIM_IO_CHECK_VECTOR_NEAR((*p_save_container), (*p_load_container));
+}
+
+TEST_CASE("DataContainer_save_load_int")
+{
+    const std::vector<int> save_values {
+        1,2,3,-6,-7789,6147,9423
+    };
+
+    std::vector<int> load_values;
+
+    const DataContainerIntBasePointer p_save_container(CoSimIO::make_unique<DataContainerStdVectorReadOnly<int>>(save_values));
+
+    std::stringstream test_stream;
+
+    p_save_container->Save(test_stream);
+
+    DataContainerIntBasePointer p_load_container(CoSimIO::make_unique<DataContainerStdVector<int>>(load_values));
+
+    p_load_container->Load(test_stream);
+
+    CO_SIM_IO_CHECK_VECTOR_EQUAL(save_values, load_values);
+    CO_SIM_IO_CHECK_VECTOR_EQUAL((*p_save_container), (*p_load_container));
 }
 
 } // TEST_SUITE("DataContainer")
