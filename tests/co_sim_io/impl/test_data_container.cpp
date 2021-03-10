@@ -263,6 +263,7 @@ TEST_CASE("DataContainer_save_load_double")
     std::vector<double> load_values;
 
     const DataContainerBasePointer p_save_container(CoSimIO::make_unique<DataContainerStdVectorReadOnly<double>>(save_values));
+    const DataContainerBase& const_ref = *p_save_container;
 
     std::stringstream test_stream;
 
@@ -273,7 +274,7 @@ TEST_CASE("DataContainer_save_load_double")
     p_load_container->Load(test_stream);
 
     CO_SIM_IO_CHECK_VECTOR_NEAR(save_values, load_values);
-    CO_SIM_IO_CHECK_VECTOR_NEAR((*p_save_container), (*p_load_container));
+    CO_SIM_IO_CHECK_VECTOR_NEAR(const_ref, (*p_load_container));
 }
 
 TEST_CASE("DataContainer_save_load_int")
@@ -285,6 +286,7 @@ TEST_CASE("DataContainer_save_load_int")
     std::vector<int> load_values;
 
     const DataContainerIntBasePointer p_save_container(CoSimIO::make_unique<DataContainerStdVectorReadOnly<int>>(save_values));
+    const DataContainerIntBase& const_ref = *p_save_container;
 
     std::stringstream test_stream;
 
@@ -295,7 +297,7 @@ TEST_CASE("DataContainer_save_load_int")
     p_load_container->Load(test_stream);
 
     CO_SIM_IO_CHECK_VECTOR_EQUAL(save_values, load_values);
-    CO_SIM_IO_CHECK_VECTOR_EQUAL((*p_save_container), (*p_load_container));
+    CO_SIM_IO_CHECK_VECTOR_EQUAL(const_ref, (*p_load_container));
 }
 
 } // TEST_SUITE("DataContainer")
