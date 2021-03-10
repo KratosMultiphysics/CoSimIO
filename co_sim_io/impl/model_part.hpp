@@ -318,10 +318,10 @@ public:
             I_InStream >> elem_type_load;
 
             ElementType elem_type = static_cast<ElementType>(elem_type_load);
-            int num_nodes_elem = Internals::GetNumberOfNodesForElementType(elem_type);
+            std::size_t num_nodes_elem = Internals::GetNumberOfNodesForElementType(elem_type);
 
             if (elem_nodes.size() != num_nodes_elem) {elem_nodes.resize(num_nodes_elem);}
-            for (int i=0; i<num_nodes_elem; ++i) {
+            for (std::size_t i=0; i<num_nodes_elem; ++i) {
                 IdType node_id;
                 I_InStream >> node_id;
                 elem_nodes[i] = node_id;
