@@ -321,7 +321,7 @@ public:
             int num_nodes_elem = Internals::GetNumberOfNodesForElementType(elem_type);
 
             if (elem_nodes.size() != num_nodes_elem) {elem_nodes.resize(num_nodes_elem);}
-            for (std::size_t i=0; i<num_nodes_elem; ++i) {
+            for (int i=0; i<num_nodes_elem; ++i) {
                 IdType node_id;
                 I_InStream >> node_id;
                 elem_nodes[i] = node_id;
