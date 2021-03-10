@@ -91,11 +91,7 @@ TEST_CASE("node_save_load")
 
     loaded_node.Load(test_stream);
 
-    CHECK_EQ(node.Id(), loaded_node.Id());
-
-    CHECK_EQ(node.X(), doctest::Approx(loaded_node.X()));
-    CHECK_EQ(node.Y(), doctest::Approx(loaded_node.Y()));
-    CHECK_EQ(node.Z(), doctest::Approx(loaded_node.Z()));
+    CheckNodesAreEqual(node, loaded_node);
 }
 
 TEST_CASE("element_basics")
@@ -453,7 +449,6 @@ TEST_CASE("model_part_save_load")
     loaded_model_part.Load(test_stream);
 
     CheckModelPartsAreEqual(model_part, loaded_model_part);
-
 }
 
 } // TEST_SUITE("ModelPart")
