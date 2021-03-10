@@ -268,11 +268,67 @@ public:
 
     void Save(std::ostream& O_OutStream) const
     {
-        CO_SIM_IO_ERROR << "NotImplementedError" << std::endl;
+        O_OutStream << mName << "\n";
+        O_OutStream << NumberOfNodes() << "\n";
+        O_OutStream << NumberOfElements() << "\n";
+
+        for (auto node_it=NodesBegin(); node_it!=NodesEnd(); ++node_it) {
+            (*node_it)->Save(O_OutStream);
+        }
+
+        for (auto elem_it=ElementsBegin(); elem_it!=ElementsEnd(); ++elem_it) {
+            // Serialization of Elements is currently done manually as it holds pointers
+            // to nodes, which will be refactored with intrusive pointers in the future
+            // (*elem_it)->Save(O_OutStream);
+
+            const Element& elem = **elem_it;
+
+            O_OutStream << elem.Id() << " " << static_cast<int>(elem.Type());
+            for (auto node_it=elem.NodesBegin(); node_it!=elem.NodesEnd(); ++node_it) {
+                O_OutStream << " " << (*node_it)->Id();
+            }
+
+            O_OutStream << "\n";
+        }
     }
+
     void Load(std::istream& I_InStream)
     {
-        CO_SIM_IO_ERROR << "NotImplementedError" << std::endl;
+        I_InStream >> mName;
+        std::size_t num_nodes, num_elements;
+        I_InStream >> num_nodes;
+        I_InStream >> num_elements;
+
+        for (std::size_t i=0; i<num_nodes; ++i) {
+            // maybe directly interact with the container in the future
+            auto& node = CreateNewNode(1,0,0,0); // creating new node to load into
+            node.Load(I_InStream);
+        }
+
+        IdType elem_id;
+        int elem_type_load;
+        ConnectivitiesType elem_nodes;
+
+        for (std::size_t i=0; i<num_elements; ++i) {
+            // serialization is currently done manually, see Save
+            // auto& elem = CreateNewElement(...); // creating new element to load into
+            // elem.Load(I_InStream);
+
+            I_InStream >> elem_id;
+            I_InStream >> elem_type_load;
+
+            ElementType elem_type = static_cast<ElementType>(elem_type_load);
+            int num_nodes_elem = Internals::GetNumberOfNodesForElementType(elem_type);
+
+            if (elem_nodes.size() != num_nodes_elem) {elem_nodes.resize(num_nodes_elem);}
+            for (std::size_t i=0; i<num_nodes_elem; ++i) {
+                IdType node_id;
+                I_InStream >> node_id;
+                elem_nodes[i] = node_id;
+            }
+
+            CreateNewElement(elem_id, elem_type, elem_nodes);
+        }
     }
 
     void Print(std::ostream& rOStream) const

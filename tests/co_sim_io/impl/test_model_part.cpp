@@ -89,8 +89,6 @@ TEST_CASE("node_save_load")
 
     node.Save(test_stream);
 
-    std::cerr << "Node save: " << test_stream.str();
-
     loaded_node.Load(test_stream);
 
     CHECK_EQ(node.Id(), loaded_node.Id());
@@ -424,6 +422,38 @@ TEST_CASE("model_part_ostream")
     test_stream << model_part;
 
     CHECK_EQ(test_stream.str(), exp_string);
+}
+
+TEST_CASE("model_part_save_load")
+{
+    ModelPart model_part("for_test");
+
+    SUBCASE("empty")
+    {
+        // does nothing
+    }
+
+    SUBCASE("with_entities")
+    {
+        const int node_ids[] = {2, 159, 61};
+        const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
+        model_part.CreateNewNode(node_ids[0], node_coords[0], node_coords[1], node_coords[2]);
+        model_part.CreateNewNode(node_ids[1], node_coords[1], node_coords[2], node_coords[0]);
+        model_part.CreateNewNode(node_ids[2], node_coords[2], node_coords[0], node_coords[1]);
+
+        model_part.CreateNewElement(15, CoSimIO::ElementType::Point2D, {node_ids[0]});
+        model_part.CreateNewElement(73, CoSimIO::ElementType::Line2D2, {node_ids[1], node_ids[2]});
+        model_part.CreateNewElement(47, CoSimIO::ElementType::Triangle3D3, {node_ids[1], node_ids[2], node_ids[0]});
+    }
+
+    std::stringstream test_stream;
+    model_part.Save(test_stream);
+
+    ModelPart loaded_model_part("xxx");
+    loaded_model_part.Load(test_stream);
+
+    CheckModelPartsAreEqual(model_part, loaded_model_part);
+
 }
 
 } // TEST_SUITE("ModelPart")
