@@ -268,10 +268,10 @@ The overview of the Kratos CoSimulation Library can be found [here](../README.md
 
 ## Tutorial 7: Building Kratos with CoSimulation
 The building instructions for the Kratos CoSimulation Library can be found [here](../README.md#building-kratos-with-cosimulation).
-
+<!--
 ## Tutorial 8: Connecting/Disconnecting to/from Kratos
 coming soon!
-<!-- For connecting to Kratos it is very important to have in mind that Kratos also uses *CoSimIO* for interprocess communication so its python interface reflects the CoSimIO. So we may create a python script for connecting and disconnecting in the same way described in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
+For connecting to Kratos it is very important to have in mind that Kratos also uses *CoSimIO* for interprocess communication so its python interface reflects the CoSimIO. So we may create a python script for connecting and disconnecting in the same way described in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
 
 ```Python
 from KratosMultiphysics.CoSimulationApplication import CoSimIO
@@ -297,11 +297,11 @@ Then you may run your executable with python script of Kratos from your working 
 
 ```shell
 path/to/bin/tests_c/connect_disconnect_c_test & python3 path/to/connect_disconnect.py
-``` -->
+```
 
 ## Tutorial 9: Data Exchange with Kratos
 coming soon!
-<!-- Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one descirbed in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
+Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one descirbed in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
 
 
 ```python
@@ -375,11 +375,11 @@ Now for running the test:
 
 ```shell
 path/to/bin/tests_c/export_import_data_c_test & python3 path/to/import_export_data.py
-``` -->
+```
 
 ## Tutorial 10: Mesh Exchange with Kratos
 coming soon!
-<!-- In this step we send a mesh to Kratos and receive it back and we will check if they are the same. (like previous tutorial with data).
+In this step we send a mesh to Kratos and receive it back and we will check if they are the same. (like previous tutorial with data).
 
 Recalling from what we had in tutorial 5 we just merge the export mesh and import mesh codes into one as we did for data exchage in previous tutorial:
 
@@ -505,11 +505,11 @@ Now for running the test:
 
 ```shell
 path/to/bin/tests_c/export_import_mesh_c_test & python3 path/to/import_export_mesh.py
-``` -->
+```
 
 ## Tutorial 11: Mapping with Kratos
 coming soon!
-<!-- This tutorial shows how to map data between (non matching) meshes with Kratos. It is based on tutorials 9 & 10.
+This tutorial shows how to map data between (non matching) meshes with Kratos. It is based on tutorials 9 & 10.
 
 In this tutorial we first send two meshes based on the same geometry but with different discretizations to Kratos. Those meshes are used as basis for the mapping. In Kratos teminology those are the origin and the destination.
 

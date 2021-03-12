@@ -202,7 +202,7 @@ The overview of the Kratos CoSimulation Library can be found [here](../README.md
 ## Tutorial 7: Building Kratos with CoSimulation
 The building instructions for the Kratos CoSimulation Library can be found [here](../README.md#building-kratos-with-cosimulation).
 
-
+<!--
 ## Tutorial 8: Connecting/Disconnecting to/from Kratos
 coming soon!
 
@@ -216,4 +216,4 @@ coming soon!
 
 
 ## Tutorial 11: Mapping with Kratos
-coming soon!
+coming soon! -->
