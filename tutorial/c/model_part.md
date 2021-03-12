@@ -54,13 +54,13 @@ The nodes and elements can be iterated with:
 // iterate nodes
 for (int i=0; i<CoSimIO_ModelPart_NumberOfNodes(model_part); ++i) {
     CoSimIO_Node node = CoSimIO_ModelPart_GetNodeByIndex(model_part, i);
-    // no sth with node
+    // do sth with node
 }
 
 // iterate elements
 for (int i=0; i<CoSimIO_ModelPart_NumberOfElements(model_part); ++i) {
     CoSimIO_Element element = CoSimIO_ModelPart_GetElementByIndex(model_part, i);
-    // no sth with element
+    // do sth with element
 }
 ~~~
 
@@ -108,10 +108,10 @@ CoSimIO_ElementType element_type = CoSimIO_Element_Type(element); // e.g. CoSimI
 // number of nodes of the element:
 int num_nodes_element = CoSimIO_Element_NumberOfNodes(element);
 
-// access the nodes of the element by index:
+// iterate the nodes of the element:
 for (int i=0; i<CoSimIO_Element_NumberOfNodes(element); ++i) {
     CoSimIO_Node node = CoSimIO_Element_GetNodeByIndex(element, i);
-    // no sth with node
+    // do sth with node
 }
 ~~~
 
