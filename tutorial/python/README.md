@@ -160,38 +160,24 @@ After seeing how we transfer raw data between solvers/software-tools, it is time
 info = CoSimIO.Info()
 info.SetString("identifier", "fluid_mesh")
 info.SetString("connection_name", connection_name) # connection_name is obtained from calling "Connect"
-return_info = CoSimIO.ExportMesh(info, model_part)
+
+model_part = CoSimIO.ModelPart("name_of_model_part_to_export");
+
+export_info = CoSimIO.ExportMesh(info, model_part)
 ```
 
-The argument `model_part` is a container for mesh, it contains nodes and elements. Check the [implementation](../../co_sim_io/python/model_part_to_python.hpp) and the [tests](../../tests/co_sim_io/python/test_model_part.py) for details of `CoSimIO::ModelPart`.
+The argument `model_part` is of type `CoSimIO.ModelPart`. Its usage is explained [here](model_part.md).
 
-Nodes can be created like this:
-```py
-model_part = CoSimIO.ModelPart("name_of_this_model_part");
-
-model_part.CreateNewNode(
-    1,    # Id
-    0.0,  # X-Coordinate
-    1.5,  # Y-Coordinate
-    -4.22 # Z-Coordinate
-)
-```
-
-Elements can be created after nodes were created:
-```py
-model_part.CreateNewElement(
-    2, # Id
-    CoSimIO::ElementType::Line2D2,  # Type of element, see "co_sim_io/impl/define.hpp"
-    [1,2] # Connectivity information, i.e. Ids of nodes that the element has
-);
-```
 On the other side one can use the ImportMesh() method to get the mesh sent by the export:
 
 ```Python
 info = CoSimIO.Info()
 info.SetString("identifier", "fluid_mesh")
 info.SetString("connection_name", "test_connection")
-return_info, nodal_coords, element_connectivities, element_types = CoSimIO.ImportMesh(info)
+
+model_part = CoSimIO.ModelPart("name_of_imported_model_part");
+
+import_info = CoSimIO.ImportMesh(info, model_part)
 ```
 
 This example can be found in [integration_tutorials/python/export_mesh.py](../../tests/integration_tutorials/python/export_mesh.py) and [integration_tutorials/python/import_mesh.py](../../tests/integration_tutorials/python/import_mesh.py).

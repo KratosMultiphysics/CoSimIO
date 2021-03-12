@@ -154,7 +154,10 @@ After seeing how we transfer raw data between solvers/software-tools, it is time
 CoSimIO::Info info;
 info.Set("identifier", "fluid_mesh");
 info.Set("connection_name", connection_name); // connection_name is obtained from calling "Connect"
-info = CoSimIO::ExportMesh(info, model_part);
+
+CoSimIO::ModelPart model_part("name_of_model_part_to_export");
+
+export_info = CoSimIO::ExportMesh(info, model_part);
 ```
 
 The argument `model_part` is of type `CoSimIO::ModelPart`. Its usage is explained [here](model_part.md).
@@ -168,7 +171,7 @@ info.Set("connection_name", connection_name); // connection_name is obtained fro
 
 CoSimIO::ModelPart model_part("name_of_imported_model_part");
 
-info = CoSimIO::ImportMesh(info, model_part);
+import_info = CoSimIO::ImportMesh(info, model_part);
 ```
 
 This example can be found in [integration_tutorials/cpp/export_mesh.cpp](../../tests/integration_tutorials/cpp/export_mesh.cpp) and [integration_tutorials/cpp/import_mesh.cpp](../../tests/integration_tutorials/cpp/import_mesh.cpp).

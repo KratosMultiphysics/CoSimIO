@@ -215,6 +215,9 @@ After seeing how we transfer raw data between solvers/software-tools, it is time
 CoSimIO_Info export_settings = CoSimIO_CreateInfo();
 CoSimIO_Info_SetString(export_settings, "identifier", "fluid_mesh");
 CoSimIO_Info_SetString(export_settings, "connection_name", connection_name); // connection_name is obtained from calling "Connect"
+
+CoSimIO_ModelPart model_part = CoSimIO_CreateModelPart("name_of_model_part_to_export");
+
 CoSimIO_Info export_info = CoSimIO_ExportMesh(export_settings, model_part);
 ```
 
@@ -226,6 +229,8 @@ On the other side one can use the `ImportMesh()` method to get the mesh sent by 
 CoSimIO_Info import_settings=CoSimIO_CreateInfo();
 CoSimIO_Info_SetString(import_settings, "identifier", "fluid_mesh");
 CoSimIO_Info_SetString(import_settings, "connection_name", connection_name); // connection_name is obtained from calling "Connect"
+
+CoSimIO_ModelPart model_part = CoSimIO_CreateModelPart("name_of_imported_model_part");
 
 CoSimIO_Info import_info = CoSimIO_ImportMesh(import_settings, model_part);
 ```
