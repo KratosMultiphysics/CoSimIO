@@ -14,10 +14,10 @@ This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool u
   - [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
   - [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-cosimulation-library-overview)
   - [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-building-kratos-with-cosimulation)
-  - [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-connectingdisconnecting-tofrom-kratos)
+  <!-- - [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-connectingdisconnecting-tofrom-kratos)
   - [Tutorial 9: Data Exchange with Kratos](#tutorial-9-data-exchange-with-kratos)
   - [Tutorial 10: Mesh Exchange with Kratos](#tutorial-10-mesh-exchange-with-kratos)
-  - [Tutorial 11: Mapping with Kratos](#tutorial-11-mapping-with-kratos)
+  - [Tutorial 11: Mapping with Kratos](#tutorial-11-mapping-with-kratos) -->
 
 ## What you need
 - Downloading the _CosimIO_ from the repository:
