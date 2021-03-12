@@ -49,6 +49,9 @@ Usually pybind automatically detects the Python installation. Sometimes it can h
 ```
 see also the corresponding [pybind documentstion](https://pybind11.readthedocs.io/en/stable/compiling.html#configuration-variables)
 
+If Python cannot find the _CoSimIO_ then check if the version of Python used for the compilation is the same as the version of Python used. E.g. when compiling _CoSimIO_ with Python 3.6 it is not possible to import it when using Python 3.8. Here Python issues a `ModuleNotFoundError`.
+This can easily be checked with the file extension of the compiled _CoSimIO_ module.
+Example: When using Python 3.5 the name of the compiled module will be sth like `CoSimIO.cp35-win_amd64.pyd` (Windows), `CoSimIO.cpython-35m-x86_64-linux-gnu.so` (Linux) or `CoSimIO.cpython-35m-darwin.so` (MacOS).
 
 
 ## Tutorial 2: Hello CosimIO
@@ -201,7 +204,7 @@ The overview of the Kratos CoSimulation Library can be found [here](../README.md
 ## Tutorial 7: Building Kratos with CoSimulation
 The building instructions for the Kratos CoSimulation Library can be found [here](../README.md#building-kratos-with-cosimulation).
 
-
+<!--
 ## Tutorial 8: Connecting/Disconnecting to/from Kratos
 coming soon!
 
@@ -215,4 +218,4 @@ coming soon!
 
 
 ## Tutorial 11: Mapping with Kratos
-coming soon!
+coming soon! -->
