@@ -53,6 +53,12 @@ int main()
     COSIMIO_CHECK_INT_EQUAL(CoSimIO_ModelPart_NumberOfNodes(model_part), 4);
     COSIMIO_CHECK_INT_EQUAL(CoSimIO_ModelPart_NumberOfElements(model_part), 2);
 
+    /* remove all Nodes and Elements */
+    CoSimIO_ModelPart_Clear(model_part);
+
+    COSIMIO_CHECK_INT_EQUAL(CoSimIO_ModelPart_NumberOfNodes(model_part), 0);
+    COSIMIO_CHECK_INT_EQUAL(CoSimIO_ModelPart_NumberOfElements(model_part), 0);
+
     CoSimIO_FreeModelPart(model_part);
 
     return 0;

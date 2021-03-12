@@ -353,6 +353,11 @@ CoSimIO_Element CoSimIO_ModelPart_GetElementById(CoSimIO_ModelPart I_ModelPart, 
     return elem;
 }
 
+void CoSimIO_ModelPart_Clear(CoSimIO_ModelPart I_ModelPart)
+{
+    static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->Clear();
+}
+
 
 int CoSimIO_FreeModelPart(CoSimIO_ModelPart I_ModelPart)
 {
