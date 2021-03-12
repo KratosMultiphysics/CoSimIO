@@ -165,7 +165,7 @@ public:
         return mOptions.size();
     }
 
-    void Save(std::ostream& O_OutStream) const
+    void Save(std::ostream& O_OutStream, StreamMode Mode) const
     {
         static std::map<std::string, std::string> s_registered_object_names {
             {typeid(Internals::InfoData<int>).name(),         "InfoData_int"},
@@ -185,7 +185,7 @@ public:
             O_OutStream << "\n";
         }
     }
-    void Load(std::istream& I_InStream)
+    void Load(std::istream& I_InStream, StreamMode Mode)
     {
         static std::map<std::string, std::shared_ptr<Internals::InfoDataBase>> s_registered_object_prototypes {
             {"InfoData_int"    , std::make_shared<Internals::InfoData<int>>(1)},

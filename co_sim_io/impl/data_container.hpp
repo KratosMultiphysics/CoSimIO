@@ -55,7 +55,7 @@ public:
         return this->data()[Index];
     }
 
-    void Save(std::ostream& O_OutStream) const
+    void Save(std::ostream& O_OutStream, StreamMode Mode) const
     {
         O_OutStream << size() << "\n";
         for (std::size_t i=0; i<size(); ++i) {
@@ -63,7 +63,7 @@ public:
         }
     }
 
-    void Load(std::istream& I_InStream)
+    void Load(std::istream& I_InStream, StreamMode Mode)
     {
         std::size_t size_data;
         I_InStream >> size_data; // the first number in the file is the size of the data

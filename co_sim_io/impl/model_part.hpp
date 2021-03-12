@@ -266,7 +266,7 @@ public:
         return *it_elem;
     }
 
-    void Save(std::ostream& O_OutStream) const
+    void Save(std::ostream& O_OutStream, StreamMode Mode) const
     {
         O_OutStream << mName << "\n";
         O_OutStream << NumberOfNodes() << "\n";
@@ -292,7 +292,7 @@ public:
         }
     }
 
-    void Load(std::istream& I_InStream)
+    void Load(std::istream& I_InStream, StreamMode Mode)
     {
         I_InStream >> mName;
         std::size_t num_nodes, num_elements;
