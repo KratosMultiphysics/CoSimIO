@@ -42,13 +42,13 @@ int main()
     /* iterate the nodes */
     for (i=0; i<CoSimIO_ModelPart_NumberOfNodes(model_part); ++i) {
         node = CoSimIO_ModelPart_GetNodeByIndex(model_part, i);
-        COSIMIO_CHECK_INT_EQUAL(CoSimIO_Node_Id(node), i+1)
+        COSIMIO_CHECK_INT_EQUAL(CoSimIO_Node_Id(node), i+1);
     }
 
     /* get a specific node by Id */
     node = CoSimIO_ModelPart_GetNodeById(model_part, 3);
-    COSIMIO_CHECK_INT_EQUAL(3, CoSimIO_Node_Id(node));
-    COSIMIO_CHECK_DOUBLE_EQUAL(-2.0, CoSimIO_Node_Z(node));
+    COSIMIO_CHECK_INT_EQUAL(CoSimIO_Node_Id(node), 3);
+    COSIMIO_CHECK_DOUBLE_EQUAL(CoSimIO_Node_Z(node), -2.0);
 
     COSIMIO_CHECK_INT_EQUAL(CoSimIO_ModelPart_NumberOfNodes(model_part), 4);
     COSIMIO_CHECK_INT_EQUAL(CoSimIO_ModelPart_NumberOfElements(model_part), 0);
