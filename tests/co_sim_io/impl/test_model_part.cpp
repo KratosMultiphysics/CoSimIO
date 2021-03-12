@@ -389,6 +389,31 @@ TEST_CASE("model_part_get_element")
     }
 }
 
+TEST_CASE("model_part_clear")
+{
+    ModelPart model_part("for_test");
+
+    const int node_ids[] = {2, 159, 61};
+    const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
+    model_part.CreateNewNode(node_ids[0], node_coords[0], node_coords[1], node_coords[2]);
+    model_part.CreateNewNode(node_ids[1], node_coords[1], node_coords[2], node_coords[0]);
+    model_part.CreateNewNode(node_ids[2], node_coords[2], node_coords[0], node_coords[1]);
+
+    model_part.CreateNewElement(15, CoSimIO::ElementType::Point2D, {node_ids[0]});
+    model_part.CreateNewElement(73, CoSimIO::ElementType::Line2D2, {node_ids[1], node_ids[2]});
+    model_part.CreateNewElement(47, CoSimIO::ElementType::Triangle3D3, {node_ids[1], node_ids[2], node_ids[0]});
+    model_part.CreateNewElement(18, CoSimIO::ElementType::Point3D, {node_ids[1]});
+
+    REQUIRE_EQ(model_part.NumberOfNodes(), 3);
+    REQUIRE_EQ(model_part.NumberOfElements(), 4);
+
+    // remove all Nodes and Elements
+    model_part.Clear();
+
+    REQUIRE_EQ(model_part.NumberOfNodes(), 0);
+    REQUIRE_EQ(model_part.NumberOfElements(), 0);
+}
+
 TEST_CASE("model_part_ostream")
 {
     ModelPart model_part("for_test");

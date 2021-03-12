@@ -82,6 +82,7 @@ CoSimIO_Node CoSimIO_ModelPart_GetNodeByIndex(CoSimIO_ModelPart I_ModelPart, con
 CoSimIO_Node CoSimIO_ModelPart_GetNodeById(CoSimIO_ModelPart I_ModelPart, const int I_Id);
 CoSimIO_Element CoSimIO_ModelPart_GetElementByIndex(CoSimIO_ModelPart I_ModelPart, const int I_Index);
 CoSimIO_Element CoSimIO_ModelPart_GetElementById(CoSimIO_ModelPart I_ModelPart, const int I_Id);
+void CoSimIO_ModelPart_Clear(CoSimIO_ModelPart I_ModelPart);
 
 CoSimIO_Node CoSimIO_ModelPart_CreateNewNode(
     CoSimIO_ModelPart I_ModelPart,
