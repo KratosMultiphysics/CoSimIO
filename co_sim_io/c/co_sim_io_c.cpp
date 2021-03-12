@@ -290,7 +290,7 @@ double CoSimIO_Node_Z(CoSimIO_Node I_Node)
 
 double CoSimIO_Node_Coordinate(CoSimIO_Node I_Node, const int I_Index)
 {
-    // add debug error if I_Index is out of bound (admissible values: 0,1,2)
+    // TODO add debug error if I_Index is out of bound (admissible values: 0,1,2)
     return static_cast<CoSimIO::Node*>(I_Node.PtrCppNode)->Coordinates()[I_Index];
 }
 
