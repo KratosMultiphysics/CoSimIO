@@ -218,37 +218,7 @@ CoSimIO_Info_SetString(export_settings, "connection_name", connection_name); // 
 CoSimIO_Info export_info = CoSimIO_ExportMesh(export_settings, model_part);
 ```
 
-The argument `model_part` is a container for mesh, it contains nodes and elements. Check the [implementation](../../co_sim_io/c/co_sim_io_c_model_part.h) and the [tests](../../tests/co_sim_io/c/model_part/test_model_part.c) for details of `CoSimIO::ModelPart`.
-
-Nodes can be created like this:
-```c
-CoSimIO_ModelPart model_part = CoSimIO_CreateModelPart("my_model_part");
-
-CoSimIO_ModelPart_CreateNewNode(
-    model_part,
-    1,    // Id
-    0.0,  // X-Coordinate
-    1.5,  // Y-Coordinate
-    -4.22 // Z-Coordinate
-);
-```
-
-Elements can be created after nodes were created:
-```c
-int connectivity[2] = {1,2};
-
-CoSimIO_ModelPart_CreateNewElement(
-    model_part,
-    2, // Id
-    CoSimIO_Line2D2, // Type of element, see "co_sim_io/c/co_sim_io_c_model_part.h"
-    connectivity // Connectivity information, i.e. Ids of nodes that the element has
-);
-```
-
-Don't forget to free the `CoSimIO_ModelPart` after using it with
-```c
-CoSimIO_FreeModelPart(model_part);
-```
+The argument `model_part` is of type `CoSimIO_ModelPart`. Its usage is explained [here](model_part.md).
 
 On the other side one can use the `ImportMesh()` method to get the mesh sent by the export:
 
