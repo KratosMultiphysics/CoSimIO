@@ -265,13 +265,21 @@ TEST_CASE("DataContainer_save_load_double")
     const DataContainerBasePointer p_save_container(CoSimIO::make_unique<DataContainerStdVectorReadOnly<double>>(save_values));
     const DataContainerBase& const_ref = *p_save_container;
 
-    std::stringstream test_stream;
-
-    const_ref.Save(test_stream);
-
     DataContainerBasePointer p_load_container(CoSimIO::make_unique<DataContainerStdVector<double>>(load_values));
 
-    p_load_container->Load(test_stream);
+    SUBCASE("ascii")
+    {
+        std::stringstream test_stream;
+        const_ref.Save(test_stream, StreamMode::ASCII);
+        p_load_container->Load(test_stream, StreamMode::ASCII);
+    }
+
+    SUBCASE("binary")
+    {
+        std::stringstream test_stream;
+        const_ref.Save(test_stream, StreamMode::BINARY);
+        p_load_container->Load(test_stream, StreamMode::BINARY);
+    }
 
     CO_SIM_IO_CHECK_VECTOR_NEAR(save_values, load_values);
     CO_SIM_IO_CHECK_VECTOR_NEAR(const_ref, (*p_load_container));
@@ -288,13 +296,21 @@ TEST_CASE("DataContainer_save_load_int")
     const DataContainerIntBasePointer p_save_container(CoSimIO::make_unique<DataContainerStdVectorReadOnly<int>>(save_values));
     const DataContainerIntBase& const_ref = *p_save_container;
 
-    std::stringstream test_stream;
-
-    const_ref.Save(test_stream);
-
     DataContainerIntBasePointer p_load_container(CoSimIO::make_unique<DataContainerStdVector<int>>(load_values));
 
-    p_load_container->Load(test_stream);
+    SUBCASE("ascii")
+    {
+        std::stringstream test_stream;
+        const_ref.Save(test_stream, StreamMode::ASCII);
+        p_load_container->Load(test_stream, StreamMode::ASCII);
+    }
+
+    SUBCASE("binary")
+    {
+        std::stringstream test_stream;
+        const_ref.Save(test_stream, StreamMode::BINARY);
+        p_load_container->Load(test_stream, StreamMode::BINARY);
+    }
 
     CO_SIM_IO_CHECK_VECTOR_EQUAL(save_values, load_values);
     CO_SIM_IO_CHECK_VECTOR_EQUAL(const_ref, (*p_load_container));

@@ -259,7 +259,7 @@ TEST_CASE("info_erase")
     CHECK_NOTHROW(info.Erase("whatever"));
 }
 
-TEST_CASE("info_save")
+TEST_CASE("info_save_ascii")
 {
     Info info;
     info.Set<std::string>("keyword", "awesome");
@@ -271,21 +271,21 @@ TEST_CASE("info_save")
 
     std::stringstream test_stream;
 
-    info.Save(test_stream);
+    info.Save(test_stream, StreamMode::ASCII);
 
     const std::string exp_string = "5\nchecking\nInfoData_int\n22\necho_level\nInfoData_int\n2\nis_converged\nInfoData_bool\n1\nkeyword\nInfoData_string\nawesome\ntol\nInfoData_double\n0.008\n";
 
     CHECK_EQ(test_stream.str(), exp_string);
 }
 
-TEST_CASE("info_load")
+TEST_CASE("info_load_ascii")
 {
     std::stringstream test_stream;
 
     test_stream << "5\nkeyword\nInfoData_string\nawesome\nis_converged\nInfoData_bool\n1\ntol\nInfoData_double\n1.225\necho_level\nInfoData_int\n2\nchecking\nInfoData_int\n22\n";
 
     Info info;
-    info.Load(test_stream);
+    info.Load(test_stream, StreamMode::ASCII);
 
     CHECK_EQ(info.Size(), 5);
     CHECK_EQ(info.Get<int>("checking"), 22);
@@ -304,12 +304,21 @@ TEST_CASE("info_save_load")
     info.Set<int>("echo_level", 2);
     info.Set<int>("checking", 22);
 
-    std::stringstream test_stream;
-
-    info.Save(test_stream);
-
     Info another_info;
-    another_info.Load(test_stream);
+
+    SUBCASE("ascii")
+    {
+        std::stringstream test_stream;
+        info.Save(test_stream, StreamMode::ASCII);
+        another_info.Load(test_stream, StreamMode::ASCII);
+    }
+
+    SUBCASE("binary")
+    {
+        std::stringstream test_stream;
+        info.Save(test_stream, StreamMode::BINARY);
+        another_info.Load(test_stream, StreamMode::BINARY);
+    }
 
     CHECK_EQ(another_info.Size(), 5);
     CHECK_EQ(another_info.Get<int>("checking"), 22);

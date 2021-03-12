@@ -151,7 +151,7 @@ private:
         CheckStream(input_file, file_name);
 
         Info imported_info;
-        imported_info.Load(input_file);
+        imported_info.Load(input_file, StreamMode::ASCII);
 
         input_file.close(); // TODO check return value?
         RemovePath(file_name);
@@ -176,7 +176,7 @@ private:
         output_file.open(GetTempFileName(file_name));
         CheckStream(output_file, file_name);
 
-        I_Info.Save(output_file);
+        I_Info.Save(output_file, StreamMode::ASCII);
 
         output_file.close();
         MakeFileVisible(file_name);

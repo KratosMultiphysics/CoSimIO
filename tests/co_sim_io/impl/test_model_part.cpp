@@ -448,30 +448,31 @@ TEST_CASE("model_part_ostream")
 TEST_CASE("model_part_save_load")
 {
     ModelPart model_part("for_test");
-
-    SUBCASE("empty")
-    {
-        // does nothing
-    }
-
-    SUBCASE("with_entities")
-    {
-        const int node_ids[] = {2, 159, 61};
-        const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
-        model_part.CreateNewNode(node_ids[0], node_coords[0], node_coords[1], node_coords[2]);
-        model_part.CreateNewNode(node_ids[1], node_coords[1], node_coords[2], node_coords[0]);
-        model_part.CreateNewNode(node_ids[2], node_coords[2], node_coords[0], node_coords[1]);
-
-        model_part.CreateNewElement(15, CoSimIO::ElementType::Point2D, {node_ids[0]});
-        model_part.CreateNewElement(73, CoSimIO::ElementType::Line2D2, {node_ids[1], node_ids[2]});
-        model_part.CreateNewElement(47, CoSimIO::ElementType::Triangle3D3, {node_ids[1], node_ids[2], node_ids[0]});
-    }
-
-    std::stringstream test_stream;
-    model_part.Save(test_stream);
-
     ModelPart loaded_model_part("xxx");
-    loaded_model_part.Load(test_stream);
+
+    const int node_ids[] = {2, 159, 61};
+    const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
+    model_part.CreateNewNode(node_ids[0], node_coords[0], node_coords[1], node_coords[2]);
+    model_part.CreateNewNode(node_ids[1], node_coords[1], node_coords[2], node_coords[0]);
+    model_part.CreateNewNode(node_ids[2], node_coords[2], node_coords[0], node_coords[1]);
+
+    model_part.CreateNewElement(15, CoSimIO::ElementType::Point2D, {node_ids[0]});
+    model_part.CreateNewElement(73, CoSimIO::ElementType::Line2D2, {node_ids[1], node_ids[2]});
+    model_part.CreateNewElement(47, CoSimIO::ElementType::Triangle3D3, {node_ids[1], node_ids[2], node_ids[0]});
+
+    SUBCASE("ascii")
+    {
+        std::stringstream test_stream;
+        model_part.Save(test_stream, StreamMode::ASCII);
+        loaded_model_part.Load(test_stream, StreamMode::ASCII);
+    }
+
+    SUBCASE("binary")
+    {
+        std::stringstream test_stream;
+        model_part.Save(test_stream, StreamMode::BINARY);
+        loaded_model_part.Load(test_stream, StreamMode::BINARY);
+    }
 
     CheckModelPartsAreEqual(model_part, loaded_model_part);
 }
