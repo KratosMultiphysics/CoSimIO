@@ -315,7 +315,7 @@ TEST_CASE("info_save_load")
 
     SUBCASE("binary")
     {
-        std::stringstream test_stream;
+        std::stringstream test_stream(std::ios_base::in | std::ios_base::out | std::ios::binary);
         info.Save(test_stream, StreamMode::BINARY);
         another_info.Load(test_stream, StreamMode::BINARY);
     }

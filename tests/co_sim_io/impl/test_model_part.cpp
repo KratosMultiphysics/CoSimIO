@@ -469,7 +469,7 @@ TEST_CASE("model_part_save_load")
 
     SUBCASE("binary")
     {
-        std::stringstream test_stream;
+        std::stringstream test_stream(std::ios_base::in | std::ios_base::out | std::ios::binary);
         model_part.Save(test_stream, StreamMode::BINARY);
         loaded_model_part.Load(test_stream, StreamMode::BINARY);
     }

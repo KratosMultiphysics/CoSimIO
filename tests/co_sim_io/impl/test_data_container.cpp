@@ -276,7 +276,7 @@ TEST_CASE("DataContainer_save_load_double")
 
     SUBCASE("binary")
     {
-        std::stringstream test_stream;
+        std::stringstream test_stream(std::ios_base::in | std::ios_base::out | std::ios::binary);
         const_ref.Save(test_stream, StreamMode::BINARY);
         p_load_container->Load(test_stream, StreamMode::BINARY);
     }
@@ -307,7 +307,7 @@ TEST_CASE("DataContainer_save_load_int")
 
     SUBCASE("binary")
     {
-        std::stringstream test_stream;
+        std::stringstream test_stream(std::ios_base::in | std::ios_base::out | std::ios::binary);
         const_ref.Save(test_stream, StreamMode::BINARY);
         p_load_container->Load(test_stream, StreamMode::BINARY);
     }
