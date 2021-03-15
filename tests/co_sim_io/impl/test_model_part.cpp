@@ -413,7 +413,7 @@ TEST_CASE("model_part_ostream")
 
     SUBCASE("with_entities")
     {
-        const int node_ids[] = {2, 159, 61};
+        const std::vector<IdType> node_ids {2, 159, 61};
         const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
         model_part.CreateNewNode(node_ids[0], node_coords[0], node_coords[1], node_coords[2]);
         model_part.CreateNewNode(node_ids[1], node_coords[1], node_coords[2], node_coords[0]);

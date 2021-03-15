@@ -12,10 +12,10 @@ This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool u
 - [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
 - [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-CoSimulation-Library-Overview)
 - [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-Building-Kratos-with-CoSimulation)
-- [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-Connecting/Disconnecting-tofrom-Kratos)
+<!-- - [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-Connecting/Disconnecting-tofrom-Kratos)
 - [Tutorial 9: Data Exchange with Kratos](#tutorial-9-Data-Exchange-with-Kratos)
 - [Tutorial 10: Mesh Exchange with Kratos](#tutorial-10-Mesh-Exchange-with-Kratos)
-- [Tutorial 11: Mapping with Kratos](#tutorial-11-Mapping-with-Kratos)
+- [Tutorial 11: Mapping with Kratos](#tutorial-11-Mapping-with-Kratos) -->
 
 ## What you need
 - Downloading the _CosimIO_ from the repository:
@@ -49,6 +49,9 @@ Usually pybind automatically detects the Python installation. Sometimes it can h
 ```
 see also the corresponding [pybind documentstion](https://pybind11.readthedocs.io/en/stable/compiling.html#configuration-variables)
 
+If Python cannot find the _CoSimIO_ then check if the version of Python used for the compilation is the same as the version of Python used. E.g. when compiling _CoSimIO_ with Python 3.6 it is not possible to import it when using Python 3.8. Here Python issues a `ModuleNotFoundError`.
+This can easily be checked with the file extension of the compiled _CoSimIO_ module.
+Example: When using Python 3.5 the name of the compiled module will be sth like `CoSimIO.cp35-win_amd64.pyd` (Windows), `CoSimIO.cpython-35m-x86_64-linux-gnu.so` (Linux) or `CoSimIO.cpython-35m-darwin.so` (MacOS).
 
 
 ## Tutorial 2: Hello CosimIO
@@ -157,38 +160,24 @@ After seeing how we transfer raw data between solvers/software-tools, it is time
 info = CoSimIO.Info()
 info.SetString("identifier", "fluid_mesh")
 info.SetString("connection_name", connection_name) # connection_name is obtained from calling "Connect"
-return_info = CoSimIO.ExportMesh(info, model_part)
+
+model_part = CoSimIO.ModelPart("name_of_model_part_to_export");
+
+export_info = CoSimIO.ExportMesh(info, model_part)
 ```
 
-The argument `model_part` is a container for mesh, it contains nodes and elements. Check the [implementation](../../co_sim_io/python/model_part_to_python.hpp) and the [tests](../../tests/co_sim_io/python/test_model_part.py) for details of `CoSimIO::ModelPart`.
+The argument `model_part` is of type `CoSimIO.ModelPart`. Its usage is explained [here](model_part.md).
 
-Nodes can be created like this:
-```py
-model_part = CoSimIO.ModelPart("name_of_this_model_part");
-
-model_part.CreateNewNode(
-    1,    # Id
-    0.0,  # X-Coordinate
-    1.5,  # Y-Coordinate
-    -4.22 # Z-Coordinate
-)
-```
-
-Elements can be created after nodes were created:
-```py
-model_part.CreateNewElement(
-    2, # Id
-    CoSimIO::ElementType::Line2D2,  # Type of element, see "co_sim_io/impl/define.hpp"
-    [1,2] # Connectivity information, i.e. Ids of nodes that the element has
-);
-```
 On the other side one can use the ImportMesh() method to get the mesh sent by the export:
 
 ```Python
 info = CoSimIO.Info()
 info.SetString("identifier", "fluid_mesh")
 info.SetString("connection_name", "test_connection")
-return_info, nodal_coords, element_connectivities, element_types = CoSimIO.ImportMesh(info)
+
+model_part = CoSimIO.ModelPart("name_of_imported_model_part");
+
+import_info = CoSimIO.ImportMesh(info, model_part)
 ```
 
 This example can be found in [integration_tutorials/python/export_mesh.py](../../tests/integration_tutorials/python/export_mesh.py) and [integration_tutorials/python/import_mesh.py](../../tests/integration_tutorials/python/import_mesh.py).
@@ -201,7 +190,7 @@ The overview of the Kratos CoSimulation Library can be found [here](../README.md
 ## Tutorial 7: Building Kratos with CoSimulation
 The building instructions for the Kratos CoSimulation Library can be found [here](../README.md#building-kratos-with-cosimulation).
 
-
+<!--
 ## Tutorial 8: Connecting/Disconnecting to/from Kratos
 coming soon!
 
@@ -215,4 +204,4 @@ coming soon!
 
 
 ## Tutorial 11: Mapping with Kratos
-coming soon!
+coming soon! -->

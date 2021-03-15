@@ -14,10 +14,10 @@ This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool u
   - [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
   - [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-cosimulation-library-overview)
   - [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-building-kratos-with-cosimulation)
-  - [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-connectingdisconnecting-tofrom-kratos)
+  <!-- - [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-connectingdisconnecting-tofrom-kratos)
   - [Tutorial 9: Data Exchange with Kratos](#tutorial-9-data-exchange-with-kratos)
   - [Tutorial 10: Mesh Exchange with Kratos](#tutorial-10-mesh-exchange-with-kratos)
-  - [Tutorial 11: Mapping with Kratos](#tutorial-11-mapping-with-kratos)
+  - [Tutorial 11: Mapping with Kratos](#tutorial-11-mapping-with-kratos) -->
 
 ## What you need
 - Downloading the _CosimIO_ from the repository:
@@ -215,40 +215,13 @@ After seeing how we transfer raw data between solvers/software-tools, it is time
 CoSimIO_Info export_settings = CoSimIO_CreateInfo();
 CoSimIO_Info_SetString(export_settings, "identifier", "fluid_mesh");
 CoSimIO_Info_SetString(export_settings, "connection_name", connection_name); // connection_name is obtained from calling "Connect"
+
+CoSimIO_ModelPart model_part = CoSimIO_CreateModelPart("name_of_model_part_to_export");
+
 CoSimIO_Info export_info = CoSimIO_ExportMesh(export_settings, model_part);
 ```
 
-The argument `model_part` is a container for mesh, it contains nodes and elements. Check the [implementation](../../co_sim_io/c/co_sim_io_c_model_part.h) and the [tests](../../tests/co_sim_io/c/model_part/test_model_part.c) for details of `CoSimIO::ModelPart`.
-
-Nodes can be created like this:
-```c
-CoSimIO_ModelPart model_part = CoSimIO_CreateModelPart("my_model_part");
-
-CoSimIO_ModelPart_CreateNewNode(
-    model_part,
-    1,    // Id
-    0.0,  // X-Coordinate
-    1.5,  // Y-Coordinate
-    -4.22 // Z-Coordinate
-);
-```
-
-Elements can be created after nodes were created:
-```c
-int connectivity[2] = {1,2};
-
-CoSimIO_ModelPart_CreateNewElement(
-    model_part,
-    2, // Id
-    CoSimIO_Line2D2, // Type of element, see "co_sim_io/c/co_sim_io_c_model_part.h"
-    connectivity // Connectivity information, i.e. Ids of nodes that the element has
-);
-```
-
-Don't forget to free the `CoSimIO_ModelPart` after using it with
-```c
-CoSimIO_FreeModelPart(model_part);
-```
+The argument `model_part` is of type `CoSimIO_ModelPart`. Its usage is explained [here](model_part.md).
 
 On the other side one can use the `ImportMesh()` method to get the mesh sent by the export:
 
@@ -256,6 +229,8 @@ On the other side one can use the `ImportMesh()` method to get the mesh sent by 
 CoSimIO_Info import_settings=CoSimIO_CreateInfo();
 CoSimIO_Info_SetString(import_settings, "identifier", "fluid_mesh");
 CoSimIO_Info_SetString(import_settings, "connection_name", connection_name); // connection_name is obtained from calling "Connect"
+
+CoSimIO_ModelPart model_part = CoSimIO_CreateModelPart("name_of_imported_model_part");
 
 CoSimIO_Info import_info = CoSimIO_ImportMesh(import_settings, model_part);
 ```
@@ -268,10 +243,10 @@ The overview of the Kratos CoSimulation Library can be found [here](../README.md
 
 ## Tutorial 7: Building Kratos with CoSimulation
 The building instructions for the Kratos CoSimulation Library can be found [here](../README.md#building-kratos-with-cosimulation).
-
+<!--
 ## Tutorial 8: Connecting/Disconnecting to/from Kratos
 coming soon!
-<!-- For connecting to Kratos it is very important to have in mind that Kratos also uses *CoSimIO* for interprocess communication so its python interface reflects the CoSimIO. So we may create a python script for connecting and disconnecting in the same way described in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
+For connecting to Kratos it is very important to have in mind that Kratos also uses *CoSimIO* for interprocess communication so its python interface reflects the CoSimIO. So we may create a python script for connecting and disconnecting in the same way described in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
 
 ```Python
 from KratosMultiphysics.CoSimulationApplication import CoSimIO
@@ -297,11 +272,11 @@ Then you may run your executable with python script of Kratos from your working 
 
 ```shell
 path/to/bin/tests_c/connect_disconnect_c_test & python3 path/to/connect_disconnect.py
-``` -->
+```
 
 ## Tutorial 9: Data Exchange with Kratos
 coming soon!
-<!-- Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one descirbed in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
+Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one descirbed in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
 
 
 ```python
@@ -375,11 +350,11 @@ Now for running the test:
 
 ```shell
 path/to/bin/tests_c/export_import_data_c_test & python3 path/to/import_export_data.py
-``` -->
+```
 
 ## Tutorial 10: Mesh Exchange with Kratos
 coming soon!
-<!-- In this step we send a mesh to Kratos and receive it back and we will check if they are the same. (like previous tutorial with data).
+In this step we send a mesh to Kratos and receive it back and we will check if they are the same. (like previous tutorial with data).
 
 Recalling from what we had in tutorial 5 we just merge the export mesh and import mesh codes into one as we did for data exchage in previous tutorial:
 
@@ -505,11 +480,11 @@ Now for running the test:
 
 ```shell
 path/to/bin/tests_c/export_import_mesh_c_test & python3 path/to/import_export_mesh.py
-``` -->
+```
 
 ## Tutorial 11: Mapping with Kratos
 coming soon!
-<!-- This tutorial shows how to map data between (non matching) meshes with Kratos. It is based on tutorials 9 & 10.
+This tutorial shows how to map data between (non matching) meshes with Kratos. It is based on tutorials 9 & 10.
 
 In this tutorial we first send two meshes based on the same geometry but with different discretizations to Kratos. Those meshes are used as basis for the mapping. In Kratos teminology those are the origin and the destination.
 

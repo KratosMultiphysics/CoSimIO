@@ -12,10 +12,10 @@ This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool u
 - [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
 - [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-CoSimulation-Library-Overview)
 - [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-Building-Kratos-with-CoSimulation)
-- [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-Connecting/Disconnecting-tofrom-Kratos)
+<!-- - [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-Connecting/Disconnecting-tofrom-Kratos)
 - [Tutorial 9: Data Exchange with Kratos](#tutorial-9-Data-Exchange-with-Kratos)
 - [Tutorial 10: Mesh Exchange with Kratos](#tutorial-10-Mesh-Exchange-with-Kratos)
-- [Tutorial 11: Mapping with Kratos](#tutorial-11-Mapping-with-Kratos)
+- [Tutorial 11: Mapping with Kratos](#tutorial-11-Mapping-with-Kratos) -->
 
 ## What you need
 - Downloading the _CosimIO_ from the repository:
@@ -154,31 +154,13 @@ After seeing how we transfer raw data between solvers/software-tools, it is time
 CoSimIO::Info info;
 info.Set("identifier", "fluid_mesh");
 info.Set("connection_name", connection_name); // connection_name is obtained from calling "Connect"
-info = CoSimIO::ExportMesh(info, model_part);
+
+CoSimIO::ModelPart model_part("name_of_model_part_to_export");
+
+export_info = CoSimIO::ExportMesh(info, model_part);
 ```
 
-The argument `model_part` is a container for mesh, it contains nodes and elements. Check the [implementation](../../co_sim_io/impl/model_part.hpp) and the [tests](../../tests/co_sim_io/impl/test_model_part.cpp) for details of `CoSimIO::ModelPart`.
-
-Nodes can be created like this:
-```c++
-CoSimIO::ModelPart model_part("name_of_this_model_part");
-
-model_part.CreateNewNode(
-    1,    // Id
-    0.0,  // X-Coordinate
-    1.5,  // Y-Coordinate
-    -4.22 // Z-Coordinate
-);
-```
-
-Elements can be created after nodes were created:
-```c++
-model_part.CreateNewElement(
-    2, // Id
-    CoSimIO::ElementType::Line2D2,  // Type of element, see "co_sim_io/impl/define.hpp"
-    {1,2} // Connectivity information, i.e. Ids of nodes that the element has
-);
-```
+The argument `model_part` is of type `CoSimIO::ModelPart`. Its usage is explained [here](model_part.md).
 
 On the other side one can use the `ImportMesh()` method to get the mesh sent by the export:
 
@@ -189,7 +171,7 @@ info.Set("connection_name", connection_name); // connection_name is obtained fro
 
 CoSimIO::ModelPart model_part("name_of_imported_model_part");
 
-info = CoSimIO::ImportMesh(info, model_part);
+import_info = CoSimIO::ImportMesh(info, model_part);
 ```
 
 This example can be found in [integration_tutorials/cpp/export_mesh.cpp](../../tests/integration_tutorials/cpp/export_mesh.cpp) and [integration_tutorials/cpp/import_mesh.cpp](../../tests/integration_tutorials/cpp/import_mesh.cpp).
@@ -202,7 +184,7 @@ The overview of the Kratos CoSimulation Library can be found [here](../README.md
 ## Tutorial 7: Building Kratos with CoSimulation
 The building instructions for the Kratos CoSimulation Library can be found [here](../README.md#building-kratos-with-cosimulation).
 
-
+<!--
 ## Tutorial 8: Connecting/Disconnecting to/from Kratos
 coming soon!
 
@@ -216,4 +198,4 @@ coming soon!
 
 
 ## Tutorial 11: Mapping with Kratos
-coming soon!
+coming soon! -->
