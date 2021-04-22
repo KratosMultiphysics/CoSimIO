@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [GCC, CLANG, ICC]
+        compiler: [GCC, CLANG] #, ICC]
         # mpi: [OpenMPI, IntelMPI]
     timeout-minutes: 15
 
