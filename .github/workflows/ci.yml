@@ -273,7 +273,8 @@ jobs:
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_C=ON               \
-          -DBUILD_PYTHON=ON
+          -DBUILD_PYTHON=ON          \
+          -DSTRICT_COMPILER=ON
 
         cmake --build "build" --target install -- -j2
 
