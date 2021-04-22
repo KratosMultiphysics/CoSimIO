@@ -3,7 +3,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/external_libraries )
 
 ### Test runner for tests of CoSimIO
 find_package (Threads REQUIRED)
-file( GLOB_RECURSE CO_SIM_IO_TEST_FILES co_sim_io/*.cpp)
+file( GLOB CO_SIM_IO_TEST_FILES co_sim_io/impl/*.cpp)
 add_executable ( co_sim_io_tests ${CO_SIM_IO_TEST_FILES})
 target_link_libraries(co_sim_io_tests ${CMAKE_THREAD_LIBS_INIT})
 install( TARGETS co_sim_io_tests DESTINATION ${CMAKE_SOURCE_DIR}/bin )
@@ -14,6 +14,20 @@ set_target_properties(co_sim_io_tests PROPERTIES
 )
 
 doctest_discover_tests(co_sim_io_tests)
+
+
+if (ENABLE_MPI)
+    file( GLOB CO_SIM_IO_MPI_TEST_FILES co_sim_io/impl/mpi/*.cpp )
+    add_executable ( co_sim_io_mpi_tests ${CO_SIM_IO_MPI_TEST_FILES} )
+    target_link_libraries( co_sim_io_mpi_tests ${MPI_LIBRARIES} )
+    install( TARGETS co_sim_io_mpi_tests DESTINATION ${CMAKE_SOURCE_DIR}/bin )
+    set_target_properties(co_sim_io_mpi_tests PROPERTIES
+        CXX_STANDARD 11
+        CXX_STANDARD_REQUIRED YES
+        CXX_EXTENSIONS NO
+    )
+
+endif()
 
 ### C++ tests ###
 function(add_cpp_executable TEST_SOURCE_FILE)
