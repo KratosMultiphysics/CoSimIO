@@ -62,7 +62,45 @@ jobs:
         python run_python_tests.py
 
 
-  Windows:
+  Windows (C++ & C):
+    runs-on: windows-latest
+    timeout-minutes: 5
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build CoSimIO
+      shell: cmd
+      run: |
+        call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64 || goto :error
+
+        set CC=cl.exe
+        set CXX=cl.exe
+
+        cmake                         ^
+          -G"Visual Studio 16 2019"   ^
+          -H"."                       ^
+          -B"build"                   ^
+          -DBUILD_C=ON                ^
+          -DCMAKE_CXX_FLAGS="/WX"     || goto :error
+
+        cmake --build "build" --target install -- /p:Platform=x64 || goto :error
+
+        goto :EOF
+
+        :error
+        echo Failed with error #%errorlevel%.
+        exit /b %errorlevel%
+
+    - name: Running tests
+      shell: cmd
+      run: |
+        set PATH=%PATH%;%GITHUB_WORKSPACE%/bin
+        cd build
+        ctest -C Debug
+
+
+  Windows (Python):
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -95,7 +133,6 @@ jobs:
           -G"Visual Studio 16 2019"   ^
           -H"."                       ^
           -B"build"                   ^
-          -DBUILD_C=ON                ^
           -DBUILD_PYTHON=ON           ^
           -DCMAKE_CXX_FLAGS="/WX"     || goto :error
 
@@ -107,26 +144,18 @@ jobs:
         echo Failed with error #%errorlevel%.
         exit /b %errorlevel%
 
-    - name: Running tests (Ctest)
-      if: ${{ matrix.python-version == '3.9' }} # only run for one py version, not necessary for all of them
-      shell: cmd
-      run: |
-        set PATH=%PATH%;%GITHUB_WORKSPACE%/bin
-        cd build
-        ctest -C Debug
-
-    - name: Running tests (Python)
+    - name: Running tests
       env:
         PYTHON_CMD: python # for the tests (subprocess)
       shell: cmd
       run: |
         set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%/bin
         cd tests
-        rem TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
+        rem TODO delete build dir to make sure the linking etc works correctly?
         python run_python_tests.py
 
 
-  centos:
+  CentOS 7:
     runs-on: ubuntu-latest
 
     container:
