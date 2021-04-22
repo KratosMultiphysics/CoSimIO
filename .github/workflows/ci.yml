@@ -13,7 +13,12 @@ on:
 jobs:
   Ubuntu-Cpp-C:
     runs-on: ubuntu-latest
-    name: Ubuntu C++ & C
+    name: "Ubuntu C++ & C (Compiler: ${{ matrix.compiler }})"
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [GCC, CLANG, ICC]
+        # mpi: [OpenMPI, IntelMPI]
     timeout-minutes: 15
 
     steps:
@@ -23,8 +28,37 @@ jobs:
       run: |
         sudo apt-get update && sudo apt-get install valgrind
 
+    - name: Install clang
+      if: ${{ matrix.compiler == 'CLANG' }}
+      run: |
+        sudo apt-get install clang-10
+
+    - name: Install intel compiler
+      if: ${{ matrix.compiler == 'ICC' }}
+      run: |
+        # see https://software.intel.com/content/www/us/en/develop/articles/installing-intel-oneapi-toolkits-via-apt.html#pkgtable
+        cd /tmp
+        wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        sudo add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
+        sudo apt-get update
+        sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+
     - name: Build CoSimIO
       run: |
+        if [ ${{ matrix.compiler }} = GCC ]; then
+          export CXX=/usr/bin/g++
+        elif [ ${{ matrix.compiler }} = CLANG ]; then
+          export CXX=/usr/bin/clang++-10
+        elif [ ${{ matrix.compiler }} = ICC ]; then
+          source /opt/intel/oneapi/setvars.sh
+          export CXX=icpc
+        else
+          echo 'Unsupported compiler: ${{ matrix.compiler }}'
+          exit 1
+        fi
+
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_C=ON               \
