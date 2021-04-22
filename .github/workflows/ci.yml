@@ -17,24 +17,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [GCC, CLANG] #, ICC]
+        compiler: [GCC, CLANG, ICC]
         # mpi: [OpenMPI, IntelMPI]
     timeout-minutes: 15
 
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install Valgrind
-      run: |
-        sudo apt-get update && sudo apt-get install valgrind
-
-    - name: Install clang
-      if: ${{ matrix.compiler == 'CLANG' }}
-      run: |
-        sudo apt-get install clang-10
-
-    - name: Install intel compiler
-      if: ${{ matrix.compiler == 'ICC' }}
+    - name: Install dependencies
       run: |
         # see https://software.intel.com/content/www/us/en/develop/articles/installing-intel-oneapi-toolkits-via-apt.html#pkgtable
         cd /tmp
@@ -42,18 +32,30 @@ jobs:
         sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
         rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
         sudo add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
+
         sudo apt-get update
+
+        sudo apt-get install \
+          valgrind \
+          clang-11
+
+    - name: Install intel compiler
+      if: ${{ matrix.compiler == 'ICC' }}
+      run: |
         sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
 
     - name: Build CoSimIO
       run: |
         if [ ${{ matrix.compiler }} = GCC ]; then
           export CXX=/usr/bin/g++
+          export CC=/usr/bin/gcc
         elif [ ${{ matrix.compiler }} = CLANG ]; then
-          export CXX=/usr/bin/clang++-10
+          export CXX=/usr/bin/clang++-11
+          export CC=/usr/bin/clang-11
         elif [ ${{ matrix.compiler }} = ICC ]; then
           source /opt/intel/oneapi/setvars.sh
           export CXX=icpc
+          export CC=icc
         else
           echo 'Unsupported compiler: ${{ matrix.compiler }}'
           exit 1
@@ -62,15 +64,18 @@ jobs:
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_C=ON               \
-          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
-          -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
+          -DSTRICT_COMPILER=ON
 
         cmake --build "build" --target install -- -j2
 
     - name: Running tests
       run: |
+        if [ ${{ matrix.compiler }} = ICC ]; then
+          source /opt/intel/oneapi/setvars.sh
+        fi
+
         cd build
-        ctest -T memcheck
+        ctest -T memcheck --output-on-failure
 
 
   Ubuntu-Python:
@@ -95,9 +100,7 @@ jobs:
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_PYTHON=ON          \
-          -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }} \
-          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
-          -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
+          -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }}
 
         cmake --build "build" --target install -- -j2
 
@@ -122,15 +125,14 @@ jobs:
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_C=ON               \
-          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
-          -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
+          -DSTRICT_COMPILER=ON
 
         cmake --build "build" --target install -- -j2
 
     - name: Running tests
       run: |
         cd build
-        ctest
+        ctest  --output-on-failure
 
 
   MacOS-Python:
@@ -156,9 +158,7 @@ jobs:
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_C=ON               \
           -DBUILD_PYTHON=ON          \
-          -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }} \
-          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
-          -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
+          -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }}
 
         cmake --build "build" --target install -- -j2
 
@@ -191,8 +191,7 @@ jobs:
           -H"."                       ^
           -B"build"                   ^
           -DBUILD_C=ON                ^
-          -DBUILD_PYTHON=ON           ^
-          -DCMAKE_CXX_FLAGS="/WX"     || goto :error
+          -DSTRICT_COMPILER=ON        || goto :error
 
         cmake --build "build" --target install -- /p:Platform=x64 || goto :error
 
@@ -207,7 +206,7 @@ jobs:
       run: |
         set PATH=%PATH%;%GITHUB_WORKSPACE%/bin
         cd build
-        ctest -C Debug
+        ctest -C Debug  --output-on-failure
 
 
   Windows-Python:
@@ -244,8 +243,7 @@ jobs:
           -G"Visual Studio 16 2019"   ^
           -H"."                       ^
           -B"build"                   ^
-          -DBUILD_PYTHON=ON           ^
-          -DCMAKE_CXX_FLAGS="/WX"     || goto :error
+          -DBUILD_PYTHON=ON           || goto :error
 
         cmake --build "build" --target install -- /p:Platform=x64 || goto :error
 
@@ -282,15 +280,14 @@ jobs:
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_C=ON               \
           -DBUILD_PYTHON=ON          \
-          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
-          -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
+          -DSTRICT_COMPILER=ON
 
         cmake --build "build" --target install -- -j2
 
     - name: Running tests (Ctest)
       run: |
         cd build
-        ctest
+        ctest  --output-on-failure
 
     - name: Running tests (Python)
       run: |

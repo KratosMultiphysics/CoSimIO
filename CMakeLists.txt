@@ -7,11 +7,15 @@ set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track
 
 include(CTest)
 
-OPTION ( ENABLE_SOCKETS "Enable sockets communication"              OFF )
-OPTION ( ENABLE_MPI     "Enable MPI communication and MPI examples" OFF )
-OPTION ( BUILD_C        "Building the CoSimIO for C"                OFF )
-OPTION ( BUILD_PYTHON   "Building the CoSimIO for Python"           OFF )
-OPTION ( BUILD_FORTRAN  "Building the CoSimIO for Fortran"          OFF )
+# TODO check how this can be added (supported from CMake 3.17)
+# list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
+
+OPTION ( ENABLE_SOCKETS  "Enable sockets communication"              OFF )
+OPTION ( ENABLE_MPI      "Enable MPI communication and MPI examples" OFF )
+OPTION ( BUILD_C         "Building the CoSimIO for C"                OFF )
+OPTION ( BUILD_PYTHON    "Building the CoSimIO for Python"           OFF )
+OPTION ( BUILD_FORTRAN   "Building the CoSimIO for Fortran"          OFF )
+OPTION ( STRICT_COMPILER "Compiler has more warnings"                OFF )
 
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
@@ -25,6 +29,7 @@ message("    BUILD_TESTING:    " ${BUILD_TESTING})
 message("    BUILD_C:          " ${BUILD_C})
 message("    BUILD_PYTHON:     " ${BUILD_PYTHON})
 message("    BUILD_FORTRAN:    " ${BUILD_FORTRAN})
+message("    STRICT_COMPILER:  " ${STRICT_COMPILER})
 message("")
 
 set( CO_SIM_IO_REQUIRES_BOOST OFF )
@@ -59,13 +64,43 @@ if(MSVC)
     # Note: min value is c++14 => 201402L (c++11 does not exist, will also output 201402L)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /W3 /EHsc")
 
+    if (STRICT_COMPILER)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /WX")
+    endif()
+
     set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
+
 elseif(${CMAKE_COMPILER_IS_GNUCXX})
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wpedantic")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c89 -Wall -Wpedantic")
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c89")
+
+    if (STRICT_COMPILER)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Werror")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wpedantic -Werror")
+    endif()
+
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0 AND STRICT_COMPILER)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wsuggest-override -Wignored-qualifiers")
     endif()
+
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c89")
+
+    if (STRICT_COMPILER)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Werror")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wpedantic -Werror")
+    endif()
+
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c89")
+
+    if (STRICT_COMPILER)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror-all  -diag-disable=2196") # 2196 currently comes from doctest
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror-all")
+    endif()
+
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wpedantic")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c89 -Wall -Wpedantic")
