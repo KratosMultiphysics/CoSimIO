@@ -11,7 +11,7 @@ on:
 
 
 jobs:
-  Ubuntu-C++/C:
+  Ubuntu-Cpp-C:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -73,7 +73,7 @@ jobs:
         python run_python_tests.py
 
 
-  MacOS-C++/C:
+  MacOS-Cpp-C:
     runs-on: macOS-latest
     timeout-minutes: 15
 
@@ -132,7 +132,7 @@ jobs:
         python run_python_tests.py
 
 
-  Windows-C++/C:
+  Windows-Cpp-C:
     runs-on: windows-latest
     timeout-minutes: 5
 
