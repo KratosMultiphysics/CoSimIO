@@ -13,7 +13,7 @@ on:
 jobs:
   Ubuntu-Cpp-C:
     runs-on: ubuntu-latest
-    name: "Ubuntu C++ & C (Compiler: ${{ matrix.compiler }})"
+    name: "Ubuntu C++ & C (Compiler: ${{ matrix.compiler }}, MPI: ${{ matrix.mpi }})"
     strategy:
       fail-fast: false
       matrix:
