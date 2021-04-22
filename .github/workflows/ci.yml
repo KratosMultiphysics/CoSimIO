@@ -11,7 +11,7 @@ on:
 
 
 jobs:
-  Ubuntu (C++ & C):
+  Ubuntu-C++/C:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -38,7 +38,7 @@ jobs:
         ctest -T memcheck
 
 
-  Ubuntu (Python):
+  Ubuntu-Python:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -73,7 +73,7 @@ jobs:
         python run_python_tests.py
 
 
-  MacOS (C++ & C):
+  MacOS-C++/C:
     runs-on: macOS-latest
     timeout-minutes: 15
 
@@ -96,7 +96,7 @@ jobs:
         ctest
 
 
-  MacOS (Python):
+  MacOS-Python:
     runs-on: macOS-latest
     strategy:
       fail-fast: false
@@ -132,7 +132,7 @@ jobs:
         python run_python_tests.py
 
 
-  Windows (C++ & C):
+  Windows-C++/C:
     runs-on: windows-latest
     timeout-minutes: 5
 
@@ -171,7 +171,7 @@ jobs:
         ctest -C Debug
 
 
-  Windows (Python):
+  Windows-Python:
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -226,7 +226,7 @@ jobs:
         python run_python_tests.py
 
 
-  CentOS 7:
+  CentOS-7:
     runs-on: ubuntu-latest
 
     container:
