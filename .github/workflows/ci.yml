@@ -31,7 +31,7 @@ jobs:
     - name: Install clang
       if: ${{ matrix.compiler == 'CLANG' }}
       run: |
-        sudo apt-get install clang-10
+        sudo apt-get install clang-11
 
     - name: Install intel compiler
       if: ${{ matrix.compiler == 'ICC' }}
@@ -51,8 +51,8 @@ jobs:
           export CXX=/usr/bin/g++
           export CC=/usr/bin/gcc
         elif [ ${{ matrix.compiler }} = CLANG ]; then
-          export CXX=/usr/bin/clang++-10
-          export CCC=/usr/bin/clang-10
+          export CXX=/usr/bin/clang++-11
+          export CC=/usr/bin/clang-11
         elif [ ${{ matrix.compiler }} = ICC ]; then
           source /opt/intel/oneapi/setvars.sh
           export CXX=icpc
