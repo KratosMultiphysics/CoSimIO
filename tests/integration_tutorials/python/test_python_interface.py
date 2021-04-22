@@ -51,7 +51,7 @@ class PythonInterfaceTests(unittest.TestCase):
     def __RunScript(self, script_name):
         p = subprocess.Popen([PythonInterfaceTests.PYTHON_CMD, script_name], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD)
         try:
-            p_out = p.communicate(timeout=5)
+            p_out = p.communicate(timeout=15)
             p_timeout_reached = False
         except subprocess.TimeoutExpired: # Timeout reached
             p_timeout_reached = True
@@ -65,7 +65,7 @@ class PythonInterfaceTests(unittest.TestCase):
         p2 = subprocess.Popen([PythonInterfaceTests.PYTHON_CMD, script_name_2], stdout=subprocess.PIPE, cwd=PythonInterfaceTests.CWD)
 
         try:
-            p1_out = p1.communicate(timeout=5)
+            p1_out = p1.communicate(timeout=15)
             p1_timeout_reached = False
         except subprocess.TimeoutExpired: # Timeout reached
             p1_timeout_reached = True
