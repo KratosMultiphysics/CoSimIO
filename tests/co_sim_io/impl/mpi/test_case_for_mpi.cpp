@@ -10,7 +10,7 @@ int my_function_to_test(MPI_Comm comm) {
 }
 
 
-MPI_TEST_CASE("test over two processes",3) { // Parallel test on 2 processes
+MPI_TEST_CASE("test over two processes", 2) { // Parallel test on 2 processes
 return;
   int x = my_function_to_test(test_comm);
 

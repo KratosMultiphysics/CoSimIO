@@ -86,6 +86,15 @@ jobs:
         cd build
         ctest -T memcheck --output-on-failure
 
+    - name: Running MPI tests
+      run: |
+        if [ ${{ matrix.compiler }} = ICC ]; then
+          source /opt/intel/oneapi/setvars.sh
+        fi
+
+        cd bin
+        mpiexec -np 2 co_sim_io_mpi_tests
+
 
   Ubuntu-Python:
     runs-on: ubuntu-latest
