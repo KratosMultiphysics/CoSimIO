@@ -94,7 +94,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c89")
 
     if (STRICT_COMPILER)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror-all")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror-all  -diag-disable=2196") # 2196 currently comes from doctest
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror-all")
     endif()
 
