@@ -72,7 +72,7 @@ jobs:
       run: |
         if [ ${{ matrix.compiler }} = ICC ]; then
           source /opt/intel/oneapi/setvars.sh
-        else
+        fi
 
         cd build
         ctest -T memcheck --output-on-failure
