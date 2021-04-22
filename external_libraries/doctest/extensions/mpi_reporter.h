@@ -15,7 +15,7 @@ namespace {
 
 // https://stackoverflow.com/a/11826666/1583122
 struct NullBuffer : std::streambuf {
-  int overflow(int c) { return c; }
+  int overflow(int c) override { return c; }
 };
 class NullStream : public std::ostream {
   public:
@@ -186,7 +186,7 @@ public:
   }
 
   bool is_mpi_test_case() const {
-    return tc->m_description != nullptr 
+    return tc->m_description != nullptr
         && std::string(tc->m_description) == std::string("MPI_TEST_CASE");
   }
 
