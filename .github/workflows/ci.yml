@@ -18,7 +18,8 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install Valgrind
-      sudo apt-get update && sudo apt-get install valgrind
+      run: |
+        sudo apt-get update && sudo apt-get install valgrind
 
     - name: Build CoSimIO
       run: |
