@@ -72,11 +72,7 @@ jobs:
     - name: Running tests
       run: |
         cd build
-        if [ ${{ matrix.compiler }} = ICC ]; then
-          ctest # there are some memory issues in the CI atm #FIXME (locally it works)
-        else
-          ctest -T memcheck
-        fi
+        ctest -T memcheck --output-on-failure
 
 
   Ubuntu-Python:
@@ -133,7 +129,7 @@ jobs:
     - name: Running tests
       run: |
         cd build
-        ctest
+        ctest  --output-on-failure
 
 
   MacOS-Python:
@@ -207,7 +203,7 @@ jobs:
       run: |
         set PATH=%PATH%;%GITHUB_WORKSPACE%/bin
         cd build
-        ctest -C Debug
+        ctest -C Debug  --output-on-failure
 
 
   Windows-Python:
@@ -288,7 +284,7 @@ jobs:
     - name: Running tests (Ctest)
       run: |
         cd build
-        ctest
+        ctest  --output-on-failure
 
     - name: Running tests (Python)
       run: |
