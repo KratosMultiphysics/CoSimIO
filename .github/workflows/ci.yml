@@ -49,11 +49,14 @@ jobs:
       run: |
         if [ ${{ matrix.compiler }} = GCC ]; then
           export CXX=/usr/bin/g++
+          export CC=/usr/bin/gcc
         elif [ ${{ matrix.compiler }} = CLANG ]; then
           export CXX=/usr/bin/clang++-10
+          export CCC=/usr/bin/clang-10
         elif [ ${{ matrix.compiler }} = ICC ]; then
           source /opt/intel/oneapi/setvars.sh
           export CXX=icpc
+          export CC=icc
         else
           echo 'Unsupported compiler: ${{ matrix.compiler }}'
           exit 1
