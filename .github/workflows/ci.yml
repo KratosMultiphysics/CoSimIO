@@ -70,7 +70,31 @@ jobs:
         # TODO delete build dir to make sure the linking etc works correctly?
         python run_python_tests.py
 
-  MacOS:
+
+  MacOS (C++ & C):
+    runs-on: macOS-latest
+    timeout-minutes: 15
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build CoSimIO
+      run: |
+        cmake -H"." -B"build"        \
+          -DCMAKE_BUILD_TYPE="Debug" \
+          -DBUILD_C=ON               \
+          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
+          -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
+
+        cmake --build "build" --target install -- -j2
+
+    - name: Running tests
+      run: |
+        cd build
+        ctest
+
+
+  MacOS (Python):
     runs-on: macOS-latest
     strategy:
       fail-fast: false
@@ -86,41 +110,24 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install Valgrind
-      if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9' }}
-      run: |
-        sudo apt-get update && sudo apt-get install valgrind
-
     - name: Build CoSimIO
       run: |
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_C=ON               \
           -DBUILD_PYTHON=ON          \
-          -DBUILD_FORTRAN=OFF        \
           -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }} \
           -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
           -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
 
         cmake --build "build" --target install -- -j2
 
-    - name: Running tests (Ctest)
-      if: ${{ matrix.python-version == '3.9' }} # only run for one py version, not necessary for all of them
-      run: |
-        cd build
-        if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
-          ctest -T memcheck
-        else
-          ctest
-        fi
-
-    - name: Running tests (Python)
+    - name: Running tests
       run: |
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
         cd tests
-        # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
+        # TODO delete build dir to make sure the linking etc works correctly?
         python run_python_tests.py
-
 
   Windows (C++ & C):
     runs-on: windows-latest
@@ -212,7 +219,7 @@ jobs:
       run: |
         set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%/bin
         cd tests
-        rem TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
+        rem TODO delete build dir to make sure the linking etc works correctly?
         python run_python_tests.py
 
 
