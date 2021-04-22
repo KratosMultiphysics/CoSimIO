@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         compiler: [GCC, CLANG, ICC]
-        # mpi: [OpenMPI, IntelMPI]
+        mpi: [OpenMPI, IntelMPI]
     timeout-minutes: 15
 
     steps:
@@ -43,6 +43,14 @@ jobs:
       if: ${{ matrix.compiler == 'ICC' }}
       run: |
         sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+
+    - name: Install MPI
+      run: |
+        if [ ${{ matrix.mpi }} = OpenMPI ]; then
+          sudo apt-get install libopenmpi-dev openmpi-bin
+        else
+          sudo apt-get install intel-oneapi-mpi-devel
+        fi
 
     - name: Build CoSimIO
       run: |
