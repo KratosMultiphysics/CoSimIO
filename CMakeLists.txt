@@ -7,7 +7,8 @@ set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track
 
 include(CTest)
 
-list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
+# TODO check how this can be added (supported from CMake 3.17)
+# list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
 
 OPTION ( ENABLE_SOCKETS  "Enable sockets communication"              OFF )
 OPTION ( ENABLE_MPI      "Enable MPI communication and MPI examples" OFF )
