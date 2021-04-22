@@ -234,6 +234,7 @@ jobs:
 
   CentOS-7:
     runs-on: ubuntu-latest
+    name: CentOS 7
 
     container:
       image: kratosmultiphysics/kratos-image-ci-centos7-python35:latest
