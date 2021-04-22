@@ -9,6 +9,7 @@ on:
 
   workflow_dispatch:
 
+
 jobs:
   Ubuntu (C++ & C):
     runs-on: ubuntu-latest
@@ -130,6 +131,7 @@ jobs:
         # TODO delete build dir to make sure the linking etc works correctly?
         python run_python_tests.py
 
+
   Windows (C++ & C):
     runs-on: windows-latest
     timeout-minutes: 5
@@ -224,7 +226,7 @@ jobs:
         python run_python_tests.py
 
 
-  centos:
+  CentOS 7:
     runs-on: ubuntu-latest
 
     container:
