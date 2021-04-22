@@ -62,8 +62,7 @@ jobs:
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_C=ON               \
-          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
-          -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
+          -DSTRICT_COMPILER=ON
 
         cmake --build "build" --target install -- -j2
 
@@ -95,9 +94,7 @@ jobs:
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_PYTHON=ON          \
-          -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }} \
-          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
-          -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
+          -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }}
 
         cmake --build "build" --target install -- -j2
 
@@ -122,8 +119,7 @@ jobs:
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_C=ON               \
-          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
-          -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
+          -DSTRICT_COMPILER=ON
 
         cmake --build "build" --target install -- -j2
 
@@ -156,9 +152,7 @@ jobs:
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_C=ON               \
           -DBUILD_PYTHON=ON          \
-          -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }} \
-          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
-          -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
+          -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }}
 
         cmake --build "build" --target install -- -j2
 
@@ -191,8 +185,7 @@ jobs:
           -H"."                       ^
           -B"build"                   ^
           -DBUILD_C=ON                ^
-          -DBUILD_PYTHON=ON           ^
-          -DCMAKE_CXX_FLAGS="/WX"     || goto :error
+          -DSTRICT_COMPILER=ON        || goto :error
 
         cmake --build "build" --target install -- /p:Platform=x64 || goto :error
 
@@ -244,8 +237,7 @@ jobs:
           -G"Visual Studio 16 2019"   ^
           -H"."                       ^
           -B"build"                   ^
-          -DBUILD_PYTHON=ON           ^
-          -DCMAKE_CXX_FLAGS="/WX"     || goto :error
+          -DBUILD_PYTHON=ON           || goto :error
 
         cmake --build "build" --target install -- /p:Platform=x64 || goto :error
 
@@ -281,9 +273,7 @@ jobs:
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_C=ON               \
-          -DBUILD_PYTHON=ON          \
-          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Werror" \
-          -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Werror"
+          -DBUILD_PYTHON=ON
 
         cmake --build "build" --target install -- -j2
 
