@@ -37,8 +37,12 @@ jobs:
 
         sudo apt-get install \
           valgrind \
-          clang-11 \
-          intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+          clang-11
+
+    - name: Install intel compiler
+      if: ${{ matrix.compiler == 'ICC' }}
+      run: |
+        sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
 
     - name: Install MPI
       run: |
