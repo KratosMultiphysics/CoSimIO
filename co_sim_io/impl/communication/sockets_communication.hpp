@@ -16,6 +16,8 @@
 // System includes
 
 // External includes
+#define ASIO_NO_DEPRECATED
+#define ASIO_STANDALONE
 #include <asio.hpp>
 
 // Project includes
