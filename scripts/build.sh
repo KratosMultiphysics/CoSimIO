@@ -7,6 +7,6 @@ cmake -H"." -B"build" \
     -DBUILD_PYTHON=ON \
     -DBUILD_FORTRAN=OFF \
     -DENABLE_SOCKETS=OFF \
-    -DENABLE_MPI=OFF \
+    -DCOSIMIO_ENABLE_MPI=OFF \
     -DCMAKE_BUILD_TYPE=Debug
 cmake --build "build" --target install -- -j$(nproc)

@@ -72,7 +72,7 @@ jobs:
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_C=ON               \
-          -DENABLE_MPI=ON            \
+          -DCOSIMIO_ENABLE_MPI=ON    \
           -DSTRICT_COMPILER=ON
 
         cmake --build "build" --target install -- -j2
