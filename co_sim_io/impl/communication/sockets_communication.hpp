@@ -18,7 +18,9 @@
 // External includes
 #define ASIO_NO_DEPRECATED
 #define ASIO_STANDALONE
-#define _WIN32_WINNT 0x0601
+#ifndef _WIN32_WINNT
+    #define _WIN32_WINNT 0x0601
+#endif
 #include <asio.hpp>
 
 // Project includes
