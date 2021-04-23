@@ -9,7 +9,7 @@ sh scripts/build.sh
 
 echo $'\n>>> Running CTests'
 cd build
-ctest -T memcheck --output-on-failure || true # don't stop if this fails
+ctest # -T memcheck --output-on-failure || true # don't stop if this fails
 
 echo $'\n>>> Running Python Tests'
 cd ../tests
