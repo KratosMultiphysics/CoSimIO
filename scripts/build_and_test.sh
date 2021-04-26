@@ -11,9 +11,6 @@ echo $'\n>>> Running CTests'
 cd build
 ctest -T memcheck --output-on-failure || true # don't stop if this fails
 
-cd ..
-mpiexec --oversubscribe -np 4 bin/co_sim_io_mpi_tests
-
 echo $'\n>>> Running Python Tests'
 cd tests
 python3 run_python_tests.py
