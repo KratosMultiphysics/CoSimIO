@@ -134,7 +134,8 @@ jobs:
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_PYTHON=ON          \
           -DCO_SIM_IO_ENABLE_MPI=ON    \
-          -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }}
+          -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }} \
+          -DCO_SIM_IO_STRICT_COMPILER=ON
 
         cmake --build "build" --target install -- -j2
 
@@ -206,7 +207,8 @@ jobs:
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_C=ON               \
           -DBUILD_PYTHON=ON          \
-          -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }}
+          -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }} \
+          -DCO_SIM_IO_STRICT_COMPILER=ON
 
         cmake --build "build" --target install -- -j2
 
@@ -291,7 +293,8 @@ jobs:
           -G"Visual Studio 16 2019"   ^
           -H"."                       ^
           -B"build"                   ^
-          -DBUILD_PYTHON=ON           || goto :error
+          -DBUILD_PYTHON=ON           ^
+          -DCO_SIM_IO_STRICT_COMPILER=ON || goto :error
 
         cmake --build "build" --target install -- /p:Platform=x64 || goto :error
 
