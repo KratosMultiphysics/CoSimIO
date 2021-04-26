@@ -193,7 +193,6 @@
    fun:dlopen_doit
    fun:_dl_catch_exception
 }
-### end suppressions for OpenMPI
 
 ### start suppressions for IntelMPI
 {
@@ -299,4 +298,3 @@
    fun:mpiexec_get_parameters
    fun:main
 }
-### end suppressions for IntelMPI
