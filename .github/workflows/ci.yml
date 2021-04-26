@@ -133,6 +133,7 @@ jobs:
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_PYTHON=ON          \
+          -DCOSIMIO_ENABLE_MPI=ON    \
           -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }}
 
         cmake --build "build" --target install -- -j2
