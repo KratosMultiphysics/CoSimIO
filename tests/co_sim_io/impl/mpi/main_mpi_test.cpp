@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
 
   doctest::Context ctx;
   ctx.setOption("reporters", "MpiConsoleReporter");
-  ctx.setOption("force-colors", true);
+  // ctx.setOption("force-colors", true); // this messes up the test detection for CTest
   ctx.applyCommandLine(argc, argv);
 
   int test_result = ctx.run();
