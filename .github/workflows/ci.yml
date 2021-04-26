@@ -99,6 +99,7 @@ jobs:
         cd build
         ctest -T memcheck --output-on-failure
 
+    - name: print err
         cat Testing/Temporary/MemoryChecker.58.log
 
 
