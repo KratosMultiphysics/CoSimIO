@@ -80,7 +80,7 @@ jobs:
 
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
-          -DBUILD_C=OFF               \
+          -DBUILD_C=ON               \
           -DCOSIMIO_ENABLE_MPI=ON    \
           -DSTRICT_COMPILER=ON
 
@@ -99,7 +99,7 @@ jobs:
         ctest -T memcheck --output-on-failure
 
 
-        Ubuntu-Python:
+  Ubuntu-Python:
     runs-on: ubuntu-latest
     name: Ubuntu Python ${{ matrix.python-version }}
     strategy:
