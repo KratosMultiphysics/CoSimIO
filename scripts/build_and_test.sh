@@ -12,5 +12,5 @@ cd build
 ctest -T memcheck --output-on-failure || true # don't stop if this fails
 
 echo $'\n>>> Running Python Tests'
-cd tests
+cd ../tests
 python3 run_python_tests.py
