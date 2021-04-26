@@ -13,12 +13,12 @@ on:
 jobs:
   Ubuntu-Cpp-C:
     runs-on: ubuntu-latest
-    name: "Ubuntu C++ & C (Compiler: ${{ matrix.compiler }}, MPI: ${{ matrix.mpi }})"
+    name: "Ubuntu C++ & C (${{ matrix.compiler }} / ${{ matrix.mpi }})"
     strategy:
       fail-fast: false
       matrix:
         compiler: [GCC, CLANG, ICC]
-        mpi: [OpenMPI, IntelMPI]
+        mpi: [OpenMPI] #, IntelMPI]
     timeout-minutes: 15
 
     steps:
@@ -72,6 +72,7 @@ jobs:
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
           -DBUILD_C=ON               \
+          -DCOSIMIO_ENABLE_MPI=ON    \
           -DSTRICT_COMPILER=ON
 
         cmake --build "build" --target install -- -j2
@@ -84,6 +85,14 @@ jobs:
 
         cd build
         ctest -T memcheck --output-on-failure
+
+    - name: Running MPI tests
+      run: |
+        if [ ${{ matrix.compiler }} = ICC ]; then
+          source /opt/intel/oneapi/setvars.sh
+        fi
+
+        mpiexec --oversubscribe -np 4 bin/co_sim_io_mpi_tests
 
 
   Ubuntu-Python:
