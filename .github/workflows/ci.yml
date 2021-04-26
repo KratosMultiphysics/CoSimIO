@@ -80,7 +80,7 @@ jobs:
 
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
-          -DBUILD_C=ON               \
+          -DBUILD_C=OFF               \
           -DCOSIMIO_ENABLE_MPI=ON    \
           -DSTRICT_COMPILER=ON
 
