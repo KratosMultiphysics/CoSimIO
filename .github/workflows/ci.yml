@@ -98,7 +98,7 @@ jobs:
         cd build
         ctest -T memcheck --output-on-failure
 
-        cat build/Testing/Temporary/MemoryChecker.58.log
+        cat Testing/Temporary/MemoryChecker.58.log
 
 
   Ubuntu-Python:
