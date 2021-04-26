@@ -49,6 +49,8 @@ jobs:
         if [ ${{ matrix.mpi }} = OpenMPI ]; then
           sudo apt-get install libopenmpi-dev openmpi-bin
         else
+          sudo apt-get install intel-oneapi-mpi-devel
+          sudo apt-get install intel-oneapi-runtime-mpi
           sudo apt-get install intel-oneapi-mpi
         fi
 
