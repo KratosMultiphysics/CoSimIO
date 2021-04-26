@@ -100,7 +100,8 @@ jobs:
         ctest -T memcheck --output-on-failure
 
     - name: print err
-        cat Testing/Temporary/MemoryChecker.58.log
+      run: |
+        cat build/Testing/Temporary/MemoryChecker.58.log
 
 
   Ubuntu-Python:
