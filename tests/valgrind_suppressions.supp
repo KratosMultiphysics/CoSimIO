@@ -10,6 +10,8 @@
    ...
    obj:*/bin/dash
 }
+
+### start suppressions for OpenMPI
 {
    <insert_a_suppression_name_here>
    Memcheck:Leak
@@ -191,3 +193,110 @@
    fun:dlopen_doit
    fun:_dl_catch_exception
 }
+### end suppressions for OpenMPI
+
+### start suppressions for IntelMPI
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Param
+   write(buf)
+   fun:write
+   fun:HYD_sock_write
+   fun:cmd_bcast_root
+   fun:initiate_process_launch
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Param
+   write(buf)
+   fun:write
+   fun:HYD_sock_write
+   fun:cmd_bcast_root
+   fun:push_mapping_info_downstream
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Value8
+   fun:HYD_find_base_path
+   fun:mpiexec_get_parameters
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Param
+   write(buf)
+   fun:write
+   fun:HYD_sock_write
+   fun:cmd_bcast_root
+   fun:push_env_downstream
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:HYD_str_from_int_pad
+   fun:i_gtool_proxy_args
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:HYD_dbg_setup_procdesc
+   fun:control_cb
+   fun:HYDI_dmx_poll_wait_for_event
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Param
+   write(buf)
+   fun:write
+   fun:HYD_sock_write
+   fun:cmd_bcast_root
+   fun:push_cwd_downstream
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Param
+   write(buf)
+   fun:write
+   fun:HYD_sock_write
+   fun:send_info_downstream
+   fun:HYD_bstrap_setup
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:MPL_strdup
+   fun:i_gtool_proxy_args
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Param
+   write(buf)
+   fun:write
+   fun:HYD_sock_write
+   fun:mpiexec_pmi_barrier
+   fun:control_cb
+   fun:HYDI_dmx_poll_wait_for_event
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Cond
+   fun:HYD_find_base_path
+   fun:mpiexec_get_parameters
+   fun:main
+}
+### end suppressions for IntelMPI
