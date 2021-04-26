@@ -14,6 +14,7 @@ jobs:
   Ubuntu-Cpp-C:
     runs-on: ubuntu-latest
     name: "Ubuntu C++ & C (${{ matrix.compiler }} / ${{ matrix.mpi }})"
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
@@ -26,7 +27,6 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      continue-on-error: true
     - uses: actions/checkout@v2
 
     - name: Install dependencies
