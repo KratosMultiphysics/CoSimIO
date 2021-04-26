@@ -63,14 +63,15 @@ jobs:
           export CXX=/usr/bin/clang++-11
           export CC=/usr/bin/clang-11
         elif [ ${{ matrix.compiler }} = ICC ]; then
-          source /opt/intel/oneapi/setvars.sh
           export CXX=icpc
           export CC=icc
-        elif [ ${{ matrix.mpi }} = IntelMPI ]; then
-          source /opt/intel/oneapi/setvars.sh
         else
           echo 'Unsupported compiler: ${{ matrix.compiler }}'
           exit 1
+        fi
+
+        if [ ${{ matrix.compiler }} = ICC || ${{ matrix.mpi }} = IntelMPI ]; then
+          source /opt/intel/oneapi/setvars.sh
         fi
 
         cmake -H"." -B"build"        \
@@ -86,7 +87,7 @@ jobs:
         OMPI_MCA_rmaps_base_oversubscribe: 1 # Allow oversubscription for MPI (needed for OpenMPI >= 3.0)
       run: |
         export PATH=${PATH}:${GITHUB_WORKSPACE}/bin # required for IntelMPI
-        if [ ${{ matrix.compiler }} = ICC ]; then
+        if [ ${{ matrix.compiler }} = ICC || ${{ matrix.mpi }} = IntelMPI ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
 
