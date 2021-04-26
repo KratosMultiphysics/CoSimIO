@@ -70,7 +70,7 @@ jobs:
           exit 1
         fi
 
-        if [ ${{ matrix.compiler }} = ICC || ${{ matrix.mpi }} = IntelMPI ]; then
+        if [ ${{ matrix.compiler }} = ICC ] || [ ${{ matrix.mpi }} = IntelMPI ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
 
@@ -87,7 +87,7 @@ jobs:
         OMPI_MCA_rmaps_base_oversubscribe: 1 # Allow oversubscription for MPI (needed for OpenMPI >= 3.0)
       run: |
         export PATH=${PATH}:${GITHUB_WORKSPACE}/bin # required for IntelMPI
-        if [ ${{ matrix.compiler }} = ICC || ${{ matrix.mpi }} = IntelMPI ]; then
+        if [ ${{ matrix.compiler }} = ICC ] || [ ${{ matrix.mpi }} = IntelMPI ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
 
