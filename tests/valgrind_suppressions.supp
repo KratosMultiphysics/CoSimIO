@@ -298,3 +298,14 @@
    fun:mpiexec_get_parameters
    fun:main
 }
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Param
+   write(buf)
+   fun:write
+   fun:HYD_sock_write
+   fun:cmd_bcast_root
+   fun:stdin_cb
+   fun:HYDI_dmx_poll_wait_for_event
+   fun:main
+}
