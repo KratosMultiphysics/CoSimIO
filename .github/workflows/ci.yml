@@ -19,10 +19,10 @@ jobs:
       matrix:
         compiler: [GCC, CLANG, ICC]
         mpi: [OpenMPI, IntelMPI]
-      exclude:
-          # CLANG is not properly supported by Intel, better zuse LLVMIntel in the future
-          - compiler: CLANG
-            mpi: IntelMPI
+        exclude:
+            # CLANG is not properly supported by Intel, better use LLVMIntel in the future
+            - compiler: CLANG
+              mpi: IntelMPI
     timeout-minutes: 15
 
     steps:
