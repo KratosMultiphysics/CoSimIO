@@ -39,10 +39,9 @@ jobs:
           valgrind \
           clang-11
 
-    - name: Install intel compiler
+    - name: Install Intel compiler
       if: ${{ matrix.compiler == 'ICC' }}
-      run: |
-        sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+      run: sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
 
     - name: Install MPI
       run: |
@@ -97,15 +96,23 @@ jobs:
 
   Ubuntu-Python:
     runs-on: ubuntu-latest
-    name: Ubuntu Python ${{ matrix.python-version }}
+    name: Ubuntu Python ${{ matrix.python-version }} (${{ matrix.compiler }})
     strategy:
       fail-fast: false
       matrix:
         python-version: [3.5, 3.6, 3.7, 3.8, 3.9]
+        compiler: [GCC, ICC]
     timeout-minutes: 15
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Install Intel compiler
+      if: ${{ matrix.compiler == 'ICC' }}
+      run: sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+
+    - name: Install MPI
+      run: sudo apt-get install libopenmpi-dev openmpi-bin
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
@@ -123,10 +130,24 @@ jobs:
 
     - name: Running tests
       run: |
+        if [ ${{ matrix.compiler }} = ICC ]; then
+          source /opt/intel/oneapi/setvars.sh
+        fi
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly?
         python run_python_tests.py
+
+    - name: Running MPI tests
+      run: |
+        if [ ${{ matrix.compiler }} = ICC ]; then
+          source /opt/intel/oneapi/setvars.sh
+        fi
+        export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
+        cd tests
+        #TODO run the tests...
+        # TODO delete build dir to make sure the linking etc works correctly?
+        # python run_python_tests.py
 
 
   MacOS-Cpp-C:
@@ -149,7 +170,7 @@ jobs:
     - name: Running tests
       run: |
         cd build
-        ctest  --output-on-failure
+        ctest --output-on-failure
 
 
   MacOS-Python:
@@ -223,7 +244,7 @@ jobs:
       run: |
         set PATH=%PATH%;%GITHUB_WORKSPACE%/bin
         cd build
-        ctest -C Debug  --output-on-failure
+        ctest -C Debug --output-on-failure
 
 
   Windows-Python:
