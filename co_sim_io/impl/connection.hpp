@@ -17,9 +17,9 @@
 #include "communication/sockets_communication.hpp"
 
 
-#ifdef CO_SIM_IO_USING_MPI
-#include "communication/mpi_communication.hpp"
-#endif // CO_SIM_IO_USING_MPI
+// #ifdef CO_SIM_IO_USING_MPI
+// #include "communication/mpi_communication.hpp"
+// #endif // CO_SIM_IO_USING_MPI
 
 // System includes
 #include <iostream>
@@ -156,12 +156,12 @@ private:
             mpComm = CoSimIO::make_unique<FileCommunication>(I_Settings);
         } else if (comm_format == "sockets") {
             mpComm = CoSimIO::make_unique<SocketsCommunication>(I_Settings);
-        } else if (comm_format == "mpi") {
-            #ifdef CO_SIM_IO_USING_MPI
-            mpComm = CoSimIO::make_unique<MPICommunication>(I_Settings);
-            #else
-            CO_SIM_IO_ERROR << "Support for MPI was not compiled!" << std::endl;
-            #endif // CO_SIM_IO_USING_MPI
+        // } else if (comm_format == "mpi") {
+        //     #ifdef CO_SIM_IO_USING_MPI
+        //     mpComm = CoSimIO::make_unique<MPICommunication>(I_Settings);
+        //     #else
+        //     CO_SIM_IO_ERROR << "Support for MPI was not compiled!" << std::endl;
+        //     #endif // CO_SIM_IO_USING_MPI
         } else {
             CO_SIM_IO_ERROR << "Unsupported communication format: " << comm_format << std::endl;
         }
