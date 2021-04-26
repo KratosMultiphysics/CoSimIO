@@ -7,8 +7,7 @@
 
 cmake -H"." -B"build" \
     -DBUILD_C=ON \
-    -DBUILD_PYTHON=OFF \
-    -DBUILD_FORTRAN=OFF \
-    -DCOSIMIO_ENABLE_MPI=OFF \
+    -DBUILD_PYTHON=ON \
+    -DCOSIMIO_ENABLE_MPI=ON \
     -DSTRICT_COMPILER=ON
 cmake --build "build" --target install -- -j$(nproc)
