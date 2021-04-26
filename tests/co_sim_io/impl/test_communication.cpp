@@ -584,10 +584,3 @@ TEST_CASE_TEMPLATE_INVOKE(COMM_TESTS, FileCommunication);
 using SocketsCommunication = CoSimIO::Internals::SocketsCommunication;
 TYPE_TO_STRING(SocketsCommunication);
 // TEST_CASE_TEMPLATE_INVOKE(COMM_TESTS, SocketsCommunication);
-
-// #ifdef CO_SIM_IO_USING_MPI
-// #include "impl/communication/mpi_communication.hpp"
-// using MPICommunication = CoSimIO::Internals::MPICommunication;
-// TYPE_TO_STRING(MPICommunication);
-// TEST_CASE_TEMPLATE_INVOKE(COMM_TESTS, MPICommunication);
-// #endif
