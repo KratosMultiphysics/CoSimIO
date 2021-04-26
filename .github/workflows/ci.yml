@@ -66,6 +66,8 @@ jobs:
           source /opt/intel/oneapi/setvars.sh
           export CXX=icpc
           export CC=icc
+        elif [ ${{ matrix.mpi }} = IntelMPI ]; then
+          source /opt/intel/oneapi/setvars.sh
         else
           echo 'Unsupported compiler: ${{ matrix.compiler }}'
           exit 1
