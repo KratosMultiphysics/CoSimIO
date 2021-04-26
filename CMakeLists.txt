@@ -10,7 +10,6 @@ include(CTest)
 # TODO check how this can be added (supported from CMake 3.17)
 # list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
 
-OPTION ( ENABLE_SOCKETS     "Enable sockets communication"              OFF )
 OPTION ( COSIMIO_ENABLE_MPI "Enable MPI communication and MPI examples" OFF )
 OPTION ( BUILD_C            "Building the CoSimIO for C"                OFF )
 OPTION ( BUILD_PYTHON       "Building the CoSimIO for Python"           OFF )
@@ -23,7 +22,6 @@ endif()
 
 message("Building the CoSimIO with the following configuration:")
 message("    CMAKE_BUILD_TYPE:   " ${CMAKE_BUILD_TYPE})
-message("    ENABLE_SOCKETS:     " ${ENABLE_SOCKETS})
 message("    COSIMIO_ENABLE_MPI: " ${COSIMIO_ENABLE_MPI})
 message("    BUILD_TESTING:      " ${BUILD_TESTING})
 message("    BUILD_C:            " ${BUILD_C})
@@ -34,24 +32,12 @@ message("")
 
 include_directories(SYSTEM "external_libraries/asio/include")
 
-set( CO_SIM_IO_REQUIRES_MPI OFF )
-
-if (ENABLE_SOCKETS)
-    set( CO_SIM_IO_REQUIRES_BOOST ON ) # Sockets Communication is implemented using Boost::ASIO
-    add_definitions( -DCO_SIM_IO_USING_SOCKETS )
-endif()
-if (ENABLE_MPI)
-    set( CO_SIM_IO_REQUIRES_MPI ON )
-    add_definitions( -DCO_SIM_IO_USING_MPI )
-endif()
-
 if (COSIMIO_ENABLE_MPI)
     find_package(MPI REQUIRED)
-#     add_definitions( -DCO_SIM_IO_USING_MPI )
-#     # TODO check this, was copied from Kratos
-#     # set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
-#     # set(CMAKE_C_COMPILE_FLAGS ${CMAKE_C_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
-#     # set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
+    add_definitions( -DCO_SIM_IO_USING_MPI )
+    set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
+    set(CMAKE_C_COMPILE_FLAGS ${CMAKE_C_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
+    set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
     include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 endif()
 
