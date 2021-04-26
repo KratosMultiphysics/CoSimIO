@@ -32,17 +32,17 @@ message("    BUILD_FORTRAN:      " ${BUILD_FORTRAN})
 message("    STRICT_COMPILER:    " ${STRICT_COMPILER})
 message("")
 
-set( CO_SIM_IO_REQUIRES_BOOST OFF )
+include_directories(SYSTEM "external_libraries/asio/include")
+
 set( CO_SIM_IO_REQUIRES_MPI OFF )
 
 if (ENABLE_SOCKETS)
     set( CO_SIM_IO_REQUIRES_BOOST ON ) # Sockets Communication is implemented using Boost::ASIO
     add_definitions( -DCO_SIM_IO_USING_SOCKETS )
 endif()
-
-if (CO_SIM_IO_REQUIRES_BOOST)
-    find_package(Boost REQUIRED)
-    include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+if (ENABLE_MPI)
+    set( CO_SIM_IO_REQUIRES_MPI ON )
+    add_definitions( -DCO_SIM_IO_USING_MPI )
 endif()
 
 if (COSIMIO_ENABLE_MPI)

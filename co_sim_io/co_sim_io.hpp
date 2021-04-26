@@ -24,9 +24,6 @@ Note that this introduces dependencies such as e.g. boost (header-only version) 
 */
 
 // macros are protected to avoid redefinition in case they were defined externally (e.g. in CMake)
-#ifndef CO_SIM_IO_USING_SOCKETS
-// #define CO_SIM_IO_USING_SOCKETS // uncomment for Sockets support
-#endif
 #ifndef CO_SIM_IO_USING_MPI
 // #define CO_SIM_IO_USING_MPI // uncomment for MPI support
 #endif

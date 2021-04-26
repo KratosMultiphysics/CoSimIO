@@ -1,5 +1,4 @@
 {
-    "ENABLE_SOCKETS"     : "@ENABLE_SOCKETS@",
     "COSIMIO_ENABLE_MPI" : "@COSIMIO_ENABLE_MPI@",
     "BUILD_TESTING"      : "@BUILD_TESTING@",
     "BUILD_C"            : "@BUILD_C@",
