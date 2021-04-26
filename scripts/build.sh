@@ -10,5 +10,5 @@ cmake -H"." -B"build" \
     -DBUILD_PYTHON=OFF \
     -DBUILD_FORTRAN=OFF \
     -DCOSIMIO_ENABLE_MPI=OFF \
-    -DCMAKE_BUILD_TYPE=Debug
+    -DSTRICT_COMPILER=ON
 cmake --build "build" --target install -- -j$(nproc)
