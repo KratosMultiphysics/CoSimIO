@@ -26,6 +26,7 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      continue-on-error: true
     - uses: actions/checkout@v2
 
     - name: Install dependencies
