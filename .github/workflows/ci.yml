@@ -98,11 +98,8 @@ jobs:
         cd build
         ctest -T memcheck --output-on-failure
 
-        # cat Testing/Temporary/MemoryChecker.58.log
-        cat tests/valgrind_sup.log
 
-
-  Ubuntu-Python:
+        Ubuntu-Python:
     runs-on: ubuntu-latest
     name: Ubuntu Python ${{ matrix.python-version }}
     strategy:
