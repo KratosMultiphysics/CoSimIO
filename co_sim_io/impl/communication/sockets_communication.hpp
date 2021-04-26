@@ -16,10 +16,10 @@
 // System includes
 
 // External includes
-#define ASIO_NO_DEPRECATED
-#define ASIO_STANDALONE
+#define ASIO_NO_DEPRECATED // disabling deprecated features/interfaces
+#define ASIO_STANDALONE // independent of boost
 #ifndef _WIN32_WINNT
-    #define _WIN32_WINNT 0x0601
+    #define _WIN32_WINNT 0x0601 // see "https://github.com/chriskohlhoff/asio/issues/596"
 #endif
 #include <asio.hpp>
 
