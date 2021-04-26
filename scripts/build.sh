@@ -2,11 +2,13 @@
 
 # rm -r build/
 
+# export CXX=icpc
+# export CC=icc
+
 cmake -H"." -B"build" \
     -DBUILD_C=ON \
-    -DBUILD_PYTHON=ON \
+    -DBUILD_PYTHON=OFF \
     -DBUILD_FORTRAN=OFF \
-    -DENABLE_SOCKETS=OFF \
     -DENABLE_MPI=OFF \
-    -DCMAKE_BUILD_TYPE=Debug
-cmake --build "build" --target install -- -j$(nproc)
+    -DSTRICT_COMPILER=ON
+cmake --build "build" --target install -- -j6

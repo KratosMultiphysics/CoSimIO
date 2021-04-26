@@ -28,11 +28,13 @@ When using only C++11 the alternative implementation from
     #endif
 #endif
 #ifndef STD_FILESYSTEM_AVAILABLE
-    #define WIN32_LEAN_AND_MEAN
-    #define NOMINMAX
+    #ifndef WIN32_LEAN_AND_MEAN
+        #define WIN32_LEAN_AND_MEAN
+    #endif
+    #ifndef NOMINMAX
+        #define NOMINMAX
+    #endif
     #include "../../external_libraries/ghc/filesystem.hpp"
-    #undef NOMINMAX
-    #undef WIN32_LEAN_AND_MEAN
     namespace fs = ghc::filesystem;
 #endif
 

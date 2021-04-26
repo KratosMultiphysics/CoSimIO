@@ -16,7 +16,12 @@
 // System includes
 
 // External includes
-#include <boost/asio.hpp>
+#define ASIO_NO_DEPRECATED
+#define ASIO_STANDALONE
+#ifndef _WIN32_WINNT
+    #define _WIN32_WINNT 0x0601
+#endif
+#include <asio.hpp>
 
 // Project includes
 #include "communication.hpp"
@@ -29,8 +34,18 @@ class SocketsCommunication : public Communication
 public:
     explicit SocketsCommunication(const Info& I_Settings) : Communication(I_Settings)
     {
-       static_assert(false,"Sockets Communication is not implemented yet");
+        CO_SIM_IO_ERROR << "Sockets Communication is not implemented yet" << std::endl;
     }
+
+    Info ConnectDetail(const Info& I_Info) override
+    {
+        return Info();
+    };
+
+    Info DisconnectDetail(const Info& I_Info) override
+    {
+        return Info();
+    };
 };
 
 } // namespace Internals
