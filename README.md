@@ -7,8 +7,7 @@
 Kratos CoSimulationApplication
 ~~~
 
-![Building and Testing](https://github.com/KratosMultiphysics/CoSimIO/workflows/Building%20and%20Testing/badge.svg?event=schedule)
-
+[![CI](https://github.com/KratosMultiphysics/CoSimIO/actions/workflows/ci.yml/badge.svg?event=schedule)](https://github.com/KratosMultiphysics/CoSimIO/actions/workflows/ci.yml)
 # CoSimIO
 
 _CoSimIO_ for coupling and exchanging data between different solvers or other software-tools. It works in combination with the [_CoSimulationApplication_](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/CoSimulationApplication).
