@@ -15,7 +15,6 @@ set_target_properties(co_sim_io_tests PROPERTIES
 
 doctest_discover_tests(co_sim_io_tests)
 
-
 if (CO_SIM_IO_ENABLE_MPI)
     file( GLOB CO_SIM_IO_MPI_TEST_FILES co_sim_io/impl/mpi/*.cpp )
     add_executable ( co_sim_io_mpi_tests ${CO_SIM_IO_MPI_TEST_FILES} )
@@ -52,6 +51,23 @@ add_test(NAME import_export_info_cpp_test COMMAND sh run.sh $<TARGET_FILE:export
 add_test(NAME import_export_data_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_data_cpp_test>  $<TARGET_FILE:import_data_cpp_test>)
 add_test(NAME import_export_mesh_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_mesh_cpp_test>  $<TARGET_FILE:import_mesh_cpp_test>)
 add_test(NAME run_runner_cpp_test COMMAND sh run.sh $<TARGET_FILE:run_cpp_test>  $<TARGET_FILE:runner_cpp_test>)
+
+if (CO_SIM_IO_ENABLE_MPI)
+    function(add_cpp_mpi_executable TEST_SOURCE_FILE)
+        get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
+        string(REGEX REPLACE ".cpp" "_cpp_test" TEST_NAME ${TEST_FILENAME})
+        message(STATUS  "adding ${TEST_NAME} ")
+        add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
+        target_link_libraries(${TEST_NAME} ${MPI_LIBRARIES})
+        install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_cpp_mpi")
+    endfunction()
+
+    file(GLOB cpp_mpi_test_files "integration_tutorials/cpp/mpi/*.cpp")
+
+    foreach(cpp_mpi_test_file ${cpp_mpi_test_files})
+    add_cpp_mpi_executable(${cpp_mpi_test_file})
+    endforeach(cpp_mpi_test_file)
+endif()
 
 ### C tests ###
 if(BUILD_C)
