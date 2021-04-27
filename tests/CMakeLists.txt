@@ -16,7 +16,7 @@ set_target_properties(co_sim_io_tests PROPERTIES
 doctest_discover_tests(co_sim_io_tests)
 
 
-if (COSIMIO_ENABLE_MPI)
+if (CO_SIM_IO_ENABLE_MPI)
     file( GLOB CO_SIM_IO_MPI_TEST_FILES co_sim_io/impl/mpi/*.cpp )
     add_executable ( co_sim_io_mpi_tests ${CO_SIM_IO_MPI_TEST_FILES} )
     target_link_libraries( co_sim_io_mpi_tests ${MPI_LIBRARIES} )
