@@ -27,6 +27,8 @@ if (CO_SIM_IO_ENABLE_MPI)
         CXX_EXTENSIONS NO
     )
 
+    add_test(NAME "MPI-C++-tests-4-Cores" COMMAND mpiexec -np 4 co_sim_io_mpi_tests)
+
 endif()
 
 ### C++ tests ###
