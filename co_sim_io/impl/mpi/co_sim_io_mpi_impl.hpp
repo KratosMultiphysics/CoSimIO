@@ -36,6 +36,8 @@ inline Info ConnectMPI(
     int flag_initialized;
     MPI_Initialized(&flag_initialized);
     CO_SIM_IO_ERROR_IF_NOT(flag_initialized) << "MPI must be initialized before calling \"ConnectMPI\"!" << std::endl;
+
+    return Info(); // TODO use this
 }
 
 } // namespace CoSimIO
