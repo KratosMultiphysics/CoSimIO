@@ -36,6 +36,11 @@ Note that this introduces dependencies such as e.g. boost (header-only version) 
 #include "impl/info.hpp"
 #include "impl/model_part.hpp"
 
+// include the MPI extension if necessary
+#ifdef CO_SIM_IO_USING_MPI
+#include "impl/mpi/co_sim_io_mpi.hpp"
+#endif
+
 namespace CoSimIO {
 
 inline Info Hello();
