@@ -20,7 +20,7 @@
 
 int main(int argc, char** argv)
 {
-/*
+
     int rank;
     MPI_Init(&argc, &argv);
 
@@ -29,6 +29,6 @@ int main(int argc, char** argv)
     printf("RANK %d", rank);
 
     MPI_Finalize();
-*/
+
     return 0;
 }
