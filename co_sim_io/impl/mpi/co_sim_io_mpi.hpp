@@ -21,8 +21,8 @@ This file contains the interface of the MPI extension for the CoSimIO
 #include "mpi.h"
 
 // Project includes
-#include "impl/define.hpp"
-#include "impl/info.hpp"
+#include "../define.hpp"
+#include "../info.hpp"
 
 namespace CoSimIO {
 

@@ -21,8 +21,8 @@ This file contains the implementation of the functions defined in "co_sim_io_mpi
 #include "mpi.h"
 
 // Project includes
-#include "impl/define.hpp"
-#include "impl/info.hpp"
+#include "../define.hpp"
+#include "../info.hpp"
 
 namespace CoSimIO {
 
@@ -34,7 +34,5 @@ inline Info ConnectMPI(
 }
 
 } // namespace CoSimIO
-
-#include "impl/co_sim_io_impl.hpp"
 
 #endif // CO_SIM_IO_MPI_IMPL_INCLUDED
