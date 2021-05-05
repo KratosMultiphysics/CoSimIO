@@ -18,7 +18,11 @@ jobs:
       fail-fast: false
       matrix:
         compiler: [GCC, CLANG, ICC]
-        mpi: [OpenMPI] #, IntelMPI]
+        mpi: [OpenMPI, IntelMPI]
+        exclude:
+            # CLANG is not properly supported by Intel, better use LLVMIntel in the future
+            - compiler: CLANG
+              mpi: IntelMPI
     timeout-minutes: 15
 
     steps:
@@ -60,12 +64,15 @@ jobs:
           export CXX=/usr/bin/clang++-11
           export CC=/usr/bin/clang-11
         elif [ ${{ matrix.compiler }} = ICC ]; then
-          source /opt/intel/oneapi/setvars.sh
           export CXX=icpc
           export CC=icc
         else
           echo 'Unsupported compiler: ${{ matrix.compiler }}'
           exit 1
+        fi
+
+        if [ ${{ matrix.compiler }} = ICC ] || [ ${{ matrix.mpi }} = IntelMPI ]; then
+          source /opt/intel/oneapi/setvars.sh
         fi
 
         cmake -H"." -B"build"        \
@@ -77,21 +84,16 @@ jobs:
         cmake --build "build" --target install -- -j2
 
     - name: Running tests
+      env:
+        OMPI_MCA_rmaps_base_oversubscribe: 1 # Allow oversubscription for MPI (needed for OpenMPI >= 3.0)
       run: |
-        if [ ${{ matrix.compiler }} = ICC ]; then
+        export PATH=${PATH}:${GITHUB_WORKSPACE}/bin # required for IntelMPI
+        if [ ${{ matrix.compiler }} = ICC ] || [ ${{ matrix.mpi }} = IntelMPI ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
 
         cd build
         ctest -T memcheck --output-on-failure
-
-    - name: Running MPI tests
-      run: |
-        if [ ${{ matrix.compiler }} = ICC ]; then
-          source /opt/intel/oneapi/setvars.sh
-        fi
-
-        mpiexec --oversubscribe -np 4 bin/co_sim_io_mpi_tests
 
 
   Ubuntu-Python:
