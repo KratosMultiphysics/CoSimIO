@@ -31,6 +31,11 @@ inline Info ConnectMPI(
     MPI_Comm ThisMPIComm)
 {
     CO_SIM_IO_ERROR << "Not implemented!" << std::endl;
+
+    // make sure MPI was already initialized by the host
+    int flag_initialized;
+    MPI_Initialized(&flag_initialized);
+    CO_SIM_IO_ERROR_IF_NOT(flag_initialized) << "MPI must be initialized before calling \"ConnectMPI\"!" << std::endl;
 }
 
 } // namespace CoSimIO
