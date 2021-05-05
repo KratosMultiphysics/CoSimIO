@@ -89,7 +89,6 @@ jobs:
       run: |
         export PATH=${PATH}:${GITHUB_WORKSPACE}/bin # required for IntelMPI
         export PATH=${PATH}:${GITHUB_WORKSPACE}/bin/tests_c_mpi # required for IntelMPI
-        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/bin # required for IntelMPI
         if [ ${{ matrix.compiler }} = ICC ] || [ ${{ matrix.mpi }} = IntelMPI ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
