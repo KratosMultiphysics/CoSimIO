@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     settings.Set("echo_level", 1);
     settings.Set("version", "1.25");
 
-    auto info = CoSimIO::Connect(settings);
+    auto info = CoSimIO::ConnectMPI(settings, MPI_COMM_WORLD);
     COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
     const std::string connection_name = info.Get<std::string>("connection_name");
 
