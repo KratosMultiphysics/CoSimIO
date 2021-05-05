@@ -95,7 +95,7 @@ jobs:
         fi
 
         cd build
-        ctest --output-on-failure
+        ctest -T memcheck --output-on-failure
 
 
   Ubuntu-Python:
