@@ -95,6 +95,8 @@ jobs:
         cd build
         ctest -T memcheck --output-on-failure
 
+        cat tests/valgrind_sup.log
+
 
   Ubuntu-Python:
     runs-on: ubuntu-latest
