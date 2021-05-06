@@ -14,7 +14,7 @@
 #include "mpi.h"
 
 // CoSimulation includes
-#include "co_sim_io.hpp"
+#include "co_sim_io_mpi.hpp"
 
 #define COSIMIO_CHECK_EQUAL(a, b)                                \
     if (a != b) {                                                \
