@@ -87,7 +87,9 @@ jobs:
       env:
         OMPI_MCA_rmaps_base_oversubscribe: 1 # Allow oversubscription for MPI (needed for OpenMPI >= 3.0)
       run: |
+        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/bin
         export PATH=${PATH}:${GITHUB_WORKSPACE}/bin # required for IntelMPI
+        export PATH=${PATH}:${GITHUB_WORKSPACE}/bin/tests_c_mpi # required for IntelMPI
         if [ ${{ matrix.compiler }} = ICC ] || [ ${{ matrix.mpi }} = IntelMPI ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
