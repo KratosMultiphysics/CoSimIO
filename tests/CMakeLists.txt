@@ -94,7 +94,10 @@ if(BUILD_C)
         install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_c")
     endfunction()
 
-    file(GLOB_RECURSE c_test_files "co_sim_io/c/*.c")
+    file(GLOB c_test_files
+        "co_sim_io/c/info/*.c"
+        "co_sim_io/c/model_part/*.c"
+    )
 
     foreach(c_test_file ${c_test_files})
     add_c_test(${c_test_file})
@@ -111,6 +114,25 @@ if(BUILD_C)
     add_test(NAME import_export_info_c_test COMMAND bash run.sh $<TARGET_FILE:export_info_c_test>  $<TARGET_FILE:import_info_c_test>)
     add_test(NAME import_export_data_c_test COMMAND bash run.sh $<TARGET_FILE:export_data_c_test>  $<TARGET_FILE:import_data_c_test>)
     add_test(NAME import_export_mesh_c_test COMMAND bash run.sh $<TARGET_FILE:export_mesh_c_test>  $<TARGET_FILE:import_mesh_c_test>)
+
+    if (CO_SIM_IO_ENABLE_MPI)
+        function(add_c_mpi_test TEST_SOURCE_FILE)
+            get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
+            string(REGEX REPLACE "[.]c" "_c_mpi_test" TEST_NAME ${TEST_FILENAME})
+            message(STATUS  "adding ${TEST_NAME} ")
+            add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
+            target_link_libraries(${TEST_NAME} co_sim_io_c ${MPI_LIBRARIES})
+            add_test(NAME ${TEST_NAME} COMMAND mpiexec -np 4 ${TEST_NAME})
+            install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_c_mpi")
+        endfunction()
+
+        file(GLOB c_mpi_test_files "co_sim_io/c/mpi/*.c")
+
+        foreach(c_mpi_test_file ${c_mpi_test_files})
+        add_c_mpi_test(${c_mpi_test_file})
+        endforeach(c_mpi_test_file)
+
+    endif()
 endif()
 
 
