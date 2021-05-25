@@ -14,7 +14,9 @@
 #define CO_SIM_IO_C_INFO_INCLUDED
 
 
-typedef struct CoSimIO_Info
+#include "define_c.h"
+
+typedef struct CO_SIM_IO_NODISCARD CoSimIO_Info
 {
     void* PtrCppInfo;
 } CoSimIO_Info;
