@@ -17,7 +17,7 @@
 https://en.cppreference.com/w/c/language/attributes/nodiscard
 hence using custom solution
 */
-#if (defined(__GNUC__) || defined(__clang__)) && !(defined(__INTEL_COMPILER))
+#if defined(__GNUC__) || defined(__clang__) || defined(__INTEL_COMPILER)
 #define CO_SIM_IO_NODISCARD __attribute__((warn_unused_result))
 #else
 #define CO_SIM_IO_NODISCARD
