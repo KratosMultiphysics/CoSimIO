@@ -35,29 +35,29 @@ enum CoSimIO_ConnectionStatus
     CoSimIO_DisconnectionError
 };
 
-CoSimIO_Info CoSimIO_Hello();
+CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_Hello();
 
-CoSimIO_Info CoSimIO_Connect(
+CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_Connect(
     const CoSimIO_Info I_Settings);
 
-CoSimIO_Info CoSimIO_Disconnect(
+CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_Disconnect(
     const CoSimIO_Info I_Info);
 
-CoSimIO_Info CoSimIO_ImportData(
+CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_ImportData(
     const CoSimIO_Info I_Info,
     int* O_Size,
     double** O_Data);
 
-CoSimIO_Info CoSimIO_ExportData(
+CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_ExportData(
     const CoSimIO_Info I_Info,
     const int I_Size,
     const double* I_Data);
 
-CoSimIO_Info CoSimIO_ImportMesh(
+CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_ImportMesh(
     const CoSimIO_Info I_Info,
     CoSimIO_ModelPart O_ModelPart);
 
-CoSimIO_Info CoSimIO_ExportMesh(
+CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_ExportMesh(
     const CoSimIO_Info I_Info,
     const CoSimIO_ModelPart I_ModelPart);
 
@@ -65,17 +65,17 @@ CoSimIO_Info CoSimIO_ExportMesh(
 void CoSimIO_PrintInfo(FILE *Stream,
     const CoSimIO_Info I_Info);
 
-CoSimIO_Info CoSimIO_ImportInfo(
+CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_ImportInfo(
     const CoSimIO_Info I_Info);
 
-CoSimIO_Info CoSimIO_ExportInfo(
+CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_ExportInfo(
     const CoSimIO_Info I_Info);
 
-CoSimIO_Info CoSimIO_Register(
+CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_Register(
     const CoSimIO_Info I_Info,
     CoSimIO_Info (*I_FunctionPointer)(const CoSimIO_Info I_Info));
 
-CoSimIO_Info CoSimIO_Run(const CoSimIO_Info I_Info);
+CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_Run(const CoSimIO_Info I_Info);
 
 void* CoSimIO_Malloc(size_t size);
 
