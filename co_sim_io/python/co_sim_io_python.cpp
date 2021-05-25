@@ -27,7 +27,7 @@
 #include <pybind11/numpy.h>
 
 // must be done before CoSimIO includes
-PYBIND11_DECLARE_HOLDER_TYPE(T, CoSimIO::intrusive_ptr<T>);
+PYBIND11_DECLARE_HOLDER_TYPE(T, CoSimIO::intrusive_ptr<T>)
 
 // CoSimIO includes
 #include "../co_sim_io.hpp"
