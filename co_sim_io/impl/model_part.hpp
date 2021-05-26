@@ -112,7 +112,7 @@ inline std::ostream & operator <<(
 class Element
 {
 public:
-    using NodesContainerType = std::vector<Node*>;
+    using NodesContainerType = std::vector<CoSimIO::intrusive_ptr<Node>>;
 
     Element(
         const IdType I_Id,
@@ -232,7 +232,7 @@ public:
         Element::NodesContainerType nodes;
         nodes.reserve(I_Connectivities.size());
         for (const IdType node_id : I_Connectivities) {
-            nodes.push_back(&GetNode(node_id));
+            nodes.push_back(pGetNode(node_id));
         }
         mElements.push_back(CoSimIO::make_intrusive<Element>(I_Id, I_Type, nodes));
         return *(mElements.back());
