@@ -1,7 +1,20 @@
-// taken from Kratos
+//
+//  intrusive_ptr.hpp
+//
+//  Copyright (c) 2001, 2002 Peter Dimov
+//
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
+//
+//  See http://www.boost.org/libs/smart_ptr/ for documentation.
+//
+// simplified implementation that depends only on C++, taken from Kratos:
+// https://github.com/KratosMultiphysics/Kratos/blob/master/external_libraries/intrusive_ptr/intrusive_ptr.hpp
 
-#if !defined(CO_SIM_IO_INTRUSIVE_PTR_H_INCLUDED )
-#define  CO_SIM_IO_INTRUSIVE_PTR_H_INCLUDED
+
+#if !defined(CO_SIM_IO_INTRUSIVE_PTR_H_INCLUDED)
+#define CO_SIM_IO_INTRUSIVE_PTR_H_INCLUDED
 
 #include <cstddef>
 #include <functional>
@@ -300,5 +313,4 @@ template< class T > std::size_t hash_value( CoSimIO::intrusive_ptr<T> const & p 
 
 }
 
-#endif // CO_SIM_IO_INTRUSIVE_PTR_H_INCLUDED  defined
-
+#endif // CO_SIM_IO_INTRUSIVE_PTR_H_INCLUDED defined
