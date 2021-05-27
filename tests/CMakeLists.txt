@@ -31,6 +31,28 @@ if (CO_SIM_IO_ENABLE_MPI)
 
 endif()
 
+
+add_library (sub1 SHARED co_sim_io/impl/singleton_tests/sub_1.cpp co_sim_io/impl/singleton_tests/sub_12.cpp)
+install( TARGETS sub1 DESTINATION ${CMAKE_SOURCE_DIR}/bin )
+
+add_executable ( main_singleton co_sim_io/impl/singleton_tests/main.cpp co_sim_io/impl/singleton_tests/main2.cpp)
+target_link_libraries( main_singleton sub1 )
+install( TARGETS main_singleton DESTINATION ${CMAKE_SOURCE_DIR}/bin )
+set_target_properties(main_singleton PROPERTIES
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+)
+
+
+add_executable ( main_singleton_partner co_sim_io/impl/singleton_tests/main_partner.cpp)
+install( TARGETS main_singleton_partner DESTINATION ${CMAKE_SOURCE_DIR}/bin )
+set_target_properties(main_singleton_partner PROPERTIES
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+)
+
 ### C++ tests ###
 function(add_cpp_executable TEST_SOURCE_FILE)
     get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)

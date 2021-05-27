@@ -30,7 +30,12 @@ namespace CoSimIO {
 
 namespace Internals {
 // TODO make sure this is unique even across compilation units (test somehow)
-static std::unordered_map<std::string, std::unique_ptr<Connection>> s_co_sim_connections;
+
+#ifdef CO_SIM_IO_EXTERN
+extern std::unordered_map<std::string, std::unique_ptr<Connection>> s_co_sim_connections;
+#else
+std::unordered_map<std::string, std::unique_ptr<Connection>> s_co_sim_connections;
+#endif
 
 static bool HasIO(const std::string& rConnectionName)
 {

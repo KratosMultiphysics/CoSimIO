@@ -10,9 +10,19 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-/* see "test_include_co_sim_io_1.cpp" for why this file is necessary
-*/
+// System includes
+#include <iostream>
 
 // Project includes
-#define CO_SIM_IO_EXTERN
+// #define CO_SIM_IO_EXTERN
 #include "co_sim_io.hpp"
+
+bool CheckSub(const std::string& ConnectionName)
+{
+    std::cout << "\nHas_io: "<< CoSimIO::Internals::HasIO(ConnectionName) << std::endl<< std::endl;
+
+
+
+    return true;
+
+}
