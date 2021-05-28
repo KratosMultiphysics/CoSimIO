@@ -16,6 +16,8 @@ The implementation is defined in [co_sim_io](co_sim_io)
 
 A tutorial for using the _CoSimIO_ can be found in [tutorial](tutorial)
 
+Documentation can be found [here](https://kratosmultiphysics.github.io/CoSimIO/)
+
 The tests are contained in [tests](tests)
 
 ## Dependencies
