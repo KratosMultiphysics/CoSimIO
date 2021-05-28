@@ -191,11 +191,11 @@ This example can be found in [integration_tutorials/python/export_mesh.py](../..
 
 
 ## Tutorial 6: Kratos CoSimulation Library Overview
-The overview of the Kratos CoSimulation Library can be found [here](../README.md#kratos-cosimulation-library-overview).
+The overview of the Kratos CoSimulation Library can be found [here](../index.md#kratos-cosimulation-library-overview).
 
 
 ## Tutorial 7: Building Kratos with CoSimulation
-The building instructions for the Kratos CoSimulation Library can be found [here](../README.md#building-kratos-with-cosimulation).
+The building instructions for the Kratos CoSimulation Library can be found [here](../index.md#building-kratos-with-cosimulation).
 
 <!--
 ## Tutorial 8: Connecting/Disconnecting to/from Kratos
