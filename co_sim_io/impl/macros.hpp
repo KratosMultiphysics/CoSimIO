@@ -24,6 +24,7 @@ the code where the CoSimIO is included
     #include <string>
     #include <stdexcept>
     #include <sstream>
+    #include "code_location.h"
 
     namespace CoSimIO {
 
@@ -32,6 +33,8 @@ the code where the CoSimIO is included
     {
         public:
         explicit Exception(const std::string& rWhat) : std::exception(), mMessage(rWhat) { }
+
+        Exception(const std::string& rWhat, const CodeLocation& rLocation) : Exception(rWhat + rLocation.GetLocation()) { }
 
         const char* what() const noexcept override
         {
@@ -73,15 +76,15 @@ the code where the CoSimIO is included
 
     } // namespace CoSimIO
 
-    #define CO_SIM_IO_ERROR throw CoSimIO::Exception("Error: ")
+    #define CO_SIM_IO_ERROR throw CoSimIO::Exception("Error: ", CO_SIM_IO_CODE_LOCATION)
 #endif
 
 #ifndef CO_SIM_IO_ERROR_IF
-    #define CO_SIM_IO_ERROR_IF(conditional) if (conditional) CO_SIM_IO_ERROR
+    #define CO_SIM_IO_ERROR_IF(conditional) if (conditional) throw CoSimIO::Exception("Error: ", CO_SIM_IO_CODE_LOCATION)
 #endif
 
 #ifndef CO_SIM_IO_ERROR_IF_NOT
-    #define CO_SIM_IO_ERROR_IF_NOT(conditional) if (!(conditional)) CO_SIM_IO_ERROR
+    #define CO_SIM_IO_ERROR_IF_NOT(conditional) if (!(conditional)) throw CoSimIO::Exception("Error: ", CO_SIM_IO_CODE_LOCATION)
 #endif
 
 #ifndef CO_SIM_IO_INFO
