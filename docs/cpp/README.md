@@ -10,8 +10,8 @@ This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool u
 - [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
 - [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
 - [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
-- [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-CoSimulation-Library-Overview)
-- [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-Building-Kratos-with-CoSimulation)
+- [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-cosimulation-library-overview)
+- [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-building-kratos-with-cosimulation)
 
 
 

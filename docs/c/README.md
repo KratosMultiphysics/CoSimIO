@@ -5,15 +5,15 @@ This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool u
 ## Overview
 
 - [Tutorial for integrating the _CoSimIO_ using the C interface](#tutorial-for-integrating-the-cosimio-using-the-c-interface)
-  - [Overview](#overview)
-  - [What you need](#what-you-need)
-  - [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
-  - [Tutorial 2: Hello CosimIO](#tutorial-2-hello-cosimio)
-  - [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
-  - [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
-  - [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
-  - [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-cosimulation-library-overview)
-  - [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-building-kratos-with-cosimulation)
+- [Overview](#overview)
+- [What you need](#what-you-need)
+- [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
+- [Tutorial 2: Hello CosimIO](#tutorial-2-hello-cosimio)
+- [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
+- [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
+- [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
+- [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-cosimulation-library-overview)
+- [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-building-kratos-with-cosimulation)
 
 
 
