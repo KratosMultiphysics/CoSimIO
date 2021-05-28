@@ -15,6 +15,8 @@ This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool u
   - [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-cosimulation-library-overview)
   - [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-building-kratos-with-cosimulation)
 
+
+
 <!--
 - [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-connectingdisconnecting-tofrom-kratos)
 - [Tutorial 9: Data Exchange with Kratos](#tutorial-9-data-exchange-with-kratos)
@@ -246,6 +248,8 @@ The overview of the Kratos CoSimulation Library can be found [here](../README.md
 
 ## Tutorial 7: Building Kratos with CoSimulation
 The building instructions for the Kratos CoSimulation Library can be found [here](../README.md#building-kratos-with-cosimulation).
+
+
 
 
 <!--
