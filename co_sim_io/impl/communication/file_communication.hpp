@@ -16,6 +16,7 @@
 // System includes
 #include <chrono>
 #include <thread>
+#include <fstream>
 #include <iomanip>
 #include <algorithm>
 #include <limits>
