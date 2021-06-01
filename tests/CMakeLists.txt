@@ -55,7 +55,7 @@ add_cpp_executable(test_fail.cpp)
 add_test(NAME test_fail_fail       COMMAND sh run.sh $<TARGET_FILE:test_fail_cpp_test>  $<TARGET_FILE:test_fail_cpp_test>)
 add_test(NAME test_success_fail    COMMAND sh run.sh $<TARGET_FILE:test_success_cpp_test>  $<TARGET_FILE:test_fail_cpp_test>)
 add_test(NAME test_fail_success    COMMAND sh run.sh $<TARGET_FILE:test_fail_cpp_test>  $<TARGET_FILE:test_success_cpp_test>)
-add_test(NAME test_success_success COMMAND sh run.sh $<TARGET_FILE:test_fail_cpp_test>  $<TARGET_FILE:test_success_cpp_test>)
+add_test(NAME test_success_success COMMAND sh run.sh $<TARGET_FILE:test_success_cpp_test>  $<TARGET_FILE:test_success_cpp_test>)
 set_tests_properties(test_fail_fail test_success_fail test_fail_success PROPERTIES WILL_FAIL True)
 
 add_test(hello_cpp_test hello_cpp_test)
