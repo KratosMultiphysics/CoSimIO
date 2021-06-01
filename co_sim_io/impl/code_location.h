@@ -17,6 +17,8 @@
 #include <string>
 #include <iostream>
 
+#include "filesystem_inc.hpp"
+
 namespace CoSimIO
 {
 ///@addtogroup KratosCore
@@ -59,11 +61,17 @@ public:
     ///@name Operations
     ///@{
 
-    /// This function removes the path before the Kratos root
-    std::string CleanFileName() const;
+    /// This function removes the path before the CoSimIO root and resolves relative paths
+    std::string GetCleanFileName() const
+    {
+        return fs::canonical(fs::path(GetFileName())).lexically_relative(fs::absolute(".")).string();
+    }
 
     /// This method cleans many template arguments and namespaces from the function name gives by compiler
-    std::string CleanFunctionName() const;
+    std::string GetCleanFunctionName() const
+    {
+        return GetFunctionName();
+    }
 
 
     ///@}
@@ -85,11 +93,6 @@ public:
         return mLineNumber;
     }
 
-    std::string GetLocation() const
-    {
-        return GetFileName() + ":" + std::to_string(GetLineNumber()) + ":" + GetFunctionName();
-    }
-
     ///@}
 
 private:
@@ -101,20 +104,6 @@ private:
     std::size_t mLineNumber;
 
     ///@}
-    ///@name Private Operations
-    ///@{
-
-    // static void RemoveNamespace(std::string& FunctionName, const std::string& Namespace);
-
-    // static void ReduceTemplateArgumentsToFirstN(std::string& FunctionName, const std::string& TemplateName, std::size_t NumberOfArgumentsToKeep);
-
-    // static std::size_t GetNextPositionSkippingWhiteSpaces(std::string const& ThisString, std::size_t Position);
-
-    // static bool IsWhiteSpace(char C);
-
-    // static void ReplaceAll(std::string& ThisString, const std::string& FromString, const std::string& ToString);
-
-    ///@}
 
 }; // Class CodeLocation
 
@@ -123,12 +112,13 @@ private:
 ///@{
 
 // /// output stream function
-// std::ostream & operator <<(std::ostream& rOStream,
-//     const CodeLocation& rLocation)
-// {
-//     rOStream << rLocation.GetFileName() << ":" << rLocation.GetLineNumber() << ":" << rLocation.GetFunctionName();
-//     return rOStream;
-// }
+inline std::ostream & operator <<(std::ostream& rOStream,
+    const CodeLocation& Location)
+{
+    rOStream << Location.GetCleanFileName() << " : " << Location.GetLineNumber() << " : " << Location.GetCleanFunctionName();
+    return rOStream;
+}
+
 // ///@}
 
 #if defined(CO_SIM_IO_CODE_LOCATION)
