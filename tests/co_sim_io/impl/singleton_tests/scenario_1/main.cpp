@@ -23,8 +23,8 @@
 
 #define COSIMIO_CHECK_True(a)                                    \
     if (!a) {                                                    \
-        std::cout << "in line " << __LINE__ << " : " << a        \
-                  << " is not true" << std::endl;                \
+        std::cout << "in line " << __LINE__ << " : "             \
+                  << "false is not true" << std::endl;           \
         return 1;                                                \
     }
 
