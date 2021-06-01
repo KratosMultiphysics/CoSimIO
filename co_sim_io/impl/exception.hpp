@@ -100,13 +100,13 @@ class Exception : public std::exception
 
     void update_what(){
         std::stringstream buffer;
-        buffer << mMessage << std::endl;
+        buffer << mMessage << "\n";
         if (mCallStack.empty()) {
             buffer << "in Unknown Location";
         } else {
-            buffer << "in " << mCallStack[0] << std::endl;
+            buffer << "in " << mCallStack[0] << "\n";
             for (auto i = mCallStack.begin()+1; i != mCallStack.end(); ++i) {
-                buffer << "   " << *i << std::endl;
+                buffer << "   " << *i << "\n";
             }
         }
         mWhat = buffer.str();
