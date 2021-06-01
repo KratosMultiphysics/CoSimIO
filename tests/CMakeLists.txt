@@ -50,7 +50,7 @@ foreach(cpp_test_file ${cpp_test_files})
 add_cpp_executable(${cpp_test_file})
 endforeach(cpp_test_file)
 
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run.sh  $1 & $2 && echo\ 1)
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run.sh  $1 & $2 && exit\ 1)
 
 add_test(hello_cpp_test hello_cpp_test)
 add_test(NAME connect_disconnect_cpp_test COMMAND sh run.sh $<TARGET_FILE:connect_disconnect_a_cpp_test>  $<TARGET_FILE:connect_disconnect_b_cpp_test>)
