@@ -47,9 +47,9 @@ foreach(cpp_test_file ${cpp_test_files})
 add_cpp_executable(${cpp_test_file})
 endforeach(cpp_test_file)
 
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run.sh  $1 & $2)
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run.sh $1\ &\ $2\ &\nwait\ %1\ &&\ wait\ %2)
 
-# checking if the run script return the correct exit codes
+# checking if the "run.sh" script return the correct exit codes
 add_cpp_executable(test_success.cpp)
 add_cpp_executable(test_fail.cpp)
 add_test(NAME test_fail_fail       COMMAND sh run.sh $<TARGET_FILE:test_fail_cpp_test>  $<TARGET_FILE:test_fail_cpp_test>)
