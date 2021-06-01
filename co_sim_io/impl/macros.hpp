@@ -20,111 +20,17 @@ the code where the CoSimIO is included
 */
 
 #ifndef CO_SIM_IO_ERROR
-    #include <iostream>
-    #include <string>
-    #include <stdexcept>
-    #include <sstream>
-    #include <vector>
-    #include "code_location.h"
-
-    namespace CoSimIO {
-
-    // Simplified version of kratos/includes/exception.h
-    class Exception : public std::exception
-    {
-      public:
-        explicit Exception(const std::string& rWhat)
-            : std::exception(),
-              mMessage(rWhat),
-              mCallStack()
-        {
-		    update_what();
-        }
-
-        Exception(const std::string& rWhat, const CodeLocation& rLocation)
-            : std::exception(),
-              mMessage(rWhat),
-              mCallStack()
-        {
-            add_to_call_stack(rLocation);
-		    update_what();
-        }
-
-        const char* what() const noexcept override
-        {
-            return mWhat.c_str();
-        }
-
-        /// string stream function
-        template<class StreamValueType>
-        Exception& operator << (StreamValueType const& rValue)
-        {
-            std::stringstream buffer;
-            buffer << rValue;
-
-            append_message(buffer.str());
-
-            return *this;
-        }
-
-        Exception& operator << (std::ostream& (*pf)(std::ostream&))
-        {
-            std::stringstream buffer;
-            pf(buffer);
-
-            append_message(buffer.str());
-
-            return *this;
-        }
-
-        Exception& operator << (const char* pString)
-        {
-            append_message(pString);
-            return *this;
-        }
-
-      private:
-        std::string mWhat;
-        std::string mMessage;
-        std::vector<CodeLocation> mCallStack;
-
-        void append_message(const std::string& rMessage)
-        {
-            mMessage.append(rMessage);
-            update_what();
-        }
-
-        void add_to_call_stack(const CodeLocation& rLocation)
-        {
-            mCallStack.push_back(rLocation);
-            update_what();
-        }
-
-        void update_what(){
-            std::stringstream buffer;
-            buffer << mMessage << std::endl;
-            if (mCallStack.empty()) {
-                buffer << "in Unknown Location";
-            } else {
-                buffer << "in " << mCallStack[0] << std::endl;
-                for (auto i = mCallStack.begin()+1; i != mCallStack.end(); ++i) {
-                    buffer << "   " << *i << std::endl;
-                }
-            }
-            mWhat = buffer.str();
-        }
-    }; // class Exception
-
-    } // namespace CoSimIO
-
+    #include "exception.hpp"
     #define CO_SIM_IO_ERROR throw CoSimIO::Exception("Error: ", CO_SIM_IO_CODE_LOCATION)
 #endif
 
 #ifndef CO_SIM_IO_ERROR_IF
+    #include "exception.hpp"
     #define CO_SIM_IO_ERROR_IF(conditional) if (conditional) throw CoSimIO::Exception("Error: ", CO_SIM_IO_CODE_LOCATION)
 #endif
 
 #ifndef CO_SIM_IO_ERROR_IF_NOT
+    #include "exception.hpp"
     #define CO_SIM_IO_ERROR_IF_NOT(conditional) if (!(conditional)) throw CoSimIO::Exception("Error: ", CO_SIM_IO_CODE_LOCATION)
 #endif
 
