@@ -5,7 +5,7 @@ install( TARGETS singleton_tests_scenario_2_ext_lib DESTINATION ${CMAKE_SOURCE_D
 
 add_executable ( main_scenario_2 main.cpp )
 target_link_libraries( main_scenario_2 singleton_tests_scenario_2_ext_lib )
-install( TARGETS main_scenario_2 DESTINATION ${CMAKE_SOURCE_DIR}/bin/singleton_tests/scenario_1/ )
+install( TARGETS main_scenario_2 DESTINATION ${CMAKE_SOURCE_DIR}/bin/singleton_tests/scenario_2/ )
 set_target_properties( main_scenario_2 PROPERTIES
     CXX_STANDARD 11
     CXX_STANDARD_REQUIRED YES
