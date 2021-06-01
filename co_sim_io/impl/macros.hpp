@@ -24,6 +24,7 @@ the code where the CoSimIO is included
     #include <string>
     #include <stdexcept>
     #include <sstream>
+    #include <vector>
     #include "code_location.h"
 
     namespace CoSimIO {
@@ -31,14 +32,27 @@ the code where the CoSimIO is included
     // Simplified version of kratos/includes/exception.h
     class Exception : public std::exception
     {
-        public:
-        explicit Exception(const std::string& rWhat) : std::exception(), mMessage(rWhat) { }
+      public:
+        explicit Exception(const std::string& rWhat)
+            : std::exception(),
+              mMessage(rWhat),
+              mCallStack()
+        {
+		    update_what();
+        }
 
-        Exception(const std::string& rWhat, const CodeLocation& rLocation) : Exception(rWhat + rLocation.GetLocation()) { }
+        Exception(const std::string& rWhat, const CodeLocation& rLocation)
+            : std::exception(),
+              mMessage(rWhat),
+              mCallStack()
+        {
+            add_to_call_stack(rLocation);
+		    update_what();
+        }
 
         const char* what() const noexcept override
         {
-            return mMessage.c_str();
+            return mWhat.c_str();
         }
 
         /// string stream function
@@ -48,7 +62,7 @@ the code where the CoSimIO is included
             std::stringstream buffer;
             buffer << rValue;
 
-            mMessage.append(buffer.str());
+            append_message(buffer.str());
 
             return *this;
         }
@@ -58,21 +72,48 @@ the code where the CoSimIO is included
             std::stringstream buffer;
             pf(buffer);
 
-            mMessage.append(buffer.str());
+            append_message(buffer.str());
 
             return *this;
         }
 
         Exception& operator << (const char* pString)
         {
-            mMessage.append(pString);
+            append_message(pString);
             return *this;
         }
 
-        private:
+      private:
+        std::string mWhat;
         std::string mMessage;
+        std::vector<CodeLocation> mCallStack;
 
-    };
+        void append_message(const std::string& rMessage)
+        {
+            mMessage.append(rMessage);
+            update_what();
+        }
+
+        void add_to_call_stack(const CodeLocation& rLocation)
+        {
+            mCallStack.push_back(rLocation);
+            update_what();
+        }
+
+        void update_what(){
+            std::stringstream buffer;
+            buffer << mMessage << std::endl;
+            if (mCallStack.empty()) {
+                buffer << "in Unknown Location";
+            } else {
+                buffer << "in " << mCallStack[0] << std::endl;
+                for (auto i = mCallStack.begin()+1; i != mCallStack.end(); ++i) {
+                    buffer << "   " << *i << std::endl;
+                }
+            }
+            mWhat = buffer.str();
+        }
+    }; // class Exception
 
     } // namespace CoSimIO
 
