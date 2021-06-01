@@ -9,3 +9,4 @@ set_target_properties( main_singleton_partner PROPERTIES
 )
 
 add_subdirectory(scenario_1)
+add_subdirectory(scenario_2)

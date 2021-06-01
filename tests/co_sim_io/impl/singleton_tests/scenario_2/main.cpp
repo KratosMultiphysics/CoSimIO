@@ -14,7 +14,7 @@
 Testing if the CoSimIO can be safely included in complex libraries
 In this scenario the CoSimIO is included in the main executable
 and in the external library
-Connecting and disconnecting is done in the main executable
+Connecting and disconnecting is done in the external library
 */
 
 // CoSimulation includes
@@ -37,22 +37,11 @@ Connecting and disconnecting is done in the main executable
 
 int main()
 {
-    CoSimIO::Info settings;
-    settings.Set("my_name",    "singleton_tester");
-    settings.Set("connect_to", "singleton_tester_partner");
-    settings.Set("echo_level", 1);
-    settings.Set("version", "1.25");
+    const std::string connection_name = ConnectToCoSimIO();
 
-    auto info = CoSimIO::Connect(settings);
-    COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
-    const std::string connection_name = info.Get<std::string>("connection_name");
+    COSIMIO_CHECK_True(CoSimIO::Internals::HasIO(connection_name));
 
-    COSIMIO_CHECK_True(CheckExtLibHasConnection(connection_name));
-
-    CoSimIO::Info disconnect_settings;
-    disconnect_settings.Set("connection_name", connection_name);
-    info = CoSimIO::Disconnect(disconnect_settings); // disconnect afterwards
-    COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Disconnected);
+    DisconnectFromCoSimIO(connection_name);
 
     return 0;
 }
