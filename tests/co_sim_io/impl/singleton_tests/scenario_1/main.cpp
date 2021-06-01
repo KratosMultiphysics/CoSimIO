@@ -40,9 +40,6 @@ int main()
     COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
     const std::string connection_name = info.Get<std::string>("connection_name");
 
-
-    std::cout << "\nHas_io MAIN: "<< CoSimIO::Internals::HasIO(connection_name) << std::endl<< std::endl;
-
     COSIMIO_CHECK_True(CheckExtLibHasConnection(connection_name));
 
     CoSimIO::Info disconnect_settings;
