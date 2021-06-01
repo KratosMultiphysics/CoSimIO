@@ -17,17 +17,18 @@
 #include <string>
 #include <iostream>
 
+// Project includes
 #include "filesystem_inc.hpp"
 
 namespace CoSimIO
 {
-///@addtogroup KratosCore
+///@addtogroup CoSimIO
 ///@{
 
 /// This class keeps a code location consist of filename, function name and line number.
 /// It also provides methods to get cleaned version of filename and function name.
-/// Adapted from Kratos (https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/code_location.h)
-class  CodeLocation
+/// Adapted from Kratos (kratos/includes/code_location.h)
+class CodeLocation
 {
 public:
 
