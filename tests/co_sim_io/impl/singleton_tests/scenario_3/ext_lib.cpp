@@ -10,19 +10,11 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-// Project includes
-#include "co_sim_io.hpp"
 #include "ext_lib.hpp"
 
-std::string ConnectToCoSimIO()
+std::string ConnectToCoSimIO(CoSimIO::Info& rSettings)
 {
-    CoSimIO::Info settings;
-    settings.Set("my_name",    "singleton_tester");
-    settings.Set("connect_to", "singleton_tester_partner");
-    settings.Set("echo_level", 1);
-    settings.Set("version", "1.25");
-
-    auto info = CoSimIO::Connect(settings);
+    auto info = CoSimIO::Connect(rSettings);
     return info.Get<std::string>("connection_name");
 }
 

@@ -10,11 +10,12 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
+// System includes
+#include <string>
+
 // Project includes
 #include "co_sim_io.hpp"
-#include "ext_lib.hpp"
 
-bool CheckExtLibHasConnection(const std::string& ConnectionName)
-{
-    return CoSimIO::Internals::HasIO(ConnectionName);
-}
+std::string ConnectToCoSimIO(CoSimIO::Info& rSettings);
+
+void DisconnectFromCoSimIO(const std::string& rConnectionName);
