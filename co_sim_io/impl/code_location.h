@@ -32,17 +32,17 @@ class CodeLocation
 {
 public:
 
-	CodeLocation(std::string const& FileName,
+    CodeLocation(std::string const& FileName,
                  std::string const& FunctionName,
                  std::size_t LineNumber) :
-		mFileName(FileName),
+        mFileName(FileName),
         mFunctionName(FunctionName),
         mLineNumber(LineNumber) {}
 
     CodeLocation() : CodeLocation("Unknown", "Unknown", 0) {}
 
-	CodeLocation(CodeLocation const & Other) :
-		mFileName(Other.mFileName),
+    CodeLocation(CodeLocation const & Other) :
+        mFileName(Other.mFileName),
         mFunctionName(Other.mFunctionName),
         mLineNumber(Other.mLineNumber) {}
 
