@@ -49,6 +49,15 @@ endforeach(cpp_test_file)
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run.sh  $1 & $2)
 
+# checking if the run script return the correct exit codes
+add_cpp_executable(test_success.cpp)
+add_cpp_executable(test_fail.cpp)
+add_test(NAME test_fail_fail       COMMAND sh run.sh $<TARGET_FILE:test_fail_cpp_test>  $<TARGET_FILE:test_fail_cpp_test>)
+add_test(NAME test_success_fail    COMMAND sh run.sh $<TARGET_FILE:test_success_cpp_test>  $<TARGET_FILE:test_fail_cpp_test>)
+add_test(NAME test_fail_success    COMMAND sh run.sh $<TARGET_FILE:test_fail_cpp_test>  $<TARGET_FILE:test_success_cpp_test>)
+add_test(NAME test_success_success COMMAND sh run.sh $<TARGET_FILE:test_fail_cpp_test>  $<TARGET_FILE:test_success_cpp_test>)
+set_tests_properties(test_fail_fail test_success_fail test_fail_success PROPERTIES WILL_FAIL True)
+
 add_test(hello_cpp_test hello_cpp_test)
 add_test(NAME connect_disconnect_cpp_test COMMAND sh run.sh $<TARGET_FILE:connect_disconnect_a_cpp_test>  $<TARGET_FILE:connect_disconnect_b_cpp_test>)
 add_test(NAME import_export_info_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_info_cpp_test>  $<TARGET_FILE:import_info_cpp_test>)
