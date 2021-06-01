@@ -31,27 +31,8 @@ if (CO_SIM_IO_ENABLE_MPI)
 
 endif()
 
-
-add_library (sub1 SHARED co_sim_io/impl/singleton_tests/sub_1.cpp co_sim_io/impl/singleton_tests/sub_12.cpp)
-install( TARGETS sub1 DESTINATION ${CMAKE_SOURCE_DIR}/bin )
-
-add_executable ( main_singleton co_sim_io/impl/singleton_tests/main.cpp co_sim_io/impl/singleton_tests/main2.cpp)
-target_link_libraries( main_singleton sub1 )
-install( TARGETS main_singleton DESTINATION ${CMAKE_SOURCE_DIR}/bin )
-set_target_properties(main_singleton PROPERTIES
-    CXX_STANDARD 11
-    CXX_STANDARD_REQUIRED YES
-    CXX_EXTENSIONS NO
-)
-
-
-add_executable ( main_singleton_partner co_sim_io/impl/singleton_tests/main_partner.cpp)
-install( TARGETS main_singleton_partner DESTINATION ${CMAKE_SOURCE_DIR}/bin )
-set_target_properties(main_singleton_partner PROPERTIES
-    CXX_STANDARD 11
-    CXX_STANDARD_REQUIRED YES
-    CXX_EXTENSIONS NO
-)
+# singleton tests
+add_subdirectory(co_sim_io/impl/singleton_tests)
 
 ### C++ tests ###
 function(add_cpp_executable TEST_SOURCE_FILE)
@@ -69,7 +50,7 @@ foreach(cpp_test_file ${cpp_test_files})
 add_cpp_executable(${cpp_test_file})
 endforeach(cpp_test_file)
 
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run.sh  $1 & $2)
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run.sh  $1 & $2 && echo\ 1)
 
 add_test(hello_cpp_test hello_cpp_test)
 add_test(NAME connect_disconnect_cpp_test COMMAND sh run.sh $<TARGET_FILE:connect_disconnect_a_cpp_test>  $<TARGET_FILE:connect_disconnect_b_cpp_test>)

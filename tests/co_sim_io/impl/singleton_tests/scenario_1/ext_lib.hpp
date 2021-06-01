@@ -11,18 +11,6 @@
 //
 
 // System includes
-#include <iostream>
+#include <string>
 
-// Project includes
-// #define CO_SIM_IO_EXTERN
-#include "co_sim_io.hpp"
-
-bool CheckSub(const std::string& ConnectionName)
-{
-    std::cout << "\nHas_io: "<< CoSimIO::Internals::HasIO(ConnectionName) << std::endl<< std::endl;
-
-
-
-    return true;
-
-}
+bool CheckExtLibHasConnection(const std::string& ConnectionName);

@@ -12,12 +12,19 @@
 
 // CoSimulation includes
 #include "co_sim_io.hpp"
-#include "sub_1.hpp"
+#include "ext_lib.hpp"
 
 #define COSIMIO_CHECK_EQUAL(a, b)                                \
     if (a != b) {                                                \
         std::cout << "in line " << __LINE__ << " : " << a        \
                   << " is not equal to " << b << std::endl;      \
+        return 1;                                                \
+    }
+
+#define COSIMIO_CHECK_True(a)                                    \
+    if (!a) {                                                    \
+        std::cout << "in line " << __LINE__ << " : " << a        \
+                  << " is not true" << std::endl;                \
         return 1;                                                \
     }
 
@@ -36,7 +43,7 @@ int main()
 
     std::cout << "\nHas_io MAIN: "<< CoSimIO::Internals::HasIO(connection_name) << std::endl<< std::endl;
 
-    CheckSub(connection_name);
+    COSIMIO_CHECK_True(CheckExtLibHasConnection(connection_name));
 
     CoSimIO::Info disconnect_settings;
     disconnect_settings.Set("connection_name", connection_name);
