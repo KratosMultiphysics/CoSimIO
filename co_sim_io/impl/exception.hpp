@@ -53,6 +53,11 @@ class Exception : public std::exception
         return mWhat.c_str();
     }
 
+    const std::string& message() const
+    {
+        return mMessage;
+    }
+
     /// string stream function
     template<class StreamValueType>
     Exception& operator << (StreamValueType const& rValue)
