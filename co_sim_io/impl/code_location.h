@@ -89,7 +89,7 @@ public:
         return mFunctionName;
     }
 
-    int GetLineNumber() const
+    std::size_t GetLineNumber() const
     {
         return mLineNumber;
     }
