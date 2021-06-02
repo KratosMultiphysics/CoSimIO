@@ -10,12 +10,19 @@ This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool u
 - [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
 - [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
 - [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
-- [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-CoSimulation-Library-Overview)
-- [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-Building-Kratos-with-CoSimulation)
-<!-- - [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-Connecting/Disconnecting-tofrom-Kratos)
+- [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-cosimulation-library-overview)
+- [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-building-kratos-with-cosimulation)
+
+
+
+
+
+<!--
+- [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-Connecting/Disconnecting-tofrom-Kratos)
 - [Tutorial 9: Data Exchange with Kratos](#tutorial-9-Data-Exchange-with-Kratos)
 - [Tutorial 10: Mesh Exchange with Kratos](#tutorial-10-Mesh-Exchange-with-Kratos)
-- [Tutorial 11: Mapping with Kratos](#tutorial-11-Mapping-with-Kratos) -->
+- [Tutorial 11: Mapping with Kratos](#tutorial-11-Mapping-with-Kratos)
+-->
 
 ## What you need
 - Downloading the _CosimIO_ from the repository:
@@ -184,11 +191,11 @@ This example can be found in [integration_tutorials/python/export_mesh.py](../..
 
 
 ## Tutorial 6: Kratos CoSimulation Library Overview
-The overview of the Kratos CoSimulation Library can be found [here](../README.md#kratos-cosimulation-library-overview).
+The overview of the Kratos CoSimulation Library can be found [here](../index.md#kratos-cosimulation-library-overview).
 
 
 ## Tutorial 7: Building Kratos with CoSimulation
-The building instructions for the Kratos CoSimulation Library can be found [here](../README.md#building-kratos-with-cosimulation).
+The building instructions for the Kratos CoSimulation Library can be found [here](../index.md#building-kratos-with-cosimulation).
 
 <!--
 ## Tutorial 8: Connecting/Disconnecting to/from Kratos

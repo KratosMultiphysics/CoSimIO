@@ -14,7 +14,7 @@ _CoSimIO_ for coupling and exchanging data between different solvers or other so
 
 The implementation is defined in [co_sim_io](co_sim_io)
 
-A tutorial for using the _CoSimIO_ can be found in [tutorial](tutorial)
+Documentation and tutorials can be found [here](https://kratosmultiphysics.github.io/CoSimIO/)
 
 The tests are contained in [tests](tests)
 

@@ -3,9 +3,9 @@
 This folder contains step-by-step instructions on how to integrate the _CoSimIO_ into a solver/software-tool. Since the _CoSimIO_ is independent of Kratos, this is done completely standalone.
 
 Each subfolder has the tutorial for an specific language:
-* **C++ Interface**: Is the natural interface of the _CoSimIO_ providing its full capabilities.
-* **Python Interface**: Is an extensive interface based on the C++ one which provides the most capabilities.
-* **C Interface**: A subset of the C++ interface providing the interface for double and common C arrays with set of functions representing the C++ class methods.
+* **C++ Interface**: Is the natural interface of the _CoSimIO_ providing its full capabilities. [link to tutorials](cpp)
+* **Python Interface**: Is an extensive interface based on the C++ one which provides the most capabilities. [link to tutorials](python)
+* **C Interface**: A subset of the C++ interface providing the interface for double and common C arrays with set of functions representing the C++ class methods. [link to tutorials](c)
 
 The Python interface is recommended for solvers/software-tools implemented in Python. Furthermore it is recommend to be used if the solver/software-tool has an efficient Python interface (efficient in the sense of compute and memory-overhead). The C++ is the most complete one and the C is a practical substitute for solvers/software-tools in other languages avoiding the incompatibilities and complexities of C++ interface.
 
@@ -42,3 +42,54 @@ Now for running the Kratos, first you should add configure the python environmen
 * `LD_LIBRARY_PATH` should point to the libs folder (`path/to/kratos/libs`) where you can find compiled libraries.
 
 For more information about the Kratos build requirements, options please check the [Kratos install guide](https://github.com/KratosMultiphysics/Kratos/blob/master/INSTALL.md)
+
+
+
+
+
+<!--
+
+
+# Testing
+[cpp](cpp/README.md)
+
+
+
+
+## Welcome to GitHub Pages
+
+You can use the [editor on GitHub](https://github.com/KratosMultiphysics/CoSimIO/edit/docs-improvement/docs/index.md) to maintain and preview the content for your website in Markdown files.
+
+Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+
+### Markdown
+
+Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+
+```markdown
+Syntax highlighted code block
+
+# Header 1
+## Header 2
+### Header 3
+
+- Bulleted
+- List
+
+1. Numbered
+2. List
+
+**Bold** and _Italic_ and `Code` text
+
+[Link](url) and ![Image](src)
+```
+
+For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+
+### Jekyll Themes
+
+Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/KratosMultiphysics/CoSimIO/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+
+### Support or Contact
+
+Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out. -->
