@@ -14,4 +14,5 @@
 */
 
 // Project includes
+#define CO_SIM_IO_EXTERN
 #include "co_sim_io.hpp"
