@@ -29,23 +29,22 @@ This file contains the implementation of the functions defined in "co_sim_io.hpp
 namespace CoSimIO {
 
 namespace Internals {
-// TODO make sure this is unique even across compilation units (test somehow)
 
-#ifdef CO_SIM_IO_EXTERN
-extern std::unordered_map<std::string, std::unique_ptr<Connection>> s_co_sim_connections;
-#else
-std::unordered_map<std::string, std::unique_ptr<Connection>> s_co_sim_connections;
-#endif
+inline std::unordered_map<std::string, std::unique_ptr<Connection>>& GetRegistry()
+{
+    static std::unordered_map<std::string, std::unique_ptr<Connection>> s_co_sim_connections;
+    return s_co_sim_connections;
+}
 
 static bool HasIO(const std::string& rConnectionName)
 {
-    return s_co_sim_connections.find(rConnectionName) != s_co_sim_connections.end();
+    return GetRegistry().find(rConnectionName) != GetRegistry().end();
 }
 
 static Connection& GetConnection(const std::string& rConnectionName)
 {
     CO_SIM_IO_ERROR_IF_NOT(HasIO(rConnectionName)) << "Trying to use connection \"" << rConnectionName << "\" which does not exist!" << std::endl;
-    return *s_co_sim_connections.at(rConnectionName);
+    return *GetRegistry().at(rConnectionName);
 }
 
 } // namespace Internals
@@ -86,7 +85,7 @@ inline Info Connect(const Info& I_Settings)
 
     CO_SIM_IO_ERROR_IF(HasIO(connection_name)) << "A connection from \"" << my_name << "\" to \"" << connect_to << "\"already exists!" << std::endl;
 
-    s_co_sim_connections[connection_name] = std::unique_ptr<Connection>(new Connection(I_Settings));
+    GetRegistry()[connection_name] = std::unique_ptr<Connection>(new Connection(I_Settings));
 
     auto info = GetConnection(connection_name).Connect(I_Settings);
     info.Set<std::string>("connection_name", connection_name);
@@ -101,7 +100,7 @@ inline Info Disconnect(const Info& I_Info)
     CO_SIM_IO_ERROR_IF_NOT(HasIO(connection_name)) << "Trying to disconnect connection \"" << connection_name << "\" which does not exist!" << std::endl;
 
     auto info = GetConnection(connection_name).Disconnect(I_Info);
-    s_co_sim_connections.erase(connection_name);
+    GetRegistry().erase(connection_name);
 
     return info;
 }
