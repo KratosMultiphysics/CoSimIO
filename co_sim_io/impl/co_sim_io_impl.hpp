@@ -30,6 +30,7 @@ namespace CoSimIO {
 
 namespace Internals {
 
+// this function makes sure that the registry works correctly also across translation units / libraries
 inline std::unordered_map<std::string, std::unique_ptr<Connection>>& GetRegistry()
 {
     static std::unordered_map<std::string, std::unique_ptr<Connection>> s_co_sim_connections;
