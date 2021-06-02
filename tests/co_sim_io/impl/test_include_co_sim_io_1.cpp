@@ -16,5 +16,4 @@ the "other" file that includes CoSimIO is "test_include_co_sim_io_2.cpp"
 */
 
 // Project includes
-#define CO_SIM_IO_EXTERN
 #include "co_sim_io.hpp"
