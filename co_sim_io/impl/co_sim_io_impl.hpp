@@ -36,10 +36,18 @@ class Singleton
 public:
     static T& getInstance()
     {
-        static T instance;
-        return instance;
+        if (!m_instance) {
+            m_instance = CoSimIO::make_unique<T>();
+        }
+        return *m_instance;
     }
+
+private:
+    static std::unique_ptr<T> m_instance;
 };
+
+template<typename T>
+std::unique_ptr<T> Singleton<T>::m_instance = nullptr;
 
 using maptype = std::unordered_map<std::string, std::unique_ptr<Connection>>;
 
