@@ -10,11 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-// Project includes
-#include "co_sim_io.hpp"
-#include "ext_lib_2.hpp"
+// System includes
+#include <string>
 
-bool ExtLib2HasIO(const std::string& rConnectionName)
-{
-    return CoSimIO::Internals::HasIO(rConnectionName);
-}
+bool ExtLib2HasIO(const std::string& rConnectionName);
