@@ -30,6 +30,19 @@ namespace CoSimIO {
 
 namespace Internals {
 
+template <typename T>
+class Singleton
+{
+public:
+    static T& getInstance()
+    {
+        static T instance;
+        return instance;
+    }
+};
+
+using maptype = std::unordered_map<std::string, std::unique_ptr<Connection>>;
+
 // this function makes sure that the registry works correctly also across translation units / libraries
 inline std::unordered_map<std::string, std::unique_ptr<Connection>>& GetRegistry()
 {
@@ -39,13 +52,13 @@ inline std::unordered_map<std::string, std::unique_ptr<Connection>>& GetRegistry
 
 static bool HasIO(const std::string& rConnectionName)
 {
-    return GetRegistry().find(rConnectionName) != GetRegistry().end();
+    return Singleton<maptype>::getInstance().find(rConnectionName) != Singleton<maptype>::getInstance().end();
 }
 
 static Connection& GetConnection(const std::string& rConnectionName)
 {
     CO_SIM_IO_ERROR_IF_NOT(HasIO(rConnectionName)) << "Trying to use connection \"" << rConnectionName << "\" which does not exist!" << std::endl;
-    return *GetRegistry().at(rConnectionName);
+    return *Singleton<maptype>::getInstance().at(rConnectionName);
 }
 
 } // namespace Internals
@@ -86,7 +99,7 @@ inline Info Connect(const Info& I_Settings)
 
     CO_SIM_IO_ERROR_IF(HasIO(connection_name)) << "A connection from \"" << my_name << "\" to \"" << connect_to << "\"already exists!" << std::endl;
 
-    GetRegistry()[connection_name] = std::unique_ptr<Connection>(new Connection(I_Settings));
+    Singleton<maptype>::getInstance()[connection_name] = std::unique_ptr<Connection>(new Connection(I_Settings));
 
     auto info = GetConnection(connection_name).Connect(I_Settings);
     info.Set<std::string>("connection_name", connection_name);
@@ -101,7 +114,7 @@ inline Info Disconnect(const Info& I_Info)
     CO_SIM_IO_ERROR_IF_NOT(HasIO(connection_name)) << "Trying to disconnect connection \"" << connection_name << "\" which does not exist!" << std::endl;
 
     auto info = GetConnection(connection_name).Disconnect(I_Info);
-    GetRegistry().erase(connection_name);
+    Singleton<maptype>::getInstance().erase(connection_name);
 
     return info;
 }
