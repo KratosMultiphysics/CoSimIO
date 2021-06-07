@@ -2,19 +2,10 @@
 
 Welcome to the documentation of _CoSimIO_.
 
-## Tutorials for integrating the _CoSimIO_
-The tutorials can be found [here](tutorials/README.md)
+## Structure of _CoSimIO_ and which part it plays in Kratos CoSimulation
+Even though the _CoSimIO_ is a standalone tool, it reaches its full capabilities only in combination with the CoSimulation features of Kratos. This section explains how everything fits together.
 
-### Some test
-Hello
-
-## API documentation
-The documentation for the API of the _CoSimIO_ can be found [here](api_docs/README.md)
-
-## Kratos CoSimulation
-For using the _CoSimIO_ with Kratos it is necessary to build Kratos (separately). Basic explanations are given below with links for more detailed descriptions.
-
-## Kratos CoSimulation Library Overview
+### Kratos CoSimulation Library Overview
 Conceptually the Kratos CoSimulation consists of 3 main components:
 1. **Data Transfer**: Any co-simulation process needs several data communications between different solvers/executables and Kratos. This includes raw data (in the form of vectors), meshes, and mesh data (like nodal and elemental data) or control signals. So a flexible data transfer mechanism one of the important components of the library.
 2. **Coupling Solutions**: Coupling algorithms have many common parts like the strategy, convergence criteria, convergence accelerators, and predictors. To be seamlessly usable in Kratos such an algorithm should provide the same interface as internal solutions of Kratos. The Kratos CoSimulation provides many of these tools and algorithms generic enough to be used in different contexts.
@@ -26,6 +17,17 @@ Based on these concepts these are the main components of the library:
 3. **MappingApplication**: The standard mapping application of the Kratos located in [kratos/applications/MappingApplication](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/MappingApplication) folder. This application provides the mapping of data from one mesh to another one. It supports the 1D, 2D and 3D mapping with different types of mappings (like nearest node, nearest element, etc.). Check the link for a more detailed overview.
 
 Kratos provides an extensive Python interface to its CoSimulation library which is used in the tutorials.
+
+
+## Tutorials for integrating the _CoSimIO_
+The tutorials can be found [here](tutorials/README.md).
+
+## API documentation
+The documentation for the API of the _CoSimIO_ can be found [here](api_docs/README.md).
+
+## Kratos CoSimulation
+For using the _CoSimIO_ with Kratos it is necessary to build Kratos (separately). Basic explanations are given below with links for more detailed descriptions.
+
 
 
 ## Building Kratos with CoSimulation
