@@ -1,6 +1,6 @@
 # ModelPart
 
-This file describes the Python interface of `Kratos::ModelPart`. See [here](model_model_part_cpp.md) for more information and the native (C++) interface.
+This file describes the Python interface of `CoSimIO::ModelPart`. See [here](model_model_part_cpp.md) for more information and the native (C++) interface.
 
 ## Python interface of _CoSimIO.ModelPart_
 

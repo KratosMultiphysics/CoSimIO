@@ -1,6 +1,6 @@
 # ModelPart
 
-This file describes the C interface of `Kratos::ModelPart`. See [here](model_model_part_cpp.md) for more information and the native (C++) interface.
+This file describes the C interface of `CoSimIO::ModelPart`. See [here](model_model_part_cpp.md) for more information and the native (C++) interface.
 
 ## C interface of _CoSimIO_ModelPart_
 Create and free a `ModelPart` like this:
