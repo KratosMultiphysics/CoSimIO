@@ -8,6 +8,9 @@ The tutorials can be found [here](tutorials/README.md)
 ### Some test
 Hello
 
+## API documentation
+The documentation for the API of the _CoSimIO_ can be found [here](api_docs/README.md)
+
 ## Kratos CoSimulation
 For using the _CoSimIO_ with Kratos it is necessary to build Kratos (separately). Basic explanations are given below with links for more detailed descriptions.
 
