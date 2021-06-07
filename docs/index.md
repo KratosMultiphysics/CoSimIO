@@ -22,8 +22,11 @@ Kratos provides an extensive Python interface to its CoSimulation library which 
 ## Tutorials for integrating the _CoSimIO_
 The tutorials can be found [here](tutorials/README.md).
 
-## API documentation (WIP)
+## API documentation
 The documentation for the API of the _CoSimIO_ can be found [here](api_docs/README.md).
+
+## Communication
+The available methods for (interprocess) communication are explained [here](communication.md).
 
 ## Kratos CoSimulation
 For using the _CoSimIO_ with Kratos it is necessary to build Kratos (separately). Basic explanations are given [here](kratos_build.md) with links for more detailed descriptions.
