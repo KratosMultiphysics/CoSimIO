@@ -2,6 +2,8 @@
 
 **Input for all communication methods:**
 
+The following settings are available for all methods of communication:
+
 | name | type | required | default| description |
 |-------------------|--------|---|---|---|
 | my_name           | string | x | - | necessary for establishing a connection |
@@ -12,7 +14,7 @@
 
 
 ## File-based communication
-As the name indicates, this method uses files for communicating data.
+As the name indicates, this method uses files for communicating data. It is robust and useful for debugging.
 
 **Specific Input:**
 
