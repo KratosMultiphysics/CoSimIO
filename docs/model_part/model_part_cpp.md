@@ -8,7 +8,7 @@ This file describes the native (C++) interface of `CoSimIO::ModelPart`.
 Click [here](model_part_c.md) for the C interface and [here](model_part_python.md) for the Python interface.
 
 ## C++ interface of _CoSimIO::ModelPart_
-Create a `ModelPart` like this:
+Create a _ModelPart_ like this:
 ```c++
 // create CoSimIO::ModelPart
 CoSimIO::ModelPart model_part("my_model_part");

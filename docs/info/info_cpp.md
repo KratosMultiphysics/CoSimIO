@@ -125,7 +125,7 @@ info.Set<int>("echo_level", 1);
 info.Clear(); // removes everything form info
 ~~~
 
-## Printing the `Info`
+## Printing the _Info_
 The `CoSimIO::Info` can be printed to a stream:
 
 ~~~c++
