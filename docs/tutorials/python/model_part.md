@@ -103,4 +103,4 @@ for node in element.Nodes:
 ```
 
 ## Further information
-For more information check the [implementation](../../co_sim_io/python/model_part_to_python.hpp) and the [tests](../../tests/co_sim_io/python/test_model_part.py).
+For more information check the [implementation](../../../co_sim_io/python/model_part_to_python.hpp) and the [tests](../../../tests/co_sim_io/python/test_model_part.py).

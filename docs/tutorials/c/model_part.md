@@ -118,4 +118,4 @@ for (int i=0; i<CoSimIO_Element_NumberOfNodes(element); ++i) {
 ```
 
 ## Further information
-For more information check the [implementation](../../co_sim_io/c/co_sim_io_c_model_part.h) and the [tests](../../tests/co_sim_io/c/model_part/test_model_part.c).
+For more information check the [implementation](../../../co_sim_io/c/co_sim_io_c_model_part.h) and the [tests](../../../tests/co_sim_io/c/model_part/test_model_part.c).
