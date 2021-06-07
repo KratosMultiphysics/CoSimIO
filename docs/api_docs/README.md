@@ -19,11 +19,17 @@ Instance of `CoSimIO::Info` which contains the following:
 | minor_version | int    | Minor version of _CoSimIO_ |
 | patch_version | string | Patch version of _CoSimIO_ |
 
+#
+
 
 ### Connect
 
+#
+
 
 ### Disconnect
+
+#
 
 
 ### ImportData
@@ -40,6 +46,9 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 
+#
+
+
 ### ExportData
 This function is used to export (send) data to the connection partner. The connection partner has to call `ImportData`.
 
@@ -53,6 +62,8 @@ xxx
 Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
+
+#
 
 
 ### ImportMesh
@@ -73,6 +84,8 @@ Instance of `CoSimIO::Info` which contains the following:
 #### Additional information
 See documentation of `CoSimIO::ModelPart` [here](../model_part/model_part_cpp.md).
 
+#
+
 
 ### ExportMesh
 This function is used to export (send) a mesh (in the form of a `CoSimIO::ModelPart`) to the connection partner. The connection partner has to call `ImportMesh`.
@@ -92,11 +105,14 @@ Instance of `CoSimIO::Info` which contains the following:
 #### Additional information
 See documentation of `CoSimIO::ModelPart` [here](../model_part/model_part_cpp.md).
 
+#
+
 
 ### Run
 
 
 ### Register
+
 
 
 ## Doxygen documentation
