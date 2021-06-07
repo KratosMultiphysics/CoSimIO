@@ -5,6 +5,8 @@ It is a simplified version of `Kratos::ModelPart` ([link](https://github.com/Kra
 
 This file describes the native (C++) interface of `Kratos::ModelPart`.
 
+Click [here](model_part_c.md) for the C interface and [here](model_part_python.md) for the Python interface.
+
 ## C++ interface of _CoSimIO::ModelPart_
 Create a `ModelPart` like this:
 ```c++
