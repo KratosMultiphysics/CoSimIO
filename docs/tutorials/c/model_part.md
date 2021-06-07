@@ -3,7 +3,7 @@
 The `ModelPart` is a container for mesh, it contains nodes and elements.
 It is a simplified version of [`Kratos::ModelPart`](https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/model_part.h).
 
-### Interface of _CoSimIO_ModelPart_
+## Interface of _CoSimIO_ModelPart_
 Create and free a `ModelPart` like this:
 ```c
 // create CoSimIO_ModelPart
@@ -81,7 +81,7 @@ Removing all nodes and elements can be done with the following:
 CoSimIO_ModelPart_Clear(model_part);
 ```
 
-### Interface of _CoSimIO_Node_
+## Interface of _CoSimIO_Node_
 The _CoSimIO_Node_ an be used in the following way:
 ```c
 // access Id of node:
@@ -98,7 +98,7 @@ double node_y_idx = CoSimIO_Node_Coordinate(node, 1);
 double node_z_idx = CoSimIO_Node_Coordinate(node, 2);
 ```
 
-### Interface of _CoSimIO_Element_
+## Interface of _CoSimIO_Element_
 The _CoSimIO_Element_ provides the following interface:
 ```c
 // access Id of element:
@@ -117,5 +117,5 @@ for (int i=0; i<CoSimIO_Element_NumberOfNodes(element); ++i) {
 }
 ```
 
-### Further information
+## Further information
 For more information check the [implementation](../../co_sim_io/c/co_sim_io_c_model_part.h) and the [tests](../../tests/co_sim_io/c/model_part/test_model_part.c).
