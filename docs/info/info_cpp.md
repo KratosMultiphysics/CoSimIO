@@ -82,7 +82,7 @@ Info info;
 info.Set<int>("echo_level", 1);
 
 int echo_level = info.Get("echo_level", 2); // returns 1 as "echo_level" exists
-int vebosity = info.Get("vebosity", 2); // returns 2 as "vebosity" doesn't exist
+int verbosity  = info.Get("verbosity", 2);  // returns 2 as "verbosity" doesn't exist
 ~~~
 
 ## Checking the size
