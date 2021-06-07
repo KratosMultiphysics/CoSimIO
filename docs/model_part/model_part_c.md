@@ -74,6 +74,8 @@ CoSimIO_Node node = CoSimIO_ModelPart_GetNodeById(model_part, 3);
 CoSimIO_Element element = CoSimIO_ModelPart_GetElementById(model_part, 12);
 ```
 
+Accessing by index is the preferred way of accessing the nodes and elements, access by Id is inherently slower due to the internal data structure of `ModelPart`.
+
 Removing all nodes and elements can be done with the following:
 ```c
 // removing all nodes and elements

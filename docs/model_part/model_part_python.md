@@ -64,6 +64,8 @@ node = model_part.GetNode(3)
 element = model_part.GetElement(12)
 ```
 
+Iterating is the preferred way of accessing the nodes and elements, access by Id is inherently slower due to the internal data structure of `ModelPart`.
+
 Removing all nodes and elements can be done with the following:
 ```python
 # removing all nodes and elements
