@@ -24,10 +24,30 @@ Instance of `CoSimIO::Info` which contains the following:
 
 ### Connect
 
+#### Input
+xxx
+
+#### Returns
+Instance of `CoSimIO::Info` which contains the following:
+
+| name | type | description |
+
+* * *
+
 * * *
 
 
 ### Disconnect
+
+#### Input
+xxx
+
+#### Returns
+Instance of `CoSimIO::Info` which contains the following:
+
+| name | type | description |
+
+* * *
 
 * * *
 
@@ -110,10 +130,30 @@ See documentation of `CoSimIO::ModelPart` [here](../model_part/model_part_cpp.md
 
 ### Run
 
+#### Input
+xxx
+
+#### Returns
+Instance of `CoSimIO::Info` which contains the following:
+
+| name | type | description |
+
+* * *
+
 * * *
 
 
 ### Register
+
+#### Input
+xxx
+
+#### Returns
+Instance of `CoSimIO::Info` which contains the following:
+
+| name | type | description |
+
+* * *
 
 
 

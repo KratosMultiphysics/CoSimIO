@@ -3,7 +3,7 @@
 The `ModelPart` is a container for mesh, it contains nodes and elements.
 It is a simplified version of `CoSimIO::ModelPart` ([link](https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/model_part.h)).
 
-This file describes the native (C++) interface of `CoSimIO::ModelPart`.
+This page describes the native (C++) interface of `CoSimIO::ModelPart`.
 
 Click [here](model_part_c.md) for the C interface and [here](model_part_python.md) for the Python interface.
 
