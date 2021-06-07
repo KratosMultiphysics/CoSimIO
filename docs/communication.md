@@ -15,22 +15,10 @@
 As the name indicates, this method uses files for communicating data.
 
 **Specific Input:**
-| name | type | required | default| description |
-|:---|:---|:---|:---|:---|
-| use_folder_for_communication | bool | - | true | wh. |
 
 | name | type | required | default | description |
 |---|---|---|---|---|
 | use_folder_for_communication | bool | -  | true  |  whether the files used for communication are written in a dedicated folder. Deadlocks from leftover files from previous executions are less likely to happen as they can be cleanup up.  |
 
-
-
 ## Socket-based communication
 Coming soon ...
-
-| head1        | head two          | three |
-|:-------------|:-------------|:------|
-| ok           | good swedish fish | nice  |
-| out of stock | good and plenty   | nice  |
-| ok           | good `oreos`      | hmm   |
-| ok           | good `zoute` drop | yumm  |
