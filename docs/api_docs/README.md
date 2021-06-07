@@ -29,10 +29,10 @@ Instance of `CoSimIO::Info` which contains the following:
 ### ExportData
 
 ### ImportMesh
-Used `CoSimIO::ModelPart` (see [here](../model_part/model_part_cpp.md))
+Uses `CoSimIO::ModelPart` (see [here](../model_part/model_part_cpp.md))
 
 ### ExportMesh
-Used `CoSimIO::ModelPart` (see [here](../model_part/model_part_cpp.md))
+Uses `CoSimIO::ModelPart` (see [here](../model_part/model_part_cpp.md))
 
 ### Run
 

@@ -31,8 +31,10 @@ The available methods for (interprocess) communication are explained [here](comm
 ## Kratos CoSimulation
 For using the _CoSimIO_ with Kratos it is necessary to build Kratos (separately). Basic explanations are given [here](kratos_build.md) with links for more detailed descriptions.
 
-## Definitions
+## Miscellaneous
 - [Mesh Connectivities](mesh_connectivities.md)
+- Documentation of `CoSimIO::Info`: [link](info/info_cpp.md)
+- Documentation of `CoSimIO::ModelPart`: [link](model_part/model_part_cpp.md)
 
 
 
