@@ -1,7 +1,6 @@
 # Documentation of the _CoSimIO_
 
-This documentation contains explanations of the 
-
+Welcome to the documentation of _CoSimIO_.
 
 ## Tutorials for integrating the _CoSimIO_
 The tutorials can be found [here](tutorials/README.md)
