@@ -10,7 +10,7 @@ Kratos CoSimulationApplication
 [![CI](https://github.com/KratosMultiphysics/CoSimIO/actions/workflows/ci.yml/badge.svg?event=schedule)](https://github.com/KratosMultiphysics/CoSimIO/actions/workflows/ci.yml)
 # CoSimIO
 
-_CoSimIO_ for coupling and exchanging data between different solvers or other software-tools. It works in combination with the [_CoSimulationApplication_](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/CoSimulationApplication).
+The _CoSimIO_ is a small library for interprocess communication in CoSimulation contexts. It is designed for exchanging data between different solvers or other software-tools. For performing coupled simulations it is used in combination with the [_CoSimulationApplication_](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/CoSimulationApplication).
 
 The implementation is defined in [co_sim_io](co_sim_io)
 
@@ -33,7 +33,7 @@ Besides the native C++ interface, the _CoSimIO_ also provides interfaces to othe
 These interfaces are implemented as consistent as possible with the C++ interface.
 
 ## Usage
-This section provides a brief overview on how to use the _CoSimIO_. For more detailed explanations please check the [tutorial](tutorial) in the corresponding language.
+This section provides a brief overview on how to use the _CoSimIO_. For more detailed explanations please check the [documentation](https://kratosmultiphysics.github.io/CoSimIO/) in the corresponding language.
 
 ### **C++**
 The C++ interface is defined in [co_sim_io.hpp](co_sim_io/co_sim_io.hpp). It is sufficient to include this header, no compilation/linking is necessary because it is header-only.
