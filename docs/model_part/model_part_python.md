@@ -1,9 +1,8 @@
 # ModelPart
 
-The `ModelPart` is a container for mesh, it contains nodes and elements.
-It is a simplified version of [`Kratos::ModelPart`](https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/model_part.h).
+This file describes the Python interface of `Kratos::ModelPart`. See [here](model_model_part_cpp.md) for more information and the native (C++) interface.
 
-## Interface of _CoSimIO.ModelPart_
+## Python interface of _CoSimIO.ModelPart_
 
 Create a `ModelPart` like this:
 ```py
@@ -71,7 +70,7 @@ Removing all nodes and elements can be done with the following:
 model_part.Clear()
 ```
 
-## Interface of _CoSimIO.Node_
+## Python interface of _CoSimIO.Node_
 The _CoSimIO.Node_ an be used in the following way:
 ```python
 # access Id of node:
@@ -85,7 +84,7 @@ node_z = node.Z()
 coords = node.Coordinates() # [x,y,z]
 ```
 
-## Interface of _CoSimIO.Element_
+## Python interface of _CoSimIO.Element_
 The _CoSimIO.Element_ provides the following interface:
 ```python
 # access Id of element:
@@ -102,5 +101,5 @@ for node in element.Nodes:
     # do sth with node
 ```
 
-## Further information
+## Further information (Python interface)
 For more information check the [implementation](../../../co_sim_io/python/model_part_to_python.hpp) and the [tests](../../../tests/co_sim_io/python/test_model_part.py).

@@ -1,9 +1,11 @@
 # ModelPart
 
 The `ModelPart` is a container for mesh, it contains nodes and elements.
-It is a simplified version of [`Kratos::ModelPart`](https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/model_part.h).
+It is a simplified version of `Kratos::ModelPart` ([link](https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/model_part.h)).
 
-## Interface of _CoSimIO::ModelPart_
+This file describes the native (C++) interface of `Kratos::ModelPart`.
+
+## C++ interface of _CoSimIO::ModelPart_
 Create a `ModelPart` like this:
 ```c++
 // create CoSimIO::ModelPart
@@ -74,7 +76,7 @@ Removing all nodes and elements can be done with the following:
 model_part.Clear();
 ```
 
-## Interface of _CoSimIO::Node_
+## C++ interface of _CoSimIO::Node_
 The _CoSimIO::Node_ an be used in the following way:
 ```c++
 // access Id of node:
@@ -88,7 +90,7 @@ double node_z = node.Z();
 CoSimIO::CoordinatesType coords = node.Coordinates();
 ```
 
-## Interface of _CoSimIO::Element_
+## C++ interface of _CoSimIO::Element_
 The _CoSimIO::Element_ provides the following interface:
 ```c++
 // access Id of element:
@@ -107,5 +109,5 @@ for (auto node_it=element.NodesBegin(); node_it!=element.NodesEnd(); ++node_it) 
 }
 ```
 
-## Further information
+## Further information (C++ interface)
 For more information check the [implementation](../../../co_sim_io/impl/model_part.hpp) and the [tests](../../../tests/co_sim_io/impl/test_model_part.cpp).
