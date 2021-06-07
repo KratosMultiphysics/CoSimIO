@@ -1,6 +1,7 @@
 # Communication
 
 **Input for all communication methods:**
+
 | name | type | required | default| description |
 |-------------------|--------|---|---|---|
 | my_name           | string | x | - | necessary for establishing a connection |
