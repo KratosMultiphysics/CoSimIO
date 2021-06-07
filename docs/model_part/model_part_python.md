@@ -26,7 +26,7 @@ node = model_part.CreateNewNode(
 )
 ```
 
-Elements can be created after nodes were created. The mesh connectivites are documented [here](../../mesh_connectivities.md).
+Elements can be created after nodes were created. The mesh connectivites are documented [here](../mesh_connectivities.md).
 ```python
 connectivity = [1,2] # Ids of the Nodes
 
@@ -102,4 +102,4 @@ for node in element.Nodes:
 ```
 
 ## Further information (Python interface)
-For more information check the [implementation](../../../co_sim_io/python/model_part_to_python.hpp) and the [tests](../../../tests/co_sim_io/python/test_model_part.py).
+For more information check the [implementation](../../co_sim_io/python/model_part_to_python.hpp) and the [tests](../../tests/co_sim_io/python/test_model_part.py).

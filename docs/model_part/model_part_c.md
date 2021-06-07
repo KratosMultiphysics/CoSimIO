@@ -30,7 +30,7 @@ CoSimIO_Node node = CoSimIO_ModelPart_CreateNewNode(
 );
 ```
 
-Elements can be created after nodes were created. The mesh connectivites are documented [here](../../mesh_connectivities.md).
+Elements can be created after nodes were created. The mesh connectivites are documented [here](../mesh_connectivities.md).
 ```c
 int connectivity[2] = {1,2}; // Ids of the Nodes
 
@@ -117,4 +117,4 @@ for (int i=0; i<CoSimIO_Element_NumberOfNodes(element); ++i) {
 ```
 
 ## Further information (C interface)
-For more information check the [implementation](../../../co_sim_io/c/co_sim_io_c_model_part.h) and the [tests](../../../tests/co_sim_io/c/model_part/test_model_part.c).
+For more information check the [implementation](../../co_sim_io/c/co_sim_io_c_model_part.h) and the [tests](../../tests/co_sim_io/c/model_part/test_model_part.c).
