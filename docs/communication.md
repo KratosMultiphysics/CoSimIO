@@ -2,7 +2,7 @@
 
 **Input for all communication methods:**
 | name | type | required | default| description |
-|---|---|---|---|---|
+|-------------------|--------|---|---|---|
 | my_name           | string | x | - | necessary for establishing a connection |
 | connect_to        | string | x | - | name of partner to connect to |
 | working_directory | string | - | current working directory | path to the working directory |
@@ -23,7 +23,7 @@ As the name indicates, this method uses files for communicating data.
 Coming soon ...
 
 | head1        | head two          | three |
-|:-------------|:------------------|:------|
+|:-------------|:-------------|:------|
 | ok           | good swedish fish | nice  |
 | out of stock | good and plenty   | nice  |
 | ok           | good `oreos`      | hmm   |
