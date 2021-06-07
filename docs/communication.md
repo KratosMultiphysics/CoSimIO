@@ -20,7 +20,7 @@ As the name indicates, this method uses files for communicating data.
 
 | name | type | required | default| description |
 |:-------------|:-------------|:------|:------|:------|
-| ok           | good swedish fish | nice  | nice  | nice  |
+| use_folder_for_communication           | good swedish fish | nice  | nice  | nice  |
 | out of stock | good and plenty   | nice  | nice  | nice  |
 | ok           | good `oreos`      | hmm   | nice  | nice  |
 | ok           | good `zoute` drop | yumm  | nice  | nice  |
