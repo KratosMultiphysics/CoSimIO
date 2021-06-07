@@ -28,6 +28,9 @@ The documentation for the API of the _CoSimIO_ can be found [here](api_docs/READ
 ## Kratos CoSimulation
 For using the _CoSimIO_ with Kratos it is necessary to build Kratos (separately). Basic explanations are given [here](kratos_build.md) with links for more detailed descriptions.
 
+## Definitions
+- [Mesh Connectivities](mesh_connectivities.md)
+
 
 
 
