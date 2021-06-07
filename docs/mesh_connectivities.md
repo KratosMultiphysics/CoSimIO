@@ -1,11 +1,5 @@
 # Mesh Connectivities
 
-The definition of the mesh connectivities follows mostly the [vtk format](https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf). It is extended by additional mesh topologies.
+The _CoSimIO_ uses the same mesh connectivities / node ordering as [Kratos](https://github.com/KratosMultiphysics/Kratos/wiki/Mesh-node-ordering).
 
-For reference: [Kratos mesh connectivities](https://github.com/KratosMultiphysics/Kratos/wiki/Mesh-node-ordering)
-
-## Linear types
-
-
-
-## Quadratic types
+Except for Hexahedron20 is also coincides with the [vtk format](https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf). 
