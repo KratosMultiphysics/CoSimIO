@@ -143,3 +143,6 @@ Then you may run your executable with python script of Kratos from your working 
 ```shell
 path/to/bin/data_exchange_cpp_test & python3 path/to/connect_disconnect.py
 ```
+
+## Next steps
+In the [next tutorial](data_and_mesh_exchange_and_mapping.md), meshes are exchanged with Kratos and mapping is used.
