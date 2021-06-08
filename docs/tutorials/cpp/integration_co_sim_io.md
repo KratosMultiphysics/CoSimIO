@@ -59,7 +59,7 @@ After integrating the _CoSimIO_ in your code now it's time to say hello
 CoSimIO::Info info = CoSimIO::Hello();
 ```
 
-Please note that this method like other methods in _CoSimIO_ returns a `CoSimIO::Info` object. This object is a versatile container holding important information about the operation that has been done See [here](../../info/info_cpp.md) for the documentation. In this case, it contains the version of the _CoSimIO_ library which can be queried:
+Please note that this method like other methods in _CoSimIO_ returns a `CoSimIO::Info` object. This object is a versatile container holding important information about the operation that has been done. See [here](../../info/info_cpp.md) for the documentation. In this case, it contains the version of the _CoSimIO_ library which can be queried:
 
 ```c++
 std::cout << info << std::endl;
@@ -142,7 +142,7 @@ This example can be found in [integration_tutorials/cpp/connect_disconnect_a.cpp
 One of the important missions of the CoSimIO is to send and recieve data between processes. The `ExportData` method can be used to send data to the Kratos or directly to another solver/software-tool:
 
 ```c++
-std::vector<double> data_to_send(4,3.14);
+std::vector<double> data_to_send(4, 3.14);
 CoSimIO::Info info;
 info.Set("identifier", "vector_of_pi");
 info.Set("connection_name", connection_name); // connection_name is obtained from calling "Connect"
@@ -158,7 +158,7 @@ info.Set("connection_name", connection_name); // connection_name is obtained fro
 info = CoSimIO::ImportData(info, receive_data);
 ```
 
-It is important to mention that the `ImportData` will clear and resize the vector if needed.
+It is important to mention that `ImportData` will clear and resize the vector if needed.
 
 This example can be found in [integration_tutorials/cpp/export_data.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/cpp/export_data.cpp) and [integration_tutorials/cpp/import_data.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/cpp/import_data.cpp).
 
