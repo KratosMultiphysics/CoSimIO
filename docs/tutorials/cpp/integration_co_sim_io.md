@@ -2,24 +2,28 @@
 
 This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool using the C++ interface.
 
+<!--
 ## Overview
 
-- [What you need](#what-you-need)
-- [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
-- [Tutorial 2: Hello CoSimIO](#tutorial-2-hello-cosimio)
-- [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
-- [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
-- [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
-- [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-cosimulation-library-overview)
-- [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-building-kratos-with-cosimulation)
+- [Tutorial for integrating the _CoSimIO_ using C++ interface](#tutorial-for-integrating-the-cosimio-using-c-interface)
+  - [What you need](#what-you-need)
+  - [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
+  - [Tutorial 2: Hello CosimIO](#tutorial-2-hello-cosimio)
+  - [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
+  - [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
+  - [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
+  - [Next steps](#next-steps)
 
 
 
-<!--
-- [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-Connecting/Disconnecting-tofrom-Kratos)
-- [Tutorial 9: Data Exchange with Kratos](#tutorial-9-Data-Exchange-with-Kratos)
-- [Tutorial 10: Mesh Exchange with Kratos](#tutorial-10-Mesh-Exchange-with-Kratos)
-- [Tutorial 11: Mapping with Kratos](#tutorial-11-Mapping-with-Kratos)
+- [Tutorial for integrating the _CoSimIO_ using C++ interface](#tutorial-for-integrating-the-cosimio-using-c-interface)
+  - [What you need](#what-you-need)
+  - [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
+  - [Tutorial 2: Hello CosimIO](#tutorial-2-hello-cosimio)
+  - [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
+  - [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
+  - [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
+  - [Next steps](#next-steps)
 -->
 
 ## What you need
@@ -181,7 +185,11 @@ import_info = CoSimIO::ImportMesh(info, model_part);
 
 This example can be found in [integration_tutorials/cpp/export_mesh.cpp](../../tests/integration_tutorials/cpp/export_mesh.cpp) and [integration_tutorials/cpp/import_mesh.cpp](../../tests/integration_tutorials/cpp/import_mesh.cpp).
 
+## Next steps
+In the [next tutorial](basic_data_exchange_with_kratos.md), a connection to Kratos is established and basic data exchange with Kratos is done.
 
+
+<!--
 ## Tutorial 6: Kratos CoSimulation Library Overview
 The overview of the Kratos CoSimulation Library can be found [here](../index.md#kratos-cosimulation-library-overview).
 
@@ -189,7 +197,6 @@ The overview of the Kratos CoSimulation Library can be found [here](../index.md#
 ## Tutorial 7: Building Kratos with CoSimulation
 The building instructions for the Kratos CoSimulation Library can be found [here](../index.md#building-kratos-with-cosimulation).
 
-<!--
 ## Tutorial 8: Connecting/Disconnecting to/from Kratos
 coming soon!
 
