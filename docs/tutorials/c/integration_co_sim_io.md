@@ -86,7 +86,7 @@ Finally it is **very important** to free the info using the `CoSimIO_FreeInfo()`
 CoSimIO_FreeInfo(hello_info);
 ```
 
-This example can be found in [integration_tutorials/c/hello.c](../../tests/integration_tutorials/c/hello.c).
+This example can be found in [integration_tutorials/c/hello.c](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/c/hello.c).
 
 
 ## Tutorial 3: Connecting and Disconnecting
@@ -163,7 +163,7 @@ int main()
 }
 ```
 
-This example can be found in [integration_tutorials/c/connect_disconnect_a.c](../../tests/integration_tutorials/c/connect_disconnect_a.c) and [integration_tutorials/c/connect_disconnect_b.c](../../tests/integration_tutorials/c/connect_disconnect_b.c).
+This example can be found in [integration_tutorials/c/connect_disconnect_a.c](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/c/connect_disconnect_a.c) and [integration_tutorials/c/connect_disconnect_b.c](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/c/connect_disconnect_b.c).
 
 
 ## Tutorial 4: Data Exchange
@@ -213,7 +213,7 @@ CoSimIO_Free(data);
 ```
 You may also allocate the memory for data by `CoSimIO_Malloc()` function. If the allocated size is larger that imported data then there is no reallocation is done but if imported data is larger, then only if the data is allocated by `CoSimIO_Malloc()` function a reallocation will be done. If not, it will gives an error.
 
-This example can be found in [integration_tutorials/c/export_data.c](../../tests/integration_tutorials/c/export_data.c) and [integration_tutorials/c/import_data.c](../../tests/integration_tutorials/c/import_data.c).
+This example can be found in [integration_tutorials/c/export_data.c](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/c/export_data.c) and [integration_tutorials/c/import_data.c](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/c/import_data.c).
 
 
 ## Tutorial 5: Mesh Exchange
@@ -230,7 +230,7 @@ CoSimIO_ModelPart model_part = CoSimIO_CreateModelPart("name_of_model_part_to_ex
 CoSimIO_Info export_info = CoSimIO_ExportMesh(export_settings, model_part);
 ```
 
-The argument `model_part` is of type `CoSimIO_ModelPart`. Its usage is explained [here](model_part.md).
+The argument `model_part` is of type `CoSimIO_ModelPart`. Its usage is explained [here](../../model_part/model_part_cpp.md).
 
 On the other side one can use the `ImportMesh()` method to get the mesh sent by the export:
 
@@ -244,7 +244,7 @@ CoSimIO_ModelPart model_part = CoSimIO_CreateModelPart("name_of_imported_model_p
 CoSimIO_Info import_info = CoSimIO_ImportMesh(import_settings, model_part);
 ```
 
-This example can be found in [integration_tutorials/c/export_mesh.c](../../tests/integration_tutorials/c/export_mesh.c) and [integration_tutorials/c/import_mesh.c](../../tests/integration_tutorials/c/import_mesh.c).
+This example can be found in [integration_tutorials/c/export_mesh.c](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/c/export_mesh.c) and [integration_tutorials/c/import_mesh.c](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/c/import_mesh.c).
 
 
 ## Tutorial 6: Kratos CoSimulation Library Overview

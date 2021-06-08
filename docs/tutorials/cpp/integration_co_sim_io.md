@@ -72,7 +72,7 @@ int minor_version = info.Get<int>("minor_version");
 std::string patch_version = info.Get<std::string>("patch_version");
 ```
 
-This example can be found in [integration_tutorials/cpp/hello.cpp](../../tests/integration_tutorials/cpp/hello.cpp).
+This example can be found in [integration_tutorials/cpp/hello.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/cpp/hello.cpp).
 
 
 ## Tutorial 3: Connecting and Disconnecting
@@ -127,7 +127,7 @@ int main(){
 }
 ```
 
-This example can be found in [integration_tutorials/cpp/connect_disconnect_a.cpp](../../tests/integration_tutorials/cpp/connect_disconnect_a.cpp) and [integration_tutorials/cpp/connect_disconnect_b.cpp](../../tests/integration_tutorials/cpp/connect_disconnect_b.cpp).
+This example can be found in [integration_tutorials/cpp/connect_disconnect_a.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/cpp/connect_disconnect_a.cpp) and [integration_tutorials/cpp/connect_disconnect_b.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/cpp/connect_disconnect_b.cpp).
 
 
 ## Tutorial 4: Data Exchange
@@ -152,7 +152,7 @@ info = CoSimIO::ImportData(info, receive_data);
 
 It is important to mention that the `ImportData()` will clear and resize the vector if needed.
 
-This example can be found in [integration_tutorials/cpp/export_data.cpp](../../tests/integration_tutorials/cpp/export_data.cpp) and [integration_tutorials/cpp/import_data.cpp](../../tests/integration_tutorials/cpp/import_data.cpp).
+This example can be found in [integration_tutorials/cpp/export_data.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/cpp/export_data.cpp) and [integration_tutorials/cpp/import_data.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/cpp/import_data.cpp).
 
 
 ## Tutorial 5: Mesh Exchange
@@ -169,7 +169,7 @@ CoSimIO::ModelPart model_part("name_of_model_part_to_export");
 export_info = CoSimIO::ExportMesh(info, model_part);
 ```
 
-The argument `model_part` is of type `CoSimIO::ModelPart`. Its usage is explained [here](model_part.md).
+The argument `model_part` is of type `CoSimIO::ModelPart`. Its usage is explained [here](../../model_part/model_part_cpp.md).
 
 On the other side one can use the `ImportMesh()` method to get the mesh sent by the export:
 
@@ -183,7 +183,7 @@ CoSimIO::ModelPart model_part("name_of_imported_model_part");
 import_info = CoSimIO::ImportMesh(info, model_part);
 ```
 
-This example can be found in [integration_tutorials/cpp/export_mesh.cpp](../../tests/integration_tutorials/cpp/export_mesh.cpp) and [integration_tutorials/cpp/import_mesh.cpp](../../tests/integration_tutorials/cpp/import_mesh.cpp).
+This example can be found in [integration_tutorials/cpp/export_mesh.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/cpp/export_mesh.cpp) and [integration_tutorials/cpp/import_mesh.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/cpp/import_mesh.cpp).
 
 ## Next steps
 In the [next tutorial](basic_data_exchange_with_kratos.md), a connection to Kratos is established and basic data exchange with Kratos is done.
