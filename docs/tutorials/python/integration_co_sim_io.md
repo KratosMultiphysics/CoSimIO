@@ -88,7 +88,7 @@ minor_version = info.GetInt("minor_version")
 patch_version = info.GetString("patch_version")
 ```
 
-This example can be found in [integration_tutorials/python/hello.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/python/hello.py).
+This example can be found in [integration_tutorials/python/hello.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/python/hello.py).
 
 
 
@@ -137,7 +137,7 @@ if info.GetInt("connection_status") == CoSimIO.ConnectionStatus.Disconnected:
     print("Disconnected!")
 ```
 
-This example can be found in [integration_tutorials/python/connect_disconnect_a.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/python/connect_disconnect_a.py) and [integration_tutorials/python/connect_disconnect_b.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/python/connect_disconnect_b.py).
+This example can be found in [integration_tutorials/python/connect_disconnect_a.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/python/connect_disconnect_a.py) and [integration_tutorials/python/connect_disconnect_b.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/python/connect_disconnect_b.py).
 
 
 
@@ -161,7 +161,7 @@ data_to_be_import = CoSimIO.DoubleVector()
 return_info = CoSimIO.ImportData(info, data_to_be_import)
 ```
 
-This example can be found in [integration_tutorials/python/export_data.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/python/export_data.py) and [integration_tutorials/python/import_data.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/python/import_data.py).
+This example can be found in [integration_tutorials/python/export_data.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/python/export_data.py) and [integration_tutorials/python/import_data.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/python/import_data.py).
 
 
 
@@ -193,7 +193,7 @@ model_part = CoSimIO.ModelPart("name_of_imported_model_part");
 import_info = CoSimIO.ImportMesh(info, model_part)
 ```
 
-This example can be found in [integration_tutorials/python/export_mesh.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/python/export_mesh.py) and [integration_tutorials/python/import_mesh.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/tests/integration_tutorials/python/import_mesh.py).
+This example can be found in [integration_tutorials/python/export_mesh.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/python/export_mesh.py) and [integration_tutorials/python/import_mesh.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/python/import_mesh.py).
 
 
 ## Tutorial 6: Kratos CoSimulation Library Overview
