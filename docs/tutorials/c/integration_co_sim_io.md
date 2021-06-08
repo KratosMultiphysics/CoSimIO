@@ -2,26 +2,30 @@
 
 This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool using the C interface.
 
+<!--
 ## Overview
 
 - [Tutorial for integrating the _CoSimIO_ using the C interface](#tutorial-for-integrating-the-cosimio-using-the-c-interface)
-- [Overview](#overview)
-- [What you need](#what-you-need)
-- [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
-- [Tutorial 2: Hello CosimIO](#tutorial-2-hello-cosimio)
-- [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
-- [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
-- [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
-- [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-cosimulation-library-overview)
-- [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-building-kratos-with-cosimulation)
+  - [What you need](#what-you-need)
+  - [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
+  - [Tutorial 2: Hello CosimIO](#tutorial-2-hello-cosimio)
+  - [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
+  - [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
+  - [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
+  - [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-cosimulation-library-overview)
+  - [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-building-kratos-with-cosimulation)
 
 
 
-<!--
-- [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-connectingdisconnecting-tofrom-kratos)
-- [Tutorial 9: Data Exchange with Kratos](#tutorial-9-data-exchange-with-kratos)
-- [Tutorial 10: Mesh Exchange with Kratos](#tutorial-10-mesh-exchange-with-kratos)
-- [Tutorial 11: Mapping with Kratos](#tutorial-11-mapping-with-kratos)
+- [Tutorial for integrating the _CoSimIO_ using the C interface](#tutorial-for-integrating-the-cosimio-using-the-c-interface)
+  - [What you need](#what-you-need)
+  - [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
+  - [Tutorial 2: Hello CosimIO](#tutorial-2-hello-cosimio)
+  - [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
+  - [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
+  - [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
+  - [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-cosimulation-library-overview)
+  - [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-building-kratos-with-cosimulation)
 -->
 
 ## What you need
@@ -31,11 +35,11 @@ This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool u
 git clone https://github.com/KratosMultiphysics/CoSimIO.git
 ```
 
-- A C++11 compatible compiler because the library by itself is in C++ and only a small C wrapper provides its C interface. most of the major C++ compilers in Windows, Linux, and Mac are C++11 compatible. You may find a detailed list of C++11 compatible compilers in https://en.cppreference.com/w/cpp/compiler_support#cpp11
+- A C++11 compatible compiler because the library by itself is in C++ and only a small C wrapper provides its C interface. most of the major C++ compilers in Windows, Linux, and Mac are C++11 compatible. You may find a detailed list of C++11 compatible compilers [here](https://en.cppreference.com/w/cpp/compiler_support#cpp11)
 
 
 ## Tutorial 1: Building the CoSimIO
-The C version of CosimIO is implemented in the [co_sim_io_c.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/c/co_sim_io_c.cpp). You may include it directly into your project or compiling it as a library. One may use the [build_c.sh]() script from the CoSimIO root folder to create a shared library of the C interface:
+The C version of CosimIO is implemented in the [co_sim_io_c.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/c/co_sim_io_c.cpp). You may include it directly into your project or compiling it as a library. One may use the [build_c.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_c.sh) script from the CoSimIO root folder to create a shared library of the C interface:
 
 ```bash
 $ bash scripts/build_c.sh
@@ -82,7 +86,7 @@ Finally it is **very important** to free the info using the `CoSimIO_FreeInfo()`
 CoSimIO_FreeInfo(hello_info);
 ```
 
-This example can be found in [integration_tutorials/c/hello.c](../../tests/integration_tutorials/c/hello.c).
+This example can be found in [integration_tutorials/c/hello.c](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/c/hello.c).
 
 
 ## Tutorial 3: Connecting and Disconnecting
@@ -159,7 +163,7 @@ int main()
 }
 ```
 
-This example can be found in [integration_tutorials/c/connect_disconnect_a.c](../../tests/integration_tutorials/c/connect_disconnect_a.c) and [integration_tutorials/c/connect_disconnect_b.c](../../tests/integration_tutorials/c/connect_disconnect_b.c).
+This example can be found in [integration_tutorials/c/connect_disconnect_a.c](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/c/connect_disconnect_a.c) and [integration_tutorials/c/connect_disconnect_b.c](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/c/connect_disconnect_b.c).
 
 
 ## Tutorial 4: Data Exchange
@@ -209,7 +213,7 @@ CoSimIO_Free(data);
 ```
 You may also allocate the memory for data by `CoSimIO_Malloc()` function. If the allocated size is larger that imported data then there is no reallocation is done but if imported data is larger, then only if the data is allocated by `CoSimIO_Malloc()` function a reallocation will be done. If not, it will gives an error.
 
-This example can be found in [integration_tutorials/c/export_data.c](../../tests/integration_tutorials/c/export_data.c) and [integration_tutorials/c/import_data.c](../../tests/integration_tutorials/c/import_data.c).
+This example can be found in [integration_tutorials/c/export_data.c](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/c/export_data.c) and [integration_tutorials/c/import_data.c](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/c/import_data.c).
 
 
 ## Tutorial 5: Mesh Exchange
@@ -226,7 +230,7 @@ CoSimIO_ModelPart model_part = CoSimIO_CreateModelPart("name_of_model_part_to_ex
 CoSimIO_Info export_info = CoSimIO_ExportMesh(export_settings, model_part);
 ```
 
-The argument `model_part` is of type `CoSimIO_ModelPart`. Its usage is explained [here](model_part.md).
+The argument `model_part` is of type `CoSimIO_ModelPart`. Its usage is explained [here](../../model_part/model_part_cpp.md).
 
 On the other side one can use the `ImportMesh()` method to get the mesh sent by the export:
 
@@ -240,7 +244,7 @@ CoSimIO_ModelPart model_part = CoSimIO_CreateModelPart("name_of_imported_model_p
 CoSimIO_Info import_info = CoSimIO_ImportMesh(import_settings, model_part);
 ```
 
-This example can be found in [integration_tutorials/c/export_mesh.c](../../tests/integration_tutorials/c/export_mesh.c) and [integration_tutorials/c/import_mesh.c](../../tests/integration_tutorials/c/import_mesh.c).
+This example can be found in [integration_tutorials/c/export_mesh.c](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/c/export_mesh.c) and [integration_tutorials/c/import_mesh.c](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/c/import_mesh.c).
 
 
 ## Tutorial 6: Kratos CoSimulation Library Overview
