@@ -7,22 +7,22 @@ This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool u
 
 - [Tutorial for integrating the _CoSimIO_ using C++ interface](#tutorial-for-integrating-the-cosimio-using-c-interface)
   - [What you need](#what-you-need)
-  - [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
-  - [Tutorial 2: Hello CosimIO](#tutorial-2-hello-cosimio)
-  - [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
-  - [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
-  - [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
+  - [Building the CoSimIO](#building-the-cosimio)
+  - [Hello CosimIO](#hello-cosimio)
+  - [Connecting and Disconnecting](#connecting-and-disconnecting)
+  - [Data Exchange](#data-exchange)
+  - [Mesh Exchange](#mesh-exchange)
   - [Next steps](#next-steps)
 
 
 
 - [Tutorial for integrating the _CoSimIO_ using C++ interface](#tutorial-for-integrating-the-cosimio-using-c-interface)
   - [What you need](#what-you-need)
-  - [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
-  - [Tutorial 2: Hello CosimIO](#tutorial-2-hello-cosimio)
-  - [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
-  - [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
-  - [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
+  - [Building the CoSimIO](#building-the-cosimio)
+  - [Hello CosimIO](#hello-cosimio)
+  - [Connecting and Disconnecting](#connecting-and-disconnecting)
+  - [Data Exchange](#data-exchange)
+  - [Mesh Exchange](#mesh-exchange)
   - [Next steps](#next-steps)
 -->
 
@@ -36,14 +36,15 @@ git clone https://github.com/KratosMultiphysics/CoSimIO.git
 - A C++11 compatible compiler. This includes most of the major CPP compilers in Windows, Linux, and Mac. You may find a detailed list of C++11 compatible compilers [here](https://en.cppreference.com/w/cpp/compiler_support#cpp11)
 
 
-## Tutorial 1: Building the CoSimIO
+## Building the CoSimIO
 The C++ version of CosimIO is header only and for building you may only include the [co_sim_io.hpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp) in your project file and compile it with your code:
 
 ```c++
 // CoSimulation includes
 #include "co_sim_io.hpp"
 
-int main(){
+int main()
+{
     return 0;
 }
 ```
@@ -51,14 +52,14 @@ int main(){
 Please don't forget to add the CoSimIO folder to your include path.
 
 
-## Tutorial 2: Hello CosimIO
+## Hello CosimIO
 After integrating the _CoSimIO_ in your code now it's time to say hello
 
 ```c++
-auto info = CoSimIO::Hello();
+CoSimIO::Info info = CoSimIO::Hello();
 ```
 
-Please note that this method like other methods in _CoSimIO_ returns an `Info` object. This object is a versatile container holding important information about the operation that has been done. In this case, it contains the version of the _CoSimIO_ library which can be queried:
+Please note that this method like other methods in _CoSimIO_ returns a `CoSimIO::Info` object. This object is a versatile container holding important information about the operation that has been done See [here](../../info/info_cpp.md) for the documentation. In this case, it contains the version of the _CoSimIO_ library which can be queried:
 
 ```c++
 std::cout << info << std::endl;
@@ -75,14 +76,14 @@ std::string patch_version = info.Get<std::string>("patch_version");
 This example can be found in [integration_tutorials/cpp/hello.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/cpp/hello.cpp).
 
 
-## Tutorial 3: Connecting and Disconnecting
-The first step to establishing a connection to Kratos CoSimulation is to use the `Connect()` method:
+## Connecting and Disconnecting
+The first step to establishing a connection to Kratos CoSimulation is to use the `Connect` method:
 ```c++
 // The connect must be called before any CosimIO method called
 auto info = CoSimIO::Connect(settings);
 ```
 
-First of all, you may notice that `Connect()` method takes an `Info` as its arguments. This container can be used to pass additional information about the solver/software-tool or connection settings to the _CoSimIO_:
+First of all, you may notice that `Connect` method takes a `CoSimIO::Info` as its arguments. This container can be used to pass additional information about the solver/software-tool or connection settings to the _CoSimIO_:
 
 ```c++
 CoSimIO::Info settings;
@@ -91,7 +92,12 @@ settings.Set("connect_to", "cpp_connect_disconnect_b"); // to whom I want to con
 settings.Set("echo_level", 1);
 settings.Set("version", "1.25");
 ```
-This method returns a `Info` object containing information about the connection which can be queried using Get method. For further calls to `CoSimIO` it is necessary to get the `connection_name`:
+
+It is very important that the settings for `my_name` and `connect_to` are set correctly, otherwise the connection cannot be established!
+
+E.g in the above example one code sets `my_name` as `cpp_connect_disconnect_a` and `connect_to` as `cpp_connect_disconnect_b`. This means that the other code has to use the same settings but reversed: `my_name` must be `cpp_connect_disconnect_b` and `connect_to` must be `cpp_connect_disconnect_a`.
+
+This method returns a `Info` object containing information about the connection which can be queried using `Get` method. For further calls to `CoSimIO` it is necessary to get the `connection_name`:
 
 ```c++
 std::string connection_name = info.Get<std::string>("connection_name");
@@ -102,7 +108,9 @@ Now putting together everything:
 ```c++
 // CoSimulation includes
 #include "co_sim_io.hpp"
-int main(){
+
+int main()
+{
     CoSimIO::Info settings;
     settings.Set("my_name", "cpp_connect_disconnect_a"); // my name
     settings.Set("connect_to", "cpp_connect_disconnect_b"); // to whom I want to connect to
@@ -111,7 +119,7 @@ int main(){
 
     auto info = CoSimIO::Connect(settings);
     std::string connection_name = info.Get<std::string>("connection_name"); // getting name of connection for future calls
-    if(info.Get<int>("connection_status") != CoSimIO::ConnectionStatus::Connected)
+    if (info.Get<int>("connection_status") != CoSimIO::ConnectionStatus::Connected)
         return 1;
     // Now you may call any CoSimIO methods like ImportData, ExportData, etc.
 
@@ -120,7 +128,7 @@ int main(){
     disconnect_settings.Set("connection_name", connection_name);
     info = CoSimIO::Disconnect(disconnect_settings); // disconnect afterwards
     // Here you may use the info but cannot call any CoSimIO method anymore
-    if(info.Get<int>("connection_status") != CoSimIO::ConnectionStatus::Disconnected)
+    if (info.Get<int>("connection_status") != CoSimIO::ConnectionStatus::Disconnected)
         return 1;
 
     return 0;
@@ -130,8 +138,8 @@ int main(){
 This example can be found in [integration_tutorials/cpp/connect_disconnect_a.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/cpp/connect_disconnect_a.cpp) and [integration_tutorials/cpp/connect_disconnect_b.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/cpp/connect_disconnect_b.cpp).
 
 
-## Tutorial 4: Data Exchange
-One of the important missions of the CoSimIO is to send and recieve data between processes. The `ExportData()` method can be used to send data to the Kratos or directly to another solver/software-tool:
+## Data Exchange
+One of the important missions of the CoSimIO is to send and recieve data between processes. The `ExportData` method can be used to send data to the Kratos or directly to another solver/software-tool:
 
 ```c++
 std::vector<double> data_to_send(4,3.14);
@@ -140,7 +148,7 @@ info.Set("identifier", "vector_of_pi");
 info.Set("connection_name", connection_name); // connection_name is obtained from calling "Connect"
 info = CoSimIO::ExportData(info, data_to_send);
 ```
-The `ImportData()` should be used on the other side to recieve data:
+The `ImportData` should be used on the other side to recieve data:
 
 ```c++
 std::vector<double> receive_data;
@@ -150,13 +158,13 @@ info.Set("connection_name", connection_name); // connection_name is obtained fro
 info = CoSimIO::ImportData(info, receive_data);
 ```
 
-It is important to mention that the `ImportData()` will clear and resize the vector if needed.
+It is important to mention that the `ImportData` will clear and resize the vector if needed.
 
 This example can be found in [integration_tutorials/cpp/export_data.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/cpp/export_data.cpp) and [integration_tutorials/cpp/import_data.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/cpp/import_data.cpp).
 
 
-## Tutorial 5: Mesh Exchange
-After seeing how we transfer raw data between solvers/software-tools, it is time to see how we can export and import meshes. For exporting the mesh one may use the `ExportMesh()` method:
+## Mesh Exchange
+After seeing how we transfer raw data between solvers/software-tools, it is time to see how we can export and import meshes. For exporting the mesh one may use the `ExportMesh` method:
 
 
 ```c++
@@ -169,7 +177,7 @@ CoSimIO::ModelPart model_part("name_of_model_part_to_export");
 export_info = CoSimIO::ExportMesh(info, model_part);
 ```
 
-The argument `model_part` is of type `CoSimIO::ModelPart`. Its usage is explained [here](../../model_part/model_part_cpp.md).
+The argument `model_part` is of type `CoSimIO::ModelPart` and contains a mesh. Its usage is explained [here](../../model_part/model_part_cpp.md).
 
 On the other side one can use the `ImportMesh()` method to get the mesh sent by the export:
 

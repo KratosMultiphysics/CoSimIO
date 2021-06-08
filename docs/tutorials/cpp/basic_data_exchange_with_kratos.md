@@ -1,6 +1,8 @@
 # Tutorial for connecting to Kratos and performing basic data exchange
 
-This tutorial shows how to establish a connection to Kratos and to do basics data exchange with Kratos. It is required to do [this tutorial](integration_co_sim_io.md) first
+This tutorial shows how to establish a connection to Kratos and to do basics data exchange with Kratos. It is required to do [this tutorial](integration_co_sim_io.md) first.
+
+Furthermore it is required to compile Kratos which is described [here](../../kratos_build.md).
 
 ## Connecting to Kratos
 For connecting to Kratos it is very important to have in mind that Kratos also uses _CoSimIO_, so its python interface reflects the _CoSimIO_. So we may create a python script for connecting and disconnecting in a similar way described in the [python tutorial](../python/integration_co_sim_io.md):
@@ -10,8 +12,8 @@ For connecting to Kratos it is very important to have in mind that Kratos also u
 from KratosMultiphysics.CoSimulationApplication import CoSimIO
 
 connection_settings = CoSimIO.Info()
-connection_settings.SetString("my_name", "partner_b")
-connection_settings.SetString("connect_to", "partner_a")
+connection_settings.SetString("my_name", "Kratos")
+connection_settings.SetString("connect_to", "my_code")
 connection_settings.SetInt("echo_level", 2)
 info = CoSimIO.Connect(connection_settings)
 connection_name = info.GetString("connection_name")
@@ -26,6 +28,8 @@ if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
     raise Exception("Disconnecting failed")
 ```
 
+Make sure to check that `my_name` and `connect_to` are set correctly, otherwise the connection can not be established. This was explained in more detail in a [previous tutorial](integration_co_sim_io.md#connecting-and-disconnecting).
+
 Please note that the only change here is the import statement which loads the _CoSimIO_ module which comes inside the KratosMultiphysics. You may find this python file in [here](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/connect_disconnect.py)
 
 Then you may run your executable with python script of Kratos from your working directory:
@@ -34,8 +38,8 @@ Then you may run your executable with python script of Kratos from your working 
 path/to/bin/tests_cpp/connect_disconnect_cpp_test & python3 path/to/connect_disconnect.py
 ```
 <!--
-## Tutorial 9: Data Exchange with Kratos
-Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one descirbed in the [python tutorial](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tutorial/python/README.md):
+## Data Exchange with Kratos
+Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one descirbed in the [python tutorial](../python/integration_co_sim_io.md):
 
 
 ```python
