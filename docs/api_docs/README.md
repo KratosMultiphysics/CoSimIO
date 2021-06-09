@@ -49,6 +49,7 @@ Can only be called with an active connection (i.e. after calling `Connect`).
 
 #### Input
 - Instance of `CoSimIO::Info` which contains the following:
+
     | name | type | required | default| description |
     |-------------------|--------|---|---|---|
     | connection_name  | string | x | - | output of calling `Connect` |
@@ -71,6 +72,7 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
 
 #### Input
 - Instance of `CoSimIO::Info` which contains the following:
+
     | name | type | required | default| description |
     |-------------------|--------|---|---|---|
     | connection_name  | string | x | - | output of calling `Connect` |
@@ -93,6 +95,7 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
 
 #### Input
 - Instance of `CoSimIO::Info` which contains the following:
+
     | name | type | required | default| description |
     |-------------------|--------|---|---|---|
     | connection_name  | string | x | - | output of calling `Connect` |
@@ -115,6 +118,7 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
 
 #### Input
 - Instance of `CoSimIO::Info` which contains the following:
+
     | name | type | required | default| description |
     |-------------------|--------|---|---|---|
     | connection_name  | string | x | - | output of calling `Connect` |
@@ -141,6 +145,7 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
 
 #### Input
 - Instance of `CoSimIO::Info` which contains the following:
+
     | name | type | required | default| description |
     |-------------------|--------|---|---|---|
     | connection_name  | string | x | - | output of calling `Connect` |
@@ -167,6 +172,7 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
 
 #### Input
 - Instance of `CoSimIO::Info` which contains the following:
+
     | name | type | required | default| description |
     |-------------------|--------|---|---|---|
     | connection_name          | string | x | - | output of calling `Connect` |
@@ -187,6 +193,7 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
 
 #### Input
 - Instance of `CoSimIO::Info` which contains the following:
+
     | name | type | required | default| description |
     |-------------------|--------|---|---|---|
     | connection_name          | string | x | - | output of calling `Connect` |
