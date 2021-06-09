@@ -23,7 +23,7 @@ Instance of `CoSimIO::Info` which contains the following:
 
 
 ### Connect
-This function is used to establish a connection between two partners. It is the first function that must be called, other calls (except `Hello` require an active connection)
+This function is used to establish a connection between two partners. It is the first function that must be called, other calls (except `Hello`) require an active connection.
 
 #### Requirements
 Cannot be called when the same connection was established already.
@@ -36,7 +36,8 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 |---|---|---|
-| connection_status | int | status of the connection, can be used to check if connecting was successful
+| connection_name | string | name of connection, necessary for further calls to _CoSimIO_ |
+| connection_status | int | status of the connection, can be used to check if connecting was successful |
 
 * * *
 
@@ -59,7 +60,7 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 |---|---|---|
-| connection_status | int | status of the connection, can be used to check if disconnecting was successful
+| connection_status | int | status of the connection, can be used to check if disconnecting was successful |
 
 * * *
 
