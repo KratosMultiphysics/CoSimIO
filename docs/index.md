@@ -3,7 +3,7 @@
 Welcome to the documentation of _CoSimIO_.
 
 ## Structure of _CoSimIO_ and which part it plays in Kratos CoSimulation
-Even though the _CoSimIO_ is a standalone tool, it reaches its full capabilities only in combination with the CoSimulation features of Kratos. This section explains how everything fits together.
+Even though the _CoSimIO_ is a standalone tool, it reaches its full capabilities only in combination with the CoSimulation features of Kratos. It is implemented as _detached interface_. This section explains how everything fits together.
 
 ### Kratos CoSimulation Library Overview
 Conceptually the Kratos CoSimulation consists of 3 main components:
