@@ -2,20 +2,33 @@
 
 This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool using the Python interface.
 
+<!--
 ## Overview
 
-- [What you need](#what-you-need)
-- [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
-- [Tutorial 2: Hello CoSimIO](#tutorial-2-hello-cosimio)
-- [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
-- [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
-- [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
-- [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-CoSimulation-Library-Overview)
-- [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-Building-Kratos-with-CoSimulation)
-<!-- - [Tutorial 8: Connecting/Disconnecting to/from Kratos](#tutorial-8-Connecting/Disconnecting-tofrom-Kratos)
-- [Tutorial 9: Data Exchange with Kratos](#tutorial-9-Data-Exchange-with-Kratos)
-- [Tutorial 10: Mesh Exchange with Kratos](#tutorial-10-Mesh-Exchange-with-Kratos)
-- [Tutorial 11: Mapping with Kratos](#tutorial-11-Mapping-with-Kratos) -->
+- [Tutorial for integrating the _CoSimIO_ using the Python interface](#tutorial-for-integrating-the-cosimio-using-the-python-interface)
+  - [What you need](#what-you-need)
+  - [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
+  - [Tutorial 2: Hello CosimIO](#tutorial-2-hello-cosimio)
+  - [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
+  - [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
+  - [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
+  - [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-cosimulation-library-overview)
+  - [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-building-kratos-with-cosimulation)
+
+
+
+
+
+- [Tutorial for integrating the _CoSimIO_ using the Python interface](#tutorial-for-integrating-the-cosimio-using-the-python-interface)
+  - [What you need](#what-you-need)
+  - [Tutorial 1: Building the CoSimIO](#tutorial-1-building-the-cosimio)
+  - [Tutorial 2: Hello CosimIO](#tutorial-2-hello-cosimio)
+  - [Tutorial 3: Connecting and Disconnecting](#tutorial-3-connecting-and-disconnecting)
+  - [Tutorial 4: Data Exchange](#tutorial-4-data-exchange)
+  - [Tutorial 5: Mesh Exchange](#tutorial-5-mesh-exchange)
+  - [Tutorial 6: Kratos CoSimulation Library Overview](#tutorial-6-kratos-cosimulation-library-overview)
+  - [Tutorial 7: Building Kratos with CoSimulation](#tutorial-7-building-kratos-with-cosimulation)
+-->
 
 ## What you need
 - Downloading the _CosimIO_ from the repository:
@@ -31,7 +44,7 @@ git clone https://github.com/KratosMultiphysics/CoSimIO.git
 ## Tutorial 1: Building the CoSimIO
 The Python interface is located in [co_sim_io/python](https://github.com/KratosMultiphysics/CoSimIO/tree/master/co_sim_io/python) folder of the repository. It uses the [pybind11 library](https://github.com/pybind/pybind11) for exposing the C++ code to Python. It is provided in the [expternal_libraries/pybind11](https://github.com/KratosMultiphysics/CoSimIO/tree/master/external_libraries/pybind11) folder of this repo.
 
-Using cmake the compilation is straightforward. Just calling the following command from the _CoSimIO_ root:
+One may use the [build_python.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_python.sh) script from the CoSimIO root folder to create a library of the python interface:
 
 ```
 sh scripts/build_python.sh
@@ -75,7 +88,7 @@ minor_version = info.GetInt("minor_version")
 patch_version = info.GetString("patch_version")
 ```
 
-This example can be found in [integration_tutorials/python/hello.py](../../tests/integration_tutorials/python/hello.py).
+This example can be found in [integration_tutorials/python/hello.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/python/hello.py).
 
 
 
@@ -124,7 +137,7 @@ if info.GetInt("connection_status") == CoSimIO.ConnectionStatus.Disconnected:
     print("Disconnected!")
 ```
 
-This example can be found in [integration_tutorials/python/connect_disconnect_a.py](../../tests/integration_tutorials/python/connect_disconnect_a.py) and [integration_tutorials/python/connect_disconnect_b.py](../../tests/integration_tutorials/python/connect_disconnect_b.py).
+This example can be found in [integration_tutorials/python/connect_disconnect_a.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/python/connect_disconnect_a.py) and [integration_tutorials/python/connect_disconnect_b.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/python/connect_disconnect_b.py).
 
 
 
@@ -148,7 +161,7 @@ data_to_be_import = CoSimIO.DoubleVector()
 return_info = CoSimIO.ImportData(info, data_to_be_import)
 ```
 
-This example can be found in [integration_tutorials/python/export_data.py](../../tests/integration_tutorials/python/export_data.py) and [integration_tutorials/python/import_data.py](../../tests/integration_tutorials/python/import_data.py).
+This example can be found in [integration_tutorials/python/export_data.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/python/export_data.py) and [integration_tutorials/python/import_data.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/python/import_data.py).
 
 
 
@@ -166,7 +179,7 @@ model_part = CoSimIO.ModelPart("name_of_model_part_to_export");
 export_info = CoSimIO.ExportMesh(info, model_part)
 ```
 
-The argument `model_part` is of type `CoSimIO.ModelPart`. Its usage is explained [here](model_part.md).
+The argument `model_part` is of type `CoSimIO.ModelPart`. Its usage is explained [here](../../model_part/model_part_cpp.md).
 
 On the other side one can use the ImportMesh() method to get the mesh sent by the export:
 
@@ -180,15 +193,15 @@ model_part = CoSimIO.ModelPart("name_of_imported_model_part");
 import_info = CoSimIO.ImportMesh(info, model_part)
 ```
 
-This example can be found in [integration_tutorials/python/export_mesh.py](../../tests/integration_tutorials/python/export_mesh.py) and [integration_tutorials/python/import_mesh.py](../../tests/integration_tutorials/python/import_mesh.py).
+This example can be found in [integration_tutorials/python/export_mesh.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/python/export_mesh.py) and [integration_tutorials/python/import_mesh.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/python/import_mesh.py).
 
 
 ## Tutorial 6: Kratos CoSimulation Library Overview
-The overview of the Kratos CoSimulation Library can be found [here](../README.md#kratos-cosimulation-library-overview).
+The overview of the Kratos CoSimulation Library can be found [here](../index.md#kratos-cosimulation-library-overview).
 
 
 ## Tutorial 7: Building Kratos with CoSimulation
-The building instructions for the Kratos CoSimulation Library can be found [here](../README.md#building-kratos-with-cosimulation).
+The building instructions for the Kratos CoSimulation Library can be found [here](../index.md#building-kratos-with-cosimulation).
 
 <!--
 ## Tutorial 8: Connecting/Disconnecting to/from Kratos

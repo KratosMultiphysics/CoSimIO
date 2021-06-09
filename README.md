@@ -10,16 +10,17 @@ Kratos CoSimulationApplication
 [![CI](https://github.com/KratosMultiphysics/CoSimIO/actions/workflows/ci.yml/badge.svg?event=schedule)](https://github.com/KratosMultiphysics/CoSimIO/actions/workflows/ci.yml)
 # CoSimIO
 
-_CoSimIO_ for coupling and exchanging data between different solvers or other software-tools. It works in combination with the [_CoSimulationApplication_](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/CoSimulationApplication).
+The _CoSimIO_ is a small library for interprocess communication in CoSimulation contexts. It is designed for exchanging data between different solvers or other software-tools. For performing coupled simulations it is used in combination with the [_CoSimulationApplication_](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/CoSimulationApplication).\
+It is implemented as a _detached interface_. This means that it follows the interface of Kratos but is independent of Kratos, which allows for an easy integration into other codes / solvers
 
 The implementation is defined in [co_sim_io](co_sim_io)
 
-A tutorial for using the _CoSimIO_ can be found in [tutorial](tutorial)
+Documentation and tutorials can be found [here](https://kratosmultiphysics.github.io/CoSimIO/)
 
 The tests are contained in [tests](tests)
 
 ## Dependencies
-- The _CoSimIO_ is implemented as a standalone tool in C++. The only dependency is C++11. This includes most of the major C++ compilers in Windows, Linux, and Mac. A detailed list of C++11 compatible compilers under https://en.cppreference.com/w/cpp/compiler_support#cpp11.
+- The _CoSimIO_ is implemented as a standalone tool in C++. The only dependency is C++11. This includes most of the major C++ compilers in Windows, Linux, and Mac. A detailed list of C++11 compatible compilers [here](https://en.cppreference.com/w/cpp/compiler_support#cpp11).
 - Dependency on Kratos: There is **NO** dependency on Kratos. The _CoSimIO_ can be used completely without including or linking against Kratos.
 - _CoSimIO_ is **header-only**, no compiling/linking is required.
 - The CoSimIO uses [std::filesystem](https://en.cppreference.com/w/cpp/filesystem) which is part of C++17. When compiling with C++11, the [C++11 compatible version of std::filesystem](https://github.com/gulrak/filesystem) is used.
@@ -33,7 +34,7 @@ Besides the native C++ interface, the _CoSimIO_ also provides interfaces to othe
 These interfaces are implemented as consistent as possible with the C++ interface.
 
 ## Usage
-This section provides a brief overview on how to use the _CoSimIO_. For more detailed explanations please check the [tutorial](tutorial) in the corresponding language.
+This section provides a brief overview on how to use the _CoSimIO_. For more detailed explanations please check the [documentation](https://kratosmultiphysics.github.io/CoSimIO/) in the corresponding language.
 
 ### **C++**
 The C++ interface is defined in [co_sim_io.hpp](co_sim_io/co_sim_io.hpp). It is sufficient to include this header, no compilation/linking is necessary because it is header-only.
