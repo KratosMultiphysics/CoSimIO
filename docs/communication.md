@@ -12,6 +12,8 @@ One connection partner acts as the _primary_ connection, the other one is the _s
 
 By default it is automatically determined from the names of the partners which is the _primary_ and which is the _secondary_. In some cases it can be useful to specify this explicitly, this can be done with the setting `is_primary_connection`. Either both partners or none can specify this setting. Note that specifying both partners as either _primary_ or _secondary_ will lead to a deadlock.
 
+The implementation of the different methods for _Communication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/tree/master/co_sim_io/impl/communication).
+
 **Input for all communication methods:**
 
 The following settings are available for all methods of communication:
@@ -34,6 +36,8 @@ Note however that also in this case it is possible that a leftover folder can ca
 
 - Make sure the communication folder / communication files from previous executions are deleted before starting again
 - explicitly specify which partner is the _primary_ and which is the _secondary_ connection. Then start the _primary_ with a delay before the _secondary_, so that it has time to remove potential leftovers.
+
+The implementation of the _FileCommunication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/impl/communication/file_communication.hpp).
 
 **Specific Input:**
 
