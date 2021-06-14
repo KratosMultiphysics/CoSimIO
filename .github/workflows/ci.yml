@@ -125,7 +125,9 @@ jobs:
         sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
 
     - name: Install MPI
-      run: sudo apt-get install libopenmpi-dev openmpi-bin
+      run: |
+        sudo apt-get update
+        sudo apt-get install libopenmpi-dev openmpi-bin
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
