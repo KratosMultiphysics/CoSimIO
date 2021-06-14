@@ -19,6 +19,9 @@
 #include <vector>
 #include <array>
 
+// External includes
+#include "../../external_libraries/intrusive_ptr/intrusive_ptr.hpp"
+
 namespace CoSimIO {
 
 // signed integer type, 32 bit in 32 bit systems, but 64bit in 64 bit systems => like std::size_t but signed
@@ -86,6 +89,11 @@ enum class ElementType
 template<typename C, typename...Args>
 std::unique_ptr<C> make_unique(Args &&...args) {
     return std::unique_ptr<C>(new C(std::forward<Args>(args)...));
+}
+
+template<typename C, typename...Args>
+intrusive_ptr<C> make_intrusive(Args &&...args) {
+    return intrusive_ptr<C>(new C(std::forward<Args>(args)...));
 }
 
 } //namespace CoSimIO
