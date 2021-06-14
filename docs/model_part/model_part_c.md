@@ -1,9 +1,8 @@
 # ModelPart
 
-The `ModelPart` is a container for mesh, it contains nodes and elements.
-It is a simplified version of [`Kratos::ModelPart`](https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/model_part.h).
+This page describes the C interface of `CoSimIO::ModelPart`. See [here](model_model_part_cpp.md) for more information and the native (C++) interface.
 
-### Interface of _CoSimIO_ModelPart_
+## C interface of _CoSimIO_ModelPart_
 Create and free a `ModelPart` like this:
 ```c
 // create CoSimIO_ModelPart
@@ -31,7 +30,7 @@ CoSimIO_Node node = CoSimIO_ModelPart_CreateNewNode(
 );
 ```
 
-Elements can be created after nodes were created:
+Elements can be created after nodes were created. The mesh connectivites are documented [here](../mesh_connectivities.md).
 ```c
 int connectivity[2] = {1,2}; // Ids of the Nodes
 
@@ -39,7 +38,7 @@ int connectivity[2] = {1,2}; // Ids of the Nodes
 CoSimIO_Element element = CoSimIO_ModelPart_CreateNewElement(
     model_part,
     2, // Id
-    CoSimIO_Line2D2, // Type of element, see "co_sim_io/c/co_sim_io_c_model_part.h"
+    CoSimIO_Line2D2, // Type of element
     connectivity // Connectivity information, i.e. Ids of nodes that the element has
 );
 ```
@@ -75,13 +74,15 @@ CoSimIO_Node node = CoSimIO_ModelPart_GetNodeById(model_part, 3);
 CoSimIO_Element element = CoSimIO_ModelPart_GetElementById(model_part, 12);
 ```
 
+Accessing by index is the preferred way of accessing the nodes and elements, access by Id is inherently slower due to the internal data structure of `ModelPart`.
+
 Removing all nodes and elements can be done with the following:
 ```c
 // removing all nodes and elements
 CoSimIO_ModelPart_Clear(model_part);
 ```
 
-### Interface of _CoSimIO_Node_
+## C interface of _CoSimIO_Node_
 The _CoSimIO_Node_ an be used in the following way:
 ```c
 // access Id of node:
@@ -98,7 +99,7 @@ double node_y_idx = CoSimIO_Node_Coordinate(node, 1);
 double node_z_idx = CoSimIO_Node_Coordinate(node, 2);
 ```
 
-### Interface of _CoSimIO_Element_
+## C interface of _CoSimIO_Element_
 The _CoSimIO_Element_ provides the following interface:
 ```c
 // access Id of element:
@@ -117,5 +118,5 @@ for (int i=0; i<CoSimIO_Element_NumberOfNodes(element); ++i) {
 }
 ```
 
-### Further information
-For more information check the [implementation](../../co_sim_io/c/co_sim_io_c_model_part.h) and the [tests](../../tests/co_sim_io/c/model_part/test_model_part.c).
+## Further information (C interface)
+For more information check the [implementation](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/c/co_sim_io_c_model_part.h) and the [tests](https://github.com/KratosMultiphysics/CoSimIO/tree/master/tests/co_sim_io/c/model_part).

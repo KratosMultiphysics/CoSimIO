@@ -1,9 +1,8 @@
 # ModelPart
 
-The `ModelPart` is a container for mesh, it contains nodes and elements.
-It is a simplified version of [`Kratos::ModelPart`](https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/model_part.h).
+This page describes the Python interface of `CoSimIO::ModelPart`. See [here](model_model_part_cpp.md) for more information and the native (C++) interface.
 
-### Interface of _CoSimIO.ModelPart_
+## Python interface of _CoSimIO.ModelPart_
 
 Create a `ModelPart` like this:
 ```py
@@ -27,13 +26,13 @@ node = model_part.CreateNewNode(
 )
 ```
 
-Elements can be created after nodes were created:
+Elements can be created after nodes were created. The mesh connectivites are documented [here](../mesh_connectivities.md).
 ```python
 connectivity = [1,2] # Ids of the Nodes
 
 element = model_part.CreateNewElement(
     2, # Id
-    CoSimIO.ElementType.Line2D2, # Type of element, see "co_sim_io/impl/define.hpp"
+    CoSimIO.ElementType.Line2D2, # Type of element
     connectivity # Connectivity information, i.e. Ids of nodes that the element has
 )
 ```
@@ -65,13 +64,15 @@ node = model_part.GetNode(3)
 element = model_part.GetElement(12)
 ```
 
+Iterating is the preferred way of accessing the nodes and elements, access by Id is inherently slower due to the internal data structure of `ModelPart`.
+
 Removing all nodes and elements can be done with the following:
 ```python
 # removing all nodes and elements
 model_part.Clear()
 ```
 
-### Interface of _CoSimIO.Node_
+## Python interface of _CoSimIO.Node_
 The _CoSimIO.Node_ an be used in the following way:
 ```python
 # access Id of node:
@@ -85,7 +86,7 @@ node_z = node.Z()
 coords = node.Coordinates() # [x,y,z]
 ```
 
-### Interface of _CoSimIO.Element_
+## Python interface of _CoSimIO.Element_
 The _CoSimIO.Element_ provides the following interface:
 ```python
 # access Id of element:
@@ -102,5 +103,5 @@ for node in element.Nodes:
     # do sth with node
 ```
 
-### Further information
-For more information check the [implementation](../../co_sim_io/python/model_part_to_python.hpp) and the [tests](../../tests/co_sim_io/python/test_model_part.py).
+## Further information (Python interface)
+For more information check the [implementation](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/python/model_part_to_python.hpp) and the [tests](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/co_sim_io/python/test_model_part.py).
