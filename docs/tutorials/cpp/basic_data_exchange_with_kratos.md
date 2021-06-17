@@ -8,9 +8,9 @@ Furthermore it is required to compile Kratos which is described [here](../../kra
 Instead of connecting two instances of the same code as shown in [this tutorial](../cpp/integration_co_sim_io.md#connecting-and-disconnecting), here one instance is connected to Kratos.
 For this we use the same code from the previous tutorial.
 
-For connecting to Kratos it is very important to have in mind that Kratos also uses _CoSimIO_, so its python interface reflects the _CoSimIO_. So we may create a python script for connecting and disconnecting in a similar way described in the [python tutorial](../python/integration_co_sim_io.md):
+For connecting to Kratos it is very important to have in mind that Kratos also uses _CoSimIO_, so its python interface reflects the API of the _CoSimIO_. So we may create a python script for connecting and disconnecting in a similar way described in the [python tutorial](../python/integration_co_sim_io.md):
 
-```py
+~~~py
 from KratosMultiphysics.CoSimulationApplication import CoSimIO
 
 connection_settings = CoSimIO.Info()
@@ -28,7 +28,7 @@ disconnect_settings.SetString("connection_name", connection_name)
 info = CoSimIO.Disconnect(disconnect_settings)
 if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
     raise Exception("Disconnecting failed")
-```
+~~~
 
 Make sure to check that `my_name` and `connect_to` are set correctly, otherwise the connection can not be established. This was explained in more detail in a [previous tutorial](integration_co_sim_io.md#connecting-and-disconnecting).
 
@@ -36,14 +36,14 @@ Please note that the only change here is the import statement which loads the _C
 
 Then you may run your executable with python script of Kratos from your working directory:
 
-```shell
+~~~shell
 path/to/bin/tests_cpp/connect_disconnect_cpp_test & python3 path/to/connect_disconnect.py
-```
+~~~
 
 ## Data Exchange with Kratos
-Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one descirbed in the [python tutorial](../python/integration_co_sim_io.md):
+Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one described in the [python tutorial](../python/integration_co_sim_io.md):
 
-```python
+~~~python
 from KratosMultiphysics.CoSimulationApplication import CoSimIO
 
 connection_settings = CoSimIO.Info()
@@ -76,18 +76,25 @@ disconnect_settings.SetString("connection_name", connection_name)
 info = CoSimIO.Disconnect(disconnect_settings)
 if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
     raise Exception("Disconnecting failed")
-```
+~~~
 
 You may find this python file in [here](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/import_export_data.py)
 
 On the other side we use first export data and then import it back, following what was done in [this tutorial](integration_co_sim_io.md#data-exchange):
 
-```c++
+~~~c++
 // System includes
 #include <cmath> // std::abs
 
 // CoSimulation includes
 #include "co_sim_io.hpp"
+
+#define COSIMIO_CHECK_EQUAL(a, b)                                \
+    if (a != b) {                                                \
+        std::cout << "in line " << __LINE__ << " : " << a        \
+                  << " is not equal to " << b << std::endl;      \
+        return 1;                                                \
+    }
 
 int main()
 {
@@ -103,14 +110,14 @@ int main()
     // send data to Kratos
     std::vector<double> data_to_send(4, 3.14);
     info.Clear();
-    info.Set("identifier", "vector_of_pi");
+    info.Set("identifier", "data_exchange_1");
     info.Set("connection_name", connection_name);
     info = CoSimIO::ExportData(info, data_to_send);
 
     // receive the same data from Kratos
     std::vector<double> data_received;
     info.Clear();
-    info.Set("identifier", "vector_of_pi");
+    info.Set("identifier", "data_exchange_2");
     info.Set("connection_name", connection_name);
     info = CoSimIO::ImportData(info, data_received);
 
@@ -134,15 +141,15 @@ int main()
 
     return 0;
 }
-```
+~~~
 
 This example can be found in [integration_tutorials/cpp/data_exchange.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/cpp/data_exchange.cpp)
 
 Then you may run your executable with python script of Kratos from your working directory:
 
-```shell
+~~~shell
 path/to/bin/data_exchange_cpp_test & python3 path/to/connect_disconnect.py
-```
+~~~
 
 ## Next steps
-In the [next tutorial](data_and_mesh_exchange_and_mapping.md), meshes are exchanged with Kratos and mapping is used.
+In the [next tutorial](mesh_exchange_with_kratos.md), meshes are exchanged with Kratos

@@ -34,31 +34,42 @@ int main()
     COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
     const std::string connection_name = info.Get<std::string>("connection_name");
 
-    // send data to Kratos
-    std::vector<double> data_to_send(4, 3.14);
+    // send mesh to Kratos
+    CoSimIO::ModelPart model_part("my_mesh");
+
+    // fill the ModelPart with nodes & elements ...
+    for (int i=0; i<10; ++i) {
+        model_part.CreateNewNode(i+1, 1.1*i,0,0);
+    }
+
+    for (int i=0; i<5; ++i) {
+        model_part.CreateNewElement(i+1, CoSimIO::ElementType::Line2D2, {i+1, i+2});
+    }
+
     info.Clear();
-    info.Set("identifier", "data_exchange_1");
+    info.Set("identifier", "mesh_exchange_1");
     info.Set("connection_name", connection_name);
-    info = CoSimIO::ExportData(info, data_to_send);
+    info = CoSimIO::ExportMesh(info, model_part);
 
     // receive the same data from Kratos
-    std::vector<double> data_received;
+    CoSimIO::ModelPart model_part_received("my_mesh_2");
     info.Clear();
-    info.Set("identifier", "data_exchange_2");
+    info.Set("identifier", "mesh_exchange_1");
     info.Set("connection_name", connection_name);
-    info = CoSimIO::ImportData(info, data_received);
+    info = CoSimIO::ImportMesh(info, model_part_received);
 
-    // check that the data is the same:
-    if (data_to_send.size() != data_received.size()) {
+    // check that the meshes are the same
+    // e.g. similar to "CoSimIO/tests/co_sim_io/impl/co_sim_io_testing.hpp"
+
+    if (model_part.NumberOfNodes() != model_part_received.NumberOfNodes()) {
         return 1;
     }
 
-    for (std::size_t i=0; i<data_to_send.size(); ++i) {
-        // compare if values are the same, with a small tolerance
-        if (std::abs(data_to_send[i] - data_received[i]) > 1e-12) {
-            return 1;
-        }
+    if (model_part.NumberOfElements() != model_part_received.NumberOfElements()) {
+        return 1;
     }
+
+    // do more detailed checks if necessary ...
 
     // disconnecting afterwards
     CoSimIO::Info disconnect_settings;
