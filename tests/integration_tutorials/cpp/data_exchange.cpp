@@ -37,14 +37,14 @@ int main()
     // send data to Kratos
     std::vector<double> data_to_send(4, 3.14);
     info.Clear();
-    info.Set("identifier", "vector_of_pi");
+    info.Set("identifier", "data_exchange_1");
     info.Set("connection_name", connection_name);
     info = CoSimIO::ExportData(info, data_to_send);
 
     // receive the same data from Kratos
     std::vector<double> data_received;
     info.Clear();
-    info.Set("identifier", "vector_of_pi");
+    info.Set("identifier", "data_exchange_2");
     info.Set("connection_name", connection_name);
     info = CoSimIO::ImportData(info, data_received);
 

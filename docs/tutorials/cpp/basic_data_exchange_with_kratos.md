@@ -41,7 +41,7 @@ path/to/bin/tests_cpp/connect_disconnect_cpp_test & python3 path/to/connect_disc
 ```
 
 ## Data Exchange with Kratos
-Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one descirbed in the [python tutorial](../python/integration_co_sim_io.md):
+Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one described in the [python tutorial](../python/integration_co_sim_io.md):
 
 ```python
 from KratosMultiphysics.CoSimulationApplication import CoSimIO
