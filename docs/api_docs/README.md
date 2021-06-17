@@ -143,8 +143,7 @@ Instance of `CoSimIO::Info` which contains the following:
 ~~~c++
 CoSimIO::Info info = CoSimIO::ImportData(
     const CoSimIO::Info& I_Info,
-    std::vector<double>& O_Data
-    );
+    std::vector<double>& O_Data);
 ~~~
 
 #### Syntax C
@@ -190,8 +189,7 @@ Instance of `CoSimIO::Info` which contains the following:
 ~~~c++
 CoSimIO::Info info = CoSimIO::ExportData(
     const CoSimIO::Info& I_Info,
-    const std::vector<double>& I_Data
-    );
+    const std::vector<double>& I_Data);
 ~~~
 
 #### Syntax C
@@ -237,8 +235,7 @@ Instance of `CoSimIO::Info` which contains the following:
 ~~~c++
 CoSimIO::Info info = CoSimIO::ImportMesh(
     const CoSimIO::Info& I_Info,
-    CoSimIO::ModelPart& O_ModelPart
-    );
+    CoSimIO::ModelPart& O_ModelPart);
 ~~~
 
 #### Syntax C
@@ -287,8 +284,7 @@ Instance of `CoSimIO::Info` which contains the following:
 ~~~c++
 CoSimIO::Info info = CoSimIO::ExportMesh(
     const CoSimIO::Info& I_Info,
-    const CoSimIO::ModelPart& I_ModelPart
-    );
+    const CoSimIO::ModelPart& I_ModelPart);
 ~~~
 
 #### Syntax C
@@ -334,8 +330,7 @@ Instance of `CoSimIO::Info` which contains the following:
 #### Syntax C++
 ~~~c++
 CoSimIO::Info info = CoSimIO::Run(
-    const CoSimIO::Info& I_Info
-    );
+    const CoSimIO::Info& I_Info);
 ~~~
 
 #### Syntax C
@@ -348,7 +343,7 @@ CoSimIO_Info info = CoSimIO_Run(
 #### Syntax Python
 ~~~py
 info = CoSimIO.Run(
-    CoSimIO.Info I_Info
+    CoSimIO.Info I_Info)
 ~~~
 
 * * *
@@ -390,8 +385,7 @@ Instance of `CoSimIO::Info` which contains the following:
 ~~~c++
 CoSimIO::Info info = CoSimIO::Register(
     const CoSimIO::Info& I_Info,
-    std::function<Info(const Info&)> I_FunctionPointer
-    );
+    std::function<Info(const Info&)> I_FunctionPointer);
 ~~~
 
 #### Syntax C
@@ -406,7 +400,7 @@ CoSimIO_Info info = CoSimIO_Register(
 ~~~py
 info = CoSimIO.Register(
     CoSimIO.Info I_Info,
-    python_function I_FunctionPointer
+    python_function I_FunctionPointer)
 ~~~
 
 * * *
