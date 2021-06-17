@@ -19,6 +19,22 @@ Instance of `CoSimIO::Info` which contains the following:
 | minor_version | int    | Minor version of _CoSimIO_ |
 | patch_version | string | Patch version of _CoSimIO_ |
 
+#### Syntax C++
+~~~c++
+CoSimIO::Info info = CoSimIO::Hello();
+~~~
+
+#### Syntax C
+~~~c
+CoSimIO_Info = CoSimIO_Hello();
+~~~
+
+
+#### Syntax Python
+~~~py
+info = CoSimIO.Hello()
+~~~
+
 * * *
 
 
@@ -38,6 +54,25 @@ Instance of `CoSimIO::Info` which contains the following:
 |---|---|---|
 | connection_name | string | name of connection, necessary for further calls to _CoSimIO_ |
 | connection_status | int | status of the connection, can be used to check if connecting was successful |
+
+#### Syntax C++
+~~~c++
+CoSimIO::Info info = CoSimIO::Connect(
+    const CoSimIO::Info& I_Settings);
+~~~
+
+#### Syntax C
+~~~c
+CoSimIO_Info info = CoSimIO_Connect(
+    const CoSimIO_Info I_Settings);
+~~~
+
+
+#### Syntax Python
+~~~py
+info = CoSimIO.Connect(
+    CoSimIO.Info I_Settings)
+~~~
 
 * * *
 
@@ -62,6 +97,25 @@ Instance of `CoSimIO::Info` which contains the following:
 |---|---|---|
 | connection_status | int | status of the connection, can be used to check if disconnecting was successful |
 
+#### Syntax C++
+~~~c++
+CoSimIO::Info info = CoSimIO::Disconnect(
+    const CoSimIO::Info& I_Info);
+~~~
+
+#### Syntax C
+~~~c
+CoSimIO_Info info = CoSimIO_Disconnect(
+    const CoSimIO_Info I_Info);
+~~~
+
+
+#### Syntax Python
+~~~py
+info = CoSimIO.Disconnect(
+    CoSimIO.Info I_Info)
+~~~
+
 * * *
 
 
@@ -84,6 +138,30 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
 Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
+
+#### Syntax C++
+~~~c++
+CoSimIO::Info info = CoSimIO::ImportData(
+    const CoSimIO::Info& I_Info,
+    std::vector<double>& O_Data
+    );
+~~~
+
+#### Syntax C
+~~~c
+CoSimIO_Info info = CoSimIO_ImportData(
+    const CoSimIO_Info I_Info,
+    int* O_Size,
+    double** O_Data);
+~~~
+
+
+#### Syntax Python
+~~~py
+info = CoSimIO.ImportData(
+    CoSimIO.Info I_Info,
+    CoSimIO.DoubleVector O_Data)
+~~~
 
 * * *
 
