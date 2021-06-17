@@ -186,6 +186,30 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 
+#### Syntax C++
+~~~c++
+CoSimIO::Info info = CoSimIO::ExportData(
+    const CoSimIO::Info& I_Info,
+    const std::vector<double>& I_Data
+    );
+~~~
+
+#### Syntax C
+~~~c
+CoSimIO_Info info = CoSimIO_ExportData(
+    const CoSimIO_Info I_Info,
+    const int I_Size,
+    const double* I_Data);
+~~~
+
+
+#### Syntax Python
+~~~py
+info = CoSimIO.ExportData(
+    CoSimIO.Info I_Info,
+    CoSimIO.DoubleVector I_Data)
+~~~
+
 * * *
 
 
@@ -208,6 +232,29 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
 Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
+
+#### Syntax C++
+~~~c++
+CoSimIO::Info info = CoSimIO::ImportMesh(
+    const CoSimIO::Info& I_Info,
+    CoSimIO::ModelPart& O_ModelPart
+    );
+~~~
+
+#### Syntax C
+~~~c
+CoSimIO_Info info = CoSimIO_ImportMesh(
+    const CoSimIO_Info I_Info,
+    CoSimIO_ModelPart O_ModelPart);
+~~~
+
+
+#### Syntax Python
+~~~py
+info = CoSimIO.ImportMesh(
+    CoSimIO.Info I_Info,
+    CoSimIO.ModelPart O_ModelPart)
+~~~
 
 
 #### Additional information
@@ -236,6 +283,29 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 
+#### Syntax C++
+~~~c++
+CoSimIO::Info info = CoSimIO::ExportMesh(
+    const CoSimIO::Info& I_Info,
+    const CoSimIO::ModelPart& I_ModelPart
+    );
+~~~
+
+#### Syntax C
+~~~c
+CoSimIO_Info info = CoSimIO_ExportMesh(
+    const CoSimIO_Info I_Info,
+    const CoSimIO_ModelPart I_ModelPart);
+~~~
+
+
+#### Syntax Python
+~~~py
+info = CoSimIO.ExportMesh(
+    CoSimIO.Info I_Info,
+    CoSimIO.ModelPart I_ModelPart)
+~~~
+
 
 #### Additional information
 See documentation of `CoSimIO::ModelPart` [here](../model_part/model_part_cpp.md).
@@ -244,7 +314,7 @@ See documentation of `CoSimIO::ModelPart` [here](../model_part/model_part_cpp.md
 
 
 ### Run
-The `Run` method used only for remote controlled CoSimulation. Here the _CoSimulationApplication_ takes full control of the solver / code. Functions for controlling the solver / code have to be registered before using the `Register` function.
+The `Run` method is only for remote controlled CoSimulation. Here the _CoSimulationApplication_ takes full control of the solver / code. Functions for controlling the solver / code have to be registered before using the `Register` function.
 
 #### Requirements
 Can only be called with an active connection (i.e. after calling `Connect` and before calling `Disconnect`).
@@ -260,6 +330,26 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
 Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
+
+#### Syntax C++
+~~~c++
+CoSimIO::Info info = CoSimIO::Run(
+    const CoSimIO::Info& I_Info
+    );
+~~~
+
+#### Syntax C
+~~~c
+CoSimIO_Info info = CoSimIO_Run(
+    const CoSimIO_Info I_Info);
+~~~
+
+
+#### Syntax Python
+~~~py
+info = CoSimIO.Run(
+    CoSimIO.Info I_Info
+~~~
 
 * * *
 
@@ -295,6 +385,29 @@ The following functions can be registered:
 Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
+
+#### Syntax C++
+~~~c++
+CoSimIO::Info info = CoSimIO::Register(
+    const CoSimIO::Info& I_Info,
+    std::function<Info(const Info&)> I_FunctionPointer
+    );
+~~~
+
+#### Syntax C
+~~~c
+CoSimIO_Info info = CoSimIO_Register(
+    const CoSimIO_Info I_Info,
+    CoSimIO_Info (*I_FunctionPointer)(const CoSimIO_Info I_Info));
+~~~
+
+
+#### Syntax Python
+~~~py
+info = CoSimIO.Register(
+    CoSimIO.Info I_Info,
+    python_function I_FunctionPointer
+~~~
 
 * * *
 
