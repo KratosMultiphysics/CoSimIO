@@ -12,6 +12,7 @@
 
 // Project includes
 #include "co_sim_io.hpp"
+DEFINE_SINGLETON_MAIN( );
 #include "ext_lib_1.hpp"
 
 std::string ConnectToCoSimIO()

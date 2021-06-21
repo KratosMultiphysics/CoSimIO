@@ -15,6 +15,7 @@
 
 // Project includes
 #include "co_sim_io.hpp"
+DEFINE_SINGLETON_MAIN( );
 
 std::string ConnectToCoSimIO(CoSimIO::Info& rSettings);
 

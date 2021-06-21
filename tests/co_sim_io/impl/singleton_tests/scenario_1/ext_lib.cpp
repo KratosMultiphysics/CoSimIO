@@ -12,6 +12,7 @@
 
 // Project includes
 #include "co_sim_io.hpp"
+DEFINE_SINGLETON_MAIN( );
 #include "ext_lib.hpp"
 
 bool CheckExtLibHasConnection(const std::string& ConnectionName)
