@@ -14,4 +14,5 @@ set_target_properties( main_singleton_partner PROPERTIES
 # add_subdirectory(scenario_4)
 # add_subdirectory(scenario_5)
 # add_subdirectory(scenario_6)
-add_subdirectory(source)
+# add_subdirectory(source)
+add_subdirectory(source_cosimio)
