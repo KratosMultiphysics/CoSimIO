@@ -85,9 +85,9 @@ TEST_CASE("element_basics")
     const int id = 33;
     const CoSimIO::ElementType type = CoSimIO::ElementType::Point2D;
 
-    Node node(1, 0,0,0);
+    auto p_node = CoSimIO::make_intrusive<CoSimIO::Node>(1, 0,0,0);
 
-    Element element(id, type, {&node});
+    Element element(id, type, {p_node});
 
     CHECK_EQ(element.Id(), id);
     CHECK_EQ(element.Type(), type);
@@ -98,11 +98,11 @@ TEST_CASE("element_checks")
 {
     const int id = -33;
     const CoSimIO::ElementType type = CoSimIO::ElementType::Point2D;
-    Node node(1, 0,0,0);
+    auto p_node = CoSimIO::make_intrusive<CoSimIO::Node>(1, 0,0,0);
 
     SUBCASE("negative_id")
     {
-        CHECK_THROWS_WITH(Element element(id, type, {&node}), "Error: Id must be >= 1!\n");
+        CHECK_THROWS_WITH(Element element(id, type, {p_node}), "Error: Id must be >= 1!\n");
     }
 
     SUBCASE("no_nodes")
@@ -112,7 +112,7 @@ TEST_CASE("element_checks")
 
     SUBCASE("wrong_element_type")
     {
-        CHECK_THROWS_WITH(Element element(1, CoSimIO::ElementType::Line2D2, {&node}), "Error: Number of nodes (1) does not match expected number for element type (2)!\n");
+        CHECK_THROWS_WITH(Element element(1, CoSimIO::ElementType::Line2D2, {p_node}), "Error: Number of nodes (1) does not match expected number for element type (2)!\n");
     }
 }
 
@@ -124,11 +124,11 @@ TEST_CASE("element_nodes")
     const int node_ids[] = {2, 159, 61};
 
     const std::array<double, 3> dummy_coords = {0,0,0};
-    Node node_1(node_ids[0], dummy_coords);
-    Node node_2(node_ids[1], dummy_coords);
-    Node node_3(node_ids[2], dummy_coords);
+    auto p_node_1 = CoSimIO::make_intrusive<CoSimIO::Node>(node_ids[0], dummy_coords);
+    auto p_node_2 = CoSimIO::make_intrusive<CoSimIO::Node>(node_ids[1], dummy_coords);
+    auto p_node_3 = CoSimIO::make_intrusive<CoSimIO::Node>(node_ids[2], dummy_coords);
 
-    Element element(id, type, {&node_1, &node_2, &node_3});
+    Element element(id, type, {p_node_1, p_node_2, p_node_3});
 
     CHECK_EQ(element.Id(), id);
     CHECK_EQ(element.Type(), type);
@@ -145,11 +145,11 @@ TEST_CASE("element_nodes")
 TEST_CASE("element_ostream")
 {
     const std::array<double, 3> dummy_coords = {0,0,0};
-    Node node_1(1, dummy_coords);
-    Node node_2(22, dummy_coords);
-    Node node_3(321, dummy_coords);
+    auto p_node_1 = CoSimIO::make_intrusive<CoSimIO::Node>(1, dummy_coords);
+    auto p_node_2 = CoSimIO::make_intrusive<CoSimIO::Node>(22, dummy_coords);
+    auto p_node_3 = CoSimIO::make_intrusive<CoSimIO::Node>(321, dummy_coords);
 
-    Element element(65, CoSimIO::ElementType::Triangle2D3, {&node_1, &node_2, &node_3});
+    Element element(65, CoSimIO::ElementType::Triangle2D3, {p_node_1, p_node_2, p_node_3});
 
     std::stringstream test_stream;
 

@@ -12,3 +12,13 @@
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest/doctest.h"
+
+// Project includes
+#include "impl/exception.hpp"
+
+// registering custom exception translator
+// this is required as we only want to test the error message
+// and not the location which is included in the CoSimIO::Exception
+REGISTER_EXCEPTION_TRANSLATOR(CoSimIO::Exception& ex) {
+    return doctest::toString(ex.message());
+}

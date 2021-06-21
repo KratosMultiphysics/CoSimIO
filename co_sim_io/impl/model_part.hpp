@@ -26,6 +26,7 @@ see https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/mod
 #include <string>
 #include <functional>
 #include <algorithm>
+#include <atomic>
 
 // Project includes
 #include "define.hpp"
@@ -45,7 +46,8 @@ public:
     : mId(I_Id),
       mX(I_X),
       mY(I_Y),
-      mZ(I_Z)
+      mZ(I_Z),
+      mReferenceCounter(0)
     {
         CO_SIM_IO_ERROR_IF(I_Id < 1) << "Id must be >= 1!" << std::endl;
     }
@@ -77,6 +79,24 @@ private:
     double mX;
     double mY;
     double mZ;
+
+    //*********************************************
+    //this block is needed for refcounting
+    mutable std::atomic<int> mReferenceCounter;
+
+    friend void intrusive_ptr_add_ref(const Node* x)
+    {
+        x->mReferenceCounter.fetch_add(1, std::memory_order_relaxed);
+    }
+
+    friend void intrusive_ptr_release(const Node* x)
+    {
+        if (x->mReferenceCounter.fetch_sub(1, std::memory_order_release) == 1) {
+            std::atomic_thread_fence(std::memory_order_acquire);
+            delete x;
+        }
+    }
+    //*********************************************
 };
 
 /// output stream function
@@ -92,7 +112,7 @@ inline std::ostream & operator <<(
 class Element
 {
 public:
-    using NodesContainerType = std::vector<Node*>;
+    using NodesContainerType = std::vector<CoSimIO::intrusive_ptr<Node>>;
 
     Element(
         const IdType I_Id,
@@ -100,7 +120,8 @@ public:
         const NodesContainerType& I_Nodes)
     : mId(I_Id),
       mType(I_Type),
-      mNodes(I_Nodes)
+      mNodes(I_Nodes),
+      mReferenceCounter(0)
     {
         CO_SIM_IO_ERROR_IF(I_Id < 1) << "Id must be >= 1!" << std::endl;
         CO_SIM_IO_ERROR_IF(NumberOfNodes() < 1) << "No nodes were passed!" << std::endl;
@@ -136,6 +157,24 @@ private:
     IdType mId;
     ElementType mType;
     NodesContainerType mNodes;
+
+    //*********************************************
+    //this block is needed for refcounting
+    mutable std::atomic<int> mReferenceCounter;
+
+    friend void intrusive_ptr_add_ref(const Element* x)
+    {
+        x->mReferenceCounter.fetch_add(1, std::memory_order_relaxed);
+    }
+
+    friend void intrusive_ptr_release(const Element* x)
+    {
+        if (x->mReferenceCounter.fetch_sub(1, std::memory_order_release) == 1) {
+            std::atomic_thread_fence(std::memory_order_acquire);
+            delete x;
+        }
+    }
+    //*********************************************
 };
 
 /// output stream function
@@ -152,8 +191,8 @@ class ModelPart
 {
 public:
 
-    using NodePointerType = std::shared_ptr<Node>; // TODO switch to intrusive_ptr
-    using ElementPointerType = std::shared_ptr<Element>; // TODO switch to intrusive_ptr
+    using NodePointerType = CoSimIO::intrusive_ptr<Node>;
+    using ElementPointerType = CoSimIO::intrusive_ptr<Element>;
     using NodesContainerType = std::vector<NodePointerType>;
     using ElementsContainerType = std::vector<ElementPointerType>;
 
@@ -179,7 +218,7 @@ public:
     {
         CO_SIM_IO_ERROR_IF(HasNode(I_Id)) << "The Node with Id " << I_Id << " exists already!" << std::endl;
 
-        mNodes.push_back(std::make_shared<Node>(I_Id, I_X, I_Y, I_Z));
+        mNodes.push_back(CoSimIO::make_intrusive<Node>(I_Id, I_X, I_Y, I_Z));
         return *(mNodes.back());
     }
 
@@ -193,9 +232,9 @@ public:
         Element::NodesContainerType nodes;
         nodes.reserve(I_Connectivities.size());
         for (const IdType node_id : I_Connectivities) {
-            nodes.push_back(&GetNode(node_id));
+            nodes.push_back(pGetNode(node_id));
         }
-        mElements.push_back(std::make_shared<Element>(I_Id, I_Type, nodes));
+        mElements.push_back(CoSimIO::make_intrusive<Element>(I_Id, I_Type, nodes));
         return *(mElements.back());
     }
 
