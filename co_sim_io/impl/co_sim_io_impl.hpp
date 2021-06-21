@@ -93,12 +93,12 @@ extern maptype registry_map;
 maptype registry_map;
 #endif
 
-static bool HasIO(const std::string& rConnectionName)
+inline bool HasIO(const std::string& rConnectionName)
 {
     return registry_map.find(rConnectionName) != registry_map.end();
 }
 
-static Connection& GetConnection(const std::string& rConnectionName)
+inline Connection& GetConnection(const std::string& rConnectionName)
 {
     CO_SIM_IO_ERROR_IF_NOT(HasIO(rConnectionName)) << "Trying to use connection \"" << rConnectionName << "\" which does not exist!" << std::endl;
     return *registry_map.at(rConnectionName);
