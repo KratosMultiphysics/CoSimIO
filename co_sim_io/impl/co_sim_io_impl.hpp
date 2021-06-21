@@ -32,6 +32,8 @@ using maptype = std::unordered_map<std::string, std::unique_ptr<CoSimIO::Interna
 
 extern maptype registry_map;
 
+#define DEFINE_SINGLETON_MAIN( ) maptype registry_map
+
 namespace CoSimIO {
 
 namespace Internals {
@@ -276,7 +278,5 @@ inline Info Register(
 } // namespace CoSimIO
 
 
-
-#define DEFINE_SINGLETON_MAIN( ) maptype registry_map
 
 #endif // CO_SIM_IO_IMPL_INCLUDED
