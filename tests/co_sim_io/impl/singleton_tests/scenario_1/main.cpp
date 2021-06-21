@@ -18,7 +18,6 @@ Connecting and disconnecting is done in the main executable
 */
 
 // CoSimulation includes
-#define CO_SIM_IO_EXTERN
 #include "co_sim_io.hpp"
 #include "ext_lib.hpp"
 
