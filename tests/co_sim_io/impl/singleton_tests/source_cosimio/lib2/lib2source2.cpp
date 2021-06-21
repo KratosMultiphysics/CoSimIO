@@ -3,5 +3,6 @@
 
 void lib2function1( )
 {
-    // singleton.increment( );
+    CoSimIO::Info info;
+    CoSimIO::Connect(info);
 }

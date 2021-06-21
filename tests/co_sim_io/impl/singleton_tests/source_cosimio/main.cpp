@@ -8,6 +8,8 @@ DEFINE_SINGLETON_MAIN( );
 
 int main( )
 {
+    CoSimIO::Info info;
+    CoSimIO::Connect(info);
     // lib1function1( );
     // lib2function1( );
 
