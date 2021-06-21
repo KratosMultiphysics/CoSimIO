@@ -26,6 +26,8 @@ This file contains the implementation of the functions defined in "co_sim_io.hpp
 #include "utilities.hpp"
 #include "version.hpp"
 
+#include "singleton.h"
+
 namespace CoSimIO {
 
 namespace Internals {
@@ -51,22 +53,24 @@ std::unique_ptr<T> Singleton<T>::m_instance = nullptr;
 
 using maptype = std::unordered_map<std::string, std::unique_ptr<Connection>>;
 
+typedef Loki::SingletonHolder<maptype> SingleA;
+
 // this function makes sure that the registry works correctly also across translation units / libraries
-inline std::unordered_map<std::string, std::unique_ptr<Connection>>& GetRegistry()
-{
-    static std::unordered_map<std::string, std::unique_ptr<Connection>> s_co_sim_connections;
-    return s_co_sim_connections;
-}
+// inline std::unordered_map<std::string, std::unique_ptr<Connection>>& GetRegistry()
+// {
+//     static std::unordered_map<std::string, std::unique_ptr<Connection>> s_co_sim_connections;
+//     return s_co_sim_connections;
+// }
 
 static bool HasIO(const std::string& rConnectionName)
 {
-    return Singleton<maptype>::getInstance().find(rConnectionName) != Singleton<maptype>::getInstance().end();
+    return SingleA::Instance().find(rConnectionName) != SingleA::Instance().end();
 }
 
 static Connection& GetConnection(const std::string& rConnectionName)
 {
     CO_SIM_IO_ERROR_IF_NOT(HasIO(rConnectionName)) << "Trying to use connection \"" << rConnectionName << "\" which does not exist!" << std::endl;
-    return *Singleton<maptype>::getInstance().at(rConnectionName);
+    return *SingleA::Instance().at(rConnectionName);
 }
 
 } // namespace Internals
@@ -107,7 +111,7 @@ inline Info Connect(const Info& I_Settings)
 
     CO_SIM_IO_ERROR_IF(HasIO(connection_name)) << "A connection from \"" << my_name << "\" to \"" << connect_to << "\"already exists!" << std::endl;
 
-    Singleton<maptype>::getInstance()[connection_name] = std::unique_ptr<Connection>(new Connection(I_Settings));
+    SingleA::Instance()[connection_name] = std::unique_ptr<Connection>(new Connection(I_Settings));
 
     auto info = GetConnection(connection_name).Connect(I_Settings);
     info.Set<std::string>("connection_name", connection_name);
@@ -122,7 +126,7 @@ inline Info Disconnect(const Info& I_Info)
     CO_SIM_IO_ERROR_IF_NOT(HasIO(connection_name)) << "Trying to disconnect connection \"" << connection_name << "\" which does not exist!" << std::endl;
 
     auto info = GetConnection(connection_name).Disconnect(I_Info);
-    Singleton<maptype>::getInstance().erase(connection_name);
+    SingleA::Instance().erase(connection_name);
 
     return info;
 }
