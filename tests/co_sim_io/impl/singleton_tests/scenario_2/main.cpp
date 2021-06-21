@@ -19,6 +19,7 @@ Connecting and disconnecting is done in the external library
 
 // CoSimulation includes
 #include "co_sim_io.hpp"
+DEFINE_SINGLETON_MAIN( );
 #include "ext_lib.hpp"
 
 #define COSIMIO_CHECK_True(a)                                    \

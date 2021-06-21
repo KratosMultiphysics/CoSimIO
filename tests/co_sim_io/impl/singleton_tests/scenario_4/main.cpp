@@ -20,6 +20,7 @@ The it is checked if the connection is also available in library 2
 
 // CoSimulation includes
 #include "co_sim_io.hpp"
+DEFINE_SINGLETON_MAIN( );
 #include "ext_lib_1.hpp"
 #include "ext_lib_2.hpp"
 

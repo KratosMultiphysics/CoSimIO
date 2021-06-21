@@ -28,6 +28,10 @@ This file contains the implementation of the functions defined in "co_sim_io.hpp
 
 #include "singleton.h"
 
+using maptype = std::unordered_map<std::string, std::unique_ptr<CoSimIO::Internals::Connection>>;
+
+extern maptype registry_map;
+
 namespace CoSimIO {
 
 namespace Internals {
@@ -74,24 +78,20 @@ T& Singleton2<T>::Instance()
     return t;
 }
 
-using maptype = std::unordered_map<std::string, std::unique_ptr<Connection>>;
+// using maptype = std::unordered_map<std::string, std::unique_ptr<Connection>>;
 
-typedef Loki::SingletonHolder<maptype> SingleA;
+// typedef Loki::SingletonHolder<maptype> SingleA;
 
-// this function makes sure that the registry works correctly also across translation units / libraries
-// inline std::unordered_map<std::string, std::unique_ptr<Connection>>& GetRegistry()
-// {
-//     static std::unordered_map<std::string, std::unique_ptr<Connection>> s_co_sim_connections;
-//     return s_co_sim_connections;
-// }
+// // this function makes sure that the registry works correctly also across translation units / libraries
+// // inline std::unordered_map<std::string, std::unique_ptr<Connection>>& GetRegistry()
+// // {
+// //     static std::unordered_map<std::string, std::unique_ptr<Connection>> s_co_sim_connections;
+// //     return s_co_sim_connections;
+// // }
 
-using CoSimIOSingletonType = Singleton2<maptype>;
+// using CoSimIOSingletonType = Singleton2<maptype>;
 
-#ifdef CO_SIM_IO_EXTERN
-extern maptype registry_map;
-#else
-maptype registry_map;
-#endif
+// extern maptype registry_map;
 
 inline bool HasIO(const std::string& rConnectionName)
 {
@@ -274,5 +274,9 @@ inline Info Register(
 }
 
 } // namespace CoSimIO
+
+
+
+#define DEFINE_SINGLETON_MAIN( ) maptype registry_map
 
 #endif // CO_SIM_IO_IMPL_INCLUDED
