@@ -51,9 +51,29 @@ private:
 template<typename T>
 std::unique_ptr<T> Singleton<T>::m_instance = nullptr;
 
+template<typename T>
+class Singleton2 {
+public:
+    static T& Instance();
+
+    Singleton2(const Singleton2&) = delete;
+    Singleton2& operator= (const Singleton2) = delete;
+
+protected:
+    Singleton2() {}
+};
+
+template<typename T>
+T& Singleton2<T>::Instance()
+{
+    static const std::unique_ptr<T> instance{new T{}};
+    return *instance;
+}
+
 using maptype = std::unordered_map<std::string, std::unique_ptr<Connection>>;
 
 typedef Loki::SingletonHolder<maptype> SingleA;
+typedef Singleton2<maptype> SingleB;
 
 // this function makes sure that the registry works correctly also across translation units / libraries
 // inline std::unordered_map<std::string, std::unique_ptr<Connection>>& GetRegistry()
@@ -64,13 +84,13 @@ typedef Loki::SingletonHolder<maptype> SingleA;
 
 static bool HasIO(const std::string& rConnectionName)
 {
-    return SingleA::Instance().find(rConnectionName) != SingleA::Instance().end();
+    return SingleB::Instance().find(rConnectionName) != SingleB::Instance().end();
 }
 
 static Connection& GetConnection(const std::string& rConnectionName)
 {
     CO_SIM_IO_ERROR_IF_NOT(HasIO(rConnectionName)) << "Trying to use connection \"" << rConnectionName << "\" which does not exist!" << std::endl;
-    return *SingleA::Instance().at(rConnectionName);
+    return *SingleB::Instance().at(rConnectionName);
 }
 
 } // namespace Internals
@@ -111,7 +131,7 @@ inline Info Connect(const Info& I_Settings)
 
     CO_SIM_IO_ERROR_IF(HasIO(connection_name)) << "A connection from \"" << my_name << "\" to \"" << connect_to << "\"already exists!" << std::endl;
 
-    SingleA::Instance()[connection_name] = std::unique_ptr<Connection>(new Connection(I_Settings));
+    SingleB::Instance()[connection_name] = std::unique_ptr<Connection>(new Connection(I_Settings));
 
     auto info = GetConnection(connection_name).Connect(I_Settings);
     info.Set<std::string>("connection_name", connection_name);
@@ -126,7 +146,7 @@ inline Info Disconnect(const Info& I_Info)
     CO_SIM_IO_ERROR_IF_NOT(HasIO(connection_name)) << "Trying to disconnect connection \"" << connection_name << "\" which does not exist!" << std::endl;
 
     auto info = GetConnection(connection_name).Disconnect(I_Info);
-    SingleA::Instance().erase(connection_name);
+    SingleB::Instance().erase(connection_name);
 
     return info;
 }
