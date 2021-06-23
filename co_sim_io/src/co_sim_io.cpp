@@ -19,7 +19,7 @@
 #include "../impl/utilities.hpp"
 #include "../impl/version.hpp"
 
-This file contains the implementation of the functions defined in "co_sim_io.hpp"
+// This file contains the implementation of the functions defined in "co_sim_io.hpp"
 
 namespace CoSimIO {
 
