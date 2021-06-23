@@ -35,6 +35,7 @@ Note that this introduces dependencies such as e.g. boost (header-only version) 
 #include "impl/define.hpp"
 #include "impl/info.hpp"
 #include "impl/model_part.hpp"
+#include "impl/version.hpp"
 
 namespace CoSimIO {
 
