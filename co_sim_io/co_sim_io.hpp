@@ -41,43 +41,43 @@ namespace CoSimIO {
 Info Hello();
 
 
-inline Info Connect(
+Info Connect(
     const Info& I_Settings);
 
-inline Info Disconnect(
+Info Disconnect(
     const Info& I_Info);
 
 
 template<class TContainerType>
-inline Info ImportData(
+Info ImportData(
     const Info& I_Info,
     TContainerType& rData);
 
 template<class TContainerType>
-inline Info ExportData(
+Info ExportData(
     const Info& I_Info,
     const TContainerType& rData);
 
 
-inline Info ImportMesh(
+Info ImportMesh(
     const Info& I_Info,
     ModelPart& O_ModelPart);
 
-inline Info ExportMesh(
+Info ExportMesh(
     const Info& I_Info,
     const ModelPart& I_ModelPart);
 
-inline Info ImportInfo(
+Info ImportInfo(
     const Info& I_Info);
 
-inline Info ExportInfo(
+Info ExportInfo(
     const Info& I_Info);
 
 
-inline Info Run(const Info& I_Info);
+Info Run(const Info& I_Info);
 
 template<typename TFunctionType>
-inline Info Register(
+Info Register(
     const Info& I_Info,
     TFunctionType rFunction);
 
