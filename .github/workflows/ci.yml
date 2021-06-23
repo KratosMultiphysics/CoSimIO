@@ -161,6 +161,7 @@ jobs:
           source /opt/intel/oneapi/setvars.sh
         fi
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
+        export PATH=${PATH}:${GITHUB_WORKSPACE}/bin
         cd tests
         #TODO run the tests...
         # TODO delete build dir to make sure the linking etc works correctly?
@@ -349,6 +350,7 @@ jobs:
     - name: Running tests (Python)
       run: |
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
+        export PATH=${PATH}:${GITHUB_WORKSPACE}/bin
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
         python3.5 run_python_tests.py
