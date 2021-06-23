@@ -11,13 +11,17 @@
 //
 
 // System includes
+#include <unordered_map>
 
 // Project includes
 #include "../co_sim_io.hpp"
+#include "../impl/connection.hpp"
+#include "../impl/utilities.hpp"
+#include "../impl/version.hpp"
 
+This file contains the implementation of the functions defined in "co_sim_io.hpp"
 
 namespace CoSimIO {
-
 
 namespace {
 // TODO make sure this is unique even across compilation units (test somehow)

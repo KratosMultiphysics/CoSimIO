@@ -83,6 +83,4 @@ Info Register(
 
 } // namespace CoSimIO
 
-#include "impl/co_sim_io_impl.hpp"
-
 #endif // CO_SIM_IO_INCLUDED
