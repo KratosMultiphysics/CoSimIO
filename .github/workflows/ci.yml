@@ -223,6 +223,7 @@ jobs:
     - name: Running tests
       run: |
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
+        export PATH=${PATH}:${GITHUB_WORKSPACE}/bin
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/bin
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly?
