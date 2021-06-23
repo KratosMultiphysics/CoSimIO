@@ -38,7 +38,7 @@ Note that this introduces dependencies such as e.g. boost (header-only version) 
 
 namespace CoSimIO {
 
-inline Info Hello();
+Info Hello();
 
 
 inline Info Connect(
