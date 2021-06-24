@@ -240,6 +240,7 @@ jobs:
     - name: Build CoSimIO
       shell: cmd
       run: |
+        set PATH=%PATH%;%GITHUB_WORKSPACE%/build/Debug
         call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64 || goto :error
 
         set CC=cl.exe
@@ -252,7 +253,7 @@ jobs:
           -DBUILD_C=ON                ^
           -DCO_SIM_IO_STRICT_COMPILER=ON        || goto :error
 
-        cmake --build "${CMAKE_BINARY_DIR}\build" --target install -- /p:Platform=x64 || goto :error
+        cmake --build "build" --target install -- /p:Platform=x64 || goto :error
 
         goto :EOF
 
@@ -293,6 +294,7 @@ jobs:
     - name: Build CoSimIO
       shell: cmd
       run: |
+        set PATH=%PATH%;%GITHUB_WORKSPACE%/build/Debug
         call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64 || goto :error
 
         set CC=cl.exe
