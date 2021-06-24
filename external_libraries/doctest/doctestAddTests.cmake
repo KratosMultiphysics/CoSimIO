@@ -34,6 +34,8 @@ if("${spec}" MATCHES .)
   set(spec "--test-case=${spec}")
 endif()
 
+message("PHIIOOOO{TEST_WORKING_DIR}" ${TEST_WORKING_DIR})
+
 execute_process(
   COMMAND ${TEST_EXECUTOR} "${TEST_EXECUTABLE}" ${spec} --list-test-cases
   OUTPUT_VARIABLE output
