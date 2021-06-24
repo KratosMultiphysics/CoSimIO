@@ -240,7 +240,6 @@ jobs:
     - name: Build CoSimIO
       shell: cmd
       run: |
-        set PATH=%PATH%;%GITHUB_WORKSPACE%/build/Debug
         call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64 || goto :error
 
         set CC=cl.exe
@@ -294,7 +293,6 @@ jobs:
     - name: Build CoSimIO
       shell: cmd
       run: |
-        set PATH=%PATH%;%GITHUB_WORKSPACE%/build/Debug
         call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64 || goto :error
 
         set CC=cl.exe
