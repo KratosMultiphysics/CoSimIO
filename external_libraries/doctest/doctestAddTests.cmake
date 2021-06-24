@@ -38,6 +38,7 @@ execute_process(
   COMMAND ${TEST_EXECUTOR} "${TEST_EXECUTABLE}" ${spec} --list-test-cases
   OUTPUT_VARIABLE output
   RESULT_VARIABLE result
+  WORKING_DIRECTORY "${TEST_WORKING_DIR}"
 )
 if(NOT ${result} EQUAL 0)
   message(FATAL_ERROR
