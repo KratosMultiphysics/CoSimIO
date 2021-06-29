@@ -10,18 +10,23 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
+#ifndef CO_SIM_IO_MPI_IMPL_INCLUDED
+#define CO_SIM_IO_MPI_IMPL_INCLUDED
+
 /*
 This file contains the implementation of the functions defined in "co_sim_io_mpi.hpp"
 */
 
 // System includes
+#include "mpi.h"
 
 // Project includes
-#include "../../co_sim_io_mpi.hpp"
+#include "../define.hpp"
+#include "../info.hpp"
 
 namespace CoSimIO {
 
-Info ConnectMPI(
+inline Info ConnectMPI(
     const Info& I_Settings,
     MPI_Comm ThisMPIComm)
 {
@@ -36,3 +41,5 @@ Info ConnectMPI(
 }
 
 } // namespace CoSimIO
+
+#endif // CO_SIM_IO_MPI_IMPL_INCLUDED

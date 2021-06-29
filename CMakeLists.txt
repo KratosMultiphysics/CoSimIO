@@ -106,17 +106,6 @@ add_library (co_sim_io SHARED ${co_sim_io_source_files})
 
 install(TARGETS co_sim_io DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
-
-if (CO_SIM_IO_ENABLE_MPI)
-    # Adding CoSimIO library
-    file(GLOB co_sim_io_mpi_source_files ${CMAKE_SOURCE_DIR}/co_sim_io/src/mpi/*.cpp)
-    add_library (co_sim_io_mpi SHARED ${co_sim_io_mpi_source_files})
-
-    target_link_libraries(co_sim_io_mpi co_sim_io)
-
-    install(TARGETS co_sim_io_mpi DESTINATION ${CMAKE_SOURCE_DIR}/bin)
-endif()
-
 if (BUILD_C)
     add_subdirectory(co_sim_io/c)
 endif()
