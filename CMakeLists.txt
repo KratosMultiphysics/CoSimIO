@@ -100,12 +100,6 @@ endif()
 # clean the bin directory
 file(REMOVE_RECURSE bin)
 
-# Adding CoSimIO library
-file(GLOB co_sim_io_source_files ${CMAKE_SOURCE_DIR}/co_sim_io/src/*.cpp)
-add_library (co_sim_io SHARED ${co_sim_io_source_files})
-
-install(TARGETS co_sim_io DESTINATION ${CMAKE_SOURCE_DIR}/bin)
-
 if (BUILD_C)
     add_subdirectory(co_sim_io/c)
 endif()

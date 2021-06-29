@@ -22,6 +22,9 @@ The tests are contained in [tests](tests)
 ## Dependencies
 - The _CoSimIO_ is implemented as a standalone tool in C++. The only dependency is C++11. This includes most of the major C++ compilers in Windows, Linux, and Mac. A detailed list of C++11 compatible compilers [here](https://en.cppreference.com/w/cpp/compiler_support#cpp11).
 - Dependency on Kratos: There is **NO** dependency on Kratos. The _CoSimIO_ can be used completely without including or linking against Kratos.
+- _CoSimIO_ is **header-only**, no compiling/linking is required.
+- The CoSimIO uses [std::filesystem](https://en.cppreference.com/w/cpp/filesystem) which is part of C++17. When compiling with C++11, the [C++11 compatible version of std::filesystem](https://github.com/gulrak/filesystem) is used.
+   Note that in Windows this includes the `windows.h` header. For details check [here](co_sim_io/impl/filesystem_inc.hpp).
 
 ## Available languages
 Besides the native C++ interface, the _CoSimIO_ also provides interfaces to other languages. Currently the following languages are supported:
@@ -34,7 +37,7 @@ These interfaces are implemented as consistent as possible with the C++ interfac
 This section provides a brief overview on how to use the _CoSimIO_. For more detailed explanations please check the [documentation](https://kratosmultiphysics.github.io/CoSimIO/) in the corresponding language.
 
 ### **C++**
-The C++ interface is defined in [co_sim_io.hpp](co_sim_io/co_sim_io.hpp). In addition to including this header it is required to compile _CoSimIO_ into a shared library and link against it.
+The C++ interface is defined in [co_sim_io.hpp](co_sim_io/co_sim_io.hpp). It is sufficient to include this header, no compilation/linking is necessary because it is header-only.
 
 ### **C**
 The C interface is defined in [co_sim_io_c.h](co_sim_io/c/co_sim_io_c.h). In addition to including this header it is required to compile [co_sim_io_c.c](co_sim_io/c/co_sim_io_c.c) into a shared library and link against it.

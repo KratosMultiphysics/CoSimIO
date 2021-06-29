@@ -45,7 +45,7 @@ The C version of CosimIO is implemented in the [co_sim_io_c.cpp](https://github.
 $ bash scripts/build_c.sh
 ```
 
-The shared library will be installed in the `bin/` folder. After building and linking it to your project, you may use the interface defined in `co_sim_io_c.h`:
+The shared library will be installed in `bin/` folder. After building and linking it to your project, you may use the interface defined in `co_sim_io_c.h`:
 
 ```c
 // CoSimulation includes

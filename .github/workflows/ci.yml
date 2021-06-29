@@ -151,7 +151,6 @@ jobs:
           source /opt/intel/oneapi/setvars.sh
         fi
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
-        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/bin
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly?
         python run_python_tests.py
@@ -162,7 +161,6 @@ jobs:
           source /opt/intel/oneapi/setvars.sh
         fi
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
-        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/bin
         cd tests
         #TODO run the tests...
         # TODO delete build dir to make sure the linking etc works correctly?
@@ -223,7 +221,6 @@ jobs:
     - name: Running tests
       run: |
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
-        export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/bin
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly?
         python run_python_tests.py
@@ -240,9 +237,6 @@ jobs:
     - name: Build CoSimIO
       shell: cmd
       run: |
-        rem adding this to path is currently needed as co_sim_io must be available at configure time for discovering the tests for CTest
-        set PATH=%PATH%;%GITHUB_WORKSPACE%/build/Debug
-
         call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64 || goto :error
 
         set CC=cl.exe
@@ -296,9 +290,6 @@ jobs:
     - name: Build CoSimIO
       shell: cmd
       run: |
-        rem adding this to path is currently needed as co_sim_io must be available at configure time for discovering the tests for CTest
-        set PATH=%PATH%;%GITHUB_WORKSPACE%/build/Debug
-
         call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64 || goto :error
 
         set CC=cl.exe
@@ -358,7 +349,6 @@ jobs:
     - name: Running tests (Python)
       run: |
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
-        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/bin
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
         python3.5 run_python_tests.py

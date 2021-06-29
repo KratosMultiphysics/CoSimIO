@@ -15,8 +15,6 @@ extern "C" {
 #include "co_sim_io_c.h"
 }
 #include "../co_sim_io.hpp"
-#include "../impl/connection.hpp"
-#include "../impl/data_container.hpp"
 
 namespace {
     // get C Info from C++ Info
