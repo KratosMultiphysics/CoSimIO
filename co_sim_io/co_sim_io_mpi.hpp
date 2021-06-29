@@ -25,14 +25,11 @@ This file contains the interface of the MPI extension for the CoSimIO
 
 namespace CoSimIO {
 
-
-inline Info ConnectMPI(
+Info ConnectMPI(
     const Info& I_Settings,
     MPI_Comm ThisMPIComm);
 
 
 } // namespace CoSimIO
-
-#include "impl/mpi/co_sim_io_mpi_impl.hpp"
 
 #endif // CO_SIM_IO_MPI_INCLUDED
