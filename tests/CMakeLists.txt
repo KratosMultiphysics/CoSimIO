@@ -15,7 +15,7 @@ set_target_properties(co_sim_io_tests PROPERTIES
 )
 
 
-doctest_discover_tests(co_sim_io_tests WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+doctest_discover_tests(co_sim_io_tests TEST_PREFIX "cpp_" WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 if (CO_SIM_IO_ENABLE_MPI)
     file( GLOB CO_SIM_IO_MPI_TEST_FILES co_sim_io/impl/mpi/*.cpp )
@@ -28,7 +28,7 @@ if (CO_SIM_IO_ENABLE_MPI)
         CXX_EXTENSIONS NO
     )
 
-    add_test(NAME "MPI-C++-tests-4-Cores" COMMAND mpiexec -np 4 co_sim_io_mpi_tests)
+    doctest_discover_tests(co_sim_io_mpi_tests TEST_PREFIX "cpp_mpi_" WORKING_DIRECTORY ${CMAKE_BINARY_DIR} TEST_EXECUTOR mpiexec TEST_EXECUTOR_ARGS -np 4)
 
 endif()
 
