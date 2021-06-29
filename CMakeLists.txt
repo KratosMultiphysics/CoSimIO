@@ -4,7 +4,7 @@ cmake_minimum_required (VERSION 2.8.6)
 # this has to be specified BEFORE including CTest!
 # suppressions file has to be included in the options, as using "MEMORYCHECK_SUPPRESSIONS_FILE" doesn't work on all systems
 # set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track-origins=yes --tool=memcheck --error-exitcode=1 --suppressions=${CMAKE_SOURCE_DIR}/tests/valgrind_suppressions.supp")
-set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track-origins=yes --tool=memcheck --suppressions=${CMAKE_SOURCE_DIR}/tests/valgrind_suppressions.supp --gen-suppressions=all --log-file=valgrind_sup.log")
+set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track-origins=yes --tool=memcheck --gen-suppressions=all --log-file=valgrind_sup.log")
 
 include(CTest)
 
