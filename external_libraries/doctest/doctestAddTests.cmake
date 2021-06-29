@@ -35,7 +35,7 @@ if("${spec}" MATCHES .)
 endif()
 
 execute_process(
-  COMMAND ${TEST_EXECUTOR} "${TEST_EXECUTABLE}" ${spec} --list-test-cases
+  COMMAND "${TEST_EXECUTABLE}" ${spec} --list-test-cases
   OUTPUT_VARIABLE output
   RESULT_VARIABLE result
   WORKING_DIRECTORY "${TEST_WORKING_DIR}"
@@ -68,7 +68,8 @@ foreach(line ${output})
   # ...and add to script
   add_command(add_test
     "${prefix}${test}${suffix}"
-    ${TEST_EXECUTOR}
+    "${TEST_EXECUTOR}"
+    ${TEST_EXECUTOR_ARGS}
     "${TEST_EXECUTABLE}"
     "--test-case=${test_name}"
     "${TEST_JUNIT_OUTPUT_PARAM}"
