@@ -31,6 +31,9 @@ if (CO_SIM_IO_ENABLE_MPI)
 
 endif()
 
+# singleton tests
+add_subdirectory(co_sim_io/impl/singleton_tests)
+
 ### C++ tests ###
 function(add_cpp_executable TEST_SOURCE_FILE)
     get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)

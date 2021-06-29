@@ -26,21 +26,84 @@ This file contains the implementation of the functions defined in "co_sim_io.hpp
 #include "utilities.hpp"
 #include "version.hpp"
 
+#include "singleton.h"
+
+using maptype = std::unordered_map<std::string, std::unique_ptr<CoSimIO::Internals::Connection>>;
+
+extern maptype registry_map;
+
+#define DEFINE_SINGLETON_MAIN( ) maptype registry_map
+
 namespace CoSimIO {
 
 namespace Internals {
-// TODO make sure this is unique even across compilation units (test somehow)
-static std::unordered_map<std::string, std::unique_ptr<Connection>> s_co_sim_connections;
 
-static bool HasIO(const std::string& rConnectionName)
+template <typename T>
+class Singleton
 {
-    return s_co_sim_connections.find(rConnectionName) != s_co_sim_connections.end();
+public:
+    static T& getInstance()
+    {
+        if (!m_instance) {
+            m_instance = CoSimIO::make_unique<T>();
+        }
+        return *m_instance;
+    }
+
+private:
+    static std::unique_ptr<T> m_instance;
+};
+
+template<typename T>
+std::unique_ptr<T> Singleton<T>::m_instance = nullptr;
+
+template<typename T>
+class Singleton2 {
+public:
+    static T& Instance();
+
+    Singleton2(const Singleton2&) = delete;
+    Singleton2& operator= (const Singleton2) = delete;
+
+protected:
+    Singleton2() {}
+};
+
+template<typename T>
+T& Singleton2<T>::Instance()
+{
+// #ifdef CO_SIM_IO_EXTERN
+//     extern T t;
+// #else
+    static T t;
+// #endif
+    return t;
 }
 
-static Connection& GetConnection(const std::string& rConnectionName)
+// using maptype = std::unordered_map<std::string, std::unique_ptr<Connection>>;
+
+// typedef Loki::SingletonHolder<maptype> SingleA;
+
+// // this function makes sure that the registry works correctly also across translation units / libraries
+// // inline std::unordered_map<std::string, std::unique_ptr<Connection>>& GetRegistry()
+// // {
+// //     static std::unordered_map<std::string, std::unique_ptr<Connection>> s_co_sim_connections;
+// //     return s_co_sim_connections;
+// // }
+
+// using CoSimIOSingletonType = Singleton2<maptype>;
+
+// extern maptype registry_map;
+
+inline bool HasIO(const std::string& rConnectionName)
+{
+    return registry_map.find(rConnectionName) != registry_map.end();
+}
+
+inline Connection& GetConnection(const std::string& rConnectionName)
 {
     CO_SIM_IO_ERROR_IF_NOT(HasIO(rConnectionName)) << "Trying to use connection \"" << rConnectionName << "\" which does not exist!" << std::endl;
-    return *s_co_sim_connections.at(rConnectionName);
+    return *registry_map.at(rConnectionName);
 }
 
 } // namespace Internals
@@ -81,7 +144,7 @@ inline Info Connect(const Info& I_Settings)
 
     CO_SIM_IO_ERROR_IF(HasIO(connection_name)) << "A connection from \"" << my_name << "\" to \"" << connect_to << "\"already exists!" << std::endl;
 
-    s_co_sim_connections[connection_name] = std::unique_ptr<Connection>(new Connection(I_Settings));
+    registry_map[connection_name] = std::unique_ptr<Connection>(new Connection(I_Settings));
 
     auto info = GetConnection(connection_name).Connect(I_Settings);
     info.Set<std::string>("connection_name", connection_name);
@@ -96,7 +159,7 @@ inline Info Disconnect(const Info& I_Info)
     CO_SIM_IO_ERROR_IF_NOT(HasIO(connection_name)) << "Trying to disconnect connection \"" << connection_name << "\" which does not exist!" << std::endl;
 
     auto info = GetConnection(connection_name).Disconnect(I_Info);
-    s_co_sim_connections.erase(connection_name);
+    registry_map.erase(connection_name);
 
     return info;
 }
@@ -213,5 +276,7 @@ inline Info Register(
 }
 
 } // namespace CoSimIO
+
+
 
 #endif // CO_SIM_IO_IMPL_INCLUDED

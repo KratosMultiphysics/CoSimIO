@@ -17,3 +17,4 @@ the "other" file that includes CoSimIO is "test_include_co_sim_io_2.cpp"
 
 // Project includes
 #include "co_sim_io.hpp"
+DEFINE_SINGLETON_MAIN( );

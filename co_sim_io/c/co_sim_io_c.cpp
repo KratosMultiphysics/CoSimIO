@@ -15,6 +15,7 @@ extern "C" {
 #include "co_sim_io_c.h"
 }
 #include "../co_sim_io.hpp"
+DEFINE_SINGLETON_MAIN( );
 
 namespace {
     // get C Info from C++ Info
