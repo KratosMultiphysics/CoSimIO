@@ -15,7 +15,7 @@ set_target_properties(co_sim_io_tests PROPERTIES
 )
 
 
-doctest_discover_tests(co_sim_io_tests TEST_PREFIX "cpp_" WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+doctest_discover_tests(co_sim_io_tests WORKING_DIRECTORY $<TARGET_FILE_DIR:co_sim_io>)
 
 if (CO_SIM_IO_ENABLE_MPI)
     file( GLOB CO_SIM_IO_MPI_TEST_FILES co_sim_io/impl/mpi/*.cpp )
