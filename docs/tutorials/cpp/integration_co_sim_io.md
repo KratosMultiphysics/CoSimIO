@@ -13,7 +13,13 @@ git clone https://github.com/KratosMultiphysics/CoSimIO.git
 
 
 ## Building the CoSimIO
-The C++ version of CosimIO is header only and for building you may only include the [co_sim_io.hpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp) in your project file and compile it with your code:
+The C++ version of the CoSimIO is implemented in [co_sim_io.hpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp). It can be used after compiling CoSimIO into a shared library and linking against it. One can use [build_cpp.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build.sh) for compiling it.
+
+```bash
+$ bash scripts/build_cpp.sh
+```
+
+The shared library will be installed in the `bin/` folder. After building and linking it to your project, you may use the interface defined in `co_sim_io.hpp`:
 
 ```c++
 // CoSimulation includes

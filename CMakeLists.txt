@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 2.8.6)
 
 # this has to be specified BEFORE including CTest!
 # suppressions file has to be included in the options, as using "MEMORYCHECK_SUPPRESSIONS_FILE" doesn't work on all systems
-set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track-origins=yes --tool=memcheck --error-exitcode=1 --suppressions=${CMAKE_SOURCE_DIR}/tests/valgrind_suppressions.supp")
+set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all --track-origins=yes --tool=memcheck --error-exitcode=1 --suppressions=${CMAKE_SOURCE_DIR}/tests/valgrind_suppressions.supp --gen-suppressions=all")
 
 include(CTest)
 
@@ -99,6 +99,26 @@ endif()
 
 # clean the bin directory
 file(REMOVE_RECURSE bin)
+
+# Adding CoSimIO library
+file(GLOB co_sim_io_source_files
+    ${CMAKE_SOURCE_DIR}/co_sim_io/src/*.cpp
+    ${CMAKE_SOURCE_DIR}/co_sim_io/src/communication/*.cpp
+)
+add_library (co_sim_io SHARED ${co_sim_io_source_files})
+
+install(TARGETS co_sim_io DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+
+
+if (CO_SIM_IO_ENABLE_MPI)
+    # Adding CoSimIO library
+    file(GLOB co_sim_io_mpi_source_files ${CMAKE_SOURCE_DIR}/co_sim_io/src/mpi/*.cpp)
+    add_library (co_sim_io_mpi SHARED ${co_sim_io_mpi_source_files})
+
+    target_link_libraries(co_sim_io_mpi co_sim_io)
+
+    install(TARGETS co_sim_io_mpi DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+endif()
 
 if (BUILD_C)
     add_subdirectory(co_sim_io/c)

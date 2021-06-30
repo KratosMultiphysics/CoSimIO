@@ -18,17 +18,11 @@
 
 namespace CoSimIO {
 
-constexpr int GetMajorVersion() {
-    return 2;
-}
+int GetMajorVersion();
 
-constexpr int GetMinorVersion() {
-    return 0;
-}
+int GetMinorVersion();
 
-inline std::string GetPatchVersion() {
-    return "0";
-}
+std::string GetPatchVersion();
 
 } // namespace CoSimIO
 

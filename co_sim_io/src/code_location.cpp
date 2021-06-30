@@ -10,26 +10,18 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_MPI_INCLUDED
-#define CO_SIM_IO_MPI_INCLUDED
-
-/*
-This file contains the interface of the MPI extension for the CoSimIO
-*/
-
 // System includes
-#include "mpi.h"
 
 // Project includes
-#include "co_sim_io.hpp"
+#include "../impl/code_location.h"
+#include "../impl/filesystem_inc.hpp"
 
 namespace CoSimIO {
 
-Info ConnectMPI(
-    const Info& I_Settings,
-    MPI_Comm ThisMPIComm);
+std::string CodeLocation::GetCleanFileName() const
+{
+    return fs::canonical(fs::path(GetFileName())).lexically_relative(fs::absolute(".")).string();
+}
 
+}  // namespace CoSimIO.
 
-} // namespace CoSimIO
-
-#endif // CO_SIM_IO_MPI_INCLUDED

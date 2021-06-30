@@ -6,7 +6,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/external_libraries )
 find_package (Threads REQUIRED)
 file( GLOB CO_SIM_IO_TEST_FILES co_sim_io/impl/*.cpp)
 add_executable ( co_sim_io_tests ${CO_SIM_IO_TEST_FILES})
-target_link_libraries(co_sim_io_tests ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(co_sim_io_tests co_sim_io ${CMAKE_THREAD_LIBS_INIT})
 install( TARGETS co_sim_io_tests DESTINATION ${CMAKE_SOURCE_DIR}/bin )
 set_target_properties(co_sim_io_tests PROPERTIES
     CXX_STANDARD 11
@@ -14,12 +14,13 @@ set_target_properties(co_sim_io_tests PROPERTIES
     CXX_EXTENSIONS NO
 )
 
-doctest_discover_tests(co_sim_io_tests)
+
+doctest_discover_tests(co_sim_io_tests TEST_PREFIX "cpp_" WORKING_DIRECTORY $<TARGET_FILE_DIR:co_sim_io>)
 
 if (CO_SIM_IO_ENABLE_MPI)
     file( GLOB CO_SIM_IO_MPI_TEST_FILES co_sim_io/impl/mpi/*.cpp )
     add_executable ( co_sim_io_mpi_tests ${CO_SIM_IO_MPI_TEST_FILES} )
-    target_link_libraries( co_sim_io_mpi_tests ${MPI_LIBRARIES} )
+    target_link_libraries( co_sim_io_mpi_tests co_sim_io_mpi ${MPI_LIBRARIES} )
     install( TARGETS co_sim_io_mpi_tests DESTINATION ${CMAKE_SOURCE_DIR}/bin )
     set_target_properties(co_sim_io_mpi_tests PROPERTIES
         CXX_STANDARD 11
@@ -27,7 +28,7 @@ if (CO_SIM_IO_ENABLE_MPI)
         CXX_EXTENSIONS NO
     )
 
-    add_test(NAME "MPI-C++-tests-4-Cores" COMMAND mpiexec -np 4 co_sim_io_mpi_tests)
+    doctest_discover_tests(co_sim_io_mpi_tests TEST_PREFIX "cpp_mpi_" WORKING_DIRECTORY $<TARGET_FILE_DIR:co_sim_io_mpi> TEST_EXECUTOR mpiexec TEST_EXECUTOR_ARGS -np 4)
 
 endif()
 
@@ -37,7 +38,7 @@ function(add_cpp_executable TEST_SOURCE_FILE)
     string(REGEX REPLACE ".cpp" "_cpp_test" TEST_NAME ${TEST_FILENAME})
     message(STATUS  "adding ${TEST_NAME} ")
     add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
-    target_link_libraries(${TEST_NAME})
+    target_link_libraries(${TEST_NAME} co_sim_io)
     install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_cpp")
 endfunction()
 
@@ -71,7 +72,7 @@ if (CO_SIM_IO_ENABLE_MPI)
         string(REGEX REPLACE ".cpp" "_cpp_test" TEST_NAME ${TEST_FILENAME})
         message(STATUS  "adding ${TEST_NAME} ")
         add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
-        target_link_libraries(${TEST_NAME} ${MPI_LIBRARIES})
+        target_link_libraries(${TEST_NAME} co_sim_io_mpi ${MPI_LIBRARIES})
         install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_cpp_mpi")
     endfunction()
 

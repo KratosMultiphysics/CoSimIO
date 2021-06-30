@@ -10,26 +10,21 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_MPI_INCLUDED
-#define CO_SIM_IO_MPI_INCLUDED
-
-/*
-This file contains the interface of the MPI extension for the CoSimIO
-*/
-
-// System includes
-#include "mpi.h"
-
 // Project includes
-#include "co_sim_io.hpp"
+#include "../impl/version.hpp"
 
 namespace CoSimIO {
 
-Info ConnectMPI(
-    const Info& I_Settings,
-    MPI_Comm ThisMPIComm);
+int GetMajorVersion() {
+    return 2;
+}
 
+int GetMinorVersion() {
+    return 0;
+}
+
+std::string GetPatchVersion() {
+    return "0";
+}
 
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_MPI_INCLUDED

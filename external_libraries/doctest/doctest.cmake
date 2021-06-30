@@ -106,7 +106,7 @@ function(doctest_discover_tests TARGET)
     ""
     ""
     "TEST_PREFIX;TEST_SUFFIX;WORKING_DIRECTORY;TEST_LIST;JUNIT_OUTPUT_DIR"
-    "TEST_SPEC;EXTRA_ARGS;PROPERTIES"
+    "TEST_SPEC;EXTRA_ARGS;PROPERTIES;TEST_EXECUTOR;TEST_EXECUTOR_ARGS"
     ${ARGN}
   )
 
@@ -124,17 +124,18 @@ function(doctest_discover_tests TARGET)
   # Define rule to generate test list for aforementioned test executable
   set(ctest_include_file "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}_include-${args_hash}.cmake")
   set(ctest_tests_file "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}_tests-${args_hash}.cmake")
-  get_property(crosscompiling_emulator
-    TARGET ${TARGET}
-    PROPERTY CROSSCOMPILING_EMULATOR
-  )
+  # get_property(crosscompiling_emulator
+  #   TARGET ${TARGET}
+  #   PROPERTY CROSSCOMPILING_EMULATOR
+  # )
   add_custom_command(
     TARGET ${TARGET} POST_BUILD
     BYPRODUCTS "${ctest_tests_file}"
     COMMAND "${CMAKE_COMMAND}"
             -D "TEST_TARGET=${TARGET}"
             -D "TEST_EXECUTABLE=$<TARGET_FILE:${TARGET}>"
-            -D "TEST_EXECUTOR=${crosscompiling_emulator}"
+            -D "TEST_EXECUTOR=${_TEST_EXECUTOR}"
+            -D "TEST_EXECUTOR_ARGS=${_TEST_EXECUTOR_ARGS}"
             -D "TEST_WORKING_DIR=${_WORKING_DIRECTORY}"
             -D "TEST_SPEC=${_TEST_SPEC}"
             -D "TEST_EXTRA_ARGS=${_EXTRA_ARGS}"
