@@ -100,7 +100,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
-        name: CTest log
+        name: "CTest Log Ubuntu C++ & C (${{ matrix.compiler }} / ${{ matrix.mpi }})"
         path: ${{ github.workspace }}/build/Testing/
 
 
