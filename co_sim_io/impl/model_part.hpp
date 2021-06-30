@@ -21,12 +21,10 @@ see https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/mod
 */
 
 // System includes
-#include <memory>
 #include <vector>
 #include <string>
-#include <functional>
-#include <algorithm>
 #include <atomic>
+#include <ostream>
 
 // Project includes
 #include "define.hpp"
@@ -196,11 +194,7 @@ public:
     using NodesContainerType = std::vector<NodePointerType>;
     using ElementsContainerType = std::vector<ElementPointerType>;
 
-    explicit ModelPart(const std::string& I_Name) : mName(I_Name)
-    {
-        CO_SIM_IO_ERROR_IF(I_Name.empty()) << "Please don't use empty names (\"\") when creating a ModelPart" << std::endl;
-        CO_SIM_IO_ERROR_IF_NOT(I_Name.find(".") == std::string::npos) << "Please don't use names containing (\".\") when creating a ModelPart (used in \"" << I_Name << "\")" << std::endl;
-    }
+    explicit ModelPart(const std::string& I_Name);
 
     // delete copy and assignment CTor
     ModelPart(const ModelPart&) = delete;
@@ -214,29 +208,12 @@ public:
         const IdType I_Id,
         const double I_X,
         const double I_Y,
-        const double I_Z)
-    {
-        CO_SIM_IO_ERROR_IF(HasNode(I_Id)) << "The Node with Id " << I_Id << " exists already!" << std::endl;
-
-        mNodes.push_back(CoSimIO::make_intrusive<Node>(I_Id, I_X, I_Y, I_Z));
-        return *(mNodes.back());
-    }
+        const double I_Z);
 
     Element& CreateNewElement(
         const IdType I_Id,
         const ElementType I_Type,
-        const ConnectivitiesType& I_Connectivities)
-    {
-        CO_SIM_IO_ERROR_IF(HasElement(I_Id)) << "The Element with Id " << I_Id << " exists already!" << std::endl;
-
-        Element::NodesContainerType nodes;
-        nodes.reserve(I_Connectivities.size());
-        for (const IdType node_id : I_Connectivities) {
-            nodes.push_back(pGetNode(node_id));
-        }
-        mElements.push_back(CoSimIO::make_intrusive<Element>(I_Id, I_Type, nodes));
-        return *(mElements.back());
-    }
+        const ConnectivitiesType& I_Connectivities);
 
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
     ElementsContainerType::const_iterator ElementsBegin() const { return mElements.begin(); }
@@ -244,106 +221,36 @@ public:
     NodesContainerType::const_iterator NodesEnd() const { return mNodes.end(); }
     ElementsContainerType::const_iterator ElementsEnd() const { return mElements.end(); }
 
-    Node& GetNode(const IdType I_Id)
-    {
-        auto it_node = FindNode(I_Id);
-        CO_SIM_IO_ERROR_IF(it_node == mNodes.end()) << "Node with Id " << I_Id << " does not exist!" << std::endl;
-        return **it_node;
-    }
+    Node& GetNode(const IdType I_Id);
 
-    const Node& GetNode(const IdType I_Id) const
-    {
-        auto it_node = FindNode(I_Id);
-        CO_SIM_IO_ERROR_IF(it_node == mNodes.end()) << "Node with Id " << I_Id << " does not exist!" << std::endl;
-        return **it_node;
-    }
+    const Node& GetNode(const IdType I_Id) const;
 
-    NodePointerType pGetNode(const IdType I_Id)
-    {
-        auto it_node = FindNode(I_Id);
-        CO_SIM_IO_ERROR_IF(it_node == mNodes.end()) << "Node with Id " << I_Id << " does not exist!" << std::endl;
-        return *it_node;
-    }
+    NodePointerType pGetNode(const IdType I_Id);
 
-    Element& GetElement(const IdType I_Id)
-    {
-        auto it_elem = FindElement(I_Id);
-        CO_SIM_IO_ERROR_IF(it_elem == mElements.end()) << "Element with Id " << I_Id << " does not exist!" << std::endl;
-        return **it_elem;
-    }
+    Element& GetElement(const IdType I_Id);
 
-    const Element& GetElement(const IdType I_Id) const
-    {
-        auto it_elem = FindElement(I_Id);
-        CO_SIM_IO_ERROR_IF(it_elem == mElements.end()) << "Element with Id " << I_Id << " does not exist!" << std::endl;
-        return **it_elem;
-    }
+    const Element& GetElement(const IdType I_Id) const;
 
-    ElementPointerType pGetElement(const IdType I_Id)
-    {
-        auto it_elem = FindElement(I_Id);
-        CO_SIM_IO_ERROR_IF(it_elem == mElements.end()) << "Element with Id " << I_Id << " does not exist!" << std::endl;
-        return *it_elem;
-    }
+    ElementPointerType pGetElement(const IdType I_Id);
 
-    void Print(std::ostream& rOStream) const
-    {
-        rOStream << "CoSimIO-ModelPart \"" << mName << "\"\n";
-        rOStream << "    Number of Nodes: " << NumberOfNodes() << "\n";
-        rOStream << "    Number of Elements: " << NumberOfElements() << std::endl;
-    }
+    void Print(std::ostream& rOStream) const;
 
-    void Clear()
-    {
-        mElements.clear();
-        mElements.shrink_to_fit();
-
-        mNodes.clear();
-        mNodes.shrink_to_fit();
-    }
+    void Clear();
 
 private:
     std::string mName;
     NodesContainerType mNodes;
     ElementsContainerType mElements;
 
-    NodesContainerType::const_iterator FindNode(const IdType I_Id) const
-    {
-        return std::find_if(
-            mNodes.begin(), mNodes.end(),
-            [I_Id](const NodePointerType& rp_node) { return rp_node->Id() == I_Id;});
-    }
+    NodesContainerType::const_iterator FindNode(const IdType I_Id) const;
+    NodesContainerType::iterator FindNode(const IdType I_Id);
 
-    NodesContainerType::iterator FindNode(const IdType I_Id)
-    {
-        return std::find_if(
-            mNodes.begin(), mNodes.end(),
-            [I_Id](const NodePointerType& rp_node) { return rp_node->Id() == I_Id;});
-    }
+    ElementsContainerType::const_iterator FindElement(const IdType I_Id) const;
+    ElementsContainerType::iterator FindElement(const IdType I_Id);
 
-    ElementsContainerType::const_iterator FindElement(const IdType I_Id) const
-    {
-        return std::find_if(
-            mElements.begin(), mElements.end(),
-            [I_Id](const ElementPointerType& rp_elem) { return rp_elem->Id() == I_Id;});
-    }
+    bool HasNode(const IdType I_Id) const;
 
-    ElementsContainerType::iterator FindElement(const IdType I_Id)
-    {
-        return std::find_if(
-            mElements.begin(), mElements.end(),
-            [I_Id](const ElementPointerType& rp_elem) { return rp_elem->Id() == I_Id;});
-    }
-
-    bool HasNode(const IdType I_Id) const
-    {
-        return FindNode(I_Id) != mNodes.end();
-    }
-
-    bool HasElement(const IdType I_Id) const
-    {
-        return FindElement(I_Id) != mElements.end();
-    }
+    bool HasElement(const IdType I_Id) const;
 };
 
 /// output stream function
