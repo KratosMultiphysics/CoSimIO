@@ -97,6 +97,12 @@ jobs:
         cd build
         ctest -T memcheck --output-on-failure
 
+    - uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: "CTest Log Ubuntu C++ & C (${{ matrix.compiler }} / ${{ matrix.mpi }})"
+        path: ${{ github.workspace }}/build/Testing/
+
 
   Ubuntu-Python:
     runs-on: ubuntu-latest
