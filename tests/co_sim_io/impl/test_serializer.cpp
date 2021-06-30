@@ -15,29 +15,96 @@
 
 // Project includes
 #include "co_sim_io_testing.hpp"
-#include "impl/serializer.h"
-#include "impl/file_serializer.h"
 #include "impl/stream_serializer.h"
 
 
 namespace CoSimIO {
 
-TEST_SUITE("Serializer") {
+namespace {
 
-
-TEST_CASE("dummy")
+template<typename TObjectType>
+void SaveAndLoadObjects(Serializer& rSerializer, const TObjectType& rObjectToBeSaved, TObjectType& rObjectToBeLoaded)
 {
-    // const std::vector<double> ref_values {
-    //     1.0, -2.333, 15.88, 14.7, -99.6
-    // };
+    const std::string tag_string("TestString");
 
-    // std::vector<double> values_vec(ref_values);
-
-    // DataContainerBasePointer p_container(CoSimIO::make_unique<DataContainerStdVectorType>(values_vec));
-
-    // CO_SIM_IO_CHECK_VECTOR_NEAR(ref_values, (*p_container));
+    rSerializer.save(tag_string, rObjectToBeSaved);
+    rSerializer.load(tag_string, rObjectToBeLoaded);
 }
 
+template<typename TObjectType>
+void TestObjectSerialization(Serializer& rSerializer, const TObjectType& rObjectToBeSaved, TObjectType& rObjectToBeLoaded)
+{
+    SaveAndLoadObjects(rSerializer, rObjectToBeSaved, rObjectToBeLoaded);
+    CHECK_EQ(rObjectToBeLoaded, rObjectToBeSaved);
+}
+
+template<typename TObjectType>
+void TestObjectSerializationComponentwise1D(Serializer& rSerializer, const TObjectType& rObjectToBeSaved, TObjectType& rObjectToBeLoaded)
+{
+    SaveAndLoadObjects(rObjectToBeSaved, rObjectToBeLoaded);
+
+    REQUIRE_EQ(rObjectToBeLoaded.size(), rObjectToBeSaved.size());
+
+    for (std::size_t i=0; i< rObjectToBeSaved.size(); ++i)
+        CHECK_EQ(rObjectToBeLoaded[i], rObjectToBeSaved[i]);
+}
+
+void RunAllSerializationTests(Serializer& rSerializer)
+{
+    SUBCASE("bool_true")
+    {
+        bool object_to_be_saved = true;
+        bool object_to_be_loaded;
+
+        TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("bool_false")
+    {
+        bool object_to_be_saved = false;
+        bool object_to_be_loaded;
+
+        TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("int")
+    {
+        int object_to_be_saved = -18;
+        int object_to_be_loaded;
+
+        TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("unsigned int")
+    {
+        unsigned int object_to_be_saved = 128;
+        unsigned int object_to_be_loaded;
+
+        TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+}
+
+}
+
+TEST_SUITE("Serializer") {
+
+TEST_CASE("Serializer_no_trace")
+{
+    StreamSerializer serializer(Serializer::TraceType::SERIALIZER_NO_TRACE);
+    RunAllSerializationTests(serializer);
+}
+
+TEST_CASE("Serializer_trace_error")
+{
+    StreamSerializer serializer(Serializer::TraceType::SERIALIZER_TRACE_ERROR);
+    RunAllSerializationTests(serializer);
+}
+
+TEST_CASE("Serializer_trace_all")
+{
+    StreamSerializer serializer(Serializer::TraceType::SERIALIZER_TRACE_ALL);
+    RunAllSerializationTests(serializer);
+}
 
 } // TEST_SUITE("Serializer")
 
