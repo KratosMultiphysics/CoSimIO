@@ -24,6 +24,8 @@
 #include <sstream>
 #include <fstream>
 #include <memory>
+#include <array>
+#include <vector>
 
 // Project includes
 #include "define.hpp"
