@@ -29,7 +29,6 @@ Note that this introduces dependencies such as e.g. boost (header-only version) 
 #endif
 
 // System includes
-#include <string>
 
 // Project includes
 #include "impl/define.hpp"

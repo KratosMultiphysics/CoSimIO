@@ -18,7 +18,6 @@
 #include <iostream>
 
 // Project includes
-#include "filesystem_inc.hpp"
 
 namespace CoSimIO
 {
@@ -63,10 +62,7 @@ public:
     ///@{
 
     /// This function removes the path before the CoSimIO root and resolves relative paths
-    std::string GetCleanFileName() const
-    {
-        return fs::canonical(fs::path(GetFileName())).lexically_relative(fs::absolute(".")).string();
-    }
+    std::string GetCleanFileName() const;
 
     /// This method cleans many template arguments and namespaces from the function name gives by compiler
     std::string GetCleanFunctionName() const

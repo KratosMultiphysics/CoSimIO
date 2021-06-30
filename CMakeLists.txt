@@ -101,7 +101,10 @@ endif()
 file(REMOVE_RECURSE bin)
 
 # Adding CoSimIO library
-file(GLOB co_sim_io_source_files ${CMAKE_SOURCE_DIR}/co_sim_io/src/*.cpp)
+file(GLOB co_sim_io_source_files
+    ${CMAKE_SOURCE_DIR}/co_sim_io/src/*.cpp
+    ${CMAKE_SOURCE_DIR}/co_sim_io/src/communication/*.cpp
+)
 add_library (co_sim_io SHARED ${co_sim_io_source_files})
 
 install(TARGETS co_sim_io DESTINATION ${CMAKE_SOURCE_DIR}/bin)

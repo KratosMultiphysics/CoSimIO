@@ -10,20 +10,18 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_VERSION_INCLUDED
-#define CO_SIM_IO_VERSION_INCLUDED
-
 // System includes
-#include <string>
+
+// Project includes
+#include "../impl/code_location.h"
+#include "../impl/filesystem_inc.hpp"
 
 namespace CoSimIO {
 
-int GetMajorVersion();
+std::string CodeLocation::GetCleanFileName() const
+{
+    return fs::canonical(fs::path(GetFileName())).lexically_relative(fs::absolute(".")).string();
+}
 
-int GetMinorVersion();
+}  // namespace CoSimIO.
 
-std::string GetPatchVersion();
-
-} // namespace CoSimIO
-
-#endif // CO_SIM_IO_VERSION_INCLUDED
