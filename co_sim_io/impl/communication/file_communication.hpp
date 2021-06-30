@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <limits>
 #include <system_error>
+#include <unordered_map>
 
 // Project includes
 #include "communication.hpp"
