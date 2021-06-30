@@ -101,7 +101,7 @@ jobs:
       if: failure()
       with:
         name: CTest log
-        path: ${GITHUB_WORKSPACE}/build/Testing/
+        path: ${{ github.workspace }}/build/Testing/
 
 
   Ubuntu-Python:
