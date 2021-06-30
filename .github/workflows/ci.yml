@@ -95,10 +95,7 @@ jobs:
         fi
 
         cd build
-        ctest -T memcheck --output-on-failure    
-    
-    - name: print err
-        cat Testing/Temporary/MemoryChecker.58.log
+        ctest -T memcheck --output-on-failure
 
     - uses: actions/upload-artifact@v2
       if: failure()
