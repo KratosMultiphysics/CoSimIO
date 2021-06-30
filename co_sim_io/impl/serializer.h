@@ -11,8 +11,8 @@
 //
 //
 
-#if !defined(CO_SIM_IO_SERIALIZER_HPP_INCLUDED )
-#define  CO_SIM_IO_SERIALIZER_HPP_INCLUDED
+#ifndef CO_SIM_IO_SERIALIZER_INCLUDED
+#define CO_SIM_IO_SERIALIZER_INCLUDED
 
 // System includes
 #include <string>
@@ -25,13 +25,11 @@
 #include <fstream>
 #include <memory>
 
-// External includes
-
 // Project includes
 #include "define.hpp"
 #include "macros.hpp"
 
-#define KRATOS_SERIALIZATION_DIRECT_LOAD(type)                           \
+#define CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(type)                           \
     void load(std::string const & rTag, type& rValue)                \
     {                                                                \
         load_trace_point(rTag);                                      \
@@ -49,7 +47,7 @@
       read(rValue);                                             \
     }
 
-#define KRATOS_SERIALIZATION_DIRECT_SAVE(type)                           \
+#define CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(type)                           \
     void save(std::string const & rTag, type const & rValue)         \
     {                                                                \
       save_trace_point(rTag);                                      \
@@ -62,7 +60,7 @@
       write(rValue);                                             \
     }
 
-#define KRATOS_SERIALIZATION_DIRECT_CREATE(type)                         \
+#define CO_SIM_IO_SERIALIZATION_DIRECT_CREATE(type)                         \
     void* create(std::string const & rTag, type* prototype)          \
     {                                                                \
       type* p_new = new type;                                        \
@@ -70,11 +68,11 @@
       return p_new;                                                  \
     }
 
-#define KRATOS_SERIALIZER_MODE_BINARY \
+#define CO_SIM_IO_SERIALIZER_MODE_BINARY \
     if(!mTrace) {
-#define KRATOS_SERIALIZER_MODE_ASCII \
+#define CO_SIM_IO_SERIALIZER_MODE_ASCII \
     } else {
-#define KRATOS_SERIALIZER_MODE_END \
+#define CO_SIM_IO_SERIALIZER_MODE_END \
     }
 
 namespace CoSimIO {
@@ -158,6 +156,12 @@ public:
     ///@}
     ///@name Operators
     ///@{
+
+    /// Assignment operator.
+    Serializer& operator=(Serializer const& rOther) = delete;
+
+    /// Copy constructor.
+    Serializer(Serializer const& rOther) = delete;
 
     /// Sets the Serializer in a state ready to be loaded
     /// Note: If the same object is loaded twice before deleting it from memory all its pointers will be duplicated.
@@ -426,21 +430,21 @@ public:
         load("Second", rObject.second);
     }
 
-    KRATOS_SERIALIZATION_DIRECT_LOAD(bool)
-    KRATOS_SERIALIZATION_DIRECT_LOAD(int)
-    KRATOS_SERIALIZATION_DIRECT_LOAD(long)
-    KRATOS_SERIALIZATION_DIRECT_LOAD(double)
-    KRATOS_SERIALIZATION_DIRECT_LOAD(unsigned long)
-    KRATOS_SERIALIZATION_DIRECT_LOAD(unsigned int)
-    KRATOS_SERIALIZATION_DIRECT_LOAD(std::string)
-    KRATOS_SERIALIZATION_DIRECT_LOAD(long long)
+    CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(bool)
+    CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(int)
+    CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(long)
+    CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(double)
+    CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(unsigned long)
+    CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(unsigned int)
+    CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(std::string)
+    CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(long long)
 //#ifdef  _WIN32 // work around for windows int64_t error
-//    KRATOS_SERIALIZATION_DIRECT_LOAD(__int64)
+//    CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(__int64)
 //#endif
 #ifdef  _WIN64 // work around for windows size_t error in win64
-    KRATOS_SERIALIZATION_DIRECT_LOAD(std::size_t)
+    CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(std::size_t)
 #endif
-	// KRATOS_SERIALIZATION_DIRECT_LOAD(std::complex<double>)
+	// CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(std::complex<double>)
 
 	template<class TDataType, std::size_t TDataSize>
 	void save(std::string const & rTag, std::array<TDataType, TDataSize> const& rObject)
@@ -579,21 +583,21 @@ public:
         save("Second", rObject.second);
     }
 
-    KRATOS_SERIALIZATION_DIRECT_SAVE(bool)
-    KRATOS_SERIALIZATION_DIRECT_SAVE(int)
-    KRATOS_SERIALIZATION_DIRECT_SAVE(long)
-    KRATOS_SERIALIZATION_DIRECT_SAVE(double)
-    KRATOS_SERIALIZATION_DIRECT_SAVE(unsigned long)
-    KRATOS_SERIALIZATION_DIRECT_SAVE(unsigned int)
-    KRATOS_SERIALIZATION_DIRECT_SAVE(std::string)
-    KRATOS_SERIALIZATION_DIRECT_SAVE(long long)
+    CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(bool)
+    CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(int)
+    CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(long)
+    CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(double)
+    CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(unsigned long)
+    CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(unsigned int)
+    CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(std::string)
+    CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(long long)
 //#ifdef  _WIN32 // work around for windows int64_t error
-//    KRATOS_SERIALIZATION_DIRECT_SAVE(__int64)
+//    CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(__int64)
 //#endif
 #ifdef  _WIN64 // work around for windows size_t error in win64
-    KRATOS_SERIALIZATION_DIRECT_SAVE(std::size_t)
+    CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(std::size_t)
 #endif
-	// KRATOS_SERIALIZATION_DIRECT_SAVE(std::complex<double>)
+	// CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(std::complex<double>)
 
 
     template<class TDataType>
@@ -674,9 +678,6 @@ public:
 
     }
 
-
-
-
     ///@}
     ///@name Access
     ///@{
@@ -755,11 +756,6 @@ private:
     LoadedPointersContainerType mLoadedPointers;
 
     ///@}
-    ///@name Private Operators
-    ///@{
-
-
-    ///@}
     ///@name Private Operations
     ///@{
 
@@ -817,40 +813,40 @@ private:
 
     void read(PointerType& rValue)
     {
-        KRATOS_SERIALIZER_MODE_BINARY
+        CO_SIM_IO_SERIALIZER_MODE_BINARY
 
         int temp;
         mpBuffer->read((char *)(&temp),sizeof(PointerType));
         rValue = PointerType(temp);
 
-        KRATOS_SERIALIZER_MODE_ASCII
+        CO_SIM_IO_SERIALIZER_MODE_ASCII
 
         int temp;
         *mpBuffer >> temp;
         rValue = PointerType(temp);
         mNumberOfLines++;
 
-        KRATOS_SERIALIZER_MODE_END
+        CO_SIM_IO_SERIALIZER_MODE_END
     }
 
     void write(PointerType const& rValue)
     {
-        KRATOS_SERIALIZER_MODE_BINARY
+        CO_SIM_IO_SERIALIZER_MODE_BINARY
 
         int ptr = (int)rValue;
         const char * data = reinterpret_cast<const char*>(&ptr);
         mpBuffer->write(data,sizeof(PointerType));
 
-        KRATOS_SERIALIZER_MODE_ASCII
+        CO_SIM_IO_SERIALIZER_MODE_ASCII
 
         *mpBuffer << int(rValue) << std::endl;
 
-        KRATOS_SERIALIZER_MODE_END
+        CO_SIM_IO_SERIALIZER_MODE_END
     }
 
     void read(std::string& rValue)
     {
-        KRATOS_SERIALIZER_MODE_BINARY
+        CO_SIM_IO_SERIALIZER_MODE_BINARY
 
         SizeType size;
         mpBuffer->read((char *)(&size),sizeof(SizeType));
@@ -860,7 +856,7 @@ private:
         rValue = s_binStream;
         delete [] c_binStream;
 
-        KRATOS_SERIALIZER_MODE_ASCII
+        CO_SIM_IO_SERIALIZER_MODE_ASCII
 
         // going to the first '"'
         std::getline( *mpBuffer,rValue, '\"');
@@ -868,12 +864,12 @@ private:
         std::getline( *mpBuffer,rValue, '\"');
         mNumberOfLines++;
 
-        KRATOS_SERIALIZER_MODE_END
+        CO_SIM_IO_SERIALIZER_MODE_END
     }
 
     void write(std::string const& rValue)
     {
-        KRATOS_SERIALIZER_MODE_BINARY
+        CO_SIM_IO_SERIALIZER_MODE_BINARY
 
         const char * data = rValue.c_str();
         SizeType rData_size = rValue.length() * sizeof(char);
@@ -883,47 +879,47 @@ private:
         mpBuffer->write(data1,sizeof(SizeType));
         mpBuffer->write(data,rData_size);
 
-        KRATOS_SERIALIZER_MODE_ASCII
+        CO_SIM_IO_SERIALIZER_MODE_ASCII
 
         *mpBuffer << "\"" << rValue << "\"" << std::endl;
 
-        KRATOS_SERIALIZER_MODE_END
+        CO_SIM_IO_SERIALIZER_MODE_END
     }
 
     template<class TDataType>
     void read(TDataType& rData)
     {
-        KRATOS_SERIALIZER_MODE_BINARY
+        CO_SIM_IO_SERIALIZER_MODE_BINARY
 
         mpBuffer->read((char *)(&rData),sizeof(TDataType));
 
-        KRATOS_SERIALIZER_MODE_ASCII
+        CO_SIM_IO_SERIALIZER_MODE_ASCII
 
         *mpBuffer >> rData;
         mNumberOfLines++;
 
-        KRATOS_SERIALIZER_MODE_END
+        CO_SIM_IO_SERIALIZER_MODE_END
     }
 
     template<class TDataType>
     void write(TDataType const& rData)
     {
-        KRATOS_SERIALIZER_MODE_BINARY
+        CO_SIM_IO_SERIALIZER_MODE_BINARY
 
         const char * data = reinterpret_cast<const char*>(&rData);
         mpBuffer->write(data,sizeof(TDataType));
 
-        KRATOS_SERIALIZER_MODE_ASCII
+        CO_SIM_IO_SERIALIZER_MODE_ASCII
 
         *mpBuffer << rData << std::endl;
 
-        KRATOS_SERIALIZER_MODE_END
+        CO_SIM_IO_SERIALIZER_MODE_END
     }
 
     template<class TDataType>
     void read(std::vector<TDataType>& rData)
     {
-        KRATOS_SERIALIZER_MODE_BINARY
+        CO_SIM_IO_SERIALIZER_MODE_BINARY
 
         SizeType size;
         mpBuffer->read((char *)(&size),sizeof(SizeType));
@@ -932,7 +928,7 @@ private:
 
         read(rData.begin(), rData.end(), sizeof(TDataType));
 
-        KRATOS_SERIALIZER_MODE_ASCII
+        CO_SIM_IO_SERIALIZER_MODE_ASCII
 
         std::size_t size;
         *mpBuffer >> size;
@@ -941,13 +937,13 @@ private:
 
         read(rData.begin(), rData.end());
 
-        KRATOS_SERIALIZER_MODE_END
+        CO_SIM_IO_SERIALIZER_MODE_END
     }
 
     template<class TDataType>
     void write(std::vector<TDataType> const& rData)
     {
-        KRATOS_SERIALIZER_MODE_BINARY
+        CO_SIM_IO_SERIALIZER_MODE_BINARY
 
         SizeType rData_size = rData.size();
 
@@ -956,25 +952,25 @@ private:
 
         write(rData.begin(), rData.end(), sizeof(TDataType));
 
-        KRATOS_SERIALIZER_MODE_ASCII
+        CO_SIM_IO_SERIALIZER_MODE_ASCII
 
         *mpBuffer << rData.size() << std::endl;
         write(rData.begin(), rData.end());
 
-        KRATOS_SERIALIZER_MODE_END
+        CO_SIM_IO_SERIALIZER_MODE_END
     }
 
     template<class TIteratorType>
     void read(TIteratorType First, TIteratorType Last, SizeType size)
     {
-        KRATOS_SERIALIZER_MODE_BINARY
+        CO_SIM_IO_SERIALIZER_MODE_BINARY
 
         for(; First != Last ; First++)
         {
             mpBuffer->read((char *)First,sizeof(size));
         }
 
-        KRATOS_SERIALIZER_MODE_ASCII
+        CO_SIM_IO_SERIALIZER_MODE_ASCII
 
         for(; First != Last ; First++)
         {
@@ -983,12 +979,12 @@ private:
 
         }
 
-        KRATOS_SERIALIZER_MODE_END
+        CO_SIM_IO_SERIALIZER_MODE_END
     }
     template<class TIteratorType>
     void write(TIteratorType First, TIteratorType Last, SizeType size)
     {
-        KRATOS_SERIALIZER_MODE_BINARY
+        CO_SIM_IO_SERIALIZER_MODE_BINARY
 
         for(; First != Last ; First++)
         {
@@ -996,12 +992,12 @@ private:
             mpBuffer->write(data,sizeof(size));
         }
 
-        KRATOS_SERIALIZER_MODE_ASCII
+        CO_SIM_IO_SERIALIZER_MODE_ASCII
 
         for(; First != Last ; First++)
             *mpBuffer << *First << std::endl;
 
-        KRATOS_SERIALIZER_MODE_END
+        CO_SIM_IO_SERIALIZER_MODE_END
     }
 
     inline SizeType BlockCompatibleSize(SizeType rSize)
@@ -1018,34 +1014,8 @@ private:
     void SeekEnd();
 
     ///@}
-    ///@name Private  Access
-    ///@{
-
-
-    ///@}
-    ///@name Private Inquiry
-    ///@{
-
-
-    ///@}
-    ///@name Un accessible methods
-    ///@{
-
-    /// Assignment operator.
-    Serializer& operator=(Serializer const& rOther);
-
-    /// Copy constructor.
-    Serializer(Serializer const& rOther);
-
-    ///@}
 
 }; // Class Serializer
-
-///@}
-
-///@name Type Definitions
-///@{
-
 
 ///@}
 ///@name Input and output
@@ -1086,11 +1056,11 @@ private:
 
 }  // namespace Kratos.
 
-#undef KRATOS_SERIALIZER_MODE_BINARY
-#undef KRATOS_SERIALIZER_MODE_ASCII
-#undef KRATOS_SERIALIZER_MODE_END
+#undef CO_SIM_IO_SERIALIZER_MODE_BINARY
+#undef CO_SIM_IO_SERIALIZER_MODE_ASCII
+#undef CO_SIM_IO_SERIALIZER_MODE_END
 
-#undef KRATOS_SERIALIZATION_DIRECT_LOAD
-#undef KRATOS_SERIALIZATION_DIRECT_SAVE
+#undef CO_SIM_IO_SERIALIZATION_DIRECT_LOAD
+#undef CO_SIM_IO_SERIALIZATION_DIRECT_SAVE
 
-#endif // CO_SIM_IO_SERIALIZER_HPP_INCLUDED  defined
+#endif // CO_SIM_IO_SERIALIZER_INCLUDED  defined
