@@ -717,3 +717,139 @@
    obj:*
    obj:*
 }
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Addr32
+   fun:__intel_avx_memmove
+   fun:_ZN7doctest7Context3runEv
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   fun:_ZN4llvm14object_creatorINS_2cl10SubCommandEE4callEv
+   fun:_ZNK4llvm17ManagedStaticBase21RegisterManagedStaticEPFPvvEPFvS1_E
+   fun:_ZN12_GLOBAL__N_117CommandLineParser18registerSubCommandEPN4llvm2cl10SubCommandE
+   fun:_ZN4llvm14object_creatorIN12_GLOBAL__N_117CommandLineParserEE4callEv
+   fun:_ZNK4llvm17ManagedStaticBase21RegisterManagedStaticEPFPvvEPFvS1_E
+   fun:_ZN4llvm2cl6Option11addArgumentEv
+   fun:_GLOBAL__sub_I_Signals.cpp
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   fun:_ZN4llvm9StringMapIPNS_2cl6OptionENS_15MallocAllocatorEE11try_emplaceIJS3_EEESt4pairINS_17StringMapIteratorIS3_EEbENS_9StringRefEDpOT_
+   fun:_ZN12_GLOBAL__N_117CommandLineParser9addOptionEPN4llvm2cl6OptionEPNS2_10SubCommandE
+   fun:_ZN4llvm2cl6Option11addArgumentEv
+   fun:_GLOBAL__sub_I_WithColor.cpp
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+   fun:_dl_open
+   fun:dlopen_doit
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   fun:_ZN4llvm14object_creatorINS_2cl10SubCommandEE4callEv
+   fun:_ZNK4llvm17ManagedStaticBase21RegisterManagedStaticEPFPvvEPFvS1_E
+   fun:_ZN4llvm14object_creatorIN12_GLOBAL__N_117CommandLineParserEE4callEv
+   fun:_ZNK4llvm17ManagedStaticBase21RegisterManagedStaticEPFPvvEPFvS1_E
+   fun:_ZN4llvm2cl6Option11addArgumentEv
+   fun:_GLOBAL__sub_I_Signals.cpp
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   fun:_ZN4llvm14object_creatorIN12_GLOBAL__N_117CommandLineParserEE4callEv
+   fun:_ZNK4llvm17ManagedStaticBase21RegisterManagedStaticEPFPvvEPFvS1_E
+   fun:_ZN4llvm2cl6Option11addArgumentEv
+   fun:_GLOBAL__sub_I_Signals.cpp
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+   fun:_dl_open
+   fun:dlopen_doit
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_ZN4llvm13StringMapImpl4initEj
+   fun:_ZN4llvm13StringMapImpl15LookupBucketForENS_9StringRefE
+   fun:_ZN4llvm9StringMapIPNS_2cl6OptionENS_15MallocAllocatorEE11try_emplaceIJS3_EEESt4pairINS_17StringMapIteratorIS3_EEbENS_9StringRefEDpOT_
+   fun:_ZN12_GLOBAL__N_117CommandLineParser9addOptionEPN4llvm2cl6OptionEPNS2_10SubCommandE
+   fun:_ZN4llvm2cl6Option11addArgumentEv
+   fun:_GLOBAL__sub_I_Signals.cpp
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   fun:_ZN4llvm9StringMapIPNS_2cl6OptionENS_15MallocAllocatorEE11try_emplaceIJS3_EEESt4pairINS_17StringMapIteratorIS3_EEbENS_9StringRefEDpOT_
+   fun:_ZN12_GLOBAL__N_117CommandLineParser9addOptionEPN4llvm2cl6OptionEPNS2_10SubCommandE
+   fun:_ZN4llvm2cl6Option11addArgumentEv
+   fun:_GLOBAL__sub_I_Signals.cpp
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+   fun:_dl_open
+   fun:dlopen_doit
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Cond
+   fun:__intel_sse2_strrchr
+   fun:strrchr
+   fun:init_ap_data
+   fun:_ZN17_INTERNALebd713af3tbb6detail2r112init_dl_dataEv
+   fun:__pthread_once_slow
+   fun:__gthread_once
+   fun:call_once
+   fun:_ZN3tbb6detail2r122init_dynamic_link_dataEv
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_exception
+}
