@@ -717,3 +717,10 @@
    obj:*
    obj:*
 }
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Addr32
+   fun:__intel_avx_memmove
+   fun:_ZN7doctest7Context3runEv
+   fun:main
+}
