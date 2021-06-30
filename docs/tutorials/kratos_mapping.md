@@ -75,7 +75,7 @@ import_data_info.SetString("connection_name", connection_name)
 import_data_info.SetString("identifier", "data_to_map")
 CoSimIO.ImportData(import_data_info, model_part_origin, KM.TEMPERATURE, CoSimIO.DataLocation.NodeHistorical)
 ```
-Please note that here the `CoSimIO.DataLocation.NodeHistorical` argument is saying that we want to store the imported data as historical value in the nodes of this `ModelPart`. So the size of the data should be coherent with the number of the nodes in the `ModelPart`s.
+Please note that here the `CoSimIO.DataLocation.NodeHistorical` argument is saying that we want to store the imported data as historical value in the nodes of this `ModelPart`. So the size of the data should be coherent with the number of the nodes in the `ModelPart`s. For vectorial data the order is [x1, y1, z1, x2, y2, z2, ...].
 
 
 ## Mapping
