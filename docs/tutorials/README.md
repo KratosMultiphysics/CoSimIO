@@ -13,7 +13,7 @@ The first three tutorials show the basics:
 3. Mesh exchange with Kratos [link](cpp/mesh_exchange_with_kratos.md)
 
 After the basics are done, one can do:
-- Mapping with Kratos (without CoSimulation) [link](undefined.md)
+- Mapping with Kratos (without CoSimulation) [link](cpp/mapping.md)
 - CoSimulation with Kratos [link](kratos_co_simulation.md)
     - "Classical" approach [link](undefined.md)
     -  Remote controlled CoSimulation [link](undefined.md)
