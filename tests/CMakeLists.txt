@@ -28,7 +28,7 @@ if (CO_SIM_IO_ENABLE_MPI)
         CXX_EXTENSIONS NO
     )
 
-    doctest_discover_tests(co_sim_io_mpi_tests TEST_PREFIX "cpp_mpi_" WORKING_DIRECTORY ${CMAKE_BINARY_DIR} TEST_EXECUTOR mpiexec TEST_EXECUTOR_ARGS -np 4)
+    doctest_discover_tests(co_sim_io_mpi_tests TEST_PREFIX "cpp_mpi_" WORKING_DIRECTORY $<TARGET_FILE_DIR:co_sim_io_mpi> TEST_EXECUTOR mpiexec TEST_EXECUTOR_ARGS -np 4)
 
 endif()
 
