@@ -246,9 +246,6 @@ jobs:
     - name: Build CoSimIO
       shell: cmd
       run: |
-        rem adding this to path is currently needed as co_sim_io must be available at configure time for discovering the tests for CTest
-        set PATH=%PATH%;%GITHUB_WORKSPACE%/build/Debug
-
         call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64 || goto :error
 
         set CC=cl.exe
@@ -302,9 +299,6 @@ jobs:
     - name: Build CoSimIO
       shell: cmd
       run: |
-        rem adding this to path is currently needed as co_sim_io must be available at configure time for discovering the tests for CTest
-        set PATH=%PATH%;%GITHUB_WORKSPACE%/build/Debug
-
         call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64 || goto :error
 
         set CC=cl.exe
