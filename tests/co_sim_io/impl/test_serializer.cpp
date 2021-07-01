@@ -101,7 +101,7 @@ void RunAllSerializationTests(Serializer& rSerializer)
 
     SUBCASE("double")
     {
-        double object_to_be_saved = -159845.6605;
+        double object_to_be_saved = -1555598.6608345;
         double object_to_be_loaded;
 
         TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);

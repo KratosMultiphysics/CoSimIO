@@ -18,6 +18,7 @@
 #include <string>
 #include <cstring>
 #include <iostream>
+#include <iomanip>
 
 // External includes
 
@@ -35,16 +36,21 @@ class StreamSerializer : public Serializer
         ///@param rTrace type of serialization to be employed
         explicit StreamSerializer(TraceType const& rTrace=SERIALIZER_NO_TRACE)
             : Serializer(new std::stringstream(std::ios::binary|std::ios::in|std::ios::out),rTrace)
-        {}
-
-        //this constructor generates a standard Serializer AND fills the buffer with the data contained in "data"
-        ///@param data a string contained the data to be used in filling the buffer
-        ///@param rTrace type of serialization to be employed
-        StreamSerializer(const std::string& data,TraceType const& rTrace=SERIALIZER_NO_TRACE)
-            : Serializer(new std::stringstream(std::ios::binary|std::ios::in|std::ios::out),rTrace)
         {
-            *(this->pGetBuffer()) << data << std::endl;
+            // increase precision when using ascii
+            if (rTrace != SERIALIZER_NO_TRACE) {
+                *pGetBuffer() << std::setprecision(14);
+            }
         }
+
+        // //this constructor generates a standard Serializer AND fills the buffer with the data contained in "data"
+        // ///@param data a string contained the data to be used in filling the buffer
+        // ///@param rTrace type of serialization to be employed
+        // StreamSerializer(const std::string& data,TraceType const& rTrace=SERIALIZER_NO_TRACE)
+        //     : Serializer(new std::stringstream(std::ios::binary|std::ios::in|std::ios::out),rTrace)
+        // {
+        //     *(this->pGetBuffer()) << data << std::endl;
+        // }
 
         //get a string representation of the serialized data
         std::string GetStringRepresentation() {
@@ -57,5 +63,7 @@ class StreamSerializer : public Serializer
         /// Copy constructor.
         StreamSerializer(StreamSerializer const& rOther) = delete;
 };
-}
+
+} // namespace CoSimIO
+
 #endif // CO_SIM_IO_STREAM_SERIALIZER_INCLUDED  defined

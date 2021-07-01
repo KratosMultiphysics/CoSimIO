@@ -18,6 +18,7 @@
 #include <string>
 #include <cstring>
 #include <iostream>
+#include <iomanip>
 
 // External includes
 
@@ -45,6 +46,11 @@ class FileSerializer : public Serializer
             SetBuffer( p_file );
             CO_SIM_IO_ERROR_IF_NOT(*pGetBuffer()) << "Error opening input file : "
                                         << std::string(Filename+".rest") << std::endl;
+
+            // increase precision when using ascii
+            if (rTrace != SERIALIZER_NO_TRACE) {
+                *pGetBuffer() << std::setprecision(14);
+            }
         }
 
         /// Assignment operator.
@@ -53,6 +59,7 @@ class FileSerializer : public Serializer
         /// Copy constructor.
         FileSerializer(FileSerializer const& rOther) = delete;
 };
-}
+
+} // namespace CoSimIO
 
 #endif // CO_SIM_IO_FILE_SERIALIZER_INCLUDED  defined
