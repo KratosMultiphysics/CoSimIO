@@ -28,7 +28,8 @@ namespace {
 class IntrusivelyManaged
 {
   public:
-    IntrusivelyManaged(double X, int Id) : mX(X), mId(Id) {}
+    IntrusivelyManaged(double X, int Id) : mX(X), mId(Id),
+      mReferenceCounter(0) {}
 
     double GetX() const {return mX;};
     int GetId() const {return mId;};
