@@ -12,15 +12,72 @@
 
 // System includes
 #include <sstream>
+#include <cmath> // std::abs<double>
 
 // Project includes
 #include "co_sim_io_testing.hpp"
+#include "impl/define.hpp"
 #include "impl/stream_serializer.h"
 
 
 namespace CoSimIO {
 
 namespace {
+
+// dummy class for testing serialization of CoSimIO::intrusive_ptr
+class IntrusivelyManaged
+{
+  public:
+    IntrusivelyManaged(double X, int Id) : mX(X), mId(Id) {}
+
+    double GetX() const {return mX;};
+    int GetId() const {return mId;};
+
+    bool operator==(const IntrusivelyManaged& rhs) const
+    {
+        if (std::abs(mX-rhs.mX)>1e-12) {return false;}
+        if (mId != rhs.mId) {return false;}
+        return true;
+    }
+
+  private:
+    double mX = 0.0;
+    int mId = 0;
+
+    //*********************************************
+    //this block is needed for refcounting
+    mutable std::atomic<int> mReferenceCounter;
+
+    friend void intrusive_ptr_add_ref(const IntrusivelyManaged* x)
+    {
+        x->mReferenceCounter.fetch_add(1, std::memory_order_relaxed);
+    }
+
+    friend void intrusive_ptr_release(const IntrusivelyManaged* x)
+    {
+        if (x->mReferenceCounter.fetch_sub(1, std::memory_order_release) == 1) {
+            std::atomic_thread_fence(std::memory_order_acquire);
+            delete x;
+        }
+    }
+    //*********************************************
+
+    IntrusivelyManaged()=default; // required for serialization
+
+    friend class CoSimIO::Serializer; // needs "CoSimIO::" because it is in different namespace
+
+    void save(Serializer& rSerializer) const
+    {
+        rSerializer.save("mX", mX);
+        rSerializer.save("mId", mId);
+    }
+
+    void load(Serializer& rSerializer)
+    {
+        rSerializer.load("mX", mX);
+        rSerializer.load("mId", mId);
+    }
+};
 
 template<typename TObjectType>
 void SaveAndLoadObjects(Serializer& rSerializer, const TObjectType& rObjectToBeSaved, TObjectType& rObjectToBeLoaded)
@@ -267,6 +324,22 @@ void RunAllSerializationTests(Serializer& rSerializer)
     SUBCASE("std::unique_ptr_basics")
     {
         TestBasicSmartPointerSerialization<std::unique_ptr<double>, std::unique_ptr<std::vector<double>>>(rSerializer);
+    }
+
+    SUBCASE("CoSimIO::intrusive_ptr")
+    {
+        const std::string tag_string("TestString");
+
+        using PointerType = CoSimIO::intrusive_ptr<IntrusivelyManaged>;
+
+        PointerType p_save = CoSimIO::make_intrusive<IntrusivelyManaged>(-190.87412, 194741);
+        PointerType p_load;
+
+        rSerializer.save(tag_string, p_save);
+        rSerializer.load(tag_string, p_load);
+
+        CHECK_EQ(*p_save, *p_load);
+        CHECK_NE(p_save, p_load);
     }
 }
 
