@@ -82,6 +82,70 @@ void RunAllSerializationTests(Serializer& rSerializer)
 
         TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
     }
+
+    SUBCASE("IdType")
+    {
+        CoSimIO::IdType object_to_be_saved = -19147;
+        CoSimIO::IdType object_to_be_loaded;
+
+        TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("float")
+    {
+        float object_to_be_saved = -128.28547;
+        float object_to_be_loaded;
+
+        TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("double")
+    {
+        double object_to_be_saved = -159845.6605;
+        double object_to_be_loaded;
+
+        TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("long")
+    {
+        long object_to_be_saved = -1598456605;
+        long object_to_be_loaded;
+
+        TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("long long")
+    {
+        long long object_to_be_saved = -1598456546843565605;
+        long long object_to_be_loaded;
+
+        TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("unsigned long")
+    {
+        unsigned long object_to_be_saved = 1598456605;
+        unsigned long object_to_be_loaded;
+
+        TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("std::size_t")
+    {
+        std::size_t object_to_be_saved = 1598456605;
+        std::size_t object_to_be_loaded;
+
+        TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("std::string")
+    {
+        std::string object_to_be_saved = "EASTEREGG:ThisStringShouldBeSerialized";
+        std::string object_to_be_loaded;
+
+        TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
 }
 
 }
