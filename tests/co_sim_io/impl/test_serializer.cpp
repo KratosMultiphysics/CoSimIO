@@ -53,6 +53,36 @@ void FillVectorWithValues(TObjectType& rObject)
     }
 }
 
+template<typename TDoublePtrType, typename TVectorPtrType>
+void TestBasicSmartPointerSerialization(Serializer& rSerializer)
+{
+    const std::string tag_string("TestString");
+    const std::string tag_string_2("TestString2");
+
+    using DoubleType = typename TDoublePtrType::element_type;
+    using VectorType = typename TVectorPtrType::element_type;
+
+    TDoublePtrType p_dbl_save = TDoublePtrType(new DoubleType(-0.25568));
+    TVectorPtrType p_vec_save = TVectorPtrType(new VectorType(15));
+
+    FillVectorWithValues(*p_vec_save);
+
+    TDoublePtrType p_dbl_load;
+    TVectorPtrType p_vec_load;
+
+    rSerializer.save(tag_string, p_dbl_save);
+    rSerializer.save(tag_string_2, p_vec_save);
+
+    rSerializer.load(tag_string, p_dbl_load);
+    rSerializer.load(tag_string_2, p_vec_load);
+
+    CHECK_EQ(*p_dbl_save, *p_dbl_load);
+    CHECK_NE(p_dbl_save, p_dbl_load);
+
+    CO_SIM_IO_CHECK_VECTOR_NEAR(*p_vec_save, *p_vec_load)
+    CHECK_NE(p_vec_save, p_vec_load);
+}
+
 void RunAllSerializationTests(Serializer& rSerializer)
 {
     SUBCASE("bool_true")
@@ -227,6 +257,16 @@ void RunAllSerializationTests(Serializer& rSerializer)
         std::pair<int, double> object_to_be_loaded(42, 0.123);
 
         TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("std::shared_ptr_basics")
+    {
+        TestBasicSmartPointerSerialization<std::shared_ptr<double>, std::shared_ptr<std::vector<double>>>(rSerializer);
+    }
+
+    SUBCASE("std::unique_ptr_basics")
+    {
+        TestBasicSmartPointerSerialization<std::unique_ptr<double>, std::unique_ptr<std::vector<double>>>(rSerializer);
     }
 }
 
