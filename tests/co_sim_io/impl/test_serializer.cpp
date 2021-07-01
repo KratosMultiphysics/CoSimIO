@@ -41,12 +41,16 @@ void TestObjectSerialization(Serializer& rSerializer, const TObjectType& rObject
 template<typename TObjectType>
 void TestObjectSerializationComponentwise1D(Serializer& rSerializer, const TObjectType& rObjectToBeSaved, TObjectType& rObjectToBeLoaded)
 {
-    SaveAndLoadObjects(rObjectToBeSaved, rObjectToBeLoaded);
+    SaveAndLoadObjects(rSerializer, rObjectToBeSaved, rObjectToBeLoaded);
+    CO_SIM_IO_CHECK_VECTOR_NEAR(rObjectToBeSaved, rObjectToBeLoaded)
+}
 
-    REQUIRE_EQ(rObjectToBeLoaded.size(), rObjectToBeSaved.size());
-
-    for (std::size_t i=0; i< rObjectToBeSaved.size(); ++i)
-        CHECK_EQ(rObjectToBeLoaded[i], rObjectToBeSaved[i]);
+template<typename TObjectType>
+void FillVectorWithValues(TObjectType& rObject)
+{
+    for (std::size_t i=0; i<rObject.size(); ++i) {
+        rObject[i] = i*i*0.2 + 5.333;
+    }
 }
 
 void RunAllSerializationTests(Serializer& rSerializer)
@@ -143,6 +147,84 @@ void RunAllSerializationTests(Serializer& rSerializer)
     {
         std::string object_to_be_saved = "EASTEREGG:ThisStringShouldBeSerialized";
         std::string object_to_be_loaded;
+
+        TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("std::array_int")
+    {
+        using ArrayType = std::array<int,7>;
+
+        ArrayType object_to_be_saved;
+        ArrayType object_to_be_loaded;
+
+        FillVectorWithValues(object_to_be_saved);
+
+        TestObjectSerializationComponentwise1D(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("std::array_double")
+    {
+        using ArrayType = std::array<double,12>;
+
+        ArrayType object_to_be_saved;
+        ArrayType object_to_be_loaded;
+
+        FillVectorWithValues(object_to_be_saved);
+
+        TestObjectSerializationComponentwise1D(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("std::vector_int")
+    {
+        using VectorType = std::vector<int>;
+
+        VectorType object_to_be_saved;
+        VectorType object_to_be_loaded;
+
+        FillVectorWithValues(object_to_be_saved);
+
+        TestObjectSerializationComponentwise1D(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("std::vector_double")
+    {
+        using VectorType = std::vector<double>;
+
+        VectorType object_to_be_saved(158);
+        VectorType object_to_be_loaded(23); // initialized smaller to check if resizing works
+
+        FillVectorWithValues(object_to_be_saved);
+
+        TestObjectSerializationComponentwise1D(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("std::map")
+    {
+        std::map <std::string, double> object_to_be_saved {
+            { "42", -30.556 },
+            { "3",   10.258 }
+        };
+        std::map<std::string, double> object_to_be_loaded;
+
+        TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("std::unordered_map")
+    {
+        std::unordered_map <std::string, double> object_to_be_saved {
+            { "42", -30.556 },
+            { "3",   10.258 }
+        };
+        std::unordered_map<std::string, double> object_to_be_loaded;
+
+        TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
+    }
+
+    SUBCASE("std::pair")
+    {
+        std::pair<int, double> object_to_be_saved(42, 0.123);
+        std::pair<int, double> object_to_be_loaded(42, 0.123);
 
         TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
     }
