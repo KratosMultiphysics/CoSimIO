@@ -326,7 +326,7 @@ void RunAllSerializationTests(Serializer& rSerializer)
 
     SUBCASE("float")
     {
-        float object_to_be_saved = -128.28547;
+        float object_to_be_saved = -128.28547f;
         float object_to_be_loaded;
 
         TestObjectSerialization(rSerializer, object_to_be_saved, object_to_be_loaded);
