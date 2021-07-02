@@ -18,6 +18,7 @@
 #include "../impl/file_serializer.hpp"
 
 namespace CoSimIO {
+namespace Internals {
 
 FileSerializer::FileSerializer(std::string const& rFilename, Serializer::TraceType const& rTrace)
     : Serializer(nullptr, rTrace)
@@ -39,4 +40,5 @@ FileSerializer::FileSerializer(std::string const& rFilename, Serializer::TraceTy
     }
 }
 
+} // namespace Internals
 } // namespace CoSimIO

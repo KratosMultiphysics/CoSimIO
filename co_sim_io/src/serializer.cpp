@@ -15,8 +15,10 @@
 #include "../impl/serializer.hpp"
 
 namespace CoSimIO {
+namespace Internals {
 
 Serializer::RegisteredObjectsContainerType Serializer::msRegisteredObjects;
 Serializer::RegisteredObjectsNameContainerType Serializer::msRegisteredObjectsName;
 
+} // namespace Internals
 }

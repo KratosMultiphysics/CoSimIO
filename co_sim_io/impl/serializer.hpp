@@ -77,6 +77,7 @@
     }
 
 namespace CoSimIO {
+namespace Internals {
 
 ///@name CoSimIO Classes
 ///@{
@@ -921,7 +922,8 @@ private:
 
 ///@}
 
-}  // namespace CoSimIO.
+} // namespace Internals
+} // namespace CoSimIO
 
 #undef CO_SIM_IO_SERIALIZER_MODE_BINARY
 #undef CO_SIM_IO_SERIALIZER_MODE_ASCII
@@ -937,4 +939,4 @@ private:
 #define CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(Serializer, BaseType) \
     Serializer.load_base("BaseClass",*static_cast<BaseType *>(this));
 
-#endif // CO_SIM_IO_SERIALIZER_INCLUDED  defined
+#endif // CO_SIM_IO_SERIALIZER_INCLUDED

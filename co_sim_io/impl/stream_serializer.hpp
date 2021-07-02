@@ -20,6 +20,7 @@
 #include "serializer.hpp"
 
 namespace CoSimIO {
+namespace Internals {
 
 // This class provides a simpler interface for serialization to a string instead of to a file
 // Note that you may not override any load or save method of the Serializer. They are not virtual.
@@ -42,6 +43,7 @@ class StreamSerializer : public Serializer
     StreamSerializer(StreamSerializer const& rOther) = delete;
 };
 
+} // namespace Internals
 } // namespace CoSimIO
 
 #endif // CO_SIM_IO_STREAM_SERIALIZER_INCLUDED

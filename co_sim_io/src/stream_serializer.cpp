@@ -18,6 +18,7 @@
 #include "../impl/stream_serializer.hpp"
 
 namespace CoSimIO {
+namespace Internals {
 
 StreamSerializer::StreamSerializer(TraceType const& rTrace)
     : Serializer(new std::stringstream(std::ios::binary|std::ios::in|std::ios::out),rTrace)
@@ -28,4 +29,5 @@ StreamSerializer::StreamSerializer(TraceType const& rTrace)
     }
 }
 
+} // namespace Internals
 } // namespace CoSimIO

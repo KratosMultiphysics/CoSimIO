@@ -20,6 +20,7 @@
 #include "serializer.hpp"
 
 namespace CoSimIO {
+namespace Internals {
 
 // This class provides a simpler interface for serialization to a file
 // Note that you may not override any load or save method of the Serializer. They are not virtual
@@ -37,6 +38,7 @@ class FileSerializer : public Serializer
     FileSerializer(FileSerializer const& rOther) = delete;
 };
 
+} // namespace Internals
 } // namespace CoSimIO
 
 #endif // CO_SIM_IO_FILE_SERIALIZER_INCLUDED

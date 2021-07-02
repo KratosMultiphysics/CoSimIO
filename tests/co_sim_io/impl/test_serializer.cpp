@@ -61,15 +61,15 @@ class IntrusivelyManaged
 
     IntrusivelyManaged() = default; // required for serialization
 
-    friend class CoSimIO::Serializer; // needs "CoSimIO::" because it is in different namespace
+    friend class CoSimIO::Internals::Serializer; // needs "CoSimIO::Internals::" because it is in different namespace
 
-    void save(Serializer& rSerializer) const
+    void save(CoSimIO::Internals::Serializer& rSerializer) const
     {
         rSerializer.save("mX", mX);
         rSerializer.save("mId", mId);
     }
 
-    void load(Serializer& rSerializer)
+    void load(CoSimIO::Internals::Serializer& rSerializer)
     {
         rSerializer.load("mX", mX);
         rSerializer.load("mId", mId);
@@ -95,14 +95,14 @@ class Base
     int mBaseMember=0;
 
 
-    friend class CoSimIO::Serializer; // needs "CoSimIO::" because it is in different namespace
+    friend class CoSimIO::Internals::Serializer; // needs "CoSimIO::Internals::" because it is in different namespace
 
-    virtual void save(Serializer& rSerializer) const
+    virtual void save(CoSimIO::Internals::Serializer& rSerializer) const
     {
         rSerializer.save("mBaseMember", mBaseMember);
     }
 
-    virtual void load(Serializer& rSerializer)
+    virtual void load(CoSimIO::Internals::Serializer& rSerializer)
     {
         rSerializer.load("mBaseMember", mBaseMember);
     }
@@ -126,16 +126,15 @@ class Derived : public Base
   private:
     int mDerivedMember=0;
 
+    friend class CoSimIO::Internals::Serializer; // needs "CoSimIO::Internals::" because it is in different namespace
 
-    friend class CoSimIO::Serializer; // needs "CoSimIO::" because it is in different namespace
-
-    void save(Serializer& rSerializer) const override
+    void save(CoSimIO::Internals::Serializer& rSerializer) const override
     {
         CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(rSerializer, Base)
         rSerializer.save("mDerivedMember", mDerivedMember);
     }
 
-    void load(Serializer& rSerializer) override
+    void load(CoSimIO::Internals::Serializer& rSerializer) override
     {
         CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(rSerializer, Base)
         rSerializer.load("mDerivedMember", mDerivedMember);
@@ -161,15 +160,15 @@ class DoubleDerived : public Derived
     int mDoubleDerivedMember=0;
 
 
-    friend class CoSimIO::Serializer; // needs "CoSimIO::" because it is in different namespace
+    friend class CoSimIO::Internals::Serializer; // needs "CoSimIO::Internals::" because it is in different namespace
 
-    void save(Serializer& rSerializer) const override
+    void save(CoSimIO::Internals::Serializer& rSerializer) const override
     {
         CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(rSerializer, Derived)
         rSerializer.save("mDoubleDerivedMember", mDoubleDerivedMember);
     }
 
-    void load(Serializer& rSerializer) override
+    void load(CoSimIO::Internals::Serializer& rSerializer) override
     {
         CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(rSerializer, Derived)
         rSerializer.load("mDoubleDerivedMember", mDoubleDerivedMember);
@@ -178,7 +177,7 @@ class DoubleDerived : public Derived
 };
 
 template<typename TObjectType>
-void SaveAndLoadObjects(Serializer& rSerializer, const TObjectType& rObjectToBeSaved, TObjectType& rObjectToBeLoaded)
+void SaveAndLoadObjects(CoSimIO::Internals::Serializer& rSerializer, const TObjectType& rObjectToBeSaved, TObjectType& rObjectToBeLoaded)
 {
     const std::string tag_string("TestString");
 
@@ -187,14 +186,14 @@ void SaveAndLoadObjects(Serializer& rSerializer, const TObjectType& rObjectToBeS
 }
 
 template<typename TObjectType>
-void TestObjectSerialization(Serializer& rSerializer, const TObjectType& rObjectToBeSaved, TObjectType& rObjectToBeLoaded)
+void TestObjectSerialization(CoSimIO::Internals::Serializer& rSerializer, const TObjectType& rObjectToBeSaved, TObjectType& rObjectToBeLoaded)
 {
     SaveAndLoadObjects(rSerializer, rObjectToBeSaved, rObjectToBeLoaded);
     CHECK_EQ(rObjectToBeLoaded, rObjectToBeSaved);
 }
 
 template<typename TObjectType>
-void TestObjectSerializationComponentwise1D(Serializer& rSerializer, const TObjectType& rObjectToBeSaved, TObjectType& rObjectToBeLoaded)
+void TestObjectSerializationComponentwise1D(CoSimIO::Internals::Serializer& rSerializer, const TObjectType& rObjectToBeSaved, TObjectType& rObjectToBeLoaded)
 {
     SaveAndLoadObjects(rSerializer, rObjectToBeSaved, rObjectToBeLoaded);
     CO_SIM_IO_CHECK_VECTOR_NEAR(rObjectToBeSaved, rObjectToBeLoaded)
@@ -209,7 +208,7 @@ void FillVectorWithValues(TObjectType& rObject)
 }
 
 template<typename TDoublePtrType, typename TVectorPtrType>
-void TestBasicSmartPointerSerialization(Serializer& rSerializer)
+void TestBasicSmartPointerSerialization(CoSimIO::Internals::Serializer& rSerializer)
 {
     const std::string tag_string("TestString");
     const std::string tag_string_2("TestString2");
@@ -239,12 +238,12 @@ void TestBasicSmartPointerSerialization(Serializer& rSerializer)
 }
 
 template<typename TBPtrType, typename TDPtrType, typename TDDPtrType>
-void TestClassHierarchySerialization(Serializer& rSerializer)
+void TestClassHierarchySerialization(CoSimIO::Internals::Serializer& rSerializer)
 {
     // this should ideally only be done once, but seems also fine when doing it multiple times
-    Serializer::Register("Base", Base());
-    Serializer::Register("Derived", Derived());
-    Serializer::Register("DoubleDerived", DoubleDerived());
+    CoSimIO::Internals::Serializer::Register("Base", Base());
+    CoSimIO::Internals::Serializer::Register("Derived", Derived());
+    CoSimIO::Internals::Serializer::Register("DoubleDerived", DoubleDerived());
 
     const std::string tag_string("TestString");
     const std::string tag_string_2("TestString2");
@@ -282,7 +281,7 @@ void TestClassHierarchySerialization(Serializer& rSerializer)
     CHECK_NE(p_double_derived_save, p_double_derived_load);
 }
 
-void RunAllSerializationTests(Serializer& rSerializer)
+void RunAllSerializationTests(CoSimIO::Internals::Serializer& rSerializer)
 {
     SUBCASE("bool_true")
     {
@@ -513,19 +512,19 @@ TEST_SUITE("Serializer") {
 
 TEST_CASE("Serializer_no_trace")
 {
-    StreamSerializer serializer(Serializer::TraceType::SERIALIZER_NO_TRACE);
+    CoSimIO::Internals::StreamSerializer serializer(CoSimIO::Internals::Serializer::TraceType::SERIALIZER_NO_TRACE);
     RunAllSerializationTests(serializer);
 }
 
 TEST_CASE("Serializer_trace_error")
 {
-    StreamSerializer serializer(Serializer::TraceType::SERIALIZER_TRACE_ERROR);
+    CoSimIO::Internals::StreamSerializer serializer(CoSimIO::Internals::Serializer::TraceType::SERIALIZER_TRACE_ERROR);
     RunAllSerializationTests(serializer);
 }
 
 TEST_CASE("Serializer_trace_all")
 {
-    StreamSerializer serializer(Serializer::TraceType::SERIALIZER_TRACE_ALL);
+    CoSimIO::Internals::StreamSerializer serializer(CoSimIO::Internals::Serializer::TraceType::SERIALIZER_TRACE_ALL);
     RunAllSerializationTests(serializer);
 }
 
