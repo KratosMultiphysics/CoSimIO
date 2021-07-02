@@ -204,7 +204,7 @@ template<typename TObjectType>
 void FillVectorWithValues(TObjectType& rObject)
 {
     for (std::size_t i=0; i<rObject.size(); ++i) {
-        rObject[i] = i*i*0.2 + 5.333;
+        rObject[i] = static_cast<typename TObjectType::value_type>(i*i*0.2 + 5.333);
     }
 }
 
