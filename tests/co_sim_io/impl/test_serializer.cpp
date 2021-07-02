@@ -28,7 +28,7 @@ namespace {
 class IntrusivelyManaged
 {
   public:
-    IntrusivelyManaged(double X, int Id) : mX(X), mId(Id), mReferenceCounter(0) {}
+    IntrusivelyManaged(double X, int Id) : mX(X), mId(Id) {}
 
     bool operator==(const IntrusivelyManaged& rhs) const
     {
@@ -43,7 +43,7 @@ class IntrusivelyManaged
 
     //*********************************************
     //this block is needed for refcounting
-    mutable std::atomic<int> mReferenceCounter;
+    mutable std::atomic<int> mReferenceCounter{0};
 
     friend void intrusive_ptr_add_ref(const IntrusivelyManaged* x)
     {
@@ -59,7 +59,7 @@ class IntrusivelyManaged
     }
     //*********************************************
 
-    IntrusivelyManaged() : mReferenceCounter(0) {}; // required for serialization
+    IntrusivelyManaged() = default; // required for serialization
 
     friend class CoSimIO::Serializer; // needs "CoSimIO::" because it is in different namespace
 
