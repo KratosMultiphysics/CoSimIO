@@ -11,12 +11,21 @@
 //                   Philipp Bucher (https://github.com/philbucher)
 //
 
+// System includes
+#include <iomanip>
+
 // Project includes
-#include "../impl/serializer.hpp"
+#include "../impl/stream_serializer.hpp"
 
 namespace CoSimIO {
 
-Serializer::RegisteredObjectsContainerType Serializer::msRegisteredObjects;
-Serializer::RegisteredObjectsNameContainerType Serializer::msRegisteredObjectsName;
-
+StreamSerializer::StreamSerializer(TraceType const& rTrace)
+    : Serializer(new std::stringstream(std::ios::binary|std::ios::in|std::ios::out),rTrace)
+{
+    // increase precision when using ascii
+    if (rTrace != SERIALIZER_NO_TRACE) {
+        *pGetBuffer() << std::setprecision(14);
+    }
 }
+
+} // namespace CoSimIO
