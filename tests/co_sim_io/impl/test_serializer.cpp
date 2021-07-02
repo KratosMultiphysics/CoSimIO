@@ -28,8 +28,7 @@ namespace {
 class IntrusivelyManaged
 {
   public:
-    IntrusivelyManaged(double X, int Id) : mX(X), mId(Id),
-      mReferenceCounter(0) {}
+    IntrusivelyManaged(double X, int Id) : mX(X), mId(Id), mReferenceCounter(0) {}
 
     bool operator==(const IntrusivelyManaged& rhs) const
     {
@@ -60,7 +59,7 @@ class IntrusivelyManaged
     }
     //*********************************************
 
-    IntrusivelyManaged()=default; // required for serialization
+    IntrusivelyManaged() : mReferenceCounter(0) {}; // required for serialization
 
     friend class CoSimIO::Serializer; // needs "CoSimIO::" because it is in different namespace
 
