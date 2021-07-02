@@ -171,8 +171,8 @@ public:
     ///@}
     ///@name Operations
     ///@{
-    ///This function returns the "trace type" used in initializing the serializer.
-    ///Trace type is one of SERIALIZER_NO_TRACE,SERIALIZER_TRACE_ERROR,SERIALIZER_TRACE_ALL
+    /// This function returns the "trace type" used in initializing the serializer.
+    /// Trace type is one of SERIALIZER_NO_TRACE,SERIALIZER_TRACE_ERROR,SERIALIZER_TRACE_ALL
     TraceType GetTraceType() const {return mTrace;}
 
     void SetBuffer(BufferType* pBuffer)
@@ -380,12 +380,6 @@ public:
             }
         }
     }
-
-    // void load(std::string const & rTag, ModelPart*& pValue);
-
-    // void load(std::string const & rTag, std::unique_ptr<ModelPart>& pValue);
-
-    // void load(std::string const & rTag, std::shared_ptr<ModelPart>& pValue);
 
 
     template<class TDataType, std::size_t TDataSize>
@@ -1020,41 +1014,6 @@ private:
 
 }; // Class Serializer
 
-///@}
-///@name Input and output
-///@{
-
-
-//   template<class TDataType>
-//   inline Serializer& operator >> (Serializer& rThis, TDataType& rObject)
-//   {
-//     rThis.load(rObject);
-
-//     return rThis;
-//   }
-
-
-//   template<class TDataType>
-//   inline Serializer& operator << (Serializer& rThis, TDataType& rObject)
-//   {
-//     rThis.save(rObject, KRATOS_VERSION);
-
-//     return rThis;
-//   }
-/// input stream function
-//   inline std::istream& operator >> (std::istream& rIStream,
-//                  Serializer& rThis);
-
-/// output stream function
-//   inline std::ostream& operator << (std::ostream& rOStream,
-//                  const Serializer& rThis)
-//     {
-//       rThis.PrintInfo(rOStream);
-//       rOStream << std::endl;
-//       rThis.PrintData(rOStream);
-
-//       return rOStream;
-//     }
 ///@}
 
 }  // namespace Kratos.
