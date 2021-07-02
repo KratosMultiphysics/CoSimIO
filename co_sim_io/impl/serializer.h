@@ -78,36 +78,16 @@
 
 namespace CoSimIO {
 
-
-///@name Kratos Globals
-///@{
-
-///@}
-///@name Type Definitions
-///@{
-
-///@}
-///@name  Enum's
-///@{
-
-///@}
-///@name  Functions
-///@{
-
-///@}
-///@name Kratos Classes
+///@name CoSimIO Classes
 ///@{
 
 /**
  * @class Serializer
  *
- * \ingroup KratosCore
- *
  * @brief The serialization consists in storing the state of an object into a storage format like data file or memory buffer and also retrieving the object from such a media.
  *
  * @details The serialization consists in storing the state of an object into a storage format like data file or memory buffer and also retrieving the object from such a media.
  * The idea of serialization is based on saving all object's data consecutively in the file or buffer and then load it in the same order.
- * In Kratos a serialization mechanism is used for creating the restart file. So for storing an object into restart file and retrieve it afterward on must add the necessary component used by serialization.
  *
  * @author Pooyan Dadvand
  */
@@ -226,7 +206,7 @@ public:
                     typename RegisteredObjectsContainerType::iterator i_prototype =  msRegisteredObjects.find(object_name);
 
                     CO_SIM_IO_ERROR_IF(i_prototype == msRegisteredObjects.end())
-                        << "There is no object registered in Kratos with name : "
+                        << "There is no object registered in CoSimIO with name : "
                         << object_name << std::endl;
 
                     if(!pValue) {
@@ -271,7 +251,7 @@ public:
                     typename RegisteredObjectsContainerType::iterator i_prototype =  msRegisteredObjects.find(object_name);
 
                     CO_SIM_IO_ERROR_IF(i_prototype == msRegisteredObjects.end())
-                        << "There is no object registered in Kratos with name : "
+                        << "There is no object registered in CoSimIO with name : "
                         << object_name << std::endl;
 
                     if(!pValue) {
@@ -316,7 +296,7 @@ public:
                     typename RegisteredObjectsContainerType::iterator i_prototype =  msRegisteredObjects.find(object_name);
 
                     CO_SIM_IO_ERROR_IF(i_prototype == msRegisteredObjects.end())
-                        << "There is no object registered in Kratos with name : "
+                        << "There is no object registered in CoSimIO with name : "
                         << object_name << std::endl;
 
                     if(!pValue) {
@@ -361,7 +341,7 @@ public:
                     typename RegisteredObjectsContainerType::iterator i_prototype =  msRegisteredObjects.find(object_name);
 
                     CO_SIM_IO_ERROR_IF(i_prototype == msRegisteredObjects.end())
-                        << "There is no object registered in Kratos with name : "
+                        << "There is no object registered in CoSimIO with name : "
                         << object_name << std::endl;
 
                     if(!pValue) {
@@ -381,7 +361,6 @@ public:
         }
     }
 
-
     template<class TDataType, std::size_t TDataSize>
     void load(std::string const & rTag, std::array<TDataType, TDataSize>& rObject)
     {
@@ -400,7 +379,7 @@ public:
 
         rObject.resize(size);
 
-        for(SizeType i = 0 ; i < size ; i++)
+        for (SizeType i = 0 ; i < size ; i++)
             load("E", rObject[i]);
     }
 
@@ -458,7 +437,7 @@ public:
 
         save("size", size);
 
-        for(SizeType i = 0 ; i < size ; i++)
+        for (SizeType i = 0 ; i < size ; i++)
             save("E", rObject[i]);
     }
 
@@ -503,17 +482,15 @@ public:
     template<class TDataType>
     void save(std::string const & rTag, const TDataType * pValue)
     {
-        if(pValue)
-        {
-            if(IsDerived(pValue))
+        if (pValue) {
+            if(IsDerived(pValue)) {
                 write(SP_DERIVED_CLASS_POINTER);
-            else
+            } else {
                 write(SP_BASE_CLASS_POINTER);
+            };
 
             SavePointer(rTag,pValue);
-        }
-        else
-        {
+        } else {
             write(SP_INVALID_POINTER);
         }
     }
@@ -532,36 +509,20 @@ public:
       //return is_derived;
     }
 
-
     template<class TDataType>
     void save(std::string const & rTag, TDataType * pValue)
     {
-        if(pValue)
-        {
-            if(IsDerived(pValue))
-            {
+        if (pValue) {
+            if (IsDerived(pValue)) {
                 write(SP_DERIVED_CLASS_POINTER);
-            }
-            else
-            {
+            } else {
                 write(SP_BASE_CLASS_POINTER);
             }
 
             SavePointer(rTag,pValue);
-        }
-        else
-        {
+        } else {
             write(SP_INVALID_POINTER);
         }
-    }
-
-    template<class TDataType>
-    void save(std::string const & rTag, std::shared_ptr<const TDataType> pValue)
-    {
-        // This is for testing. I have to change it. Pooyan.
-//          save_trace_point(rTag);
-//    write(*pValue);
-        save(rTag, pValue.get());
     }
 
     void save(std::string const & rTag, const char * pValue)
@@ -569,7 +530,6 @@ public:
         save_trace_point(rTag);
         write(std::string(pValue));
     }
-
 
     template<class TFirstType, class TSecondType>
     void save(std::string const & rTag, std::pair<TFirstType, TSecondType> rObject)
@@ -604,7 +564,6 @@ public:
         rObject.TDataType::load(*this);
     }
 
-
     template<class TDataType>
     void load_base(std::string const & rTag, std::vector<TDataType>& rObject)
     {
@@ -628,22 +587,19 @@ public:
 
     void save_trace_point(std::string const & rTag)
     {
-        if(mTrace)
-        {
+        if(mTrace) {
             write(rTag);
         }
     }
 
     bool load_trace_point(std::string const & rTag)
     {
-        if(mTrace == SERIALIZER_TRACE_ERROR) // only reporting the errors
-        {
+        if(mTrace == SERIALIZER_TRACE_ERROR) {// only reporting the errors
             std::string read_tag;
             read(read_tag);
-            if(read_tag == rTag)
+            if(read_tag == rTag) {
                 return true;
-            else
-            {
+            } else {
                 std::stringstream buffer;
                 buffer << "In line " << mNumberOfLines;
                 buffer << " the trace tag is not the expected one:" << std::endl;
@@ -651,18 +607,13 @@ public:
                 buffer << "    Tag given : " << rTag << std::endl;
                 CO_SIM_IO_ERROR << buffer.str() << std::endl;
             }
-        }
-        else if(mTrace == SERIALIZER_TRACE_ALL) // also reporting matched tags.
-        {
+        } else if (mTrace == SERIALIZER_TRACE_ALL) {// also reporting matched tags.
             std::string read_tag;
             read(read_tag);
-            if(read_tag == rTag)
-            {
+            if(read_tag == rTag) {
                 CO_SIM_IO_INFO("Serializer") << "In line " << mNumberOfLines << " loading " << rTag << " as expected" << std::endl;
                 return true;
-            }
-            else
-            {
+            } else {
                 std::stringstream buffer;
                 buffer << "In line " << mNumberOfLines;
                 buffer << " the trace tag is not the expected one:" << std::endl;
@@ -682,25 +633,6 @@ public:
     BufferType* pGetBuffer()
     {
         return mpBuffer;
-    }
-
-    /**
-     * This function let's one introduce "pValue"  between the objects
-     * which are considered to be already serialized
-     * TODO: verify if this should be a void* or if it is correct that it is taken as TDataType
-     */
-    template<class TDataType>
-    void AddToSavedPointers(const TDataType& pValue) {
-        mSavedPointers.insert(pValue);
-    }
-
-    /**
-     * This function is to be used to inform the serializer that the object
-     * initially stored in "pStoredPosition" is after loading located at pAllocatedPosition
-     * This function is useful to substitute some objects with others that already exist.
-     */
-    void RedirectLoadingPointer(void * pStoredPointer, void * pAllocatedPosition) {
-        mLoadedPointers[pStoredPointer]=pAllocatedPosition;
     }
 
     static RegisteredObjectsContainerType& GetRegisteredObjects()
@@ -731,7 +663,6 @@ public:
     virtual void PrintData(std::ostream& rOStream) const
     {}
 
-
     ///@}
 
 private:
@@ -756,20 +687,17 @@ private:
     ///@name Private Operations
     ///@{
 
-
     template<class TDataType>
     void SavePointer(std::string const & rTag, const TDataType * pValue)
     {
         write(pValue);
-        if (mSavedPointers.find(pValue) == mSavedPointers.end())
-        {
+        if (mSavedPointers.find(pValue) == mSavedPointers.end()) {
             mSavedPointers.insert(pValue);
-            if (IsDerived(pValue))
-            {
+            if (IsDerived(pValue)) {
                 typename RegisteredObjectsNameContainerType::iterator i_name = msRegisteredObjectsName.find(typeid (*pValue).name());
 
                 if (i_name == msRegisteredObjectsName.end()) {
-                    CO_SIM_IO_ERROR << "There is no object registered in Kratos with type id : "
+                    CO_SIM_IO_ERROR << "There is no object registered in CoSimIO with type id : "
                                  << typeid (*pValue).name() << std::endl;
                 } else {
                     write(i_name->second);
@@ -788,13 +716,12 @@ private:
 
         load("size", size);
 
-        for(SizeType i = 0 ; i < size ; i++){
+        for (SizeType i = 0 ; i < size ; i++) {
             typename TMapType::value_type temp;
             load("E", temp);
             rObject.insert(temp);
         }
     }
-
 
     template<class TMapType>
     void save_map(std::string const & rTag, TMapType const& rObject)
@@ -804,8 +731,9 @@ private:
 
         save("size", size);
 
-        for(auto& i : rObject)
+        for (auto& i : rObject) {
             save("E", i);
+        }
     }
 
     void read(PointerType& rValue)
@@ -962,53 +890,38 @@ private:
     {
         CO_SIM_IO_SERIALIZER_MODE_BINARY
 
-        for(; First != Last ; First++)
-        {
+        for (; First != Last ; First++) {
             mpBuffer->read((char *)First,sizeof(size));
         }
 
         CO_SIM_IO_SERIALIZER_MODE_ASCII
 
-        for(; First != Last ; First++)
-        {
+        for (; First != Last ; First++) {
             *mpBuffer >> *First;
             mNumberOfLines++;
-
         }
 
         CO_SIM_IO_SERIALIZER_MODE_END
     }
+
     template<class TIteratorType>
     void write(TIteratorType First, TIteratorType Last, SizeType size)
     {
         CO_SIM_IO_SERIALIZER_MODE_BINARY
 
-        for(; First != Last ; First++)
-        {
+        for (; First != Last ; First++) {
             const char * data = reinterpret_cast<const char *>(First);
             mpBuffer->write(data,sizeof(size));
         }
 
         CO_SIM_IO_SERIALIZER_MODE_ASCII
 
-        for(; First != Last ; First++)
+        for (; First != Last ; First++) {
             *mpBuffer << *First << std::endl;
+        }
 
         CO_SIM_IO_SERIALIZER_MODE_END
     }
-
-    inline SizeType BlockCompatibleSize(SizeType rSize)
-    {
-        typedef char BlockType;
-        const SizeType block_size = sizeof(BlockType);
-        return static_cast<SizeType>(((block_size - 1) + rSize) / block_size);
-    }
-
-    /// Sets the pointer of the stream buffer at the begnining
-    void SeekBegin();
-
-    /// Sets the pointer of the stream buffer at tht end
-    void SeekEnd();
 
     ///@}
 
@@ -1016,7 +929,7 @@ private:
 
 ///@}
 
-}  // namespace Kratos.
+}  // namespace CoSimIO.
 
 #undef CO_SIM_IO_SERIALIZER_MODE_BINARY
 #undef CO_SIM_IO_SERIALIZER_MODE_ASCII
