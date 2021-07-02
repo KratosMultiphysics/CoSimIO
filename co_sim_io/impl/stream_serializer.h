@@ -1,14 +1,14 @@
-//    |  /           |
-//    ' /   __| _` | __|  _ \   __|
-//    . \  |   (   | |   (   |\__ `
-//   _|\_\_|  \__,_|\__|\___/ ____/
-//                   Multi-Physics
+//     ______     _____ _           ________
+//    / ____/___ / ___/(_)___ ___  /  _/ __ |
+//   / /   / __ \\__ \/ / __ `__ \ / // / / /
+//  / /___/ /_/ /__/ / / / / / / // // /_/ /
+//  \____/\____/____/_/_/ /_/ /_/___/\____/
+//  Kratos CoSimulationApplication
 //
-//  License:		 BSD License
-//					 Kratos default license: kratos/license.txt
+//  License:         BSD License, see license.txt
 //
 //  Main authors:    Pooyan Dadvand
-//
+//                   Philipp Bucher (https://github.com/philbucher)
 //
 
 #ifndef CO_SIM_IO_STREAM_SERIALIZER_INCLUDED

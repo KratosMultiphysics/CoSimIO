@@ -1,14 +1,14 @@
-//    |  /           |
-//    ' /   __| _` | __|  _ \   __|
-//    . \  |   (   | |   (   |\__ `
-//   _|\_\_|  \__,_|\__|\___/ ____/
-//                   Multi-Physics
+//     ______     _____ _           ________
+//    / ____/___ / ___/(_)___ ___  /  _/ __ |
+//   / /   / __ \\__ \/ / __ `__ \ / // / / /
+//  / /___/ /_/ /__/ / / / / / / // // /_/ /
+//  \____/\____/____/_/_/ /_/ /_/___/\____/
+//  Kratos CoSimulationApplication
 //
-//  License:		 BSD License
-//					 Kratos default license: kratos/license.txt
+//  License:         BSD License, see license.txt
 //
 //  Main authors:    Pooyan Dadvand
-//
+//                   Philipp Bucher (https://github.com/philbucher)
 //
 
 #ifndef CO_SIM_IO_SERIALIZER_INCLUDED
@@ -32,43 +32,41 @@
 #include "define.hpp"
 #include "macros.hpp"
 
-#define CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(type)                           \
+#define CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(type)                    \
     void load(std::string const & rTag, type& rValue)                \
     {                                                                \
         load_trace_point(rTag);                                      \
-            read(rValue);                                             \
-    }                                \
-    void load(std::string const & rTag, type const& rValue)                \
+        read(rValue);                                                \
+    }                                                                \
+    void load(std::string const & rTag, type const& rValue)          \
     {                                                                \
         load_trace_point(rTag);                                      \
-            read(const_cast<type&>(rValue));                                             \
-    }                                \
-                                     \
+        read(const_cast<type&>(rValue));                             \
+    }                                                                \
     void load_base(std::string const & rTag, type& rValue)           \
     {                                                                \
-          load_trace_point(rTag);                                      \
-      read(rValue);                                             \
+        load_trace_point(rTag);                                      \
+        read(rValue);                                                \
     }
 
-#define CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(type)                           \
-    void save(std::string const & rTag, type const & rValue)         \
-    {                                                                \
-      save_trace_point(rTag);                                      \
-      write(rValue);                                             \
-    }                                    \
-                                     \
-    void save_base(std::string const & rTag, type const & rValue)    \
-    {                                                                \
-      save_trace_point(rTag);                                      \
-      write(rValue);                                             \
+#define CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(type)                   \
+    void save(std::string const & rTag, type const & rValue)        \
+    {                                                               \
+      save_trace_point(rTag);                                       \
+      write(rValue);                                                \
+    }                                                               \
+    void save_base(std::string const & rTag, type const & rValue)   \
+    {                                                               \
+      save_trace_point(rTag);                                       \
+      write(rValue);                                                \
     }
 
-#define CO_SIM_IO_SERIALIZATION_DIRECT_CREATE(type)                         \
-    void* create(std::string const & rTag, type* prototype)          \
-    {                                                                \
-      type* p_new = new type;                                        \
-      load(rTag, *p_new);                                            \
-      return p_new;                                                  \
+#define CO_SIM_IO_SERIALIZATION_DIRECT_CREATE(type)                 \
+    void* create(std::string const & rTag, type* prototype)         \
+    {                                                               \
+      type* p_new = new type;                                       \
+      load(rTag, *p_new);                                           \
+      return p_new;                                                 \
     }
 
 #define CO_SIM_IO_SERIALIZER_MODE_BINARY \
@@ -448,15 +446,15 @@ public:
 #ifdef  _WIN64 // work around for windows size_t error in win64
     CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(std::size_t)
 #endif
-	// CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(std::complex<double>)
+    // CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(std::complex<double>)
 
-	template<class TDataType, std::size_t TDataSize>
-	void save(std::string const & rTag, std::array<TDataType, TDataSize> const& rObject)
-	{
-		save_trace_point(rTag);
-		for (SizeType i = 0; i < TDataSize; i++)
-			save("E", rObject[i]);
-	}
+    template<class TDataType, std::size_t TDataSize>
+    void save(std::string const & rTag, std::array<TDataType, TDataSize> const& rObject)
+    {
+        save_trace_point(rTag);
+        for (SizeType i = 0; i < TDataSize; i++)
+            save("E", rObject[i]);
+    }
 
     template<class TDataType>
     void save(std::string const & rTag, std::vector<TDataType> const& rObject)
@@ -530,10 +528,10 @@ public:
     bool IsDerived(TDataType * pValue)
     {
       if (strcmp(typeid(TDataType).name(), typeid(*pValue).name()) != 0) {
-	return true;
+    return true;
       }
       else {
-	return false;
+    return false;
       }
       // bool is_derived = (typeid(TDataType) != typeid(*pValue));
 //    std::cout << "for TDataType : " << typeid(TDataType).name() << " and *pValue type : " << typeid(*pValue).name() << " is derived : " << is_derived << std::endl;
@@ -602,7 +600,7 @@ public:
 #ifdef  _WIN64 // work around for windows size_t error in win64
     CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(std::size_t)
 #endif
-	// CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(std::complex<double>)
+    // CO_SIM_IO_SERIALIZATION_DIRECT_SAVE(std::complex<double>)
 
 
     template<class TDataType>
@@ -1070,9 +1068,9 @@ private:
 
 
 #define CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(Serializer, BaseType) \
-	Serializer.save_base("BaseClass",*static_cast<const BaseType *>(this));
+    Serializer.save_base("BaseClass",*static_cast<const BaseType *>(this));
 
 #define CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(Serializer, BaseType) \
-	Serializer.load_base("BaseClass",*static_cast<BaseType *>(this));
+    Serializer.load_base("BaseClass",*static_cast<BaseType *>(this));
 
 #endif // CO_SIM_IO_SERIALIZER_INCLUDED  defined
