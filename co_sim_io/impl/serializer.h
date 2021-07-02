@@ -487,26 +487,12 @@ public:
                 write(SP_DERIVED_CLASS_POINTER);
             } else {
                 write(SP_BASE_CLASS_POINTER);
-            };
+            }
 
             SavePointer(rTag,pValue);
         } else {
             write(SP_INVALID_POINTER);
         }
-    }
-
-    template<class TDataType>
-    bool IsDerived(TDataType * pValue)
-    {
-      if (strcmp(typeid(TDataType).name(), typeid(*pValue).name()) != 0) {
-    return true;
-      }
-      else {
-    return false;
-      }
-      // bool is_derived = (typeid(TDataType) != typeid(*pValue));
-//    std::cout << "for TDataType : " << typeid(TDataType).name() << " and *pValue type : " << typeid(*pValue).name() << " is derived : " << is_derived << std::endl;
-      //return is_derived;
     }
 
     template<class TDataType>
@@ -523,6 +509,12 @@ public:
         } else {
             write(SP_INVALID_POINTER);
         }
+    }
+
+    template<class TDataType>
+    bool IsDerived(const TDataType * pValue)
+    {
+        return typeid(TDataType).name() != typeid(*pValue).name();
     }
 
     void save(std::string const & rTag, const char * pValue)
