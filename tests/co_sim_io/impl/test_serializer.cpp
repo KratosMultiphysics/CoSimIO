@@ -79,27 +79,30 @@ class IntrusivelyManaged
 class Base
 {
   public:
+    Base(int MyMember) : mBaseMember(MyMember) {}
+
+    virtual ~Base() = default;
 
     bool operator==(const Base& rhs) const
     {
-        // if (std::abs(mX-rhs.mX)>1e-12) {return false;}
-        // if (mId != rhs.mId) {return false;}
+        if (mBaseMember != rhs.mBaseMember) {return false;}
         return true;
     }
+
+    Base()=default; // required for serialization
 
   private:
     int mBaseMember=0;
 
-    Base()=default; // required for serialization
 
     friend class CoSimIO::Serializer; // needs "CoSimIO::" because it is in different namespace
 
-    void save(Serializer& rSerializer) const
+    virtual void save(Serializer& rSerializer) const
     {
         rSerializer.save("mBaseMember", mBaseMember);
     }
 
-    void load(Serializer& rSerializer)
+    virtual void load(Serializer& rSerializer)
     {
         rSerializer.load("mBaseMember", mBaseMember);
     }
@@ -109,21 +112,30 @@ class Base
 class Derived : public Base
 {
   public:
+    Derived(int MyMember, int ParentMember) : Base(ParentMember), mDerivedMember(MyMember) {}
+
+    bool operator==(const Derived& rhs) const
+    {
+        if (!(Base::operator==(rhs))) {return false;}
+        if (mDerivedMember != rhs.mDerivedMember) {return false;}
+        return true;
+    }
+
+    Derived()=default; // required for serialization
 
   private:
     int mDerivedMember=0;
 
-    Derived()=default; // required for serialization
 
     friend class CoSimIO::Serializer; // needs "CoSimIO::" because it is in different namespace
 
-    void save(Serializer& rSerializer) const
+    void save(Serializer& rSerializer) const override
     {
         CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(rSerializer, Base)
         rSerializer.save("mDerivedMember", mDerivedMember);
     }
 
-    void load(Serializer& rSerializer)
+    void load(Serializer& rSerializer) override
     {
         CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(rSerializer, Base)
         rSerializer.load("mDerivedMember", mDerivedMember);
@@ -134,28 +146,36 @@ class Derived : public Base
 class DoubleDerived : public Derived
 {
   public:
+    DoubleDerived(int MyMember, int ParentMember, int ParentParentMember) : Derived(ParentMember, ParentParentMember), mDoubleDerivedMember(MyMember) {}
+
+    bool operator==(const DoubleDerived& rhs) const
+    {
+        if (!(Derived::operator==(rhs))) {return false;}
+        if (mDoubleDerivedMember != rhs.mDoubleDerivedMember) {return false;}
+        return true;
+    }
+
+    DoubleDerived()=default; // required for serialization
 
   private:
     int mDoubleDerivedMember=0;
 
-    DoubleDerived()=default; // required for serialization
 
     friend class CoSimIO::Serializer; // needs "CoSimIO::" because it is in different namespace
 
-    void save(Serializer& rSerializer) const
+    void save(Serializer& rSerializer) const override
     {
         CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(rSerializer, Derived)
         rSerializer.save("mDoubleDerivedMember", mDoubleDerivedMember);
     }
 
-    void load(Serializer& rSerializer)
+    void load(Serializer& rSerializer) override
     {
         CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(rSerializer, Derived)
         rSerializer.load("mDoubleDerivedMember", mDoubleDerivedMember);
     }
 
 };
-
 
 template<typename TObjectType>
 void SaveAndLoadObjects(Serializer& rSerializer, const TObjectType& rObjectToBeSaved, TObjectType& rObjectToBeLoaded)
@@ -216,6 +236,50 @@ void TestBasicSmartPointerSerialization(Serializer& rSerializer)
 
     CO_SIM_IO_CHECK_VECTOR_NEAR(*p_vec_save, *p_vec_load)
     CHECK_NE(p_vec_save, p_vec_load);
+}
+
+template<typename TBPtrType, typename TDPtrType, typename TDDPtrType>
+void TestClassHierarchySerialization(Serializer& rSerializer)
+{
+    // this should ideally only be done once, but seems also fine when doing it multiple times
+    Serializer::Register("Base", Base());
+    Serializer::Register("Derived", Derived());
+    Serializer::Register("DoubleDerived", DoubleDerived());
+
+    const std::string tag_string("TestString");
+    const std::string tag_string_2("TestString2");
+    const std::string tag_string_3("TestString3");
+
+    using BaseType = typename TBPtrType::element_type;
+    using DerivedType = typename TDPtrType::element_type;
+    using DoubleDerivedType = typename TDDPtrType::element_type;
+
+    TBPtrType p_base_save = TBPtrType(new BaseType(51));
+    TBPtrType p_derived_save = TBPtrType(new DerivedType(31, 12));
+    TBPtrType p_double_derived_save = TBPtrType(new DoubleDerivedType(64,31,82));
+
+    TBPtrType p_base_load;
+    TBPtrType p_derived_load;
+    TBPtrType p_double_derived_load;
+
+    rSerializer.save(tag_string, p_base_save);
+    rSerializer.save(tag_string_2, p_derived_save);
+    rSerializer.save(tag_string_3, p_double_derived_save);
+
+    rSerializer.load(tag_string, p_base_load);
+    rSerializer.load(tag_string_2, p_derived_load);
+    rSerializer.load(tag_string_3, p_double_derived_load);
+
+    CHECK_EQ(*p_base_save, *p_base_load);
+    CHECK_NE(p_base_save, p_base_load);
+
+    // cast to compare derived objects
+    CHECK_EQ(*(dynamic_cast<DerivedType*>(p_derived_save.get())), *(dynamic_cast<DerivedType*>(p_derived_load.get())));
+    CHECK_NE(p_derived_save, p_derived_load);
+
+    // cast to compare derived objects
+    CHECK_EQ(*(dynamic_cast<DoubleDerivedType*>(p_double_derived_save.get())), *(dynamic_cast<DoubleDerivedType*>(p_double_derived_load.get())));
+    CHECK_NE(p_double_derived_save, p_double_derived_load);
 }
 
 void RunAllSerializationTests(Serializer& rSerializer)
@@ -402,6 +466,28 @@ void RunAllSerializationTests(Serializer& rSerializer)
     SUBCASE("std::unique_ptr_basics")
     {
         TestBasicSmartPointerSerialization<std::unique_ptr<double>, std::unique_ptr<std::vector<double>>>(rSerializer);
+    }
+
+    SUBCASE("std::shared_ptr_class_hierarchy")
+    {
+        using BasePointerType = std::shared_ptr<Base>;
+        using DerivedPointerType = std::shared_ptr<Derived>;
+        using DoubleDerivedPointerType = std::shared_ptr<DoubleDerived>;
+        TestClassHierarchySerialization<
+            BasePointerType,
+            DerivedPointerType,
+            DoubleDerivedPointerType>(rSerializer);
+    }
+
+    SUBCASE("std::unique_ptr_class_hierarchy")
+    {
+        using BasePointerType = std::unique_ptr<Base>;
+        using DerivedPointerType = std::unique_ptr<Derived>;
+        using DoubleDerivedPointerType = std::unique_ptr<DoubleDerived>;
+        TestClassHierarchySerialization<
+            BasePointerType,
+            DerivedPointerType,
+            DoubleDerivedPointerType>(rSerializer);
     }
 
     SUBCASE("CoSimIO::intrusive_ptr")
