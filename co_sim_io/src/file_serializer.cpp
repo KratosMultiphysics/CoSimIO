@@ -19,18 +19,19 @@
 
 namespace CoSimIO {
 
-FileSerializer::FileSerializer(std::string const& Filename, Serializer::TraceType const& rTrace)
+FileSerializer::FileSerializer(std::string const& rFilename, Serializer::TraceType const& rTrace)
     : Serializer(nullptr, rTrace)
 {
-    std::fstream* p_file = new std::fstream(std::string(Filename+".rest").c_str(), std::ios::binary|std::ios::in|std::ios::out);
-    if(!(*p_file))
-    {
+    std::fstream* p_file = new std::fstream(rFilename, std::ios::binary|std::ios::in|std::ios::out);
+
+    if (!(*p_file)) {
         delete p_file;
-        p_file = new std::fstream(std::string(Filename+".rest").c_str(), std::ios::binary|std::ios::out);
+        p_file = new std::fstream(rFilename, std::ios::binary|std::ios::out);
     }
+
     SetBuffer( p_file );
-    CO_SIM_IO_ERROR_IF_NOT(*pGetBuffer()) << "Error opening input file : "
-                                << std::string(Filename+".rest") << std::endl;
+
+    CO_SIM_IO_ERROR_IF_NOT(*pGetBuffer()) << "Error opening input file: " << rFilename << std::endl;
 
     // increase precision when using ascii
     if (rTrace != SERIALIZER_NO_TRACE) {
