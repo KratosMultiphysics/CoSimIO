@@ -31,9 +31,6 @@ class IntrusivelyManaged
     IntrusivelyManaged(double X, int Id) : mX(X), mId(Id),
       mReferenceCounter(0) {}
 
-    double GetX() const {return mX;};
-    int GetId() const {return mId;};
-
     bool operator==(const IntrusivelyManaged& rhs) const
     {
         if (std::abs(mX-rhs.mX)>1e-12) {return false;}
@@ -79,6 +76,87 @@ class IntrusivelyManaged
         rSerializer.load("mId", mId);
     }
 };
+
+class Base
+{
+  public:
+
+    bool operator==(const Base& rhs) const
+    {
+        // if (std::abs(mX-rhs.mX)>1e-12) {return false;}
+        // if (mId != rhs.mId) {return false;}
+        return true;
+    }
+
+  private:
+    int mBaseMember=0;
+
+    Base()=default; // required for serialization
+
+    friend class CoSimIO::Serializer; // needs "CoSimIO::" because it is in different namespace
+
+    void save(Serializer& rSerializer) const
+    {
+        rSerializer.save("mBaseMember", mBaseMember);
+    }
+
+    void load(Serializer& rSerializer)
+    {
+        rSerializer.load("mBaseMember", mBaseMember);
+    }
+
+};
+
+class Derived : public Base
+{
+  public:
+
+  private:
+    int mDerivedMember=0;
+
+    Derived()=default; // required for serialization
+
+    friend class CoSimIO::Serializer; // needs "CoSimIO::" because it is in different namespace
+
+    void save(Serializer& rSerializer) const
+    {
+        CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(rSerializer, Base)
+        rSerializer.save("mDerivedMember", mDerivedMember);
+    }
+
+    void load(Serializer& rSerializer)
+    {
+        CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(rSerializer, Base)
+        rSerializer.load("mDerivedMember", mDerivedMember);
+    }
+
+};
+
+class DoubleDerived : public Derived
+{
+  public:
+
+  private:
+    int mDoubleDerivedMember=0;
+
+    DoubleDerived()=default; // required for serialization
+
+    friend class CoSimIO::Serializer; // needs "CoSimIO::" because it is in different namespace
+
+    void save(Serializer& rSerializer) const
+    {
+        CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(rSerializer, Derived)
+        rSerializer.save("mDoubleDerivedMember", mDoubleDerivedMember);
+    }
+
+    void load(Serializer& rSerializer)
+    {
+        CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(rSerializer, Derived)
+        rSerializer.load("mDoubleDerivedMember", mDoubleDerivedMember);
+    }
+
+};
+
 
 template<typename TObjectType>
 void SaveAndLoadObjects(Serializer& rSerializer, const TObjectType& rObjectToBeSaved, TObjectType& rObjectToBeLoaded)
