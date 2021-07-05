@@ -42,16 +42,15 @@ if (CO_SIM_IO_ENABLE_MPI)
 endif()
 
 if(MSVC)
-    # required such that "__cplusplus" is set to the correct value
+    # /Zc:__cplusplus: required such that "__cplusplus" is set to the correct value
     # see https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
     # Note: min value is c++14 => 201402L (c++11 does not exist, will also output 201402L)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /W3 /EHsc")
+    # /wd4251: "... needs to have dll-interface to be used by clients of class ..."
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /EHsc /wd4251")
 
     if (CO_SIM_IO_STRICT_COMPILER)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /WX")
     endif()
-
-    set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
 
 elseif(${CMAKE_COMPILER_IS_GNUCXX})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -106,6 +105,11 @@ file(GLOB co_sim_io_source_files
     ${CMAKE_SOURCE_DIR}/co_sim_io/src/communication/*.cpp
 )
 add_library (co_sim_io SHARED ${co_sim_io_source_files})
+
+# To automatically configure a library export header into build tree
+include(GenerateExportHeader)
+generate_export_header( co_sim_io EXPORT_MACRO_NAME CO_SIM_IO_API EXPORT_FILE_NAME
+                        ${CMAKE_SOURCE_DIR}/co_sim_io/impl/co_sim_io_api.hpp )
 
 install(TARGETS co_sim_io DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 

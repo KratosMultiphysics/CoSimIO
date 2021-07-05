@@ -21,7 +21,7 @@
 namespace CoSimIO {
 namespace Internals {
 
-class SocketsCommunication : public Communication
+class CO_SIM_IO_API SocketsCommunication : public Communication
 {
 public:
     explicit SocketsCommunication(const Info& I_Settings);

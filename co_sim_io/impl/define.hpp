@@ -22,6 +22,9 @@
 // External includes
 #include "../../external_libraries/intrusive_ptr/intrusive_ptr.hpp"
 
+// Project includes
+#include "co_sim_io_api.hpp"
+
 namespace CoSimIO {
 
 // signed integer type, 32 bit in 32 bit systems, but 64bit in 64 bit systems => like std::size_t but signed
