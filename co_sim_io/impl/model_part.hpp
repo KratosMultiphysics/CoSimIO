@@ -44,8 +44,7 @@ public:
     : mId(I_Id),
       mX(I_X),
       mY(I_Y),
-      mZ(I_Z),
-      mReferenceCounter(0)
+      mZ(I_Z)
     {
         CO_SIM_IO_ERROR_IF(I_Id < 1) << "Id must be >= 1!" << std::endl;
     }
@@ -80,7 +79,7 @@ private:
 
     //*********************************************
     //this block is needed for refcounting
-    mutable std::atomic<int> mReferenceCounter;
+    mutable std::atomic<int> mReferenceCounter{0};
 
     friend void intrusive_ptr_add_ref(const Node* x)
     {
@@ -118,8 +117,7 @@ public:
         const NodesContainerType& I_Nodes)
     : mId(I_Id),
       mType(I_Type),
-      mNodes(I_Nodes),
-      mReferenceCounter(0)
+      mNodes(I_Nodes)
     {
         CO_SIM_IO_ERROR_IF(I_Id < 1) << "Id must be >= 1!" << std::endl;
         CO_SIM_IO_ERROR_IF(NumberOfNodes() < 1) << "No nodes were passed!" << std::endl;
@@ -158,7 +156,7 @@ private:
 
     //*********************************************
     //this block is needed for refcounting
-    mutable std::atomic<int> mReferenceCounter;
+    mutable std::atomic<int> mReferenceCounter{0};
 
     friend void intrusive_ptr_add_ref(const Element* x)
     {
@@ -185,7 +183,7 @@ inline std::ostream & operator <<(
 }
 
 
-class CO_SIM_IO_API ModelPart
+class ModelPart
 {
 public:
 
