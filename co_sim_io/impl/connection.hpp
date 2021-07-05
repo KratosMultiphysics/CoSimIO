@@ -27,7 +27,7 @@
 namespace CoSimIO {
 namespace Internals {
 
-class CO_SIM_IO_EXPORT Connection
+class CO_SIM_IO_API Connection
 {
 
 public:

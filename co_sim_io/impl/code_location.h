@@ -31,7 +31,7 @@ namespace CoSimIO
 /// This class keeps a code location consist of filename, function name and line number.
 /// It also provides methods to get cleaned version of filename and function name.
 /// Adapted from Kratos (kratos/includes/code_location.h)
-class CO_SIM_IO_EXPORT CodeLocation
+class CO_SIM_IO_API CodeLocation
 {
 public:
 

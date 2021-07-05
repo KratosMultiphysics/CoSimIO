@@ -108,7 +108,7 @@ add_library (co_sim_io SHARED ${co_sim_io_source_files})
 
 # To automatically configure a library export header into build tree
 include(GenerateExportHeader)
-generate_export_header( co_sim_io EXPORT_MACRO_NAME CO_SIM_IO_EXPORT EXPORT_FILE_NAME 
+generate_export_header( co_sim_io EXPORT_MACRO_NAME CO_SIM_IO_API EXPORT_FILE_NAME
                         ${CMAKE_SOURCE_DIR}/co_sim_io/impl/co_sim_io_export.hpp )
 
 install(TARGETS co_sim_io DESTINATION ${CMAKE_SOURCE_DIR}/bin)

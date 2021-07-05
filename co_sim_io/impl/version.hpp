@@ -21,11 +21,11 @@
 
 namespace CoSimIO {
 
-int CO_SIM_IO_EXPORT GetMajorVersion();
+int CO_SIM_IO_API GetMajorVersion();
 
-int CO_SIM_IO_EXPORT GetMinorVersion();
+int CO_SIM_IO_API GetMinorVersion();
 
-std::string CO_SIM_IO_EXPORT GetPatchVersion();
+std::string CO_SIM_IO_API GetPatchVersion();
 
 } // namespace CoSimIO
 
