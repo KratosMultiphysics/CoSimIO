@@ -26,7 +26,7 @@ namespace CoSimIO {
 namespace Internals {
 
 
-class Communication
+class CO_SIM_IO_API Communication
 {
 public:
     explicit Communication(const Info& I_Settings);
