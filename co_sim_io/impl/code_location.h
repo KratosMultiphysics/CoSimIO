@@ -18,7 +18,7 @@
 #include <iostream>
 
 // Project includes
-#include "co_sim_io_export.hpp"
+#include "co_sim_io_api.hpp"
 
 namespace CoSimIO
 {

@@ -23,7 +23,7 @@
 #include "../../external_libraries/intrusive_ptr/intrusive_ptr.hpp"
 
 // Project includes
-#include "co_sim_io_export.hpp"
+#include "co_sim_io_api.hpp"
 
 namespace CoSimIO {
 
