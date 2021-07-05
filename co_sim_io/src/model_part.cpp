@@ -18,6 +18,60 @@
 
 namespace CoSimIO {
 
+void Node::Print(std::ostream& rOStream) const
+{
+    rOStream << "CoSimIO-Node; Id: " << Id() << "\n";
+    rOStream << "    Coordinates: [ " << X() << " | " << Y() << " | " << Z() << " ]" << std::endl;
+}
+
+void Node::save(CoSimIO::Internals::Serializer& rSerializer) const
+{
+    rSerializer.save("mId", mId);
+    rSerializer.save("mX", mX);
+    rSerializer.save("mY", mY);
+    rSerializer.save("mZ", mZ);
+}
+
+void Node::load(CoSimIO::Internals::Serializer& rSerializer)
+{
+    rSerializer.load("mId", mId);
+    rSerializer.load("mX", mX);
+    rSerializer.load("mY", mY);
+    rSerializer.load("mZ", mZ);
+}
+
+
+void Element::Print(std::ostream& rOStream) const
+{
+    rOStream << "CoSimIO-Element; Id: " << Id() << "\n";
+    rOStream << "    Number of Nodes: " << NumberOfNodes() << "\n";
+    rOStream << "    Node Ids: ";
+    if (NumberOfNodes() > 0) {
+        rOStream << mNodes[0]->Id();
+    }
+    for (std::size_t i=1; i<NumberOfNodes(); ++i) {
+        rOStream << ", " << mNodes[i]->Id();
+    }
+    rOStream << std::endl;
+}
+
+void Element::save(CoSimIO::Internals::Serializer& rSerializer) const
+{
+    rSerializer.save("mId", mId);
+    rSerializer.save("mType", static_cast<int>(mType));
+    rSerializer.save("mNodes", mNodes);
+}
+
+void Element::load(CoSimIO::Internals::Serializer& rSerializer)
+{
+    rSerializer.load("mId", mId);
+    int tmp;
+    rSerializer.load("mType", tmp);
+    mType = static_cast<ElementType>(tmp);
+    rSerializer.load("mNodes", mNodes);
+}
+
+
 ModelPart::ModelPart(const std::string& I_Name) : mName(I_Name)
 {
     CO_SIM_IO_ERROR_IF(I_Name.empty()) << "Please don't use empty names (\"\") when creating a ModelPart" << std::endl;
@@ -146,6 +200,20 @@ bool ModelPart::HasNode(const IdType I_Id) const
 bool ModelPart::HasElement(const IdType I_Id) const
 {
     return FindElement(I_Id) != mElements.end();
+}
+
+void ModelPart::save(CoSimIO::Internals::Serializer& rSerializer) const
+{
+    rSerializer.save("mName", mName);
+    rSerializer.save("mNodes", mNodes);
+    rSerializer.save("mElements", mElements);
+}
+
+void ModelPart::load(CoSimIO::Internals::Serializer& rSerializer)
+{
+    rSerializer.load("mName", mName);
+    rSerializer.load("mNodes", mNodes);
+    rSerializer.load("mElements", mElements);
 }
 
 } //namespace CoSimIO
