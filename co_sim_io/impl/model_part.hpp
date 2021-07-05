@@ -183,7 +183,7 @@ inline std::ostream & operator <<(
 }
 
 
-class ModelPart
+class CO_SIM_IO_API ModelPart
 {
 public:
 
