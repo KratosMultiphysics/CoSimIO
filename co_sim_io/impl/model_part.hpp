@@ -29,11 +29,12 @@ see https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/mod
 // Project includes
 #include "define.hpp"
 #include "macros.hpp"
+#include "serializer.hpp"
 #include "utilities.hpp"
 
 namespace CoSimIO {
 
-class Node
+class CO_SIM_IO_API Node
 {
 public:
     Node(
@@ -65,11 +66,7 @@ public:
     double Z() const { return mZ; }
     CoordinatesType Coordinates() const { return {mX, mY, mZ}; }
 
-    void Print(std::ostream& rOStream) const
-    {
-        rOStream << "CoSimIO-Node; Id: " << Id() << "\n";
-        rOStream << "    Coordinates: [ " << X() << " | " << Y() << " | " << Z() << " ]" << std::endl;
-    }
+    void Print(std::ostream& rOStream) const;
 
 private:
     IdType mId;
@@ -94,6 +91,14 @@ private:
         }
     }
     //*********************************************
+
+    Node() = default; // needed for Serializer
+
+    friend class CoSimIO::Internals::Serializer; // needs "CoSimIO::Internals::" because it is in different namespace
+
+    void save(CoSimIO::Internals::Serializer& rSerializer) const;
+
+    void load(CoSimIO::Internals::Serializer& rSerializer);
 };
 
 /// output stream function
@@ -106,7 +111,7 @@ inline std::ostream & operator <<(
 }
 
 
-class Element
+class CO_SIM_IO_API Element
 {
 public:
     using NodesContainerType = std::vector<CoSimIO::intrusive_ptr<Node>>;
@@ -135,19 +140,7 @@ public:
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
     NodesContainerType::const_iterator NodesEnd() const { return mNodes.end(); }
 
-    void Print(std::ostream& rOStream) const
-    {
-        rOStream << "CoSimIO-Element; Id: " << Id() << "\n";
-        rOStream << "    Number of Nodes: " << NumberOfNodes() << "\n";
-        rOStream << "    Node Ids: ";
-        if (NumberOfNodes() > 0) {
-            rOStream << mNodes[0]->Id();
-        }
-        for (std::size_t i=1; i<NumberOfNodes(); ++i) {
-            rOStream << ", " << mNodes[i]->Id();
-        }
-        rOStream << std::endl;
-    }
+    void Print(std::ostream& rOStream) const;
 
 private:
     IdType mId;
@@ -171,6 +164,14 @@ private:
         }
     }
     //*********************************************
+
+    Element() = default; // needed for Serializer
+
+    friend class CoSimIO::Internals::Serializer; // needs "CoSimIO::Internals::" because it is in different namespace
+
+    void save(CoSimIO::Internals::Serializer& rSerializer) const;
+
+    void load(CoSimIO::Internals::Serializer& rSerializer);
 };
 
 /// output stream function
@@ -249,6 +250,12 @@ private:
     bool HasNode(const IdType I_Id) const;
 
     bool HasElement(const IdType I_Id) const;
+
+    friend class CoSimIO::Internals::Serializer; // needs "CoSimIO::Internals::" because it is in different namespace
+
+    void save(CoSimIO::Internals::Serializer& rSerializer) const;
+
+    void load(CoSimIO::Internals::Serializer& rSerializer);
 };
 
 /// output stream function
