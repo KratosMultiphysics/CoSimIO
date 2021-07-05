@@ -18,10 +18,10 @@
 #include <map>
 #include <memory>
 #include <iostream>
-#include <type_traits>
 
 // Project includes
 #include "macros.hpp"
+#include "serializer.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -35,13 +35,21 @@ class InfoDataBase
 {
 public:
     virtual ~InfoDataBase() = default;
-    virtual const void* GetData() const = 0;
-    virtual std::string GetDataTypeName() const = 0;
-    virtual std::shared_ptr<InfoDataBase> Clone() const = 0;
+    virtual const void* GetData() const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
+    virtual std::string GetDataTypeName() const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
+    virtual std::shared_ptr<InfoDataBase> Clone() const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
     // virtual void Print(const void* pSource, std::ostream& rOStream) const;
-    virtual void Save(std::ostream& O_OutStream) const = 0;
-    virtual void Load(std::istream& I_InStream) = 0;
-    virtual void Print(std::ostream& rOStream) const = 0;
+    virtual void Save(std::ostream& O_OutStream) const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
+    virtual void Load(std::istream& I_InStream) {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
+    virtual void Print(std::ostream& rOStream) const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
+
+protected:
+    InfoDataBase() = default; // needed for Serializer
+private:
+    friend class Serializer;
+
+    virtual void save(Serializer& rSerializer) const {};
+    virtual void load(Serializer& rSerializer) {};
 };
 
 /// output stream function
@@ -89,12 +97,28 @@ public:
 
 private:
     TDataType mData;
+
+    InfoData() = default;
+
+    friend class Serializer;
+
+    void save(Serializer& rSerializer) const override
+    {
+        CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(rSerializer, InfoDataBase)
+        rSerializer.save("mData", mData);
+
+    }
+    void load(Serializer& rSerializer) override
+    {
+        CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(rSerializer, InfoDataBase)
+        rSerializer.load("mData", mData);
+    }
 };
 
 } // namespace Internals
 
 
-class Info
+class CO_SIM_IO_API Info
 {
 public:
     Info() : mOptions(){}
@@ -165,63 +189,16 @@ public:
         return mOptions.size();
     }
 
-    void Save(std::ostream& O_OutStream) const
-    {
-        static std::map<std::string, std::string> s_registered_object_names {
-            {typeid(Internals::InfoData<int>).name(),         "InfoData_int"},
-            {typeid(Internals::InfoData<double>).name(),      "InfoData_double"},
-            {typeid(Internals::InfoData<bool>).name(),        "InfoData_bool"},
-            {typeid(Internals::InfoData<std::string>).name(), "InfoData_string"}
-        };
+    // DEPRECATED, use serializer!
+    void Save(std::ostream& O_OutStream) const;
+    void Load(std::istream& I_InStream);
 
-        O_OutStream << Size() << "\n";
-        for (const auto& r_pair: mOptions) {
-            const auto& r_val = *(r_pair.second);
-            auto it_obj = s_registered_object_names.find(typeid(r_val).name());
-            CO_SIM_IO_ERROR_IF(it_obj == s_registered_object_names.end()) << "No name registered" << std::endl;
-            O_OutStream << r_pair.first << "\n";
-            O_OutStream << it_obj->second << "\n";
-            r_pair.second->Save(O_OutStream);
-            O_OutStream << "\n";
-        }
-    }
-    void Load(std::istream& I_InStream)
-    {
-        static std::map<std::string, std::shared_ptr<Internals::InfoDataBase>> s_registered_object_prototypes {
-            {"InfoData_int"    , std::make_shared<Internals::InfoData<int>>(1)},
-            {"InfoData_double" , std::make_shared<Internals::InfoData<double>>(1)},
-            {"InfoData_bool"   , std::make_shared<Internals::InfoData<bool>>(1)},
-            {"InfoData_string" , std::make_shared<Internals::InfoData<std::string>>("")}
-        };
-
-        std::string key, registered_name;
-
-        int size;
-        I_InStream >> size;
-
-        for (int i=0; i<size; ++i) {
-            I_InStream >> key;
-            I_InStream >> registered_name;
-            auto it_prototype = s_registered_object_prototypes.find(registered_name);
-            CO_SIM_IO_ERROR_IF(it_prototype == s_registered_object_prototypes.end()) << "No prototype registered for " << registered_name << std::endl;
-
-            auto p_clone = it_prototype->second->Clone();
-            p_clone->Load(I_InStream);
-            mOptions[key] = p_clone;
-        }
-    }
-
-    virtual void Print(std::ostream& rOStream) const
-    {
-        rOStream << "CoSimIO-Info; containing " << Size() << " entries\n";
-
-        for (const auto& r_pair: mOptions) {
-            rOStream << "  name: " << r_pair.first << " | " << *(r_pair.second) << std::endl;
-        }
-    }
+    void Print(std::ostream& rOStream) const;
 
 private:
     std::map<std::string, std::shared_ptr<Internals::InfoDataBase>> mOptions;
+
+    static bool* mpSerializerTypesRegistered;
 
     template<typename TDataType>
     const TDataType& GetExistingKey(const std::string& I_Key) const
@@ -230,6 +207,14 @@ private:
         CO_SIM_IO_ERROR_IF(r_val->GetDataTypeName() != Internals::Name(TDataType())) << "Wrong DataType! Trying to get \"" << I_Key << "\" which is of type \"" << r_val->GetDataTypeName() << "\" with \"" << Internals::Name(TDataType()) << "\"!" << std::endl;
         return *static_cast<const TDataType*>(r_val->GetData());
     }
+
+    friend class CoSimIO::Internals::Serializer; // needs "CoSimIO::Internals::" because it is in different namespace
+
+    void save(CoSimIO::Internals::Serializer& rSerializer) const;
+
+    void load(CoSimIO::Internals::Serializer& rSerializer);
+
+    static void RegisterTypesInSerializer();
 };
 
 /// output stream function
