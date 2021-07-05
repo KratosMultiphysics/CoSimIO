@@ -296,34 +296,38 @@ TEST_CASE("DataContainer_serialization_RawMemory")
 
     DataContainerBasePointer p_save_container;
 
+    double** values_raw = (double**)malloc(sizeof(double*)*1);
+    values_raw[0]= (double*)malloc(sizeof(double)*cur_size);
+
+    for (std::size_t i=0; i<cur_size; ++i) {
+        (*values_raw)[i] = ref_values[i];
+    }
     SUBCASE("mutable")
     {
-        double** values_raw = (double**)malloc(sizeof(double*)*1);
-        values_raw[0]= (double*)malloc(sizeof(double)*cur_size);
-
-        for (std::size_t i=0; i<cur_size; ++i) {
-            (*values_raw)[i] = ref_values[i];
-        }
         p_save_container = CoSimIO::make_unique<DataContainerRawMemory<double>>(values_raw, cur_size);
-
-        const DataContainerBase& const_ref_save = *p_save_container;
-
-        double* load_data;
-        DataContainerBasePointer p_load_container(CoSimIO::make_unique<DataContainerRawMemoryType>(&load_data, 0));
-
-        DataContainerBase& ref_load = *p_load_container;
-
-        CoSimIO::Internals::StreamSerializer serializer;
-        serializer.save("container", const_ref_save);
-        serializer.load("container", ref_load);
-
-        CO_SIM_IO_CHECK_VECTOR_NEAR(const_ref_save, ref_load);
-
-        // deallocating memory
-        free(*values_raw);
-        free(values_raw);
-        free(load_data);
     }
+    SUBCASE("readonly")
+    {
+        p_save_container = CoSimIO::make_unique<DataContainerRawMemoryReadOnly<double>>(*values_raw, cur_size);
+    }
+
+    const DataContainerBase& const_ref_save = *p_save_container;
+
+    double* load_data;
+    DataContainerBasePointer p_load_container(CoSimIO::make_unique<DataContainerRawMemoryType>(&load_data, 0));
+
+    DataContainerBase& ref_load = *p_load_container;
+
+    CoSimIO::Internals::StreamSerializer serializer;
+    serializer.save("container", const_ref_save);
+    serializer.load("container", ref_load);
+
+    CO_SIM_IO_CHECK_VECTOR_NEAR(const_ref_save, ref_load);
+
+    // deallocating memory
+    free(*values_raw);
+    free(values_raw);
+    free(load_data);
 }
 
 } // TEST_SUITE("DataContainer")
