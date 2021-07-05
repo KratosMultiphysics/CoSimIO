@@ -313,7 +313,7 @@ TEST_CASE("DataContainer_serialization_RawMemory")
 
         DataContainerBase& ref_load = *p_load_container;
 
-        CoSimIO::Internals::StreamSerializer serializer(CoSimIO::Internals::Serializer::TraceType::SERIALIZER_TRACE_ALL);
+        CoSimIO::Internals::StreamSerializer serializer;
         serializer.save("container", const_ref_save);
         serializer.load("container", ref_load);
 

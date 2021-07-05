@@ -185,7 +185,7 @@ private:
         CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(rSerializer, DataContainer<TDataType>)
         std::size_t new_size;
         rSerializer.load("mSize", new_size);
-        if (mSize < new_size) {
+        if (mSize != new_size) {
             resize(new_size);
         }
 
