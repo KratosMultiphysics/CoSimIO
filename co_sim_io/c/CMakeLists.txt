@@ -1,5 +1,5 @@
 if(WIN32)
-  # To enable CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS to automatically
+  # To enable WINDOWS_EXPORT_ALL_SYMBOLS to automatically
   # add export decorators for all classes, structs and functions
   # see https://cmake.org/cmake/help/latest/prop_tgt/WINDOWS_EXPORT_ALL_SYMBOLS.html#prop_tgt:WINDOWS_EXPORT_ALL_SYMBOLS
   cmake_minimum_required(VERSION 3.4)
