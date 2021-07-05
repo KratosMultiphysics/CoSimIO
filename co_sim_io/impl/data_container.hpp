@@ -174,19 +174,24 @@ private:
     void save(Serializer& rSerializer) const override
     {
         CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(rSerializer, DataContainer<TDataType>)
-        rSerializer.save("mppData", mppData);
         rSerializer.save("mSize", mSize);
-        rSerializer.save("mCapacity", mCapacity);
-
+        for (std::size_t i=0; i<mSize; ++i) {
+            rSerializer.save("v"+std::to_string(i), data()[i]);
+        }
     }
 
     void load(Serializer& rSerializer) override
     {
         CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(rSerializer, DataContainer<TDataType>)
-        rSerializer.load("mppData", mppData);
-        rSerializer.load("mSize", mSize);
-        rSerializer.load("mCapacity", mCapacity);
+        std::size_t new_size;
+        rSerializer.load("mSize", new_size);
+        if (mSize < new_size) {
+            resize(new_size);
+        }
 
+        for (std::size_t i=0; i<mSize; ++i) {
+            rSerializer.load("v"+std::to_string(i), data()[i]);
+        }
     }
 };
 
