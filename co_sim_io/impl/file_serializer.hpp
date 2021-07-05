@@ -24,7 +24,7 @@ namespace Internals {
 
 // This class provides a simpler interface for serialization to a file
 // Note that you may not override any load or save method of the Serializer. They are not virtual
-class FileSerializer : public Serializer
+class CO_SIM_IO_API FileSerializer : public Serializer
 {
   public:
     ///this constructor simply wraps the standard Serializer and defines output to basic_iostream

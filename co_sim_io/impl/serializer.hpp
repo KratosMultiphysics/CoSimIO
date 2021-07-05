@@ -92,7 +92,7 @@ namespace Internals {
  *
  * @author Pooyan Dadvand
  */
-class Serializer
+class CO_SIM_IO_API Serializer
 {
 public:
     ///@name  Enum's
