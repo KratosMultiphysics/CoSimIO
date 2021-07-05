@@ -39,7 +39,7 @@ enum class VtkCellType {
     Quadratic_Hexahedron = 25,
 };
 
-VtkCellType GetVtkCellTypeForElementType(ElementType I_ElementType);
+VtkCellType CO_SIM_IO_EXPORT GetVtkCellTypeForElementType(ElementType I_ElementType);
 
 } // namespace Internals
 } // namespace CoSimIO

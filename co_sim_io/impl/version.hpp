@@ -16,13 +16,16 @@
 // System includes
 #include <string>
 
+// Project includes
+#include "co_sim_io_export.hpp"
+
 namespace CoSimIO {
 
-int GetMajorVersion();
+int CO_SIM_IO_EXPORT GetMajorVersion();
 
-int GetMinorVersion();
+int CO_SIM_IO_EXPORT GetMinorVersion();
 
-std::string GetPatchVersion();
+std::string CO_SIM_IO_EXPORT GetPatchVersion();
 
 } // namespace CoSimIO
 

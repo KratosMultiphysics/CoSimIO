@@ -32,7 +32,7 @@ static void CheckStream(const T& rStream, const fs::path& rPath)
 } // helpers namespace
 
 
-class FileCommunication : public Communication
+class CO_SIM_IO_EXPORT FileCommunication : public Communication
 {
 public:
     explicit FileCommunication(const Info& I_Settings);

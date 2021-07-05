@@ -38,46 +38,46 @@ Note that this introduces dependencies such as e.g. boost (header-only version) 
 
 namespace CoSimIO {
 
-Info Hello();
+Info CO_SIM_IO_EXPORT Hello();
 
 
-Info Connect(
+Info CO_SIM_IO_EXPORT Connect(
     const Info& I_Settings);
 
-Info Disconnect(
+Info CO_SIM_IO_EXPORT Disconnect(
     const Info& I_Info);
 
 
 template<class TContainerType>
-Info ImportData(
+Info CO_SIM_IO_EXPORT ImportData(
     const Info& I_Info,
     TContainerType& rData);
 
 template<class TContainerType>
-Info ExportData(
+Info CO_SIM_IO_EXPORT ExportData(
     const Info& I_Info,
     const TContainerType& rData);
 
 
-Info ImportMesh(
+Info CO_SIM_IO_EXPORT ImportMesh(
     const Info& I_Info,
     ModelPart& O_ModelPart);
 
-Info ExportMesh(
+Info CO_SIM_IO_EXPORT ExportMesh(
     const Info& I_Info,
     const ModelPart& I_ModelPart);
 
-Info ImportInfo(
+Info CO_SIM_IO_EXPORT ImportInfo(
     const Info& I_Info);
 
-Info ExportInfo(
+Info CO_SIM_IO_EXPORT ExportInfo(
     const Info& I_Info);
 
 
-Info Run(const Info& I_Info);
+Info CO_SIM_IO_EXPORT Run(const Info& I_Info);
 
 template<typename TFunctionType>
-Info Register(
+Info CO_SIM_IO_EXPORT Register(
     const Info& I_Info,
     TFunctionType rFunction);
 

@@ -97,7 +97,7 @@ Info Disconnect(const Info& I_Info)
 
 // Version for C++, there this input is a std::vector, which we have to wrap before passing it on
 template<>
-Info ImportData(
+Info CO_SIM_IO_EXPORT ImportData(
     const Info& I_Info,
     std::vector<double>& rData)
 {
@@ -109,7 +109,7 @@ Info ImportData(
 
 // Version for C and fortran, there we already get a container
 template<>
-Info ImportData(
+Info CO_SIM_IO_EXPORT ImportData(
     const Info& I_Info,
     CoSimIO::Internals::DataContainer<double>& rData)
 {
@@ -119,7 +119,7 @@ Info ImportData(
 
 // Version for C++, there this input is a std::vector, which we have to wrap before passing it on
 template<>
-Info ExportData(
+Info CO_SIM_IO_EXPORT ExportData(
     const Info& I_Info,
     const std::vector<double>& rData)
 {
@@ -131,7 +131,7 @@ Info ExportData(
 
 // Version for C and fortran, there we already get a container
 template<>
-Info ExportData(
+Info CO_SIM_IO_EXPORT ExportData(
     const Info& I_Info,
     const CoSimIO::Internals::DataContainer<double>& rData)
 {
@@ -177,7 +177,7 @@ Info Run(const Info& I_Info)
 
 
 template<>
-Info Register(
+Info CO_SIM_IO_EXPORT Register(
     const Info& I_Info,
     std::function<Info(const Info&)> I_FunctionPointer)
 {
@@ -187,7 +187,7 @@ Info Register(
 }
 
 template<>
-Info Register(
+Info CO_SIM_IO_EXPORT Register(
     const Info& I_Info,
     Info (*I_FunctionPointer)(const Info&))
 {

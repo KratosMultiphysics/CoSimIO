@@ -26,15 +26,15 @@ namespace Internals {
 // Create the name for the connection
 // In a function bcs maybe in the future this will
 // need to be more elaborate
-std::string CreateConnectionName(
+std::string CO_SIM_IO_EXPORT CreateConnectionName(
     const std::string& rName1,
     const std::string& rName2);
 
-void CheckEntry(const std::string& rEntry, const std::string& rKey);
+void CO_SIM_IO_EXPORT CheckEntry(const std::string& rEntry, const std::string& rKey);
 
-double ElapsedSeconds(const std::chrono::steady_clock::time_point& rStartTime);
+double CO_SIM_IO_EXPORT ElapsedSeconds(const std::chrono::steady_clock::time_point& rStartTime);
 
-int GetNumberOfNodesForElementType(ElementType Type);
+int CO_SIM_IO_EXPORT GetNumberOfNodesForElementType(ElementType Type);
 
 } // namespace Internals
 } // namespace CoSimIO
