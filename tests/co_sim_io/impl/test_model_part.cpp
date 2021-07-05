@@ -16,6 +16,7 @@
 // Project includes
 #include "co_sim_io_testing.hpp"
 #include "impl/model_part.hpp"
+#include "impl/stream_serializer.hpp"
 
 
 namespace CoSimIO {
@@ -78,6 +79,18 @@ TEST_CASE("node_ostream")
     const std::string exp_string = "CoSimIO-Node; Id: 1\n    Coordinates: [ 0.2 | -33.4 | 647 ]\n";
 
     CHECK_EQ(test_stream.str(), exp_string);
+}
+
+TEST_CASE("node_serialization")
+{
+    Node node_save(85, 0.2, -33.4, 647);
+    Node node_load(1, 0,0,0);
+
+    CoSimIO::Internals::StreamSerializer serializer;
+    serializer.save("node", node_save);
+    serializer.load("node", node_load);
+
+    CheckNodesAreEqual(node_save, node_load);
 }
 
 TEST_CASE("element_basics")
@@ -158,6 +171,23 @@ TEST_CASE("element_ostream")
     const std::string exp_string = "CoSimIO-Element; Id: 65\n    Number of Nodes: 3\n    Node Ids: 1, 22, 321\n";
 
     CHECK_EQ(test_stream.str(), exp_string);
+}
+
+TEST_CASE("element_serialization")
+{
+    const std::array<double, 3> dummy_coords = {1.6, -2.2, 17};
+    auto p_node_1 = CoSimIO::make_intrusive<CoSimIO::Node>(1, dummy_coords[0], dummy_coords[1], dummy_coords[2]);
+    auto p_node_2 = CoSimIO::make_intrusive<CoSimIO::Node>(22, dummy_coords[1], dummy_coords[2], dummy_coords[0]);
+    auto p_node_3 = CoSimIO::make_intrusive<CoSimIO::Node>(321, dummy_coords[2], dummy_coords[0], dummy_coords[1]);
+
+    Element element_save(65, CoSimIO::ElementType::Triangle2D3, {p_node_1, p_node_2, p_node_3});
+    Element element_load(1,  CoSimIO::ElementType::Point2D, {p_node_3});
+
+    CoSimIO::Internals::StreamSerializer serializer;
+    serializer.save("element", element_save);
+    serializer.load("element", element_load);
+
+    CheckElementsAreEqual(element_save, element_load);
 }
 
 TEST_CASE("model_part_basics")
@@ -429,6 +459,28 @@ TEST_CASE("model_part_ostream")
     test_stream << model_part;
 
     CHECK_EQ(test_stream.str(), exp_string);
+}
+
+TEST_CASE("model_part_serialization")
+{
+    ModelPart model_part_save("for_test");
+    ModelPart model_part_load("xxx");
+
+    const int node_ids[] = {2, 159, 61};
+    const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
+    model_part_save.CreateNewNode(node_ids[0], node_coords[0], node_coords[1], node_coords[2]);
+    model_part_save.CreateNewNode(node_ids[1], node_coords[1], node_coords[2], node_coords[0]);
+    model_part_save.CreateNewNode(node_ids[2], node_coords[2], node_coords[0], node_coords[1]);
+
+    model_part_save.CreateNewElement(15, CoSimIO::ElementType::Point2D, {node_ids[0]});
+    model_part_save.CreateNewElement(73, CoSimIO::ElementType::Line2D2, {node_ids[1], node_ids[2]});
+    model_part_save.CreateNewElement(47, CoSimIO::ElementType::Triangle3D3, {node_ids[1], node_ids[2], node_ids[0]});
+
+    CoSimIO::Internals::StreamSerializer serializer;
+    serializer.save("model_part", model_part_save);
+    serializer.load("model_part", model_part_load);
+
+    CheckModelPartsAreEqual(model_part_save, model_part_load);
 }
 
 } // TEST_SUITE("ModelPart")
