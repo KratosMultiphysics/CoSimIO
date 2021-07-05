@@ -16,6 +16,7 @@
 // Project includes
 #include "co_sim_io_testing.hpp"
 #include "impl/info.hpp"
+#include "impl/stream_serializer.hpp"
 
 
 namespace CoSimIO {
@@ -259,64 +260,26 @@ TEST_CASE("info_erase")
     CHECK_NOTHROW(info.Erase("whatever"));
 }
 
-TEST_CASE("info_save")
+TEST_CASE("info_serialization")
 {
-    Info info;
-    info.Set<std::string>("keyword", "awesome");
-    info.Set<bool>("is_converged", true);
-    info.Set<std::string>("keyword", "awesome");
-    info.Set<double>("tol", 0.008);
-    info.Set<int>("echo_level", 2);
-    info.Set<int>("checking", 22);
+    Info info_save;
+    Info info_load;
+    info_save.Set<bool>("is_converged", true);
+    info_save.Set<std::string>("keyword", "awesome");
+    info_save.Set<double>("tol", 0.008);
+    info_save.Set<int>("echo_level", 2);
+    info_save.Set<int>("checking", 22);
 
-    std::stringstream test_stream;
+    CoSimIO::Internals::StreamSerializer serializer;
+    serializer.save("info", info_save);
+    serializer.load("info", info_load);
 
-    info.Save(test_stream);
-
-    const std::string exp_string = "5\nchecking\nInfoData_int\n22\necho_level\nInfoData_int\n2\nis_converged\nInfoData_bool\n1\nkeyword\nInfoData_string\nawesome\ntol\nInfoData_double\n0.008\n";
-
-    CHECK_EQ(test_stream.str(), exp_string);
-}
-
-TEST_CASE("info_load")
-{
-    std::stringstream test_stream;
-
-    test_stream << "5\nkeyword\nInfoData_string\nawesome\nis_converged\nInfoData_bool\n1\ntol\nInfoData_double\n1.225\necho_level\nInfoData_int\n2\nchecking\nInfoData_int\n22\n";
-
-    Info info;
-    info.Load(test_stream);
-
-    CHECK_EQ(info.Size(), 5);
-    CHECK_EQ(info.Get<int>("checking"), 22);
-    CHECK_EQ(info.Get<int>("echo_level"), 2);
-    CHECK_EQ(info.Get<std::string>("keyword"), "awesome");
-    CHECK_UNARY(info.Get<bool>("is_converged"));
-    CHECK_EQ(info.Get<double>("tol"), doctest::Approx(1.225));
-}
-
-TEST_CASE("info_save_load")
-{
-    Info info;
-    info.Set<bool>("is_converged", true);
-    info.Set<std::string>("keyword", "awesome");
-    info.Set<double>("tol", 0.008);
-    info.Set<int>("echo_level", 2);
-    info.Set<int>("checking", 22);
-
-    std::stringstream test_stream;
-
-    info.Save(test_stream);
-
-    Info another_info;
-    another_info.Load(test_stream);
-
-    CHECK_EQ(another_info.Size(), 5);
-    CHECK_EQ(another_info.Get<int>("checking"), 22);
-    CHECK_EQ(another_info.Get<int>("echo_level"), 2);
-    CHECK_EQ(another_info.Get<std::string>("keyword"), "awesome");
-    CHECK_UNARY(another_info.Get<bool>("is_converged"));
-    CHECK_EQ(another_info.Get<double>("tol"), doctest::Approx(0.008));
+    CHECK_EQ(info_load.Size(), 5);
+    CHECK_EQ(info_load.Get<int>("checking"), 22);
+    CHECK_EQ(info_load.Get<int>("echo_level"), 2);
+    CHECK_EQ(info_load.Get<std::string>("keyword"), "awesome");
+    CHECK_UNARY(info_load.Get<bool>("is_converged"));
+    CHECK_EQ(info_load.Get<double>("tol"), doctest::Approx(0.008));
 }
 
 TEST_CASE("info_ostream")
