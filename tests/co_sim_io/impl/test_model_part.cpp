@@ -179,9 +179,10 @@ TEST_CASE("element_serialization")
     auto p_node_1 = CoSimIO::make_intrusive<CoSimIO::Node>(1, dummy_coords[0], dummy_coords[1], dummy_coords[2]);
     auto p_node_2 = CoSimIO::make_intrusive<CoSimIO::Node>(22, dummy_coords[1], dummy_coords[2], dummy_coords[0]);
     auto p_node_3 = CoSimIO::make_intrusive<CoSimIO::Node>(321, dummy_coords[2], dummy_coords[0], dummy_coords[1]);
+    auto p_dummy_node = CoSimIO::make_intrusive<CoSimIO::Node>(1111, 0,0,0);
 
     Element element_save(65, CoSimIO::ElementType::Triangle2D3, {p_node_1, p_node_2, p_node_3});
-    Element element_load(1,  CoSimIO::ElementType::Point2D, {p_node_3});
+    Element element_load(1,  CoSimIO::ElementType::Point2D, {p_dummy_node});
 
     CoSimIO::Internals::StreamSerializer serializer;
     serializer.save("element", element_save);
