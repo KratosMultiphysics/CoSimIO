@@ -11,12 +11,13 @@
 //
 
 // System includes
-#include <memory>
-#include <algorithm>
+#include <cstdlib>
 
 // Project includes
 #include "co_sim_io_testing.hpp"
+#include "impl/define.hpp"
 #include "impl/data_container.hpp"
+#include "impl/stream_serializer.hpp"
 
 
 namespace CoSimIO {
@@ -249,6 +250,84 @@ TEST_CASE("DataContainer_RawMemory_multiple_resizes")
 
     // deallocating memory
     free(data);
+}
+
+TEST_CASE("DataContainer_serialization_StdVector")
+{
+    std::vector<double> save_values {
+        1.0, -2.333, 15.88, 14.7, -99.6
+    };
+
+    std::vector<double> load_values;
+
+    DataContainerBasePointer p_save_container;
+
+    SUBCASE("mutable")
+    {
+        p_save_container = CoSimIO::make_unique<DataContainerStdVector<double>>(save_values);
+    }
+    SUBCASE("readonly")
+    {
+        p_save_container = CoSimIO::make_unique<DataContainerStdVectorReadOnly<double>>(save_values);
+    }
+
+    const DataContainerBase& const_ref_save = *p_save_container;
+
+    DataContainerBasePointer p_load_container(CoSimIO::make_unique<DataContainerStdVector<double>>(load_values));
+    DataContainerBase& ref_load = *p_load_container;
+
+    CoSimIO::Internals::StreamSerializer serializer;
+    serializer.save("container", const_ref_save);
+    serializer.load("container", ref_load);
+
+    CO_SIM_IO_CHECK_VECTOR_NEAR(save_values, load_values);
+    CO_SIM_IO_CHECK_VECTOR_NEAR(const_ref_save, ref_load);
+}
+
+TEST_CASE("DataContainer_serialization_RawMemory")
+{
+    std::vector<double> ref_values {
+        1.0, -2.333, 15.88, 14.7, -99.6
+    };
+
+    const std::size_t cur_size(ref_values.size());
+
+    std::vector<double> load_values;
+
+    DataContainerBasePointer p_save_container;
+
+    double** values_raw = (double**)malloc(sizeof(double*)*1);
+    values_raw[0]= (double*)malloc(sizeof(double)*cur_size);
+
+    for (std::size_t i=0; i<cur_size; ++i) {
+        (*values_raw)[i] = ref_values[i];
+    }
+    SUBCASE("mutable")
+    {
+        p_save_container = CoSimIO::make_unique<DataContainerRawMemory<double>>(values_raw, cur_size);
+    }
+    SUBCASE("readonly")
+    {
+        p_save_container = CoSimIO::make_unique<DataContainerRawMemoryReadOnly<double>>(*values_raw, cur_size);
+    }
+
+    const DataContainerBase& const_ref_save = *p_save_container;
+
+    double* load_data;
+    DataContainerBasePointer p_load_container(CoSimIO::make_unique<DataContainerRawMemoryType>(&load_data, 0));
+
+    DataContainerBase& ref_load = *p_load_container;
+
+    CoSimIO::Internals::StreamSerializer serializer;
+    serializer.save("container", const_ref_save);
+    serializer.load("container", ref_load);
+
+    CO_SIM_IO_CHECK_VECTOR_NEAR(const_ref_save, ref_load);
+
+    // deallocating memory
+    free(*values_raw);
+    free(values_raw);
+    free(load_data);
 }
 
 } // TEST_SUITE("DataContainer")

@@ -15,11 +15,13 @@
 
 // System includes
 #include <vector>
+#include <algorithm> // std::max
 #include <ostream>
 
 // Project includes
 #include "define.hpp"
 #include "macros.hpp"
+#include "serializer.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -54,6 +56,12 @@ public:
     {
         return this->data()[Index];
     }
+
+private:
+    friend class Serializer;
+
+    virtual void save(Serializer& rSerializer) const {}
+    virtual void load(Serializer& rSerializer) {}
 };
 
 /// output stream function
@@ -88,6 +96,20 @@ public:
 
 private:
     std::vector<TDataType>& mrVector;
+
+    friend class Serializer;
+
+    void save(Serializer& rSerializer) const override
+    {
+        CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(rSerializer, DataContainer<TDataType>)
+        rSerializer.save("mrVector", mrVector);
+    }
+
+    void load(Serializer& rSerializer) override
+    {
+        CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(rSerializer, DataContainer<TDataType>)
+        rSerializer.load("mrVector", mrVector);
+    }
 };
 
 template<typename TDataType>
@@ -104,6 +126,16 @@ public:
 
 private:
     const std::vector<TDataType>& mrVector;
+
+    friend class Serializer;
+
+    void save(Serializer& rSerializer) const override
+    {
+        CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(rSerializer, DataContainer<TDataType>)
+        rSerializer.save("mrVector", mrVector);
+    }
+
+    void load(Serializer& rSerializer) override {CO_SIM_IO_ERROR << "Loading a readonly object is not possible!" << std::endl;}
 };
 
 template<typename TDataType>
@@ -136,6 +168,31 @@ private:
     TDataType** mppData;
     std::size_t mSize;
     std::size_t mCapacity;
+
+    friend class Serializer;
+
+    void save(Serializer& rSerializer) const override
+    {
+        CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(rSerializer, DataContainer<TDataType>)
+        rSerializer.save("mSize", mSize);
+        for (std::size_t i=0; i<mSize; ++i) {
+            rSerializer.save("v"+std::to_string(i), data()[i]);
+        }
+    }
+
+    void load(Serializer& rSerializer) override
+    {
+        CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(rSerializer, DataContainer<TDataType>)
+        std::size_t new_size;
+        rSerializer.load("mSize", new_size);
+        if (mSize != new_size) {
+            resize(new_size);
+        }
+
+        for (std::size_t i=0; i<mSize; ++i) {
+            rSerializer.load("v"+std::to_string(i), data()[i]);
+        }
+    }
 };
 
 template<typename TDataType>
@@ -153,6 +210,19 @@ public:
 private:
     const TDataType* mpData;
     const std::size_t mSize;
+
+    friend class Serializer;
+
+    void save(Serializer& rSerializer) const override
+    {
+        CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(rSerializer, DataContainer<TDataType>)
+        rSerializer.save("mSize", mSize);
+        for (std::size_t i=0; i<mSize; ++i) {
+            rSerializer.save("v"+std::to_string(i), data()[i]);
+        }
+    }
+
+    void load(Serializer& rSerializer) override {CO_SIM_IO_ERROR << "Loading a readonly object is not possible!" << std::endl;}
 };
 
 } // namespace Internals
