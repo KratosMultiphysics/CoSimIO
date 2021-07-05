@@ -15,6 +15,7 @@
 
 // System includes
 #include <vector>
+#include <algorithm> // std::max
 #include <ostream>
 
 // Project includes
