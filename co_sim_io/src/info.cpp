@@ -19,9 +19,9 @@
 
 namespace CoSimIO {
 
-namespace {
-    std::once_flag flag_once;
-}
+// namespace {
+//     std::once_flag flag_once;
+// }
 
 void Info::Save(std::ostream& O_OutStream) const
 {
@@ -93,7 +93,7 @@ void Info::load(CoSimIO::Internals::Serializer& rSerializer)
 void Info::RegisterTypesInSerializer()
 {
     if (!mpSerializerTypesRegistered) {
-        std::call_once(flag_once, [](){
+        // std::call_once(flag_once, [](){
             static bool types_are_registered; // no need to initialize, all that matters is that mpSerializerTypesRegistered is no longer a null_ptr
             mpSerializerTypesRegistered = &types_are_registered;
 
@@ -106,7 +106,7 @@ void Info::RegisterTypesInSerializer()
             CoSimIO::Internals::Serializer::Register("msInfoDataDouble", info_data_double);
             CoSimIO::Internals::Serializer::Register("msInfoDataBool", info_data_bool);
             CoSimIO::Internals::Serializer::Register("msInfoDataString", info_data_string);
-        });
+        // });
     }
 }
 
