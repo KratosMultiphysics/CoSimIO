@@ -19,9 +19,9 @@
 
 namespace CoSimIO {
 
-namespace {
-    std::once_flag flag_once;
-}
+// namespace {
+//     std::once_flag flag_once;
+// }
 
 void Info::Save(std::ostream& O_OutStream) const
 {
