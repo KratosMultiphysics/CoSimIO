@@ -19,6 +19,7 @@
 
 // Project includes
 #include "define.hpp"
+#include "macros.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -31,6 +32,12 @@ std::string CO_SIM_IO_API CreateConnectionName(
     const std::string& rName2);
 
 void CO_SIM_IO_API CheckEntry(const std::string& rEntry, const std::string& rKey);
+
+template <typename TStream, typename TPath>
+static void CheckStream(const TStream& rStream, const TPath& rPath)
+{
+    CO_SIM_IO_ERROR_IF_NOT(rStream.is_open()) << rPath << " could not be opened!" << std::endl;
+}
 
 double CO_SIM_IO_API ElapsedSeconds(const std::chrono::steady_clock::time_point& rStartTime);
 

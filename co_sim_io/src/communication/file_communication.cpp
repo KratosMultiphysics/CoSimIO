@@ -21,6 +21,7 @@
 
 // Project includes
 #include "../../impl/communication/file_communication.hpp"
+#include "../../impl/utilities.hpp"
 #include "../../impl/vtk_utilities.hpp"
 
 namespace CoSimIO {
