@@ -14,9 +14,24 @@
 #include <algorithm>
 
 // Project includes
+#include "../impl/macros.hpp"
 #include "../impl/model_part.hpp"
+#include "../impl/utilities.hpp"
 
 namespace CoSimIO {
+
+Node::Node(
+    const IdType I_Id,
+    const double I_X,
+    const double I_Y,
+    const double I_Z)
+: mId(I_Id),
+    mX(I_X),
+    mY(I_Y),
+    mZ(I_Z)
+{
+    CO_SIM_IO_ERROR_IF(I_Id < 1) << "Id must be >= 1!" << std::endl;
+}
 
 void Node::Print(std::ostream& rOStream) const
 {
@@ -38,6 +53,20 @@ void Node::load(CoSimIO::Internals::Serializer& rSerializer)
     rSerializer.load("mX", mX);
     rSerializer.load("mY", mY);
     rSerializer.load("mZ", mZ);
+}
+
+Element::Element(
+    const IdType I_Id,
+    const ElementType I_Type,
+    const NodesContainerType& I_Nodes)
+    : mId(I_Id),
+        mType(I_Type),
+        mNodes(I_Nodes)
+{
+    CO_SIM_IO_ERROR_IF(I_Id < 1) << "Id must be >= 1!" << std::endl;
+    CO_SIM_IO_ERROR_IF(NumberOfNodes() < 1) << "No nodes were passed!" << std::endl;
+    const int num_nodes_elem_type = CoSimIO::Internals::GetNumberOfNodesForElementType(I_Type);
+    CO_SIM_IO_ERROR_IF_NOT(num_nodes_elem_type == static_cast<int>(NumberOfNodes())) << "Number of nodes (" << NumberOfNodes() << ") does not match expected number for element type (" << num_nodes_elem_type << ")!" << std::endl;
 }
 
 
