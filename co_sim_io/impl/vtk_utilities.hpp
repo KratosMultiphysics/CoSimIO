@@ -45,7 +45,7 @@ VtkCellType CO_SIM_IO_API GetVtkCellTypeForElementType(ElementType I_ElementType
 
 void CO_SIM_IO_API WriteVtk(const Info& I_Settings, const ModelPart& I_ModelPart);
 
-void CO_SIM_IO_API ReadVtk(const Info& I_Settings, ModelPart& I_ModelPart);
+void CO_SIM_IO_API ReadVtk(const Info& I_Settings, ModelPart& O_ModelPart);
 
 } // namespace Internals
 } // namespace CoSimIO
