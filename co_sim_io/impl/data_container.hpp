@@ -60,8 +60,26 @@ public:
 private:
     friend class Serializer;
 
-    virtual void save(Serializer& rSerializer) const {}
-    virtual void load(Serializer& rSerializer) {}
+    virtual void save(Serializer& rSerializer) const
+    {
+        rSerializer.save("size", size());
+        for (std::size_t i=0; i<size(); ++i) {
+            rSerializer.save("v", data()[i]);
+        }
+    }
+
+    virtual void load(Serializer& rSerializer)
+    {
+        std::size_t new_size;
+        rSerializer.load("size", new_size);
+        if (size() != new_size) {
+            resize(new_size);
+        }
+
+        for (std::size_t i=0; i<size(); ++i) {
+            rSerializer.load("v", data()[i]);
+        }
+    }
 };
 
 /// output stream function
@@ -102,13 +120,11 @@ private:
     void save(Serializer& rSerializer) const override
     {
         CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(rSerializer, DataContainer<TDataType>)
-        rSerializer.save("mrVector", mrVector);
     }
 
     void load(Serializer& rSerializer) override
     {
         CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(rSerializer, DataContainer<TDataType>)
-        rSerializer.load("mrVector", mrVector);
     }
 };
 
@@ -132,7 +148,6 @@ private:
     void save(Serializer& rSerializer) const override
     {
         CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(rSerializer, DataContainer<TDataType>)
-        rSerializer.save("mrVector", mrVector);
     }
 
     void load(Serializer& rSerializer) override {CO_SIM_IO_ERROR << "Loading a readonly object is not possible!" << std::endl;}
@@ -174,24 +189,11 @@ private:
     void save(Serializer& rSerializer) const override
     {
         CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(rSerializer, DataContainer<TDataType>)
-        rSerializer.save("mSize", mSize);
-        for (std::size_t i=0; i<mSize; ++i) {
-            rSerializer.save("v"+std::to_string(i), data()[i]);
-        }
     }
 
     void load(Serializer& rSerializer) override
     {
         CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(rSerializer, DataContainer<TDataType>)
-        std::size_t new_size;
-        rSerializer.load("mSize", new_size);
-        if (mSize != new_size) {
-            resize(new_size);
-        }
-
-        for (std::size_t i=0; i<mSize; ++i) {
-            rSerializer.load("v"+std::to_string(i), data()[i]);
-        }
     }
 };
 
@@ -216,10 +218,6 @@ private:
     void save(Serializer& rSerializer) const override
     {
         CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(rSerializer, DataContainer<TDataType>)
-        rSerializer.save("mSize", mSize);
-        for (std::size_t i=0; i<mSize; ++i) {
-            rSerializer.save("v"+std::to_string(i), data()[i]);
-        }
     }
 
     void load(Serializer& rSerializer) override {CO_SIM_IO_ERROR << "Loading a readonly object is not possible!" << std::endl;}
