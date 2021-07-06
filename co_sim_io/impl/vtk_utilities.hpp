@@ -17,6 +17,8 @@
 
 // Project includes
 #include "define.hpp"
+#include "info.hpp"
+#include "model_part.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -40,6 +42,10 @@ enum class VtkCellType {
 };
 
 VtkCellType CO_SIM_IO_API GetVtkCellTypeForElementType(ElementType I_ElementType);
+
+void CO_SIM_IO_API WriteVtk(const Info& I_Settings, const ModelPart& I_ModelPart);
+
+void CO_SIM_IO_API ReadVtk(const Info& I_Settings, ModelPart& O_ModelPart);
 
 } // namespace Internals
 } // namespace CoSimIO

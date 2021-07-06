@@ -23,7 +23,6 @@
 #include "../../impl/communication/file_communication.hpp"
 #include "../../impl/utilities.hpp"
 #include "../../impl/vtk_utilities.hpp"
-#include "../../impl/filesystem_inc.hpp"
 
 namespace CoSimIO {
 namespace Internals {

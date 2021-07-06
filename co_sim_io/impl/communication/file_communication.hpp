@@ -17,20 +17,10 @@
 
 // Project includes
 #include "communication.hpp"
+#include "../filesystem_inc.hpp"
 
 namespace CoSimIO {
 namespace Internals {
-
-namespace { // helpers namespace
-
-template <typename T>
-static void CheckStream(const T& rStream, const fs::path& rPath)
-{
-    CO_SIM_IO_ERROR_IF_NOT(rStream.is_open()) << rPath << " could not be opened!" << std::endl;
-}
-
-} // helpers namespace
-
 
 class CO_SIM_IO_API FileCommunication : public Communication
 {
