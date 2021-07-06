@@ -28,9 +28,7 @@ see https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/mod
 
 // Project includes
 #include "define.hpp"
-#include "macros.hpp"
 #include "serializer.hpp"
-#include "utilities.hpp"
 
 namespace CoSimIO {
 
@@ -41,14 +39,7 @@ public:
         const IdType I_Id,
         const double I_X,
         const double I_Y,
-        const double I_Z)
-    : mId(I_Id),
-      mX(I_X),
-      mY(I_Y),
-      mZ(I_Z)
-    {
-        CO_SIM_IO_ERROR_IF(I_Id < 1) << "Id must be >= 1!" << std::endl;
-    }
+        const double I_Z);
 
     Node(
         const IdType I_Id,
@@ -119,16 +110,7 @@ public:
     Element(
         const IdType I_Id,
         const ElementType I_Type,
-        const NodesContainerType& I_Nodes)
-    : mId(I_Id),
-      mType(I_Type),
-      mNodes(I_Nodes)
-    {
-        CO_SIM_IO_ERROR_IF(I_Id < 1) << "Id must be >= 1!" << std::endl;
-        CO_SIM_IO_ERROR_IF(NumberOfNodes() < 1) << "No nodes were passed!" << std::endl;
-        const int num_nodes_elem_type = CoSimIO::Internals::GetNumberOfNodesForElementType(I_Type);
-        CO_SIM_IO_ERROR_IF_NOT(num_nodes_elem_type == static_cast<int>(NumberOfNodes())) << "Number of nodes (" << NumberOfNodes() << ") does not match expected number for element type (" << num_nodes_elem_type << ")!" << std::endl;
-    }
+        const NodesContainerType& I_Nodes);
 
     // delete copy and assignment CTor
     Element(const Element&) = delete;
