@@ -21,13 +21,14 @@
 // External includes
 
 // Project includes
-#include "includes/define.h"
+#include "define.hpp"
+#include "macros.hpp"
 #include "stream_serializer.hpp"
 
-// Using a macro instead of a function to get the correct line in the error message.
-#ifndef KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK
-#define KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(Size1, Size2, CheckedFunction) \
-    KRATOS_DEBUG_ERROR_IF(Size1 != Size2) \
+// Using a macro instead of a function to get the correct line in the error message. // TODO make DEBUG error
+#ifndef CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK
+#define CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(Size1, Size2, CheckedFunction) \
+    CO_SIM_IO_ERROR_IF(Size1 != Size2) \
     << "Input error in call to DataCommunicator::" << CheckedFunction \
     << ": The sizes of the local and distributed buffers do not match." << std::endl;
 #endif
@@ -36,14 +37,14 @@
 /* Variants for each method are provided, either returning the reduced value or filling a provided vector buffer.
  * The returned value is only meaningful on the Root rank.
  */
-#ifndef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_REDUCE_INTERFACE_FOR_TYPE
-#define KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_REDUCE_INTERFACE_FOR_TYPE(type)                                       \
+#ifndef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_REDUCE_INTERFACE_FOR_TYPE
+#define CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_REDUCE_INTERFACE_FOR_TYPE(type)                                       \
 virtual type Sum(const type rLocalValue, const int Root) const { return rLocalValue; }                              \
 virtual std::vector<type> Sum(const std::vector<type>& rLocalValues, const int Root) const {                        \
     return rLocalValues;                                                                                            \
 }                                                                                                                   \
 virtual void Sum(const std::vector<type>& rLocalValues, std::vector<type>& rGlobalValues, const int Root) const {   \
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rLocalValues.size(), rGlobalValues.size(), "Sum");                    \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rLocalValues.size(), rGlobalValues.size(), "Sum");                    \
     rGlobalValues = Sum(rLocalValues, Root);                                                                        \
 }                                                                                                                   \
 virtual type Min(const type rLocalValue, const int Root) const { return rLocalValue; }                              \
@@ -51,7 +52,7 @@ virtual std::vector<type> Min(const std::vector<type>& rLocalValues, const int R
     return rLocalValues;                                                                                            \
 }                                                                                                                   \
 virtual void Min(const std::vector<type>& rLocalValues, std::vector<type>& rGlobalValues, const int Root) const {   \
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rLocalValues.size(), rGlobalValues.size(), "Min");                    \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rLocalValues.size(), rGlobalValues.size(), "Min");                    \
     rGlobalValues = Min(rLocalValues, Root);                                                                        \
 }                                                                                                                   \
 virtual type Max(const type rLocalValue, const int Root) const { return rLocalValue; }                              \
@@ -59,7 +60,7 @@ virtual std::vector<type> Max(const std::vector<type>& rLocalValues, const int R
     return rLocalValues;                                                                                            \
 }                                                                                                                   \
 virtual void Max(const std::vector<type>& rLocalValues, std::vector<type>& rGlobalValues, const int Root) const {   \
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rLocalValues.size(), rGlobalValues.size(), "Max");                    \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rLocalValues.size(), rGlobalValues.size(), "Max");                    \
     rGlobalValues = Max(rLocalValues, Root);                                                                        \
 }                                                                                                                   \
 
@@ -69,14 +70,14 @@ virtual void Max(const std::vector<type>& rLocalValues, std::vector<type>& rGlob
 /* Variants for each method are provided, either returning the reduced value or filling a provided vector buffer.
  * The returned value is defined on all ranks.
  */
-#ifndef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_ALLREDUCE_INTERFACE_FOR_TYPE
-#define KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_ALLREDUCE_INTERFACE_FOR_TYPE(type)                        \
+#ifndef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_ALLREDUCE_INTERFACE_FOR_TYPE
+#define CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_ALLREDUCE_INTERFACE_FOR_TYPE(type)                        \
 virtual type SumAll(const type rLocalValue) const { return rLocalValue; }                               \
 virtual std::vector<type> SumAll(const std::vector<type>& rLocalValues) const {                         \
     return rLocalValues;                                                                                \
 }                                                                                                       \
 virtual void SumAll(const std::vector<type>& rLocalValues, std::vector<type>& rGlobalValues) const {    \
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rLocalValues.size(), rGlobalValues.size(), "SumAll");     \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rLocalValues.size(), rGlobalValues.size(), "SumAll");     \
     rGlobalValues = SumAll(rLocalValues);                                                               \
 }                                                                                                       \
 virtual type MinAll(const type rLocalValue) const { return rLocalValue; }                               \
@@ -84,7 +85,7 @@ virtual std::vector<type> MinAll(const std::vector<type>& rLocalValues) const { 
     return rLocalValues;                                                                                \
 }                                                                                                       \
 virtual void MinAll(const std::vector<type>& rLocalValues, std::vector<type>& rGlobalValues) const {    \
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rLocalValues.size(), rGlobalValues.size(), "MinAll");     \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rLocalValues.size(), rGlobalValues.size(), "MinAll");     \
     rGlobalValues = MinAll(rLocalValues);                                                               \
 }                                                                                                       \
 virtual type MaxAll(const type rLocalValue) const { return rLocalValue; }                               \
@@ -92,7 +93,7 @@ virtual std::vector<type> MaxAll(const std::vector<type>& rLocalValues) const { 
     return rLocalValues;                                                                                \
 }                                                                                                       \
 virtual void MaxAll(const std::vector<type>& rLocalValues, std::vector<type>& rGlobalValues) const {    \
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rLocalValues.size(), rGlobalValues.size(), "MaxAll");     \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rLocalValues.size(), rGlobalValues.size(), "MaxAll");     \
     rGlobalValues = MaxAll(rLocalValues);                                                               \
 }                                                                                                       \
 
@@ -103,14 +104,14 @@ virtual void MaxAll(const std::vector<type>& rLocalValues, std::vector<type>& rG
  * Variants for each method are provided, either returning the reduced value or filling a provided vector buffer.
  * The returned value is defined on all ranks.
  */
-#ifndef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_SCANSUM_INTERFACE_FOR_TYPE
-#define KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_SCANSUM_INTERFACE_FOR_TYPE(type)                      \
+#ifndef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_SCANSUM_INTERFACE_FOR_TYPE
+#define CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_SCANSUM_INTERFACE_FOR_TYPE(type)                      \
 virtual type ScanSum(const type rLocalValue) const { return rLocalValue; }                          \
 virtual std::vector<type> ScanSum(const std::vector<type>& rLocalValues) const {                    \
     return rLocalValues;                                                                            \
 }                                                                                                   \
 virtual void ScanSum(const std::vector<type>& rLocalValues, std::vector<type>& rPartialSums) const {\
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rLocalValues.size(), rPartialSums.size(), "ScanSum"); \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rLocalValues.size(), rPartialSums.size(), "ScanSum"); \
     rPartialSums = ScanSum(rLocalValues);                                                           \
 }                                                                                                   \
 
@@ -122,19 +123,19 @@ virtual void ScanSum(const std::vector<type>& rLocalValues, std::vector<type>& r
  * communicated. If the dimensions of the receiving buffer are known at the destination rank, the output buffer
  * variant should be preferred.
  */
-#ifndef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_SENDRECV_INTERFACE_FOR_TYPE
-#define KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_SENDRECV_INTERFACE_FOR_TYPE(type)                                 \
+#ifndef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_SENDRECV_INTERFACE_FOR_TYPE
+#define CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_SENDRECV_INTERFACE_FOR_TYPE(type)                                 \
 virtual type SendRecvImpl(                                                                                      \
     const type rSendValues, const int SendDestination, const int SendTag,                                       \
     const int RecvSource, const int RecvTag) const {                                                            \
-    KRATOS_ERROR_IF( (Rank() != SendDestination) || (Rank() != RecvSource))                                     \
+    CO_SIM_IO_ERROR_IF( (Rank() != SendDestination) || (Rank() != RecvSource))                                     \
     << "Communication between different ranks is not possible with a serial DataCommunicator." << std::endl;    \
     return rSendValues;                                                                                         \
 }                                                                                                               \
 virtual std::vector<type> SendRecvImpl(                                                                         \
     const std::vector<type>& rSendValues, const int SendDestination, const int SendTag,                         \
     const int RecvSource, const int RecvTag) const {                                                            \
-    KRATOS_ERROR_IF( (Rank() != SendDestination) || (Rank() != RecvSource))                                     \
+    CO_SIM_IO_ERROR_IF( (Rank() != SendDestination) || (Rank() != RecvSource))                                     \
     << "Communication between different ranks is not possible with a serial DataCommunicator." << std::endl;    \
     return rSendValues;                                                                                         \
 }                                                                                                               \
@@ -146,16 +147,16 @@ virtual void SendRecvImpl(                                                      
 virtual void SendRecvImpl(                                                                                      \
     const std::vector<type>& rSendValues, const int SendDestination, const int SendTag,                         \
     std::vector<type>& rRecvValues, const int RecvSource, const int RecvTag) const {                            \
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rSendValues.size(), rRecvValues.size(), "SendRecv");              \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rSendValues.size(), rRecvValues.size(), "SendRecv");              \
     rRecvValues = SendRecvImpl(rSendValues, SendDestination, SendTag, RecvSource, RecvTag);                     \
 }                                                                                                               \
 virtual void SendImpl(                                                                                          \
     const std::vector<type>& rSendValues, const int SendDestination, const int SendTag = 0) const {             \
-    KRATOS_ERROR_IF(Rank() != SendDestination)                                                                  \
+    CO_SIM_IO_ERROR_IF(Rank() != SendDestination)                                                                  \
     << "Communication between different ranks is not possible with a serial DataCommunicator." << std::endl;    \
 }                                                                                                               \
 virtual void RecvImpl(std::vector<type>& rRecvValues, const int RecvSource, const int RecvTag = 0) const {      \
-    KRATOS_ERROR << "Calling serial DataCommunicator::Recv, which has no meaningful return." << std::endl;      \
+    CO_SIM_IO_ERROR << "Calling serial DataCommunicator::Recv, which has no meaningful return." << std::endl;      \
 }                                                                                                               \
 
 #endif
@@ -165,8 +166,8 @@ virtual void RecvImpl(std::vector<type>& rRecvValues, const int RecvSource, cons
  *  @param[in/out] The broadcast value (input on SourceRank, output on all other ranks).
  *  @param[in] SourceRank The rank transmitting the value.
  */
-#ifndef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_BROADCAST_INTERFACE_FOR_TYPE
-#define KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_BROADCAST_INTERFACE_FOR_TYPE(type)        \
+#ifndef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_BROADCAST_INTERFACE_FOR_TYPE
+#define CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_BROADCAST_INTERFACE_FOR_TYPE(type)        \
 virtual void BroadcastImpl(type& rBuffer, const int SourceRank) const {}                \
 virtual void BroadcastImpl(std::vector<type>& rBuffer, const int SourceRank) const {}   \
 
@@ -178,32 +179,32 @@ virtual void BroadcastImpl(std::vector<type>& rBuffer, const int SourceRank) con
  * communicated. If the dimensions of the receiving buffers are known at the destination rank, the output buffer
  * variant should be preferred.
  */
-#ifndef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_SCATTER_INTERFACE_FOR_TYPE
-#define KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_SCATTER_INTERFACE_FOR_TYPE(type)                                                              \
+#ifndef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_SCATTER_INTERFACE_FOR_TYPE
+#define CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_SCATTER_INTERFACE_FOR_TYPE(type)                                                              \
 virtual std::vector<type> Scatter(const std::vector<type>& rSendValues, const int SourceRank) const {                                       \
-     KRATOS_ERROR_IF( Rank() != SourceRank )                                                                                                \
+     CO_SIM_IO_ERROR_IF( Rank() != SourceRank )                                                                                                \
     << "Communication between different ranks is not possible with a serial DataCommunicator." << std::endl;                                \
     return rSendValues;                                                                                                                     \
 }                                                                                                                                           \
 virtual void Scatter(                                                                                                                       \
     const std::vector<type>& rSendValues, std::vector<type>& rRecvValues, const int SourceRank) const {                                     \
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rSendValues.size(),rRecvValues.size(),"Scatter");                                             \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rSendValues.size(),rRecvValues.size(),"Scatter");                                             \
     rRecvValues = Scatter(rSendValues, SourceRank);                                                                                         \
 }                                                                                                                                           \
 virtual std::vector<type> Scatterv(const std::vector<std::vector<type>>& rSendValues, const int SourceRank) const {                         \
-    KRATOS_ERROR_IF( Rank() != SourceRank )                                                                                                 \
+    CO_SIM_IO_ERROR_IF( Rank() != SourceRank )                                                                                                 \
     << "Communication between different ranks is not possible with a serial DataCommunicator." << std::endl;                                \
-    KRATOS_ERROR_IF( static_cast<unsigned int>(Size()) != rSendValues.size() )                                                              \
+    CO_SIM_IO_ERROR_IF( static_cast<unsigned int>(Size()) != rSendValues.size() )                                                              \
     << "Unexpected number of sends in DataCommuncatior::Scatterv (serial DataCommunicator always assumes a single process)." << std::endl;  \
     return rSendValues[0];                                                                                                                  \
 }                                                                                                                                           \
 virtual void Scatterv(                                                                                                                      \
     const std::vector<type>& rSendValues, const std::vector<int>& rSendCounts, const std::vector<int>& rSendOffsets,                        \
     std::vector<type>& rRecvValues, const int SourceRank) const {                                                                           \
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rRecvValues.size(), rSendValues.size(), "Scatterv (values check)");                           \
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rSendCounts.size(), 1, "Scatterv (counts check)");                                            \
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rSendOffsets.size(), 1, "Scatterv (offsets check)");                                          \
-    KRATOS_ERROR_IF( Rank() != SourceRank )                                                                                                 \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rRecvValues.size(), rSendValues.size(), "Scatterv (values check)");                           \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rSendCounts.size(), 1, "Scatterv (counts check)");                                            \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rSendOffsets.size(), 1, "Scatterv (offsets check)");                                          \
+    CO_SIM_IO_ERROR_IF( Rank() != SourceRank )                                                                                                 \
     << "Communication between different ranks is not possible with a serial DataCommunicator." << std::endl;                                \
     rRecvValues = rSendValues;                                                                                                              \
 }                                                                                                                                           \
@@ -216,62 +217,63 @@ virtual void Scatterv(                                                          
  * communicated. If the dimensions of the receiving buffers are known at the destination rank, the output buffer
  * variant should be preferred.
  */
-#ifndef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_GATHER_INTERFACE_FOR_TYPE
-#define KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_GATHER_INTERFACE_FOR_TYPE(type)                                       \
+#ifndef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_GATHER_INTERFACE_FOR_TYPE
+#define CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_GATHER_INTERFACE_FOR_TYPE(type)                                       \
 virtual std::vector<type> Gather(const std::vector<type>& rSendValues, const int DestinationRank) const {           \
-    KRATOS_ERROR_IF( Rank() != DestinationRank )                                                                    \
+    CO_SIM_IO_ERROR_IF( Rank() != DestinationRank )                                                                    \
     << "Communication between different ranks is not possible with a serial DataCommunicator." << std::endl;        \
     return rSendValues;                                                                                             \
 }                                                                                                                   \
 virtual void Gather(                                                                                                \
     const std::vector<type>& rSendValues, std::vector<type>& rRecvValues, const int DestinationRank) const {        \
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rSendValues.size(),rRecvValues.size(),"Gather");                      \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rSendValues.size(),rRecvValues.size(),"Gather");                      \
     rRecvValues = Gather(rSendValues, DestinationRank);                                                             \
 }                                                                                                                   \
 virtual std::vector<std::vector<type>> Gatherv(                                                                     \
     const std::vector<type>& rSendValues, const int DestinationRank) const {                                        \
-    KRATOS_ERROR_IF( Rank() != DestinationRank )                                                                    \
+    CO_SIM_IO_ERROR_IF( Rank() != DestinationRank )                                                                    \
     << "Communication between different ranks is not possible with a serial DataCommunicator." << std::endl;        \
     return std::vector<std::vector<type>>{rSendValues};                                                             \
 }                                                                                                                   \
 virtual void Gatherv(                                                                                               \
     const std::vector<type>& rSendValues, std::vector<type>& rRecvValues,                                           \
     const std::vector<int>& rRecvCounts, const std::vector<int>& rRecvOffsets, const int DestinationRank) const {   \
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rRecvValues.size(), rSendValues.size(), "Gatherv (values check)");    \
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rRecvCounts.size(), 1, "Gatherv (counts check)");                     \
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rRecvOffsets.size(), 1, "Gatherv (offset check)");                    \
-    KRATOS_ERROR_IF( Rank() != DestinationRank )                                                                    \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rRecvValues.size(), rSendValues.size(), "Gatherv (values check)");    \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rRecvCounts.size(), 1, "Gatherv (counts check)");                     \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rRecvOffsets.size(), 1, "Gatherv (offset check)");                    \
+    CO_SIM_IO_ERROR_IF( Rank() != DestinationRank )                                                                    \
     << "Communication between different ranks is not possible with a serial DataCommunicator." << std::endl;        \
     rRecvValues = rSendValues;                                                                                      \
 }                                                                                                                   \
 virtual std::vector<type> AllGather(const std::vector<type>& rSendValues) const { return rSendValues; }             \
 virtual void AllGather(const std::vector<type>& rSendValues, std::vector<type>& rRecvValues) const {                \
-    KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rSendValues.size(),rRecvValues.size(),"AllGather");                   \
+    CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rSendValues.size(),rRecvValues.size(),"AllGather");                   \
     rRecvValues = AllGather(rSendValues);                                                                           \
 }                                                                                                                   \
 
 #endif
 
-#ifndef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE
-#define KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE(type)   \
-KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_REDUCE_INTERFACE_FOR_TYPE(type)    \
-KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_ALLREDUCE_INTERFACE_FOR_TYPE(type) \
-KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_SCANSUM_INTERFACE_FOR_TYPE(type)   \
-KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_SCATTER_INTERFACE_FOR_TYPE(type)   \
-KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_GATHER_INTERFACE_FOR_TYPE(type)    \
+#ifndef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE
+#define CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE(type)   \
+CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_REDUCE_INTERFACE_FOR_TYPE(type)    \
+CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_ALLREDUCE_INTERFACE_FOR_TYPE(type) \
+CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_SCANSUM_INTERFACE_FOR_TYPE(type)   \
+CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_SCATTER_INTERFACE_FOR_TYPE(type)   \
+CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_GATHER_INTERFACE_FOR_TYPE(type)    \
 
 #endif
 
-#ifndef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE
-#define KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE(type)   \
-KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_SENDRECV_INTERFACE_FOR_TYPE(type)  \
-KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_BROADCAST_INTERFACE_FOR_TYPE(type) \
+#ifndef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE
+#define CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE(type)   \
+CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_SENDRECV_INTERFACE_FOR_TYPE(type)  \
+CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_BROADCAST_INTERFACE_FOR_TYPE(type) \
 
 #endif
 
 
-namespace Kratos
-{
+namespace CoSimIO {
+namespace Internals {
+
 ///@addtogroup Kratos Core
 ///@{
 
@@ -281,7 +283,7 @@ namespace Kratos
 /// Serial (do-nothing) version of a wrapper class for MPI communication.
 /** @see MPIDataCommunicator for a working distributed memory implementation.
   */
-class KRATOS_API(KRATOS_CORE) DataCommunicator
+class DataCommunicator
 {
   private:
 
@@ -308,22 +310,19 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
 
     template<typename T> void CheckSerializationForSimpleType(const T& rSerializedType, TypeFromBool<true>) const {}
     template<typename T>
-    KRATOS_DEPRECATED_MESSAGE("Calling serialization-based communication for a simple type. Please implement direct communication support for this type.")
+    CO_SIM_IO_DEPRECATED//("Calling serialization-based communication for a simple type. Please implement direct communication support for this type.")
     void CheckSerializationForSimpleType(const T& rSerializedType, TypeFromBool<false>) const {}
 
   public:
     ///@name Type Definitions
     ///@{
 
-    /// Pointer definition of DataCommunicator
-    KRATOS_CLASS_POINTER_DEFINITION(DataCommunicator);
-
     ///@}
     ///@name Life Cycle
     ///@{
 
     /// Default constructor.
-    DataCommunicator() {}
+    DataCommunicator() = default;
 
     /// Destructor.
     virtual ~DataCommunicator() {}
@@ -337,9 +336,9 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
      *  @see ParallelEnvironment.
      *  @return a unique pointer to the new DataCommunicator.
      */
-    static DataCommunicator::UniquePointer Create()
+    static std::unique_ptr<DataCommunicator> Create()
     {
-        return Kratos::make_unique<DataCommunicator>();
+        return CoSimIO::make_unique<DataCommunicator>();
     }
 
     /// Pause program exectution until all threads reach this call.
@@ -348,10 +347,10 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
 
     // Complete interface for basic types
 
-    KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE(int)
-    KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE(unsigned int)
-    KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE(long unsigned int)
-    KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE(double)
+    CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE(int)
+    CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE(unsigned int)
+    CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE(long unsigned int)
+    CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE(double)
 
     // Reduce operations
 
@@ -539,16 +538,6 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
     }
 
     ///@}
-    ///@name Access
-    ///@{
-
-    /// Convenience function to retireve the current default DataCommunicator.
-    /** @return A reference to the DataCommunicator instance registered as default in ParallelEnvironment.
-     */
-    KRATOS_DEPRECATED_MESSAGE("This function is deprecated, please retrieve the DataCommunicator through the ModelPart (or by name in special cases)")
-    static DataCommunicator& GetDefault();
-
-    ///@}
     ///@name Helper functions for error checking in MPI
     ///@{
 
@@ -558,7 +547,7 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
      *  if an error is detected on the root process.
      *  The intended usage is something like:
      *
-     *  KRATOS_ERROR_IF( data_communicator_instance.BroadcastErrorIfTrue(Condition, Root) )
+     *  CO_SIM_IO_ERROR_IF( data_communicator_instance.BroadcastErrorIfTrue(Condition, Root) )
      *  << "Detailed error message in Root rank";
      *
      *  If an error is detected, ranks other than Root will fail with a generic error message.
@@ -583,7 +572,7 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
      *  if an error is detected on the root process.
      *  The intended usage is something like:
      *
-     *  KRATOS_ERROR_IF_NOT( data_communicator_instance.BroadcastErrorIfFalse(Condition, Root) )
+     *  CO_SIM_IO_ERROR_IF_NOT( data_communicator_instance.BroadcastErrorIfFalse(Condition, Root) )
      *  << "Detailed error message in Root rank";
      *
      *  If an error is detected, ranks other than Root will fail with a generic error message.
@@ -607,7 +596,7 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
      *  is detected on one or more ranks.
      *  The intended usage is something like:
      *
-     *  KRATOS_ERROR_IF( data_communicator_instance.ErrorIfTrueOnAnyRank(Condition) )
+     *  CO_SIM_IO_ERROR_IF( data_communicator_instance.ErrorIfTrueOnAnyRank(Condition) )
      *  << "Detailed error message in ranks where Condition == true.";
      *
      *  If an error is detected, ranks other than those where it was detected will fail with
@@ -631,7 +620,7 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
      *  is detected on one or more ranks.
      *  The intended usage is something like:
      *
-     *  KRATOS_ERROR_IF_NOT( data_communicator_instance.ErrorIfFalseOnAnyRank(Condition) )
+     *  CO_SIM_IO_ERROR_IF_NOT( data_communicator_instance.ErrorIfFalseOnAnyRank(Condition) )
      *  << "Detailed error message in ranks where Condition == false.";
      *
      *  If an error is detected, ranks other than those where it was detected will fail with
@@ -683,10 +672,10 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
     ///@name Protected operations
     ///@{
 
-    KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE(int)
-    KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE(unsigned int)
-    KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE(long unsigned int)
-    KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE(double)
+    CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE(int)
+    CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE(unsigned int)
+    CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE(long unsigned int)
+    CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE(double)
 
     /// Synchronize a buffer to the value held by the broadcasting rank (string version).
     /** This is a wrapper for MPI_Bcast.
@@ -748,7 +737,7 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
         const std::string& rSendValues, const int SendDestination, const int SendTag,
         std::string& rRecvValues, const int RecvSource, const int RecvTag) const
     {
-        KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rSendValues.size(), rRecvValues.size(), "SendRecv");
+        CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(rSendValues.size(), rRecvValues.size(), "SendRecv");
         rRecvValues = SendRecvImpl(rSendValues, SendDestination, SendTag, RecvSource, RecvTag);
     }
 
@@ -765,7 +754,7 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
         const std::string& rSendValues, const int SendDestination, const int SendTag,
         const int RecvSource, const int RecvTag) const
     {
-        KRATOS_ERROR_IF( (Rank() != SendDestination) || (Rank() != RecvSource))
+        CO_SIM_IO_ERROR_IF( (Rank() != SendDestination) || (Rank() != RecvSource))
         << "Communication between different ranks is not possible with a serial DataCommunicator." << std::endl;
         return rSendValues;
     }
@@ -801,7 +790,7 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
         }
         else
         {
-            KRATOS_ERROR_IF( (Rank() != SendDestination) || (Rank() != RecvSource))
+            CO_SIM_IO_ERROR_IF( (Rank() != SendDestination) || (Rank() != RecvSource))
             << "Communication between different ranks is not possible with a serial DataCommunicator." << std::endl;
 
             return rSendObject;
@@ -816,7 +805,7 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
      */
     virtual void SendImpl(const std::string& rSendValues, const int SendDestination, const int SendTag) const
     {
-        KRATOS_ERROR_IF(Rank() != SendDestination)
+        CO_SIM_IO_ERROR_IF(Rank() != SendDestination)
         << "Communication between different ranks is not possible with a serial DataCommunicator." << std::endl;
     }
 
@@ -841,7 +830,7 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
         }
         else
         {
-            KRATOS_ERROR_IF(Rank() != SendDestination)
+            CO_SIM_IO_ERROR_IF(Rank() != SendDestination)
             << "Communication between different ranks is not possible with a serial DataCommunicator." << std::endl;
         }
     }
@@ -854,7 +843,7 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
      */
     virtual void RecvImpl(std::string& rRecvValues, const int RecvSource, const int RecvTag = 0) const
     {
-        KRATOS_ERROR << "Calling serial DataCommunicator::Recv, which has no meaningful return." << std::endl;
+        CO_SIM_IO_ERROR << "Calling serial DataCommunicator::Recv, which has no meaningful return." << std::endl;
     }
 
     /// Exchange data with other ranks (generic version).
@@ -879,7 +868,7 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
         }
         else
         {
-            KRATOS_ERROR_IF(Rank() != RecvSource)
+            CO_SIM_IO_ERROR_IF(Rank() != RecvSource)
             << "Communication between different ranks is not possible with a serial DataCommunicator." << std::endl;
         }
     }
@@ -931,18 +920,19 @@ inline std::ostream &operator<<(std::ostream &rOStream,
 
 ///@} addtogroup block
 
-} // namespace Kratos.
+} // namespace Internals
+} // namespace CoSimIO
 
-#undef KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK
+#undef CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK
 
-#undef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_REDUCE_INTERFACE_FOR_TYPE
-#undef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_ALLREDUCE_INTERFACE_FOR_TYPE
-#undef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_SCANSUM_INTERFACE_FOR_TYPE
-#undef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_SENDRECV_INTERFACE_FOR_TYPE
-#undef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_BROADCAST_INTERFACE_FOR_TYPE
-#undef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_SCATTER_INTERFACE_FOR_TYPE
-#undef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_GATHER_INTERFACE_FOR_TYPE
-#undef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE
-#undef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE
+#undef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_REDUCE_INTERFACE_FOR_TYPE
+#undef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_ALLREDUCE_INTERFACE_FOR_TYPE
+#undef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_SCANSUM_INTERFACE_FOR_TYPE
+#undef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_SENDRECV_INTERFACE_FOR_TYPE
+#undef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_BROADCAST_INTERFACE_FOR_TYPE
+#undef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_SCATTER_INTERFACE_FOR_TYPE
+#undef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_GATHER_INTERFACE_FOR_TYPE
+#undef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE
+#undef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE
 
-#endif // CO_SIM_IO_DATA_COMMUNICATOR_INCLUDED  defined
+#endif // CO_SIM_IO_DATA_COMMUNICATOR_INCLUDED
