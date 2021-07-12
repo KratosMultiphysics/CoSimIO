@@ -1,13 +1,16 @@
-//    |  /           |
-//    ' /   __| _` | __|  _ \   __|
-//    . \  |   (   | |   (   |\__ `
-//   _|\_\_|  \__,_|\__|\___/ ____/
-//                   Multi-Physics
+//     ______     _____ _           ________
+//    / ____/___ / ___/(_)___ ___  /  _/ __ |
+//   / /   / __ \\__ \/ / __ `__ \ / // / / /
+//  / /___/ /_/ /__/ / / / / / / // // /_/ /
+//  \____/\____/____/_/_/ /_/ /_/___/\____/
+//  Kratos CoSimulationApplication
 //
-//  License:         BSD License
-//                   Kratos default license: kratos/license.txt
+//  License:         BSD License, see license.txt
 //
-//  Main author:     Jordi Cotela
+//  Main authors:    Jordi Cotela
+//                   Philipp Bucher (https://github.com/philbucher)
+//
+// Ported from "kratos/mpi/includes/mpi_message.h"
 //
 
 #ifndef CO_SIM_IO_MPI_MESSAGE_INCLUDED
@@ -21,9 +24,7 @@
 // External includes
 #include "mpi.h"
 
-namespace Kratos
-{
-
+namespace CoSimIO {
 namespace Internals {
 
 template<class TDataType> struct MPIDataType;
@@ -170,7 +171,7 @@ public:
     }
 };
 
-}
+} // namespace Internal
 
 template<class TDataType> class MPIMessage;
 
@@ -186,6 +187,6 @@ template<> class MPIMessage<std::string>: public Internals::StringMessage, publi
 template<class ValueType> class MPIMessage< std::vector<ValueType> >: public Internals::VectorMessage<ValueType>, public Internals::MPIDataType<ValueType> {};
 template<class ValueType, std::size_t Dimension> class MPIMessage<std::array<ValueType,Dimension>>: public Internals::ArrayMessage<ValueType,Dimension>, public Internals::MPIDataType<ValueType> {};
 
-} // namespace Kratos
+} // namespace CoSimIO
 
 #endif // CO_SIM_IO_MPI_MESSAGE_INCLUDED
