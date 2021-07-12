@@ -10,8 +10,8 @@
 //  Main author:     Jordi Cotela
 //
 
-#ifndef KRATOS_DATA_COMMUNICATOR_H_INCLUDED
-#define KRATOS_DATA_COMMUNICATOR_H_INCLUDED
+#ifndef CO_SIM_IO_DATA_COMMUNICATOR_INCLUDED
+#define CO_SIM_IO_DATA_COMMUNICATOR_INCLUDED
 
 // System includes
 #include <string>
@@ -21,10 +21,8 @@
 // External includes
 
 // Project includes
-#include "containers/array_1d.h"
-#include "containers/flags.h"
 #include "includes/define.h"
-#include "includes/mpi_serializer.h"
+#include "stream_serializer.hpp"
 
 // Using a macro instead of a function to get the correct line in the error message.
 #ifndef KRATOS_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK
@@ -357,53 +355,11 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
 
     // Reduce operations
 
-    /// Sum rLocalValue across all ranks in the Communicator (array_1d<double,3> version).
-    /** This is a wrapper to MPI_Reduce.
-     *  @param[in] rLocalValue Local contribution to the sum.
-     *  @param[in] Root The rank where the result will be computed.
-     *  @return The summed quantity (meaningful only in Root).
-     */
-    virtual array_1d<double,3> Sum(const array_1d<double,3>& rLocalValue, const int Root) const
-    {
-        return rLocalValue;
-    }
-
-
-    /// Obtain the minimum of rLocalValue across all ranks in the Communicator (array_1d<double,3> version).
-    /** This is a wrapper to MPI_Reduce.
-     *  @param[in] rLocalValue Local value to consider in computing the minimum.
-     *  @param[in] Root The rank where the result will be computed.
-     *  @return The minimum value (meaningful only in Root).
-     */
-    virtual array_1d<double,3> Min(const array_1d<double,3>& rLocalValue, const int Root) const
-    {
-        return rLocalValue;
-    }
-
-    /// Obtain the maximum of rLocalValue across all ranks in the Communicator (array_1d<double,3> version).
-    /** This is a wrapper to MPI_Reduce.
-     *  @param[in] rLocalValue Local value to consider in computing the maximum.
-     *  @param[in] Root The rank where the result will be computed.
-     *  @return The maximum value (meaningful only in Root).
-     */
-    virtual array_1d<double,3> Max(const array_1d<double,3>& rLocalValue, const int Root) const
-    {
-        return rLocalValue;
-    }
-
     virtual bool AndReduce(
         const bool Value,
         const int Root) const
     {
         return Value;
-    }
-
-    virtual Kratos::Flags AndReduce(
-        const Kratos::Flags Values,
-        const Kratos::Flags Mask,
-        const int Root) const
-    {
-        return Values;
     }
 
     virtual bool OrReduce(
@@ -413,64 +369,16 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
         return Value;
     }
 
-    virtual Kratos::Flags OrReduce(
-        const Kratos::Flags Values,
-        const Kratos::Flags Mask,
-        const int Root) const
-    {
-        return Values;
-    }
-
     // Allreduce operations
-
-    /// Sum rLocalValue across all ranks in the Communicator (array_1d<double,3> version).
-    /** This is a wrapper to MPI_Alleduce.
-     *  @param[in] rLocalValue Local contribution to the sum.
-     *  @return The summed quantity.
-     */
-    virtual array_1d<double,3> SumAll(const array_1d<double,3>& rLocalValue) const
-    {
-        return rLocalValue;
-    }
-
-    /// Obtain the minimum of rLocalValue across all ranks in the Communicator (array_1d<double,3> version).
-    /** This is a wrapper to MPI_Allreduce.
-     *  @param[in] rLocalValue Local value to consider in computing the minimum.
-     *  @return The minimum value.
-     */
-    virtual array_1d<double,3> MinAll(const array_1d<double,3>& rLocalValue) const
-    {
-        return rLocalValue;
-    }
-
-    /// Obtain the maximum of rLocalValue across all ranks in the Communicator (array_1d<double,3> version).
-    /** This is a wrapper to MPI_Allreduce.
-     *  @param[in] rLocalValue Local value to consider in computing the maximum.
-     *  @return The maximum value.
-     */
-    virtual array_1d<double,3> MaxAll(const array_1d<double,3>& rLocalValue) const
-    {
-        return rLocalValue;
-    }
 
     virtual bool AndReduceAll(const bool Value) const
     {
         return Value;
     }
 
-    virtual Kratos::Flags AndReduceAll(const Kratos::Flags Values, const Kratos::Flags Mask) const
-    {
-        return Values;
-    }
-
     virtual bool OrReduceAll(const bool Value) const
     {
         return Value;
-    }
-
-    virtual Kratos::Flags OrReduceAll(const Kratos::Flags Values, const Kratos::Flags Mask) const
-    {
-        return Values;
     }
 
     // Broadcast operations
@@ -803,7 +711,7 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
             int rank = this->Rank();
             if (rank == SourceRank)
             {
-                MpiSerializer send_serializer;
+                StreamSerializer send_serializer;
                 send_serializer.save("data", rBroadcastObject);
                 broadcast_message = send_serializer.GetStringRepresentation();
 
@@ -821,7 +729,7 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
 
             if (rank != SourceRank)
             {
-                MpiSerializer recv_serializer(broadcast_message);
+                StreamSerializer recv_serializer(broadcast_message);
                 recv_serializer.load("data", rBroadcastObject);
             }
         }
@@ -880,13 +788,13 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
         CheckSerializationForSimpleType(rSendObject, TypeFromBool<serialization_is_required<TObject>::value>());
         if (this->IsDistributed())
         {
-            MpiSerializer send_serializer;
+            StreamSerializer send_serializer;
             send_serializer.save("data", rSendObject);
             std::string send_message = send_serializer.GetStringRepresentation();
 
             std::string recv_message = this->SendRecv(send_message, SendDestination, RecvSource);
 
-            MpiSerializer recv_serializer(recv_message);
+            StreamSerializer recv_serializer(recv_message);
             TObject recv_object;
             recv_serializer.load("data", recv_object);
             return recv_object;
@@ -925,7 +833,7 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
         CheckSerializationForSimpleType(rSendObject, TypeFromBool<serialization_is_required<TObject>::value>());
         if (this->IsDistributed())
         {
-            MpiSerializer send_serializer;
+            StreamSerializer send_serializer;
             send_serializer.save("data", rSendObject);
             std::string send_message = send_serializer.GetStringRepresentation();
 
@@ -966,7 +874,7 @@ class KRATOS_API(KRATOS_CORE) DataCommunicator
 
             this->Recv(recv_message, RecvSource, RecvTag);
 
-            MpiSerializer recv_serializer(recv_message);
+            StreamSerializer recv_serializer(recv_message);
             recv_serializer.load("data", rRecvObject);
         }
         else
@@ -1037,4 +945,4 @@ inline std::ostream &operator<<(std::ostream &rOStream,
 #undef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE
 #undef KRATOS_BASE_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE
 
-#endif // KRATOS_DATA_COMMUNICATOR_H_INCLUDED  defined
+#endif // CO_SIM_IO_DATA_COMMUNICATOR_INCLUDED  defined

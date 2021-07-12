@@ -10,15 +10,15 @@
 //  Main author:     Jordi Cotela
 //
 
-#ifndef KRATOS_MPI_DATA_COMMUNICATOR_H_INCLUDED
-#define KRATOS_MPI_DATA_COMMUNICATOR_H_INCLUDED
+#ifndef CO_SIM_IO_MPI_DATA_COMMUNICATOR_INCLUDED
+#define CO_SIM_IO_MPI_DATA_COMMUNICATOR_INCLUDED
 
 // System includes
 #include <string>
 #include <iostream>
-#include <mpi.h>
 
 // External includes
+#include <mpi.h>
 
 // Project includes
 #include "includes/define.h"
@@ -197,45 +197,19 @@ class KRATOS_API(KRATOS_MPI_CORE) MPIDataCommunicator: public DataCommunicator
 
     // Reduce operations
 
-    array_1d<double,3> Sum(const array_1d<double,3>& rLocalValue, const int Root) const override;
-
-    array_1d<double,3> Min(const array_1d<double,3>& rLocalValue, const int Root) const override;
-
-    array_1d<double,3> Max(const array_1d<double,3>& rLocalValue, const int Root) const override;
-
     bool AndReduce(
         const bool Value,
-        const int Root) const override;
-
-    Kratos::Flags AndReduce(
-        const Kratos::Flags Values,
-        const Kratos::Flags Mask,
         const int Root) const override;
 
     bool OrReduce(
         const bool Value,
         const int Root) const override;
 
-    Kratos::Flags OrReduce(
-        const Kratos::Flags Values,
-        const Kratos::Flags Mask,
-        const int Root) const override;
-
     // Allreduce operations
-
-    array_1d<double,3> SumAll(const array_1d<double,3>& rLocalValue) const override;
-
-    array_1d<double,3> MinAll(const array_1d<double,3>& rLocalValue) const override;
-
-    array_1d<double,3> MaxAll(const array_1d<double,3>& rLocalValue) const override;
 
     bool AndReduceAll(const bool Value) const override;
 
-    Kratos::Flags AndReduceAll(const Kratos::Flags Values, const Kratos::Flags Mask) const override;
-
     bool OrReduceAll(const bool Value) const override;
-
-    Kratos::Flags OrReduceAll(const Kratos::Flags Values, const Kratos::Flags Mask) const override;
 
     ///@}
     ///@name Access
@@ -519,4 +493,4 @@ inline std::ostream &operator<<(std::ostream &rOStream,
 #undef KRATOS_MPI_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE
 #undef KRATOS_MPI_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE
 
-#endif // KRATOS_MPI_DATA_COMMUNICATOR_H_INCLUDED  defined
+#endif // CO_SIM_IO_MPI_DATA_COMMUNICATOR_INCLUDED  defined

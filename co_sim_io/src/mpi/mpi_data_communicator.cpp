@@ -10,11 +10,10 @@
 //  Main author:     Jordi Cotela
 //
 
-#include "includes/parallel_environment.h"
-
+// Project includes
 #include "mpi/includes/mpi_data_communicator.h"
-#include "mpi/includes/mpi_manager.h"
 #include "mpi/includes/mpi_message.h"
+
 
 #ifndef KRATOS_MPI_DATA_COMMUNICATOR_DEFINE_REDUCE_INTERFACE_FOR_TYPE
 #define KRATOS_MPI_DATA_COMMUNICATOR_DEFINE_REDUCE_INTERFACE_FOR_TYPE(type)                                 \
@@ -229,10 +228,6 @@ MPIDataCommunicator::MPIDataCommunicator(MPI_Comm MPIComm):
     DataCommunicator(),
     mComm(MPIComm)
 {
-    if (!ParallelEnvironment::MPIIsInitialized())
-    {
-        ParallelEnvironment::SetUpMPIEnvironment(MPIManager::Create());
-    }
 }
 
 MPIDataCommunicator::~MPIDataCommunicator()
@@ -248,7 +243,7 @@ MPIDataCommunicator::~MPIDataCommunicator()
 
 MPIDataCommunicator::UniquePointer MPIDataCommunicator::Create(MPI_Comm Comm)
 {
-    return Kratos::make_unique<MPIDataCommunicator>(Comm);
+    return CoSimIO::make_unique<MPIDataCommunicator>(Comm);
 }
 
 // Barrier wrapper
@@ -268,44 +263,9 @@ KRATOS_MPI_DATA_COMMUNICATOR_DEFINE_PUBLIC_INTERFACE_FOR_TYPE(double)
 
 // Reduce operations
 
-array_1d<double,3> MPIDataCommunicator::Sum(const array_1d<double,3>& rLocalValue, const int Root) const
-{
-    return ReduceDetail(rLocalValue, MPI_SUM, Root);
-}
-
-array_1d<double,3> MPIDataCommunicator::Min(const array_1d<double,3>& rLocalValue, const int Root) const
-{
-    array_1d<double,3> global_value(rLocalValue);
-    ReduceDetail(rLocalValue, global_value, MPI_MIN, Root);
-    return global_value;
-}
-
-array_1d<double,3> MPIDataCommunicator::Max(const array_1d<double,3>& rLocalValue, const int Root) const
-{
-    array_1d<double,3> global_value(rLocalValue);
-    ReduceDetail(rLocalValue,global_value,MPI_MAX,Root);
-    return global_value;
-}
-
 bool MPIDataCommunicator::AndReduce(const bool Value, const int Root) const
 {
     return ReduceDetail(Value, MPI_LAND, Root);
-}
-
-Kratos::Flags MPIDataCommunicator::AndReduce(const Kratos::Flags Values, const Kratos::Flags Mask, const int Root) const
-{
-    Flags::BlockType local_active_flags = Values.GetDefined() & Mask.GetDefined();
-    Flags::BlockType active_flags = local_active_flags;
-    ReduceDetail(local_active_flags, active_flags, MPI_BOR, Root);
-
-    Flags::BlockType flags = Values.GetFlags();
-    Flags::BlockType reduced_flags = flags;
-    ReduceDetail(flags, reduced_flags, MPI_BAND, Root);
-
-    Flags out;
-    out.SetDefined(active_flags | Values.GetDefined());
-    out.SetFlags( (reduced_flags & active_flags) | (Values.GetFlags() & ~active_flags) );
-    return out;
 }
 
 bool MPIDataCommunicator::OrReduce(const bool Value, const int Root) const
@@ -313,85 +273,16 @@ bool MPIDataCommunicator::OrReduce(const bool Value, const int Root) const
     return ReduceDetail(Value, MPI_LOR, Root);
 }
 
-Kratos::Flags MPIDataCommunicator::OrReduce(const Kratos::Flags Values, const Kratos::Flags Mask, const int Root) const
-{
-    Flags::BlockType local_active_flags = Values.GetDefined() & Mask.GetDefined();
-    Flags::BlockType active_flags = local_active_flags;
-    ReduceDetail(local_active_flags, active_flags, MPI_BOR, Root);
-
-    Flags::BlockType flags = Values.GetFlags();
-    Flags::BlockType reduced_flags = flags;
-    ReduceDetail(flags, reduced_flags, MPI_BOR, Root);
-
-    Flags out;
-    out.SetDefined(active_flags | Values.GetDefined());
-    out.SetFlags( (reduced_flags & active_flags) | (Values.GetFlags() & ~active_flags) );
-    return out;
-}
-
 // Allreduce operations
-
-array_1d<double,3> MPIDataCommunicator::SumAll(const array_1d<double,3>& rLocalValue) const
-{
-    array_1d<double,3> global_value(rLocalValue);
-    AllReduceDetail(rLocalValue,global_value,MPI_SUM);
-    return global_value;
-}
-
-array_1d<double,3> MPIDataCommunicator::MinAll(const array_1d<double,3>& rLocalValue) const
-{
-    array_1d<double,3> global_value(rLocalValue);
-    AllReduceDetail(rLocalValue,global_value,MPI_MIN);
-    return global_value;
-}
-
-array_1d<double,3> MPIDataCommunicator::MaxAll(const array_1d<double,3>& rLocalValue) const
-{
-    array_1d<double,3> global_value(rLocalValue);
-    AllReduceDetail(rLocalValue,global_value,MPI_MAX);
-    return global_value;
-}
 
 bool MPIDataCommunicator::AndReduceAll(const bool Value) const
 {
     return AllReduceDetail(Value, MPI_LAND);
 }
 
-Kratos::Flags MPIDataCommunicator::AndReduceAll(const Kratos::Flags Values, const Kratos::Flags Mask) const
-{
-    Flags::BlockType local_active_flags = Values.GetDefined() & Mask.GetDefined();
-    Flags::BlockType active_flags;
-    AllReduceDetail(local_active_flags, active_flags, MPI_BOR);
-
-    Flags::BlockType flags = Values.GetFlags();
-    Flags::BlockType reduced_flags;
-    AllReduceDetail(flags, reduced_flags, MPI_BAND);
-
-    Flags out;
-    out.SetDefined(active_flags | Values.GetDefined());
-    out.SetFlags( (reduced_flags & active_flags) | (Values.GetFlags() & ~active_flags) );
-    return out;
-}
-
 bool MPIDataCommunicator::OrReduceAll(const bool Value) const
 {
     return AllReduceDetail(Value, MPI_LOR);
-}
-
-Kratos::Flags MPIDataCommunicator::OrReduceAll(const Kratos::Flags Values, const Kratos::Flags Mask) const
-{
-    Flags::BlockType local_active_flags = Values.GetDefined() & Mask.GetDefined();
-    Flags::BlockType active_flags = local_active_flags;
-    AllReduceDetail(local_active_flags, active_flags, MPI_BOR);
-
-    Flags::BlockType flags = Values.GetFlags();
-    Flags::BlockType reduced_flags = flags;
-    AllReduceDetail(flags, reduced_flags, MPI_BOR);
-
-    Flags out;
-    out.SetDefined(active_flags | Values.GetDefined());
-    out.SetFlags( (reduced_flags & active_flags) | (Values.GetFlags() & ~active_flags) );
-    return out;
 }
 
 // Access

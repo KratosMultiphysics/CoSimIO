@@ -10,15 +10,16 @@
 //  Main author:     Jordi Cotela
 //
 
-#ifndef KRATOS_MPI_MESSAGE_H_INCLUDED
-#define KRATOS_MPI_MESSAGE_H_INCLUDED
+#ifndef CO_SIM_IO_MPI_MESSAGE_INCLUDED
+#define CO_SIM_IO_MPI_MESSAGE_INCLUDED
 
+// System includes
 #include <string>
+#include <array>
 #include <vector>
-#include "mpi.h"
 
-#include "containers/array_1d.h"
-#include "containers/flags.h"
+// External includes
+#include "mpi.h"
 
 namespace Kratos
 {
@@ -81,15 +82,6 @@ template<> struct MPIDataType<bool>
     static constexpr int LengthPerObject = 1;
 };
 
-template<> struct MPIDataType<Flags::BlockType>
-{
-    static inline MPI_Datatype DataType()
-    {
-        return MPI_INT64_T;
-    }
-    static constexpr int LengthPerObject = 1;
-};
-
 template<class TDataType> class ValueMessage
 {
 public:
@@ -131,7 +123,7 @@ public:
 template<class TDataType, std::size_t Dimension> class ArrayMessage
 {
 public:
-    static inline void* Buffer(array_1d<TDataType,Dimension>& rValues)
+    static inline void* Buffer(std::array<TDataType,Dimension>& rValues)
     {
         #ifdef KRATOS_USE_AMATRIX
         return rValues.data();
@@ -140,7 +132,7 @@ public:
         #endif
     }
 
-    static inline const void* Buffer(const array_1d<TDataType,Dimension>& rValues)
+    static inline const void* Buffer(const std::array<TDataType,Dimension>& rValues)
     {
         #ifdef KRATOS_USE_AMATRIX
         return rValues.data();
@@ -149,7 +141,7 @@ public:
         #endif
     }
 
-    static inline int Size(const array_1d<TDataType,Dimension>& rValues)
+    static inline int Size(const std::array<TDataType,Dimension>& rValues)
     {
         return Dimension * MPIDataType<TDataType>::LengthPerObject;
     }
@@ -192,8 +184,8 @@ template<> class MPIMessage<Flags::BlockType>: public Internals::ValueMessage<Fl
 template<> class MPIMessage<std::string>: public Internals::StringMessage, public Internals::MPIDataType<std::string> {};
 
 template<class ValueType> class MPIMessage< std::vector<ValueType> >: public Internals::VectorMessage<ValueType>, public Internals::MPIDataType<ValueType> {};
-template<class ValueType, std::size_t Dimension> class MPIMessage<array_1d<ValueType,Dimension>>: public Internals::ArrayMessage<ValueType,Dimension>, public Internals::MPIDataType<ValueType> {};
+template<class ValueType, std::size_t Dimension> class MPIMessage<std::array<ValueType,Dimension>>: public Internals::ArrayMessage<ValueType,Dimension>, public Internals::MPIDataType<ValueType> {};
 
 } // namespace Kratos
 
-#endif // KRATOS_MPI_MESSAGE_H_INCLUDED
+#endif // CO_SIM_IO_MPI_MESSAGE_INCLUDED
