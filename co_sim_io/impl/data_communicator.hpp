@@ -1,13 +1,16 @@
-//    |  /           |
-//    ' /   __| _` | __|  _ \   __|
-//    . \  |   (   | |   (   |\__ `
-//   _|\_\_|  \__,_|\__|\___/ ____/
-//                   Multi-Physics
+//     ______     _____ _           ________
+//    / ____/___ / ___/(_)___ ___  /  _/ __ |
+//   / /   / __ \\__ \/ / __ `__ \ / // / / /
+//  / /___/ /_/ /__/ / / / / / / // // /_/ /
+//  \____/\____/____/_/_/ /_/ /_/___/\____/
+//  Kratos CoSimulationApplication
 //
-//  License:         BSD License
-//                   Kratos default license: kratos/license.txt
+//  License:         BSD License, see license.txt
 //
-//  Main author:     Jordi Cotela
+//  Main authors:    Jordi Cotela
+//                   Philipp Bucher (https://github.com/philbucher)
+//
+// Ported from "kratos/includes/data_communicator.h"
 //
 
 #ifndef CO_SIM_IO_DATA_COMMUNICATOR_INCLUDED
@@ -274,10 +277,10 @@ CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_BROADCAST_INTERFACE_FOR_TYPE(type) \
 namespace CoSimIO {
 namespace Internals {
 
-///@addtogroup Kratos Core
+///@addtogroup CoSimIO Core
 ///@{
 
-///@name Kratos Classes
+///@name CoSimIO Classes
 ///@{
 
 /// Serial (do-nothing) version of a wrapper class for MPI communication.
@@ -661,7 +664,7 @@ class DataCommunicator
     virtual void PrintData(std::ostream &rOStream) const
     {
         rOStream
-        << "Serial do-nothing version of the Kratos wrapper for MPI communication.\n"
+        << "Serial do-nothing version of the CoSimIO wrapper for MPI communication.\n"
         << "Rank 0 of 1 assumed." << std::endl;
     }
 
