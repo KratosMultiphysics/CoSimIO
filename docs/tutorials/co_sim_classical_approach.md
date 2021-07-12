@@ -30,6 +30,7 @@ Before setting up the configuration file we need to create the `SolverWrapper` f
 Based on our setup from above, we can directly use the [ExternalSolverWrapper.py](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/python_scripts/solver_wrappers/external/external_solver_wrapper.py) which implements the functionalities that we need:
 - At the beginning it imports the coupling interfaces/meshes that are exported by the solver
 - During the solving phase it first exports the data (which is to be imported by the solver). This is done to synchronize the data in the solver with the data in the CoSimulationApplication, which can be modified by coupling features such as prediction or relaxation. After the solver solved, the CoSimulationApplication then imports the new data such that it can be used in the coupling.
+
 ### The ProjectParameters file
 
 The configuration file for a basic FSI example can be found [here](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/README.md#basic-fsi-example). For our example we will arrive to a very similar setup, we only need to modify the `solvers` section in the `solver_settings`.
