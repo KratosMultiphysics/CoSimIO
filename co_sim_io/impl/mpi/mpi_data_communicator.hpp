@@ -1,13 +1,16 @@
-//    |  /           |
-//    ' /   __| _` | __|  _ \   __|
-//    . \  |   (   | |   (   |\__ `
-//   _|\_\_|  \__,_|\__|\___/ ____/
-//                   Multi-Physics
+//     ______     _____ _           ________
+//    / ____/___ / ___/(_)___ ___  /  _/ __ |
+//   / /   / __ \\__ \/ / __ `__ \ / // / / /
+//  / /___/ /_/ /__/ / / / / / / // // /_/ /
+//  \____/\____/____/_/_/ /_/ /_/___/\____/
+//  Kratos CoSimulationApplication
 //
-//  License:         BSD License
-//                   Kratos default license: kratos/license.txt
+//  License:         BSD License, see license.txt
 //
-//  Main author:     Jordi Cotela
+//  Main authors:    Jordi Cotela
+//                   Philipp Bucher (https://github.com/philbucher)
+//
+// Ported from "kratos/mpi/includes/mpi_data_communicator.h"
 //
 
 #ifndef CO_SIM_IO_MPI_DATA_COMMUNICATOR_INCLUDED
@@ -21,8 +24,8 @@
 #include <mpi.h>
 
 // Project includes
-#include "includes/define.h"
-#include "includes/data_communicator.h"
+#include "../define.hpp"
+#include "../data_communicator.hpp"
 
 #ifndef KRATOS_MPI_DATA_COMMUNICATOR_DECLARE_REDUCE_INTERFACE_FOR_TYPE
 #define KRATOS_MPI_DATA_COMMUNICATOR_DECLARE_REDUCE_INTERFACE_FOR_TYPE(type)                                      \
@@ -139,8 +142,8 @@ KRATOS_MPI_DATA_COMMUNICATOR_DECLARE_BROADCAST_INTERFACE_FOR_TYPE(type) \
 
 #endif
 
-namespace Kratos
-{
+namespace CoSimIO {
+namespace Internals {
 ///@addtogroup Kratos MPI Core
 ///@{
 
@@ -157,14 +160,11 @@ namespace Kratos
  *
  *  @see DataCommunicator in the KratosCore for the full interface and a serial do-nothing implementation.
  */
-class KRATOS_API(KRATOS_MPI_CORE) MPIDataCommunicator: public DataCommunicator
+class MPIDataCommunicator: public DataCommunicator
 {
   public:
     ///@name Type Definitions
     ///@{
-
-    /// Pointer definition of MPIDataCommunicator
-    KRATOS_CLASS_POINTER_DEFINITION(MPIDataCommunicator);
 
     ///@}
     ///@name Life Cycle
@@ -186,7 +186,7 @@ class KRATOS_API(KRATOS_MPI_CORE) MPIDataCommunicator: public DataCommunicator
      *  and in particular calling MPI_Comm_free once it goes out of scope
      *  (this is only required/done if Comm is not one of the predefined MPI_COMM types).
      */
-    static MPIDataCommunicator::UniquePointer Create(MPI_Comm MPIComm);
+    static std::unique_ptr<MPIDataCommunicator> Create(MPI_Comm MPIComm);
 
     void Barrier() const override;
 
@@ -481,7 +481,8 @@ inline std::ostream &operator<<(std::ostream &rOStream,
 
 ///@} addtogroup block
 
-} // namespace Kratos.
+} // namespace Internals
+} // namespace CoSimIO
 
 #undef KRATOS_MPI_DATA_COMMUNICATOR_DECLARE_REDUCE_INTERFACE_FOR_TYPE
 #undef KRATOS_MPI_DATA_COMMUNICATOR_DECLARE_ALLREDUCE_INTERFACE_FOR_TYPE
