@@ -1,28 +1,27 @@
-//    |  /           |
-//    ' /   __| _` | __|  _ \   __|
-//    . \  |   (   | |   (   |\__ `
-//   _|\_\_|  \__,_|\__|\___/ ____/
-//                   Multi-Physics
+//     ______     _____ _           ________
+//    / ____/___ / ___/(_)___ ___  /  _/ __ |
+//   / /   / __ \\__ \/ / __ `__ \ / // / / /
+//  / /___/ /_/ /__/ / / / / / / // // /_/ /
+//  \____/\____/____/_/_/ /_/ /_/___/\____/
+//  Kratos CoSimulationApplication
 //
-//  License:		 BSD License
-//					 Kratos default license: kratos/license.txt
+//  License:         BSD License, see license.txt
 //
 //  Main authors:    Jordi Cotela
+//                   Philipp Bucher (https://github.com/philbucher)
 //
+// Ported from Kratos
 //
 
+// External includes
 #include "mpi.h"
 
-#include "includes/data_communicator.h"
-#include "includes/kratos_components.h"
-#include "mpi/includes/mpi_data_communicator.h"
+// Project includes
+#include "impl/data_communicator.hpp"
+#include "impl/mpi/mpi_data_communicator.hpp"
 
-#include "testing/testing.h"
-
-namespace Kratos {
-
-namespace Testing {
-
+namespace CoSimIO {
+/*
 KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorRankAndSize, KratosMPICoreFastSuite)
 {
     DataCommunicator serial_communicator;
@@ -1624,10 +1623,10 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorScatterDoubleVector, Kr
 namespace {
 template<typename T> void MPIDataCommunicatorScattervIntegralTypeVectorTest()
 {
-    /* send message for ints is {0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, ...} (max 6 values per rank)
-     * read only first <rank> values of the message per rank (up to 5 values per rank)
-     * message containing doubles is double of message containing ints
-     */
+    // send message for ints is {0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, ...} (max 6 values per rank)
+    // read only first <rank> values of the message per rank (up to 5 values per rank)
+    // message containing doubles is double of message containing ints
+    //
     MPIDataCommunicator mpi_world_communicator(MPI_COMM_WORLD);
 
     const int world_size = mpi_world_communicator.Size();
@@ -1750,10 +1749,10 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorScattervLongUnsignedInt
 
 KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorScattervDouble, KratosMPICoreFastSuite)
 {
-    /* send message for ints is {0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, ...} (max 6 values per rank)
-     * read only first <rank> values of the message per rank (up to 5 values per rank)
-     * message containing doubles is double of message containing ints
-     */
+    //send message for ints is {0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, ...} (max 6 values per rank)
+     //read only first <rank> values of the message per rank (up to 5 values per rank)
+     //message containing doubles is double of message containing ints
+     //
     MPIDataCommunicator mpi_world_communicator(MPI_COMM_WORLD);
 
     const int world_size = mpi_world_communicator.Size();
@@ -2039,11 +2038,11 @@ template<typename T> void MPIDataCommunicatorGathervIntegralTypeVectorTest()
 
     mpi_world_communicator.Gatherv(send_buffer, recv_buffer, recv_sizes, recv_offsets, recv_rank);
 
-    /* send message is {rank,} repeated <rank> times (up to 5) for ints and {2.*rank,} for doubles.
-     * read message assumes 1 extra position per rank, so that
-     * there are some uninitialized padding values on the recv message.
-     * This is essentially the inverse of the test DataCommunicatorScatterv
-     */
+    // send message is {rank,} repeated <rank> times (up to 5) for ints and {2.*rank,} for doubles.
+    // read message assumes 1 extra position per rank, so that
+    // there are some uninitialized padding values on the recv message.
+    // This is essentially the inverse of the test DataCommunicatorScatterv
+    //
     if (world_rank == recv_rank)
     {
         for (int rank = 0; rank < world_size; rank++)
@@ -2168,11 +2167,11 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorGathervDouble, KratosMP
 
     mpi_world_communicator.Gatherv(send_buffer, recv_buffer, recv_sizes, recv_offsets, recv_rank);
 
-    /* send message is {rank,} repeated <rank> times (up to 5) for ints and {2.*rank,} for doubles.
-     * read message assumes 1 extra position per rank, so that
-     * there are some uninitialized padding values on the recv message.
-     * This is essentially the inverse of the test DataCommunicatorScatterv
-     */
+    // send message is {rank,} repeated <rank> times (up to 5) for ints and {2.*rank,} for doubles.
+    // read message assumes 1 extra position per rank, so that
+    // there are some uninitialized padding values on the recv message.
+    // This is essentially the inverse of the test DataCommunicatorScatterv
+    //
     if (world_rank == recv_rank)
     {
         for (int rank = 0; rank < world_size; rank++)
@@ -2437,5 +2436,6 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorErrorBroadcasting, Krat
     );
 }
 
-}
-}
+*/
+
+} // namespace CoSimIO

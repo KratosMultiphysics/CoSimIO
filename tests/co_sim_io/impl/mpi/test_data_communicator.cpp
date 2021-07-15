@@ -1,27 +1,27 @@
-//    |  /           |
-//    ' /   __| _` | __|  _ \   __|
-//    . \  |   (   | |   (   |\__ `
-//   _|\_\_|  \__,_|\__|\___/ ____/
-//                   Multi-Physics
+//     ______     _____ _           ________
+//    / ____/___ / ___/(_)___ ___  /  _/ __ |
+//   / /   / __ \\__ \/ / __ `__ \ / // / / /
+//  / /___/ /_/ /__/ / / / / / / // // /_/ /
+//  \____/\____/____/_/_/ /_/ /_/___/\____/
+//  Kratos CoSimulationApplication
 //
-//  License:		 BSD License
-//					 Kratos default license: kratos/license.txt
+//  License:         BSD License, see license.txt
 //
 //  Main authors:    Jordi Cotela
+//                   Philipp Bucher (https://github.com/philbucher)
 //
+// Ported from Kratos
 //
 
+// External includes
 #include "mpi.h"
 
-#include "includes/data_communicator.h"
-#include "includes/kratos_components.h"
+// Project includes
+#include "impl/data_communicator.hpp"
 
-#include "testing/testing.h"
+namespace CoSimIO {
 
-namespace Kratos {
-
-namespace Testing {
-
+/*
 KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorRankAndSize, KratosMPICoreFastSuite)
 {
     DataCommunicator serial_communicator;
@@ -1590,5 +1590,6 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorErrorBroadcasting, KratosMPICoreFastSu
     KRATOS_CHECK_EQUAL(serial_communicator.ErrorIfFalseOnAnyRank(false), false);
 }
 
-}
-}
+*/
+
+} // namespace CoSimIO
