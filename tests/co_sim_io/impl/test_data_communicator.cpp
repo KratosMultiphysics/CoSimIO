@@ -13,47 +13,52 @@
 // Ported from Kratos
 //
 
-// External includes
-#include "mpi.h"
-
 // Project includes
-#include "../co_sim_io_testing.hpp"
+#include "co_sim_io_testing.hpp"
 #include "impl/data_communicator.hpp"
 
 namespace CoSimIO {
-namespace Internals {  // DataCommunicator is in "Internal" namespace
+namespace Internals { // DataCommunicator is in "Internal" namespace
 
 TEST_SUITE("DataCommunicator")
 {
 
-
-TEST_CASE("dummy_test_data_comm")
+TEST_CASE("DataCommunicatorRankAndSize")
 {
+    DataCommunicator serial_communicator;
+
+    CHECK_EQ(serial_communicator.Rank(), 0);
+    CHECK_EQ(serial_communicator.Size(), 1);
 }
+
+TEST_CASE("DataCommunicatorInquiryChecks")
+{
+    DataCommunicator serial_communicator;
+
+    CHECK_UNARY(serial_communicator.IsDefinedOnThisRank());
+    CHECK_UNARY_FALSE(serial_communicator.IsNullOnThisRank());
+    CHECK_UNARY_FALSE(serial_communicator.IsDistributed());
+}
+
+TEST_CASE("DataCommunicatorErrorBroadcasting")
+{
+    DataCommunicator serial_communicator;
+
+    // The serial communicator does not throw,
+    // since it does not know about "other ranks" to broadcast the error to.
+    // All these functions need to do is to pass along the bool condition.
+    CHECK_UNARY(serial_communicator.BroadcastErrorIfTrue(true, 0));
+    CHECK_UNARY_FALSE(serial_communicator.BroadcastErrorIfTrue(false, 0));
+    CHECK_UNARY(serial_communicator.BroadcastErrorIfFalse(true, 0));
+    CHECK_UNARY_FALSE(serial_communicator.BroadcastErrorIfFalse(false, 0));
+
+    CHECK_UNARY(serial_communicator.ErrorIfTrueOnAnyRank(true));
+    CHECK_UNARY_FALSE(serial_communicator.ErrorIfTrueOnAnyRank(false));
+    CHECK_UNARY(serial_communicator.ErrorIfFalseOnAnyRank(true));
+    CHECK_UNARY_FALSE(serial_communicator.ErrorIfFalseOnAnyRank(false));
+}
+
 /*
-KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorRankAndSize, KratosMPICoreFastSuite)
-{
-    DataCommunicator serial_communicator;
-
-    KRATOS_CHECK_EQUAL(serial_communicator.Rank(), 0);
-    KRATOS_CHECK_EQUAL(serial_communicator.Size(), 1);
-}
-
-KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorInquiryChecks, KratosMPICoreFastSuite)
-{
-    DataCommunicator serial_communicator;
-
-    KRATOS_CHECK_EQUAL(serial_communicator.IsDefinedOnThisRank(), true);
-    KRATOS_CHECK_EQUAL(serial_communicator.IsNullOnThisRank(), false);
-    KRATOS_CHECK_EQUAL(serial_communicator.IsDistributed(), false);
-}
-
-KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorFromKratosComponents, KratosMPICoreFastSuite)
-{
-    KRATOS_CHECK_EQUAL(KratosComponents<DataCommunicator>::Has("Serial"), true);
-    const DataCommunicator& r_serial = KratosComponents<DataCommunicator>::Get("Serial");
-    KRATOS_CHECK_EQUAL(r_serial.IsDistributed(), false);
-}
 
 // Sum ////////////////////////////////////////////////////////////////////////
 
@@ -1581,23 +1586,6 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorAllGatherDouble, KratosMPICoreFastSuit
 
 // Error broadcasting methods /////////////////////////////////////////////////
 
-KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorErrorBroadcasting, KratosMPICoreFastSuite)
-{
-    DataCommunicator serial_communicator;
-
-    // The serial communicator does not throw,
-    // since it does not know about "other ranks" to broadcast the error to.
-    // All these functions need to do is to pass along the bool condition.
-    KRATOS_CHECK_EQUAL(serial_communicator.BroadcastErrorIfTrue(true, 0), true);
-    KRATOS_CHECK_EQUAL(serial_communicator.BroadcastErrorIfTrue(false, 0), false);
-    KRATOS_CHECK_EQUAL(serial_communicator.BroadcastErrorIfFalse(true, 0), true);
-    KRATOS_CHECK_EQUAL(serial_communicator.BroadcastErrorIfFalse(false, 0), false);
-
-    KRATOS_CHECK_EQUAL(serial_communicator.ErrorIfTrueOnAnyRank(true), true);
-    KRATOS_CHECK_EQUAL(serial_communicator.ErrorIfTrueOnAnyRank(false), false);
-    KRATOS_CHECK_EQUAL(serial_communicator.ErrorIfFalseOnAnyRank(true), true);
-    KRATOS_CHECK_EQUAL(serial_communicator.ErrorIfFalseOnAnyRank(false), false);
-}
 
 */
 } // TEST_SUITE("DataCommunicator")

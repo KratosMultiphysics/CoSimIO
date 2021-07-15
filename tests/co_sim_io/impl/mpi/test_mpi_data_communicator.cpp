@@ -22,7 +22,7 @@
 #include "impl/mpi/mpi_data_communicator.hpp"
 
 namespace CoSimIO {
-namespace Internals {  // MPIDataCommunicator is in "Internal" namespace
+namespace Internals { // MPIDataCommunicator is in "Internal" namespace
 
 TEST_SUITE("MPIDataCommunicator")
 {
@@ -65,18 +65,6 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPICommRetrieval, KratosMPICoreFastSuite)
     KRATOS_CHECK_EQUAL(MPIDataCommunicator::GetMPICommunicator(mpi_self_communicator), MPI_COMM_SELF);
     KRATOS_CHECK_EQUAL(MPIDataCommunicator::GetMPICommunicator(mpi_world_communicator), MPI_COMM_WORLD);
     KRATOS_CHECK_NOT_EQUAL(MPIDataCommunicator::GetMPICommunicator(mpi_world_communicator), MPI_COMM_SELF);
-}
-
-KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorFromKratosComponents, KratosMPICoreFastSuite)
-{
-    // This should work always
-    KRATOS_CHECK_EQUAL(KratosComponents<DataCommunicator>::Has("Serial"), true);
-    const DataCommunicator& r_serial = KratosComponents<DataCommunicator>::Get("Serial");
-    KRATOS_CHECK_EQUAL(r_serial.IsDistributed(), false);
-    // This assumes running Kratos with mpi (this should be the case, since this test should be auto-disabled in serial runs)
-    KRATOS_CHECK_EQUAL(KratosComponents<DataCommunicator>::Has("World"), true);
-    const DataCommunicator& r_world = KratosComponents<DataCommunicator>::Get("World");
-    KRATOS_CHECK_EQUAL(r_world.IsDistributed(), true);
 }
 
 // Sum ////////////////////////////////////////////////////////////////////////
