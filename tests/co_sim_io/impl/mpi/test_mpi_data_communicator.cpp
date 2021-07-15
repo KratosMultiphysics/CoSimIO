@@ -20,30 +20,32 @@
 #include "../co_sim_io_testing.hpp"
 #include "doctest/extensions/doctest_mpi.h"
 #include "impl/mpi/mpi_data_communicator.hpp"
+#include "../data_communicator_tests_serial_distributed.hpp"
 
 namespace CoSimIO {
-namespace Internals { // MPIDataCommunicator is in "Internal" namespace
+namespace Internals { // MPIDataCommunicator is in "Internals" namespace
 
 TEST_SUITE("MPIDataCommunicator")
 {
 
+MPI_TEST_CASE("MPIDataCommunicator_serial_distributed_tests", 4)
+{
+    MPIDataCommunicator mpi_world_communicator(MPI_COMM_WORLD);
 
-MPI_TEST_CASE("dummyMPIDataCommTest", 2) { // Parallel test on 2 processes
-
+    RunAllDataCommunicatorTests(mpi_world_communicator);
 }
 
-/*
-KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorRankAndSize, KratosMPICoreFastSuite)
+MPI_TEST_CASE("MPIDataCommunicator_RankAndSize", 4)
 {
     DataCommunicator serial_communicator;
 
-    KRATOS_CHECK_EQUAL(serial_communicator.Rank(), 0);
-    KRATOS_CHECK_EQUAL(serial_communicator.Size(), 1);
+    CHECK_EQ(serial_communicator.Rank(), 0);
+    CHECK_EQ(serial_communicator.Size(), 1);
 
     MPIDataCommunicator mpi_self_communicator(MPI_COMM_SELF);
 
-    KRATOS_CHECK_EQUAL(mpi_self_communicator.Rank(), 0);
-    KRATOS_CHECK_EQUAL(mpi_self_communicator.Size(), 1);
+    CHECK_EQ(mpi_self_communicator.Rank(), 0);
+    CHECK_EQ(mpi_self_communicator.Size(), 1);
 
     MPIDataCommunicator mpi_world_communicator(MPI_COMM_WORLD);
 
@@ -51,21 +53,22 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorRankAndSize, KratosMPIC
     MPI_Comm_rank(MPI_COMM_WORLD,&world_rank);
     MPI_Comm_size(MPI_COMM_WORLD,&world_size);
 
-    KRATOS_CHECK_EQUAL(mpi_world_communicator.Rank(), world_rank);
-    KRATOS_CHECK_EQUAL(mpi_world_communicator.Size(), world_size);
+    CHECK_EQ(mpi_world_communicator.Rank(), world_rank);
+    CHECK_EQ(mpi_world_communicator.Size(), world_size);
 }
 
-KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPICommRetrieval, KratosMPICoreFastSuite)
+MPI_TEST_CASE("MPIDataCommunicator_CommRetrieval", 4)
 {
     DataCommunicator serial_communicator;
     MPIDataCommunicator mpi_self_communicator(MPI_COMM_SELF);
     MPIDataCommunicator mpi_world_communicator(MPI_COMM_WORLD);
 
-    KRATOS_CHECK_EQUAL(MPIDataCommunicator::GetMPICommunicator(serial_communicator), MPI_COMM_SELF);
-    KRATOS_CHECK_EQUAL(MPIDataCommunicator::GetMPICommunicator(mpi_self_communicator), MPI_COMM_SELF);
-    KRATOS_CHECK_EQUAL(MPIDataCommunicator::GetMPICommunicator(mpi_world_communicator), MPI_COMM_WORLD);
-    KRATOS_CHECK_NOT_EQUAL(MPIDataCommunicator::GetMPICommunicator(mpi_world_communicator), MPI_COMM_SELF);
+    CHECK_EQ(MPIDataCommunicator::GetMPICommunicator(serial_communicator), MPI_COMM_SELF);
+    CHECK_EQ(MPIDataCommunicator::GetMPICommunicator(mpi_self_communicator), MPI_COMM_SELF);
+    CHECK_EQ(MPIDataCommunicator::GetMPICommunicator(mpi_world_communicator), MPI_COMM_WORLD);
+    CHECK_NE(MPIDataCommunicator::GetMPICommunicator(mpi_world_communicator), MPI_COMM_SELF);
 }
+/*
 
 // Sum ////////////////////////////////////////////////////////////////////////
 
