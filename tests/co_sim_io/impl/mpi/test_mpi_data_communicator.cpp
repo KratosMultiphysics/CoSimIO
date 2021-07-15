@@ -17,10 +17,21 @@
 #include "mpi.h"
 
 // Project includes
-#include "impl/data_communicator.hpp"
+#include "../co_sim_io_testing.hpp"
+#include "doctest/extensions/doctest_mpi.h"
 #include "impl/mpi/mpi_data_communicator.hpp"
 
 namespace CoSimIO {
+namespace Internals {  // MPIDataCommunicator is in "Internal" namespace
+
+TEST_SUITE("MPIDataCommunicator")
+{
+
+
+MPI_TEST_CASE("dummyMPIDataCommTest", 2) { // Parallel test on 2 processes
+
+}
+
 /*
 KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorRankAndSize, KratosMPICoreFastSuite)
 {
@@ -2437,5 +2448,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorErrorBroadcasting, Krat
 }
 
 */
+} // TEST_SUITE("MPIDataCommunicator")
 
+} // namespace Internals
 } // namespace CoSimIO

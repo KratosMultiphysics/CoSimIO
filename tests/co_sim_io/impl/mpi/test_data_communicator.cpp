@@ -17,10 +17,19 @@
 #include "mpi.h"
 
 // Project includes
+#include "../co_sim_io_testing.hpp"
 #include "impl/data_communicator.hpp"
 
 namespace CoSimIO {
+namespace Internals {  // DataCommunicator is in "Internal" namespace
 
+TEST_SUITE("DataCommunicator")
+{
+
+
+TEST_CASE("dummy_test_data_comm")
+{
+}
 /*
 KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorRankAndSize, KratosMPICoreFastSuite)
 {
@@ -1591,5 +1600,7 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorErrorBroadcasting, KratosMPICoreFastSu
 }
 
 */
+} // TEST_SUITE("DataCommunicator")
 
+} // namespace Internals
 } // namespace CoSimIO
