@@ -135,33 +135,6 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorSumDouble, KratosMPICor
     #endif
 }
 
-KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorSumArray1d, KratosMPICoreFastSuite)
-{
-    MPIDataCommunicator mpi_world_communicator(MPI_COMM_WORLD);
-    constexpr int root = 0;
-    const int world_rank = mpi_world_communicator.Rank();
-    const int world_size = mpi_world_communicator.Size();
-    array_1d<double,3> local;
-    local[0] = -1.0;
-    local[1] =  0.0;
-    local[2] =  1.0;
-
-    array_1d<double,3> result = mpi_world_communicator.Sum(local, root);
-    if (world_rank == root)
-    {
-        KRATOS_CHECK_EQUAL(result[0], -1.0*world_size);
-        KRATOS_CHECK_EQUAL(result[1],  0.0);
-        KRATOS_CHECK_EQUAL(result[2],  1.0*world_size);
-    }
-
-    #ifdef KRATOS_DEBUG
-    // passing invalid rank as argument
-    KRATOS_CHECK_EXCEPTION_IS_THROWN(
-        mpi_world_communicator.Sum(local, world_size),"is not a valid rank.");
-    KRATOS_CHECK_EXCEPTION_IS_THROWN(
-        mpi_world_communicator.Sum(local, -1),"is not a valid rank.");
-    #endif
-}
 
 namespace {
 template<typename T> void MPIDataCommunicatorSumIntegralTypeVectorTest()
@@ -339,34 +312,6 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorMinDouble, KratosMPICor
     #endif
 }
 
-KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorMinArray1d, KratosMPICoreFastSuite)
-{
-    MPIDataCommunicator mpi_world_communicator(MPI_COMM_WORLD);
-    constexpr int root = 0;
-    const int world_rank = mpi_world_communicator.Rank();
-    const int world_size = mpi_world_communicator.Size();
-    array_1d<double,3> local;
-    local[0] = -1.0*world_rank;
-    local[1] =  0.0;
-    local[2] =  1.0*world_rank;
-
-    array_1d<double,3> result = mpi_world_communicator.Min(local, root);
-    if (world_rank == root)
-    {
-        KRATOS_CHECK_EQUAL(result[0], -1.0*(world_size-1));
-        KRATOS_CHECK_EQUAL(result[1],  0.0);
-        KRATOS_CHECK_EQUAL(result[2],  0.0);
-    }
-
-    #ifdef KRATOS_DEBUG
-    // passing invalid rank as argument
-    KRATOS_CHECK_EXCEPTION_IS_THROWN(
-        mpi_world_communicator.Min(local, world_size),"is not a valid rank.");
-    KRATOS_CHECK_EXCEPTION_IS_THROWN(
-        mpi_world_communicator.Min(local, -1),"is not a valid rank.");
-    #endif
-}
-
 namespace {
 template<typename T> void MPIDataCommunicatorMinIntegralVectorTypeTest()
 {
@@ -536,33 +481,6 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorMaxDouble, KratosMPICor
     #endif
 }
 
-KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorMaxArray1d, KratosMPICoreFastSuite)
-{
-    MPIDataCommunicator mpi_world_communicator(MPI_COMM_WORLD);
-    constexpr int root = 0;
-    const int world_rank = mpi_world_communicator.Rank();
-    const int world_size = mpi_world_communicator.Size();
-    array_1d<double,3> local;
-    local[0] = -1.0*world_rank;
-    local[1] =  0.0;
-    local[2] =  1.0*world_rank;
-
-    array_1d<double,3> result = mpi_world_communicator.Max(local, root);
-    if (world_rank == root)
-    {
-        KRATOS_CHECK_EQUAL(result[0], 0.0);
-        KRATOS_CHECK_EQUAL(result[1], 0.0);
-        KRATOS_CHECK_EQUAL(result[2], 1.0*(world_size-1));
-    }
-
-    #ifdef KRATOS_DEBUG
-    // passing invalid rank as argument
-    KRATOS_CHECK_EXCEPTION_IS_THROWN(
-        mpi_world_communicator.Max(local, world_size),"is not a valid rank.");
-    KRATOS_CHECK_EXCEPTION_IS_THROWN(
-        mpi_world_communicator.Max(local, -1),"is not a valid rank.");
-    #endif
-}
 
 namespace {
 template<typename T> void MPIDataCommunicatorMaxIntegralTypeVectorTest()
@@ -706,20 +624,6 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorSumAllDouble, KratosMPI
     KRATOS_CHECK_EQUAL(result, 2.0*world_size);
 }
 
-KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorSumAllArray1d, KratosMPICoreFastSuite)
-{
-    MPIDataCommunicator mpi_world_communicator(MPI_COMM_WORLD);
-    const int world_size = mpi_world_communicator.Size();
-    array_1d<double,3> local;
-    local[0] = -1.0;
-    local[1] =  0.0;
-    local[2] =  1.0;
-
-    array_1d<double,3> result = mpi_world_communicator.SumAll(local);
-    KRATOS_CHECK_EQUAL(result[0], -1.0*world_size);
-    KRATOS_CHECK_EQUAL(result[1],  0.0);
-    KRATOS_CHECK_EQUAL(result[2],  1.0*world_size);
-}
 
 namespace {
 template<typename T> void MPIDataCommunicatorSumAllIntegralTypeVectorTest()
@@ -857,22 +761,6 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorMinAllDouble, KratosMPI
     KRATOS_CHECK_EQUAL(result, 0.0);
 }
 
-KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorMinAllArray1d, KratosMPICoreFastSuite)
-{
-    MPIDataCommunicator mpi_world_communicator(MPI_COMM_WORLD);
-    const int world_rank = mpi_world_communicator.Rank();
-    const int world_size = mpi_world_communicator.Size();
-    array_1d<double,3> local;
-    local[0] = -1.0*world_rank;
-    local[1] =  0.0;
-    local[2] =  1.0*world_rank;
-
-    array_1d<double,3> result = mpi_world_communicator.MinAll(local);
-    KRATOS_CHECK_EQUAL(result[0], -1.0*(world_size-1));
-    KRATOS_CHECK_EQUAL(result[1],  0.0);
-    KRATOS_CHECK_EQUAL(result[2],  0.0);
-}
-
 namespace {
 template<typename T> void MPIDataCommunicatorMinAllIntegralTypeVectorTest()
 {
@@ -1003,21 +891,6 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorMaxAllDouble, KratosMPI
     KRATOS_CHECK_EQUAL(result, 2.0*(world_size-1));
 }
 
-KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorMaxAllArray1d, KratosMPICoreFastSuite)
-{
-    MPIDataCommunicator mpi_world_communicator(MPI_COMM_WORLD);
-    const int world_rank = mpi_world_communicator.Rank();
-    const int world_size = mpi_world_communicator.Size();
-    array_1d<double,3> local;
-    local[0] = -1.0*world_rank;
-    local[1] =  0.0;
-    local[2] =  1.0*world_rank;
-
-    array_1d<double,3> result = mpi_world_communicator.MaxAll(local);
-    KRATOS_CHECK_EQUAL(result[0], 0.0);
-    KRATOS_CHECK_EQUAL(result[1], 0.0);
-    KRATOS_CHECK_EQUAL(result[2], 1.0*(world_size-1));
-}
 
 namespace {
 template<typename T> void MPIDataCommunicatorMaxAllIntegralTypeVectorTest()
