@@ -71,7 +71,7 @@ void RunAllDataCommunicatorTests(const DataCommunicator& rDataComm)
         // return buffer version
         std::vector<int> returned_result = serial_communicator.Sum(local, root);
         if (world_rank == root) {
-            CO_SIM_IO_CHECK_VECTOR_EQUAL(output, local)
+            CO_SIM_IO_CHECK_VECTOR_EQUAL(returned_result, local)
         }
 
         #ifdef CO_SIM_IO_DEBUG
