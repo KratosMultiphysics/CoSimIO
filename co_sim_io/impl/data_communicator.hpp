@@ -28,10 +28,10 @@
 #include "macros.hpp"
 #include "stream_serializer.hpp"
 
-// Using a macro instead of a function to get the correct line in the error message. // TODO make DEBUG error
+// Using a macro instead of a function to get the correct line in the error message.
 #ifndef CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK
 #define CO_SIM_IO_DATA_COMMUNICATOR_DEBUG_SIZE_CHECK(Size1, Size2, CheckedFunction) \
-    CO_SIM_IO_ERROR_IF(Size1 != Size2) \
+    CO_SIM_IO_DEBUG_ERROR_IF(Size1 != Size2) \
     << "Input error in call to DataCommunicator::" << CheckedFunction \
     << ": The sizes of the local and distributed buffers do not match." << std::endl;
 #endif
