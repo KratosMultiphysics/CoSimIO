@@ -20,6 +20,8 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DCO_SIM_IO_DEBUG")
+
 message("Building the CoSimIO with the following configuration:")
 message("    CMAKE_BUILD_TYPE:   " ${CMAKE_BUILD_TYPE})
 message("    CO_SIM_IO_ENABLE_MPI: " ${CO_SIM_IO_ENABLE_MPI})
@@ -57,8 +59,8 @@ elseif(${CMAKE_COMPILER_IS_GNUCXX})
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c89")
 
     if (CO_SIM_IO_STRICT_COMPILER)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Werror")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wpedantic -Werror")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wextra -Wno-unused-parameter -Werror")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wpedantic -Wextra -Werror")
     endif()
 
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0 AND CO_SIM_IO_STRICT_COMPILER)
@@ -70,8 +72,8 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c89")
 
     if (CO_SIM_IO_STRICT_COMPILER)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Werror")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wpedantic -Werror")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wextra -Wno-unused-parameter -Werror")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wpedantic -Wextra -Werror")
     endif()
 
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
@@ -79,7 +81,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c89")
 
     if (CO_SIM_IO_STRICT_COMPILER)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror-all  -diag-disable=2196") # 2196 currently comes from doctest
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror-all -diag-disable=2196") # 2196 currently comes from doctest
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror-all")
     endif()
 
