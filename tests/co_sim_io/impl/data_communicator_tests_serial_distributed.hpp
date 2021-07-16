@@ -76,6 +76,7 @@ void RunAllDataCommunicatorTests(const DataCommunicator& rDataComm)
 
         #ifdef CO_SIM_IO_DEBUG
         std::vector<int> wrong_size_global{-1};
+        if (rDataComm.IsDistributed()) {return;} // TODO doctest doesn't see to support checking exceptions in MPI yet
         CHECK_THROWS_WITH(
             serial_communicator.Sum(local, wrong_size_global, root),
             "Error: Input error in call to DataCommunicator::Sum: The sizes of the local and distributed buffers do not match.\n"
