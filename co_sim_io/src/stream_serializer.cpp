@@ -29,5 +29,11 @@ StreamSerializer::StreamSerializer(TraceType const& rTrace)
     }
 }
 
+StreamSerializer::StreamSerializer(const std::string& rData,TraceType const& rTrace)
+    : StreamSerializer(rTrace)
+{
+    *(this->pGetBuffer()) << rData << std::endl;
+}
+
 } // namespace Internals
 } // namespace CoSimIO
