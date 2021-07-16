@@ -52,52 +52,43 @@ void RunAllDataCommunicatorTests(const DataCommunicator& rDataComm)
             CHECK_EQ(result, local);
         }
     }
+    SUBCASE("sum_vec_int")
+    {
+        DataCommunicator serial_communicator;
+        constexpr int root = 0;
+
+        const int world_rank = rDataComm.Rank();
+
+        std::vector<int> local{1, 1};
+        std::vector<int> output{-1, -1};
+
+        // two-buffer version
+        serial_communicator.Sum(local, output, root);
+        if (world_rank == root) {
+            CO_SIM_IO_CHECK_VECTOR_EQUAL(output, local)
+        }
+
+        // return buffer version
+        std::vector<int> returned_result = serial_communicator.Sum(local, root);
+        if (world_rank == root) {
+            CO_SIM_IO_CHECK_VECTOR_EQUAL(output, local)
+        }
+
+        #ifdef CO_SIM_IO_DEBUG
+        std::vector<int> wrong_size_global{-1};
+        CHECK_THROWS_WITH(
+            serial_communicator.Sum(local, wrong_size_global, root),
+            "Error: Input error in call to DataCommunicator::Sum: The sizes of the local and distributed buffers do not match.\n"
+        );
+        #endif
+    }
 
 /*
 
 // Sum ////////////////////////////////////////////////////////////////////////
 
 
-KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorSumIntVector, KratosMPICoreFastSuite)
-{
-    DataCommunicator serial_communicator;
-    const DataCommunicator& r_world = DataCommunicator::GetDefault();
-    constexpr int root = 0;
 
-    const int world_rank = r_world.Rank();
-
-    std::vector<int> local{1, 1};
-    std::vector<int> output{-1, -1};
-
-    // two-buffer version
-    serial_communicator.Sum(local, output, root);
-    if (world_rank == root)
-    {
-        for (int i = 0; i < 2; i++)
-        {
-            KRATOS_CHECK_EQUAL(output[i], local[i]);
-        }
-    }
-
-    // return buffer version
-    std::vector<int> returned_result = serial_communicator.Sum(local, root);
-    if (world_rank == root)
-    {
-        KRATOS_CHECK_EQUAL(returned_result.size(), 2);
-        for (int i = 0; i < 2; i++)
-        {
-            KRATOS_CHECK_EQUAL(returned_result[i], local[i]);
-        }
-    }
-
-    #ifdef KRATOS_DEBUG
-    std::vector<int> wrong_size_global{-1};
-    KRATOS_CHECK_EXCEPTION_IS_THROWN(
-        serial_communicator.Sum(local, wrong_size_global, root),
-        "Input error in call to DataCommunicator::Sum"
-    );
-    #endif
-}
 
 KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorSumDoubleVector, KratosMPICoreFastSuite)
 {
