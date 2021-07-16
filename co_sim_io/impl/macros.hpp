@@ -19,27 +19,29 @@ This makes it possible to override them to use macros that are coming from
 the code where the CoSimIO is included
 */
 
+// Exception macros
 #ifndef CO_SIM_IO_ERROR
     #include "exception.hpp"
     #define CO_SIM_IO_ERROR throw CoSimIO::Exception("Error: ", CO_SIM_IO_CODE_LOCATION)
+    #define CO_SIM_IO_ERROR_IF(conditional) if (conditional) CO_SIM_IO_ERROR
+    #define CO_SIM_IO_ERROR_IF_NOT(conditional) if (!(conditional)) CO_SIM_IO_ERROR
+
+    // debug exception macros
+    #ifdef CO_SIM_IO_DEBUG
+        #define CO_SIM_IO_DEBUG_ERROR CO_SIM_IO_ERROR
+        #define CO_SIM_IO_DEBUG_ERROR_IF(conditional) CO_SIM_IO_ERROR_IF(conditional)
+        #define CO_SIM_IO_DEBUG_ERROR_IF_NOT(conditional)  CO_SIM_IO_ERROR_IF_NOT(conditional)
+    #else
+        #define CO_SIM_IO_DEBUG_ERROR if(false) CO_SIM_IO_ERROR
+        #define CO_SIM_IO_DEBUG_ERROR_IF(conditional) if(false) CO_SIM_IO_ERROR_IF(conditional)
+        #define CO_SIM_IO_DEBUG_ERROR_IF_NOT(conditional) if(false) CO_SIM_IO_ERROR_IF_NOT(conditional)
+    #endif
 #endif
 
-#ifndef CO_SIM_IO_ERROR_IF
-    #include "exception.hpp"
-    #define CO_SIM_IO_ERROR_IF(conditional) if (conditional) throw CoSimIO::Exception("Error: ", CO_SIM_IO_CODE_LOCATION)
-#endif
-
-#ifndef CO_SIM_IO_ERROR_IF_NOT
-    #include "exception.hpp"
-    #define CO_SIM_IO_ERROR_IF_NOT(conditional) if (!(conditional)) throw CoSimIO::Exception("Error: ", CO_SIM_IO_CODE_LOCATION)
-#endif
-
+// Logging macros
 #ifndef CO_SIM_IO_INFO
     #include <iostream>
     #define CO_SIM_IO_INFO(label) std::cout << label << ": "
-#endif
-
-#ifndef CO_SIM_IO_INFO_IF
     #define CO_SIM_IO_INFO_IF(label, conditional) if (conditional) CO_SIM_IO_INFO(label)
 #endif
 
