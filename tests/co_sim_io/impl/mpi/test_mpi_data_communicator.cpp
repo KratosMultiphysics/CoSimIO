@@ -20,7 +20,6 @@
 #include "../co_sim_io_testing.hpp"
 #include "doctest/extensions/doctest_mpi.h"
 #include "impl/mpi/mpi_data_communicator.hpp"
-#include "../data_communicator_tests_serial_distributed.hpp"
 
 namespace CoSimIO {
 namespace Internals { // MPIDataCommunicator is in "Internals" namespace
