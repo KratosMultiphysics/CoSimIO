@@ -28,13 +28,6 @@ namespace Internals { // MPIDataCommunicator is in "Internals" namespace
 TEST_SUITE("MPIDataCommunicator")
 {
 
-MPI_TEST_CASE("MPIDataCommunicator_serial_distributed_tests", 4)
-{
-    MPIDataCommunicator mpi_world_communicator(MPI_COMM_WORLD);
-
-    RunAllDataCommunicatorTests(mpi_world_communicator);
-}
-
 MPI_TEST_CASE("MPIDataCommunicator_RankAndSize", 4)
 {
     DataCommunicator serial_communicator;
