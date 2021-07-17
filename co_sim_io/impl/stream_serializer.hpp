@@ -31,6 +31,11 @@ class CO_SIM_IO_API StreamSerializer : public Serializer
     ///@param rTrace type of serialization to be employed
     explicit StreamSerializer(TraceType const& rTrace=SERIALIZER_NO_TRACE);
 
+    //this constructor generates a standard Serializer AND fills the buffer with the data contained in "data"
+    ///@param rData a string contained the data to be used in filling the buffer
+    ///@param rTrace type of serialization to be employed
+    StreamSerializer(const std::string& rData, TraceType const& rTrace=SERIALIZER_NO_TRACE);
+
     //get a string representation of the serialized data
     std::string GetStringRepresentation() {
         return ((std::stringstream*)(this->pGetBuffer()))->str();
