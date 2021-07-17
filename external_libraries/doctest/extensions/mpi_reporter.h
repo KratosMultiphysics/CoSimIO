@@ -205,7 +205,7 @@ public:
 
       std::stringstream failure_msg;
       failure_msg << Color::Red << "On rank [" << rank << "] : " << Color::None;
-      failure_msg << file_line_to_string(rb.m_file, rb.m_line, " ");
+      failure_msg << file_line_to_string(rb.m_file, rb.m_line, " ") << "\n";
 
       if((rb.m_at & (assertType::is_throws_as | assertType::is_throws_with)) ==0){
         failure_msg << Color::Cyan
