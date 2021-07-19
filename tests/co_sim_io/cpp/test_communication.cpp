@@ -529,13 +529,13 @@ TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(25.0), TCommType, CO
 }
 
 // Registering tests for different types of Communication
-#include "impl/communication/file_communication.hpp"
+#include "includes/communication/file_communication.hpp"
 using FileCommunication = CoSimIO::Internals::FileCommunication;
 TYPE_TO_STRING(FileCommunication);
 
 TEST_CASE_TEMPLATE_INVOKE(COMM_TESTS, FileCommunication);
 
-#include "impl/communication/sockets_communication.hpp"
+#include "includes/communication/sockets_communication.hpp"
 using SocketsCommunication = CoSimIO::Internals::SocketsCommunication;
 TYPE_TO_STRING(SocketsCommunication);
 // TEST_CASE_TEMPLATE_INVOKE(COMM_TESTS, SocketsCommunication);
