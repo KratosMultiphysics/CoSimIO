@@ -15,8 +15,6 @@
 
 /*
 This file defines the IO of Kratos-CoSimulation for the exchange of data with external solvers.
-Only the delaration of the interface functions is defined in this file,
-the corresponding definitions can be found in "impl/co_sim_io_impl.h"
 
 By default the communication is done through files.
 Support for additional means of communication can be enabled by uncommenting the following macros.

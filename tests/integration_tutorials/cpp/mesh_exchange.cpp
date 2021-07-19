@@ -59,7 +59,7 @@ int main()
     info = CoSimIO::ImportMesh(info, model_part_received);
 
     // check that the meshes are the same
-    // e.g. similar to "CoSimIO/tests/co_sim_io/impl/co_sim_io_testing.hpp"
+    // e.g. similar to "CoSimIO/tests/co_sim_io/cpp/co_sim_io_testing.hpp"
 
     if (model_part.NumberOfNodes() != model_part_received.NumberOfNodes()) {
         return 1;

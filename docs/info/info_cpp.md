@@ -144,4 +144,4 @@ CoSimIO-Info; containing 2 entries
 ~~~
 
 ## Further information (C++ interface)
-For more information check the [implementation](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/impl/info.hpp) and the [tests](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/co_sim_io/impl/test_info.cpp).
+For more information check the [implementation](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/include/info.hpp) and the [tests](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/co_sim_io/include/test_info.cpp).
