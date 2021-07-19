@@ -20,10 +20,10 @@
 #include <unordered_map>
 
 // Project includes
-#include "../../impl/communication/file_communication.hpp"
-#include "../../impl/utilities.hpp"
-#include "../../impl/vtk_utilities.hpp"
-#include "../../impl/file_serializer.hpp"
+#include "includes/communication/file_communication.hpp"
+#include "includes/utilities.hpp"
+#include "includes/vtk_utilities.hpp"
+#include "includes/file_serializer.hpp"
 
 namespace CoSimIO {
 namespace Internals {

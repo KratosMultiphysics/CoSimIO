@@ -15,7 +15,7 @@
 #include <type_traits>
 
 // Project includes
-#include "../impl/info.hpp"
+#include "includes/info.hpp"
 
 namespace CoSimIO {
 

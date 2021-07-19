@@ -15,7 +15,7 @@
 #include <iomanip>
 
 // Project includes
-#include "../impl/file_serializer.hpp"
+#include "includes/file_serializer.hpp"
 
 namespace CoSimIO {
 namespace Internals {

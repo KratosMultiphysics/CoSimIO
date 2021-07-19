@@ -12,7 +12,7 @@
 //
 
 // Project includes
-#include "../impl/serializer.hpp"
+#include "includes/serializer.hpp"
 
 namespace CoSimIO {
 namespace Internals {

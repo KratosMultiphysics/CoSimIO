@@ -14,11 +14,11 @@
 #include <iostream>
 
 // Project includes
-#include "../impl/define.hpp"
-#include "../impl/macros.hpp"
-#include "../impl/connection.hpp"
-#include "../impl/communication/file_communication.hpp"
-#include "../impl/communication/sockets_communication.hpp"
+#include "includes/define.hpp"
+#include "includes/macros.hpp"
+#include "includes/connection.hpp"
+#include "includes/communication/file_communication.hpp"
+#include "includes/communication/sockets_communication.hpp"
 
 namespace CoSimIO {
 namespace Internals {

@@ -16,8 +16,8 @@
 #include <chrono>
 
 // Project includes
-#include "../impl/utilities.hpp"
-#include "../impl/macros.hpp"
+#include "includes/utilities.hpp"
+#include "includes/macros.hpp"
 
 namespace CoSimIO {
 namespace Internals {

@@ -15,9 +15,9 @@
 #include <iomanip>
 
 // Project includes
-#include "../impl/vtk_utilities.hpp"
-#include "../impl/macros.hpp"
-#include "../impl/utilities.hpp"
+#include "includes/vtk_utilities.hpp"
+#include "includes/macros.hpp"
+#include "includes/utilities.hpp"
 
 namespace CoSimIO {
 namespace Internals {

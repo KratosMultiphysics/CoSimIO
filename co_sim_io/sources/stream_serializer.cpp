@@ -15,7 +15,7 @@
 #include <iomanip>
 
 // Project includes
-#include "../impl/stream_serializer.hpp"
+#include "includes/stream_serializer.hpp"
 
 namespace CoSimIO {
 namespace Internals {

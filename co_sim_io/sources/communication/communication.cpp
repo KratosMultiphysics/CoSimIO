@@ -13,9 +13,9 @@
 // System includes
 
 // Project includes
-#include "../../impl/communication/communication.hpp"
-#include "../../impl/utilities.hpp"
-#include "../../impl/version.hpp"
+#include "includes/communication/communication.hpp"
+#include "includes/utilities.hpp"
+#include "includes/version.hpp"
 
 namespace CoSimIO {
 namespace Internals {

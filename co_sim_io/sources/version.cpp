@@ -11,7 +11,7 @@
 //
 
 // Project includes
-#include "../impl/version.hpp"
+#include "includes/version.hpp"
 
 namespace CoSimIO {
 

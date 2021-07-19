@@ -14,9 +14,9 @@
 #include <unordered_map>
 
 // Project includes
-#include "../co_sim_io.hpp"
-#include "../impl/connection.hpp"
-#include "../impl/utilities.hpp"
+#include "co_sim_io.hpp"
+#include "includes/connection.hpp"
+#include "includes/utilities.hpp"
 
 // This file contains the implementation of the functions defined in "co_sim_io.hpp"
 

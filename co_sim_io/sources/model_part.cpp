@@ -14,9 +14,9 @@
 #include <algorithm>
 
 // Project includes
-#include "../impl/macros.hpp"
-#include "../impl/model_part.hpp"
-#include "../impl/utilities.hpp"
+#include "includes/macros.hpp"
+#include "includes/model_part.hpp"
+#include "includes/utilities.hpp"
 
 namespace CoSimIO {
 
