@@ -31,10 +31,10 @@ Note that this introduces dependencies such as e.g. boost (header-only version) 
 // System includes
 
 // Project includes
-#include "impl/define.hpp"
-#include "impl/info.hpp"
-#include "impl/model_part.hpp"
-#include "impl/version.hpp"
+#include "includes/define.hpp"
+#include "includes/info.hpp"
+#include "includes/model_part.hpp"
+#include "includes/version.hpp"
 
 namespace CoSimIO {
 

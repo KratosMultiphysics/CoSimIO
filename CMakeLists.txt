@@ -32,7 +32,8 @@ message("    BUILD_FORTRAN:      " ${BUILD_FORTRAN})
 message("    CO_SIM_IO_STRICT_COMPILER:    " ${CO_SIM_IO_STRICT_COMPILER})
 message("")
 
-include_directories(SYSTEM "external_libraries/asio/include")
+include_directories(co_sim_io)
+include_directories(SYSTEM external_libraries)
 
 if (CO_SIM_IO_ENABLE_MPI)
     find_package(MPI REQUIRED)
@@ -111,7 +112,7 @@ add_library (co_sim_io SHARED ${co_sim_io_source_files})
 # To automatically configure a library export header into build tree
 include(GenerateExportHeader)
 generate_export_header( co_sim_io EXPORT_MACRO_NAME CO_SIM_IO_API EXPORT_FILE_NAME
-                        ${CMAKE_SOURCE_DIR}/co_sim_io/impl/co_sim_io_api.hpp )
+                        ${CMAKE_SOURCE_DIR}/co_sim_io/includes/co_sim_io_api.hpp )
 
 install(TARGETS co_sim_io DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
