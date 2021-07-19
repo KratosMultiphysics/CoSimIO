@@ -15,7 +15,7 @@
 
 // Project includes
 #include "co_sim_io_testing.hpp"
-#include "impl/data_communicator.hpp"
+#include "includes/data_communicator.hpp"
 
 namespace CoSimIO {
 namespace Internals { // DataCommunicator is in "Internals" namespace

@@ -1,5 +1,4 @@
 include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io )
-include_directories( ${CMAKE_SOURCE_DIR}/external_libraries )
 
 
 ### Test runner for tests of CoSimIO

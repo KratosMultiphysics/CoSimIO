@@ -11,10 +11,10 @@
 //
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "doctest/doctest.h"
+#include "external_libraries/doctest/doctest.h"
 
 // Project includes
-#include "impl/exception.hpp"
+#include "includes/exception.hpp"
 
 // registering custom exception translator
 // this is required as we only want to test the error message

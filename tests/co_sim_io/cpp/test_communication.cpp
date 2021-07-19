@@ -18,7 +18,7 @@
 
 // Project includes
 #include "co_sim_io_testing.hpp"
-#include "impl/communication/communication.hpp"
+#include "includes/communication/communication.hpp"
 
 namespace {
 

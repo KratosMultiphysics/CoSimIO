@@ -15,8 +15,8 @@
 
 // Project includes
 #include "co_sim_io_testing.hpp"
-#include "impl/model_part.hpp"
-#include "impl/stream_serializer.hpp"
+#include "includes/model_part.hpp"
+#include "includes/stream_serializer.hpp"
 
 
 namespace CoSimIO {

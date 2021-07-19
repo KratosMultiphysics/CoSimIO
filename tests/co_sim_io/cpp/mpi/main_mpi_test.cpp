@@ -12,7 +12,7 @@
 
 #define DOCTEST_CONFIG_IMPLEMENT
 
-#include "doctest/extensions/doctest_mpi.h"
+#include "external_libraries/doctest/extensions/doctest_mpi.h"
 
 int main(int argc, char** argv) {
   MPI_Init(&argc, &argv);

@@ -1,4 +1,4 @@
-#include "doctest/extensions/doctest_mpi.h"
+#include "external_libraries/doctest/extensions/doctest_mpi.h"
 
 int my_function_to_test(MPI_Comm comm) {
   int rank;

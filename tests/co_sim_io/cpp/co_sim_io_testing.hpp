@@ -14,10 +14,10 @@
 #define CO_SIM_IO_TESTING_INCLUDED
 
 // External includes
-#include "doctest/doctest.h"
+#include "external_libraries/doctest/doctest.h"
 
 // Project includes
-#include "impl/model_part.hpp"
+#include "includes/model_part.hpp"
 
 // Custom macros
 

@@ -14,9 +14,9 @@
 
 // Project includes
 #include "co_sim_io_testing.hpp"
-#include "impl/define.hpp"
-#include "impl/vtk_utilities.hpp"
-#include "impl/filesystem_inc.hpp"
+#include "includes/define.hpp"
+#include "includes/vtk_utilities.hpp"
+#include "includes/filesystem_inc.hpp"
 
 
 namespace CoSimIO {
