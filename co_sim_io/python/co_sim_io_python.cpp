@@ -19,7 +19,7 @@
 #include <tuple>
 
 // External includes
-#include "../../external_libraries/intrusive_ptr/intrusive_ptr.hpp"
+#include "intrusive_ptr/intrusive_ptr.hpp"
 
 // pybind includes
 #include <pybind11/pybind11.h>
@@ -30,7 +30,7 @@
 PYBIND11_DECLARE_HOLDER_TYPE(T, CoSimIO::intrusive_ptr<T>)
 
 // CoSimIO includes
-#include "../co_sim_io.hpp"
+#include "co_sim_io.hpp"
 #include "info_to_python.hpp"
 #include "model_part_to_python.hpp"
 #include "vector_to_python.hpp"

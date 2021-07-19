@@ -9,7 +9,7 @@ build/*
 bin/*
 
 # Export configuration file
-co_sim_io/impl/co_sim_io_api.hpp
+co_sim_io/includes/co_sim_io_api.hpp
 
 # file with compiled config
 tests/compiled_config.json

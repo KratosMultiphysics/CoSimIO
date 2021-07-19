@@ -24,7 +24,7 @@
 #include <pybind11/stl.h>
 
 //
-#include "../impl/define.hpp"
+#include "includes/define.hpp"
 
 namespace CoSimIO {
 

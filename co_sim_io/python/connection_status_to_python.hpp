@@ -21,7 +21,7 @@
 #include <pybind11/pybind11.h>
 
 // CoSimIO include
-#include "../co_sim_io.hpp"
+#include "co_sim_io.hpp"
 
 namespace CoSimIO {
 

@@ -15,8 +15,6 @@
 
 /*
 This file defines the IO of Kratos-CoSimulation for the exchange of data with external solvers.
-Only the delaration of the interface functions is defined in this file,
-the corresponding definitions can be found in "impl/co_sim_io_impl.h"
 
 By default the communication is done through files.
 Support for additional means of communication can be enabled by uncommenting the following macros.
@@ -31,10 +29,10 @@ Note that this introduces dependencies such as e.g. boost (header-only version) 
 // System includes
 
 // Project includes
-#include "impl/define.hpp"
-#include "impl/info.hpp"
-#include "impl/model_part.hpp"
-#include "impl/version.hpp"
+#include "includes/define.hpp"
+#include "includes/info.hpp"
+#include "includes/model_part.hpp"
+#include "includes/version.hpp"
 
 namespace CoSimIO {
 
