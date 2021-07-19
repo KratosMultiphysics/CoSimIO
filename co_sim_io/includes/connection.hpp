@@ -21,8 +21,8 @@
 #include <utility>
 
 // Project includes
-#include "../impl/info.hpp"
-#include "../impl/communication/communication.hpp"
+#include "includes/info.hpp"
+#include "includes/communication/communication.hpp"
 
 namespace CoSimIO {
 namespace Internals {

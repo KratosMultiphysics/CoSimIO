@@ -24,8 +24,8 @@
 #include <mpi.h>
 
 // Project includes
-#include "../define.hpp"
-#include "../data_communicator.hpp"
+#include "includes/define.hpp"
+#include "includes/data_communicator.hpp"
 
 #ifndef KRATOS_MPI_DATA_COMMUNICATOR_DECLARE_REDUCE_INTERFACE_FOR_TYPE
 #define KRATOS_MPI_DATA_COMMUNICATOR_DECLARE_REDUCE_INTERFACE_FOR_TYPE(type)                                      \

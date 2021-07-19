@@ -24,7 +24,7 @@
 #include <pybind11/stl.h>
 
 // CoSimIO include
-#include "../impl/model_part.hpp"
+#include "includes/model_part.hpp"
 
 namespace CoSimIO {
 

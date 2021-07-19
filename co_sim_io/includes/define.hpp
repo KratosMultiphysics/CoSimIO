@@ -20,7 +20,7 @@
 #include <array>
 
 // External includes
-#include "../../external_libraries/intrusive_ptr/intrusive_ptr.hpp"
+#include "external_libraries/intrusive_ptr/intrusive_ptr.hpp"
 
 // Project includes
 #include "co_sim_io_api.hpp"

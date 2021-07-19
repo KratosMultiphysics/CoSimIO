@@ -17,10 +17,10 @@
 #include <utility>
 
 // Project includes
-#include "../info.hpp"
-#include "../data_container.hpp"
-#include "../model_part.hpp"
-#include "../filesystem_inc.hpp"
+#include "includes/info.hpp"
+#include "includes/data_container.hpp"
+#include "includes/model_part.hpp"
+#include "includes/filesystem_inc.hpp"
 
 namespace CoSimIO {
 namespace Internals {
