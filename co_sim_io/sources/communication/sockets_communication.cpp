@@ -18,7 +18,7 @@
 #ifndef _WIN32_WINNT
     #define _WIN32_WINNT 0x0601 // see "https://github.com/chriskohlhoff/asio/issues/596"
 #endif
-#include "external_libraries/asio/include/asio.hpp"
+#include "asio.hpp"
 
 // Project includes
 #include "includes/communication/sockets_communication.hpp"

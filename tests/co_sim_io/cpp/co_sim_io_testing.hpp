@@ -14,7 +14,7 @@
 #define CO_SIM_IO_TESTING_INCLUDED
 
 // External includes
-#include "external_libraries/doctest/doctest.h"
+#include "doctest/doctest.h"
 
 // Project includes
 #include "includes/model_part.hpp"

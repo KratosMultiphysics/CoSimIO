@@ -19,7 +19,7 @@
 #include <tuple>
 
 // External includes
-#include "external_libraries/intrusive_ptr/intrusive_ptr.hpp"
+#include "intrusive_ptr/intrusive_ptr.hpp"
 
 // pybind includes
 #include <pybind11/pybind11.h>

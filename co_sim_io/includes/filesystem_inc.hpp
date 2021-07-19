@@ -34,7 +34,7 @@ When using only C++11 the alternative implementation from
     #ifndef NOMINMAX
         #define NOMINMAX
     #endif
-    #include "external_libraries/ghc/filesystem.hpp"
+    #include "ghc/filesystem.hpp"
     namespace fs = ghc::filesystem;
 #endif
 

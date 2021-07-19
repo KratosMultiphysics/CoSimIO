@@ -18,7 +18,7 @@
 
 // Project includes
 #include "../co_sim_io_testing.hpp"
-#include "external_libraries/doctest/extensions/doctest_mpi.h"
+#include "doctest/extensions/doctest_mpi.h"
 #include "includes/mpi/mpi_data_communicator.hpp"
 
 namespace CoSimIO {

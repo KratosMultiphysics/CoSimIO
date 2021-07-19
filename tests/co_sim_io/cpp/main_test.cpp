@@ -11,7 +11,7 @@
 //
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "external_libraries/doctest/doctest.h"
+#include "doctest/doctest.h"
 
 // Project includes
 #include "includes/exception.hpp"

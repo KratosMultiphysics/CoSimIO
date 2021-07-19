@@ -34,6 +34,7 @@ message("")
 
 include_directories(co_sim_io)
 include_directories(SYSTEM external_libraries)
+include_directories(SYSTEM external_libraries/asio/include)
 
 if (CO_SIM_IO_ENABLE_MPI)
     find_package(MPI REQUIRED)
