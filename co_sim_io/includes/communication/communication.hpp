@@ -31,7 +31,7 @@ class CO_SIM_IO_API Communication
 public:
     explicit Communication(const Info& I_Settings);
 
-    virtual ~Communication() = default; // impl of disconnect has to be in derived class due to order of class destruction
+    virtual ~Communication() noexcept(false) {}; // impl of disconnect has to be in derived class due to order of class destruction
 
     Info Connect(const Info& I_Info);
 
