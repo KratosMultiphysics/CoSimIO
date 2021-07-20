@@ -33,36 +33,54 @@ namespace {
 template<class TObject>
 void SerializeToFile(const fs::path& rPath, const std::string& rTag, const TObject& rObject, const Serializer::TraceType SerializerTrace)
 {
+    CO_SIM_IO_TRY
+
     FileSerializer serializer(rPath.string(), SerializerTrace);
     serializer.save(rTag, rObject);
+
+    CO_SIM_IO_CATCH
 }
 template<class TObject>
 void SerializeFromFile(const fs::path& rPath, const std::string& rTag, TObject& rObject, const Serializer::TraceType SerializerTrace)
 {
+    CO_SIM_IO_TRY
+
     FileSerializer serializer(rPath.string(), SerializerTrace);
     serializer.load(rTag, rObject);
+
+    CO_SIM_IO_CATCH
 }
 
 }
 
 FileCommunication::FileCommunication(const Info& I_Settings) : Communication(I_Settings)
 {
+    CO_SIM_IO_TRY
+
     mCommFolder = GetWorkingDirectory();
     mCommFolder /= ".CoSimIOFileComm_" + GetConnectionName();
     mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", true);
+
+    CO_SIM_IO_CATCH
 }
 
 FileCommunication::~FileCommunication()
 {
+    CO_SIM_IO_TRY
+
     if (GetIsConnected()) {
         CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not performed, attempting automatic disconnection!" << std::endl;
         Info tmp;
         Disconnect(tmp);
     }
+
+    CO_SIM_IO_CATCH
 }
 
 Info FileCommunication::ConnectDetail(const Info& I_Info)
 {
+    CO_SIM_IO_TRY
+
     if (mCommInFolder) {
         if (GetIsPrimaryConnection()) {
             // delete and recreate directory to remove potential leftovers
@@ -82,10 +100,14 @@ Info FileCommunication::ConnectDetail(const Info& I_Info)
     Info info;
     info.Set("is_connected", true);
     return info;
+
+    CO_SIM_IO_CATCH
 }
 
 Info FileCommunication::DisconnectDetail(const Info& I_Info)
 {
+    CO_SIM_IO_TRY
+
     ExchangeSyncFileWithPartner("disconnect");
 
     if (mCommInFolder && GetIsPrimaryConnection()) {
@@ -100,10 +122,14 @@ Info FileCommunication::DisconnectDetail(const Info& I_Info)
     Info info;
     info.Set("is_connected", false);
     return info;
+
+    CO_SIM_IO_CATCH
 }
 
 void FileCommunication::ExchangeSyncFileWithPartner(const std::string& rIdentifier) const
 {
+    CO_SIM_IO_TRY
+
     const fs::path file_name_primary(GetFileName("CoSimIO_primary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
     const fs::path file_name_secondary(GetFileName("CoSimIO_secondary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
 
@@ -130,10 +156,14 @@ void FileCommunication::ExchangeSyncFileWithPartner(const std::string& rIdentifi
 
         WaitUntilFileIsRemoved(file_name_secondary);
     }
+
+    CO_SIM_IO_CATCH
 }
 
 Info FileCommunication::ImportInfoImpl(const Info& I_Info)
 {
+    CO_SIM_IO_TRY
+
     const std::string identifier = I_Info.Get<std::string>("identifier");
     CheckEntry(identifier, "identifier");
 
@@ -151,10 +181,14 @@ Info FileCommunication::ImportInfoImpl(const Info& I_Info)
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing Info" << std::endl;
 
     return info;
+
+    CO_SIM_IO_CATCH
 }
 
 Info FileCommunication::ExportInfoImpl(const Info& I_Info)
 {
+    CO_SIM_IO_TRY
+
     const std::string identifier = I_Info.Get<std::string>("identifier");
     CheckEntry(identifier, "identifier");
 
@@ -171,12 +205,16 @@ Info FileCommunication::ExportInfoImpl(const Info& I_Info)
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting Info" << std::endl;
 
     return Info(); // TODO use
+
+    CO_SIM_IO_CATCH
 }
 
 Info FileCommunication::ImportDataImpl(
     const Info& I_Info,
     Internals::DataContainer<double>& rData)
 {
+    CO_SIM_IO_TRY
+
     const std::string identifier = I_Info.Get<std::string>("identifier");
     CheckEntry(identifier, "identifier");
 
@@ -197,12 +235,16 @@ Info FileCommunication::ImportDataImpl(
     CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Array \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
 
     return Info(); // TODO use
+
+    CO_SIM_IO_CATCH
 }
 
 Info FileCommunication::ExportDataImpl(
     const Info& I_Info,
     const Internals::DataContainer<double>& rData)
 {
+    CO_SIM_IO_TRY
+
     const std::string identifier = I_Info.Get<std::string>("identifier");
     CheckEntry(identifier, "identifier");
 
@@ -224,12 +266,16 @@ Info FileCommunication::ExportDataImpl(
     CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Array \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
 
     return Info(); // TODO use
+
+    CO_SIM_IO_CATCH
 }
 
 Info FileCommunication::ImportMeshImpl(
     const Info& I_Info,
     ModelPart& O_ModelPart)
 {
+    CO_SIM_IO_TRY
+
     const std::string identifier = I_Info.Get<std::string>("identifier");
     CheckEntry(identifier, "identifier");
 
@@ -250,12 +296,16 @@ Info FileCommunication::ImportMeshImpl(
     CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Mesh \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
 
     return Info(); // TODO use
+
+    CO_SIM_IO_CATCH
 }
 
 Info FileCommunication::ExportMeshImpl(
     const Info& I_Info,
     const ModelPart& I_ModelPart)
 {
+    CO_SIM_IO_TRY
+
     const std::string identifier = I_Info.Get<std::string>("identifier");
     CheckEntry(identifier, "identifier");
 
@@ -276,19 +326,27 @@ Info FileCommunication::ExportMeshImpl(
     CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Mesh \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
 
     return Info(); // TODO use
+
+    CO_SIM_IO_CATCH
 }
 
 fs::path FileCommunication::GetTempFileName(const fs::path& rPath) const
 {
+    CO_SIM_IO_TRY
+
     if (mCommInFolder) {
         return rPath.string().insert(mCommFolder.string().length()+1, ".");
     } else {
         return "." + rPath.string();
     }
+
+    CO_SIM_IO_CATCH
 }
 
 fs::path FileCommunication::GetFileName(const fs::path& rPath, const std::string& rExtension) const
 {
+    CO_SIM_IO_TRY
+
     fs::path local_copy(rPath);
     local_copy += "_" + std::to_string((mFileIndex++)%100) + "." + rExtension;
 
@@ -297,19 +355,27 @@ fs::path FileCommunication::GetFileName(const fs::path& rPath, const std::string
     } else {
         return local_copy;
     }
+
+    CO_SIM_IO_CATCH
 }
 
 void FileCommunication::WaitForPath(const fs::path& rPath) const
 {
+    CO_SIM_IO_TRY
+
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << std::endl;
     while(!fs::exists(rPath)) {
         std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
     }
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found: " << rPath << std::endl;
+
+    CO_SIM_IO_CATCH
 }
 
 void FileCommunication::WaitUntilFileIsRemoved(const fs::path& rPath) const
 {
+    CO_SIM_IO_TRY
+
     if (fs::exists(rPath)) { // only issue the wating message if the file exists initially
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << " to be removed" << std::endl;
         while(fs::exists(rPath)) {
@@ -317,17 +383,27 @@ void FileCommunication::WaitUntilFileIsRemoved(const fs::path& rPath) const
         }
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << rPath << " was removed" << std::endl;
     }
+
+    CO_SIM_IO_CATCH
 }
 
 void FileCommunication::MakeFileVisible(const fs::path& rPath) const
 {
+    CO_SIM_IO_TRY
+
     std::error_code ec;
     fs::rename(GetTempFileName(rPath), rPath, ec);
     CO_SIM_IO_ERROR_IF(ec) << rPath << " could not be made visible!\nError code: " << ec.message() << std::endl;
+
+    CO_SIM_IO_ERROR << "Error deep down" << std::endl;
+
+    CO_SIM_IO_CATCH
 }
 
 void FileCommunication::RemovePath(const fs::path& rPath) const
 {
+    CO_SIM_IO_TRY
+
     // In windows the file cannot be removed if another file handle is using it
     // this can be the case here if the partner checks if the file (still) exists
     // hence we try multiple times to delete it
@@ -338,6 +414,8 @@ void FileCommunication::RemovePath(const fs::path& rPath) const
         }
     }
     CO_SIM_IO_ERROR << rPath << " could not be deleted!\nError code: " << ec.message() << std::endl;
+
+    CO_SIM_IO_CATCH
 }
 
 } // namespace Internals
