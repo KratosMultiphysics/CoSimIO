@@ -50,7 +50,8 @@ if(MSVC)
     # see https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
     # Note: min value is c++14 => 201402L (c++11 does not exist, will also output 201402L)
     # /wd4251: "... needs to have dll-interface to be used by clients of class ..."
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /EHsc /wd4251")
+    # /wd4275: "non dll-interface class 'std::exception' used as base for dll-interface class 'CoSimIO::Internals::Exception'"
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /EHsc /wd4251 /wd4275")
 
     if (CO_SIM_IO_STRICT_COMPILER)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /WX")

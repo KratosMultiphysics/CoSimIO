@@ -27,6 +27,8 @@ Communication::Communication(const Info& I_Settings)
         mEchoLevel(I_Settings.Get<int>("echo_level", 0)),
         mPrintTiming(I_Settings.Get<bool>("print_timing", false))
 {
+    CO_SIM_IO_TRY
+
     if (I_Settings.Has("is_primary_connection")) {
         mIsPrimaryConnection = I_Settings.Get<bool>("is_primary_connection");
         mPrimaryWasExplicitlySpecified = true;
@@ -38,10 +40,14 @@ Communication::Communication(const Info& I_Settings)
     mConnectionName = CreateConnectionName(mMyName, mConnectTo);
 
     CO_SIM_IO_ERROR_IF_NOT(fs::exists(mWorkingDirectory)) << "The working directory " << mWorkingDirectory << " does not exist!" << std::endl;
+
+    CO_SIM_IO_CATCH
 }
 
 Info Communication::Connect(const Info& I_Info)
 {
+    CO_SIM_IO_TRY
+
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0)
         << "Establishing connection for \"" << mConnectionName
         << "\"\n    from: \"" << mMyName
@@ -63,10 +69,14 @@ Info Communication::Connect(const Info& I_Info)
     PerformCompatibilityCheck();
 
     return connect_detail_info;
+
+    CO_SIM_IO_CATCH
 }
 
 Info Communication::Disconnect(const Info& I_Info)
 {
+    CO_SIM_IO_TRY
+
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Disconnecting \"" << mConnectionName << "\" ..." << std::endl;
 
     if (mIsConnected) {
@@ -89,10 +99,14 @@ Info Communication::Disconnect(const Info& I_Info)
         disconnect_info.Set<int>("connection_status", ConnectionStatus::DisconnectionError);
         return disconnect_info;
     }
+
+    CO_SIM_IO_CATCH
 }
 
 void Communication::PerformCompatibilityCheck()
 {
+    CO_SIM_IO_TRY
+
     CoSimIO::Info my_info;
     CoSimIO::Info partner_info;
     my_info.Set<int>("version_major", GetMajorVersion());
@@ -118,6 +132,8 @@ void Communication::PerformCompatibilityCheck()
     CO_SIM_IO_ERROR_IF(GetMajorVersion() != partner_info.Get<int>("version_major")) << "Major version mismatch! My version: " << GetMajorVersion() << "; partner version: " << partner_info.Get<int>("version_major") << std::endl;
     CO_SIM_IO_ERROR_IF(GetMinorVersion() != partner_info.Get<int>("version_minor")) << "Minor version mismatch! My version: " << GetMinorVersion() << "; partner version: " << partner_info.Get<int>("version_minor") << std::endl;
     CO_SIM_IO_ERROR_IF(mPrimaryWasExplicitlySpecified != partner_info.Get<bool>("primary_was_explicitly_specified")) << std::boolalpha << "Mismatch in how the primary connection was specified!\nPrimary connection was explicitly specified for me: " << mPrimaryWasExplicitlySpecified << "\nPrimary connection was explicitly specified for partner: " << partner_info.Get<bool>("primary_was_explicitly_specified") << std::endl;
+
+    CO_SIM_IO_CATCH
 }
 
 } // namespace Internals

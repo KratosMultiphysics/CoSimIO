@@ -29,35 +29,18 @@ namespace Internals {
 // Extends std::exception to contain more information about error location
 // Simplified version of kratos/includes/exception.h
 
-class Exception : public std::exception
+class CO_SIM_IO_API Exception : public std::exception
 {
   public:
-    explicit Exception(const std::string& rWhat)
-        : std::exception(),
-            mMessage(rWhat),
-            mCallStack()
-    {
-        update_what();
-    }
+    explicit Exception(const std::string& rWhat);
 
-    Exception(const std::string& rWhat, const CodeLocation& rLocation)
-        : std::exception(),
-            mMessage(rWhat),
-            mCallStack()
-    {
-        add_to_call_stack(rLocation);
-        update_what();
-    }
+    Exception(const std::string& rWhat, const CodeLocation& rLocation);
 
-    const char* what() const noexcept override
-    {
-        return mWhat.c_str();
-    }
+	Exception(const Exception& Other);
 
-    const std::string& message() const
-    {
-        return mMessage;
-    }
+    const char* what() const noexcept override;
+
+    const std::string& message() const;
 
     /// string stream function
     template<class StreamValueType>
@@ -71,52 +54,23 @@ class Exception : public std::exception
         return *this;
     }
 
-    Exception& operator << (std::ostream& (*pf)(std::ostream&))
-    {
-        std::stringstream buffer;
-        pf(buffer);
+    Exception& operator << (std::ostream& (*pf)(std::ostream&));
 
-        append_message(buffer.str());
+    Exception& operator << (const char* pString);
 
-        return *this;
-    }
-
-    Exception& operator << (const char* pString)
-    {
-        append_message(pString);
-        return *this;
-    }
+    Exception& operator << (const CodeLocation& rLocation);
 
   private:
     std::string mWhat;
     std::string mMessage;
     std::vector<CodeLocation> mCallStack;
 
-    void append_message(const std::string& rMessage)
-    {
-        mMessage.append(rMessage);
-        update_what();
-    }
+    void append_message(const std::string& rMessage);
 
-    void add_to_call_stack(const CodeLocation& rLocation)
-    {
-        mCallStack.push_back(rLocation);
-        update_what();
-    }
+    void add_to_call_stack(const CodeLocation& rLocation);
 
-    void update_what(){
-        std::stringstream buffer;
-        buffer << mMessage << "\n";
-        if (mCallStack.empty()) {
-            buffer << "in Unknown Location";
-        } else {
-            buffer << "in " << mCallStack[0] << "\n";
-            for (auto i = mCallStack.begin()+1; i != mCallStack.end(); ++i) {
-                buffer << "   " << *i << "\n";
-            }
-        }
-        mWhat = buffer.str();
-    }
+    void update_what();
+
 }; // class Exception
 
 // Exception macros
@@ -128,7 +82,7 @@ class Exception : public std::exception
 #ifdef CO_SIM_IO_DEBUG
     #define CO_SIM_IO_DEBUG_ERROR CO_SIM_IO_ERROR
     #define CO_SIM_IO_DEBUG_ERROR_IF(conditional) CO_SIM_IO_ERROR_IF(conditional)
-    #define CO_SIM_IO_DEBUG_ERROR_IF_NOT(conditional)  CO_SIM_IO_ERROR_IF_NOT(conditional)
+    #define CO_SIM_IO_DEBUG_ERROR_IF_NOT(conditional) CO_SIM_IO_ERROR_IF_NOT(conditional)
 #else
     #define CO_SIM_IO_DEBUG_ERROR if(false) CO_SIM_IO_ERROR
     #define CO_SIM_IO_DEBUG_ERROR_IF(conditional) if(false) CO_SIM_IO_ERROR_IF(conditional)
