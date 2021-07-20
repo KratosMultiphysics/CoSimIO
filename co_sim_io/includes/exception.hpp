@@ -29,7 +29,7 @@ namespace Internals {
 // Extends std::exception to contain more information about error location
 // Simplified version of kratos/includes/exception.h
 
-class Exception : public std::exception
+class CO_SIM_IO_API Exception : public std::exception
 {
   public:
     explicit Exception(const std::string& rWhat);
