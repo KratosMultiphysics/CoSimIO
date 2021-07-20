@@ -22,7 +22,7 @@ the code where the CoSimIO is included
 // Exception macros
 #ifndef CO_SIM_IO_ERROR
     #include "exception.hpp"
-    #define CO_SIM_IO_ERROR throw CoSimIO::Exception("Error: ", CO_SIM_IO_CODE_LOCATION)
+    #define CO_SIM_IO_ERROR throw CoSimIO::Internals::Exception("Error: ", CO_SIM_IO_CODE_LOCATION)
     #define CO_SIM_IO_ERROR_IF(conditional) if (conditional) CO_SIM_IO_ERROR
     #define CO_SIM_IO_ERROR_IF_NOT(conditional) if (!(conditional)) CO_SIM_IO_ERROR
 

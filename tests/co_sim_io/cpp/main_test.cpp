@@ -19,6 +19,6 @@
 // registering custom exception translator
 // this is required as we only want to test the error message
 // and not the location which is included in the CoSimIO::Exception
-REGISTER_EXCEPTION_TRANSLATOR(CoSimIO::Exception& ex) {
+REGISTER_EXCEPTION_TRANSLATOR(CoSimIO::Internals::Exception& ex) {
     return doctest::toString(ex.message());
 }

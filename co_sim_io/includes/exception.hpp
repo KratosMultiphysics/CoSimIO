@@ -21,9 +21,10 @@
 #include <vector>
 
 // Project includes
-#include "code_location.h"
+#include "code_location.hpp"
 
 namespace CoSimIO {
+namespace Internals {
 
 // Extends std::exception to contain more information about error location
 // Simplified version of kratos/includes/exception.h
@@ -118,6 +119,7 @@ class Exception : public std::exception
     }
 }; // class Exception
 
+} // namespace Internals
 } // namespace CoSimIO
 
 #endif // CO_SIM_IO_EXCEPTION_INCLUDED
