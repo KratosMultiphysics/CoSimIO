@@ -82,7 +82,7 @@ class Exception : public std::exception
 #ifdef CO_SIM_IO_DEBUG
     #define CO_SIM_IO_DEBUG_ERROR CO_SIM_IO_ERROR
     #define CO_SIM_IO_DEBUG_ERROR_IF(conditional) CO_SIM_IO_ERROR_IF(conditional)
-    #define CO_SIM_IO_DEBUG_ERROR_IF_NOT(conditional)  CO_SIM_IO_ERROR_IF_NOT(conditional)
+    #define CO_SIM_IO_DEBUG_ERROR_IF_NOT(conditional) CO_SIM_IO_ERROR_IF_NOT(conditional)
 #else
     #define CO_SIM_IO_DEBUG_ERROR if(false) CO_SIM_IO_ERROR
     #define CO_SIM_IO_DEBUG_ERROR_IF(conditional) if(false) CO_SIM_IO_ERROR_IF(conditional)

@@ -31,7 +31,10 @@ Exception::Exception(const std::string& rWhat, const CodeLocation& rLocation)
 }
 
 Exception::Exception(const Exception& Other)
-    : std::exception(Other), mWhat(Other.mWhat), mMessage(Other.mMessage), mCallStack(Other.mCallStack)
+    : std::exception(Other),
+      mWhat(Other.mWhat),
+      mMessage(Other.mMessage),
+      mCallStack(Other.mCallStack)
 {
 }
 
