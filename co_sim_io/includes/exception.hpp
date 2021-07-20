@@ -49,6 +49,11 @@ class Exception : public std::exception
         update_what();
     }
 
+	Exception(const Exception& Other)
+		: std::exception(Other), mWhat(Other.mWhat), mMessage(Other.mMessage), mCallStack(Other.mCallStack)
+	{
+	}
+
     const char* what() const noexcept override
     {
         return mWhat.c_str();
@@ -87,6 +92,12 @@ class Exception : public std::exception
         return *this;
     }
 
+    Exception& operator << (const CodeLocation& rLocation)
+    {
+        add_to_call_stack(rLocation);
+        return *this;
+    }
+
   private:
     std::string mWhat;
     std::string mMessage;
@@ -106,7 +117,7 @@ class Exception : public std::exception
 
     void update_what(){
         std::stringstream buffer;
-        buffer << mMessage << "\n";
+        buffer << message() << "\n";
         if (mCallStack.empty()) {
             buffer << "in Unknown Location";
         } else {
