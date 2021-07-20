@@ -19,7 +19,6 @@
 
 // Project includes
 #include "define.hpp"
-#include "macros.hpp"
 
 namespace CoSimIO {
 namespace Internals {

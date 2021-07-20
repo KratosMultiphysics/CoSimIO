@@ -14,6 +14,7 @@
 #define CO_SIM_IO_DEFINE_INCLUDED
 
 // System includes
+#include <iostream>
 #include <cstddef> // std::ptrdiff_t
 #include <memory> // std::unique_ptr
 #include <vector>
@@ -24,6 +25,7 @@
 
 // Project includes
 #include "co_sim_io_api.hpp"
+#include "exception.hpp"
 
 namespace CoSimIO {
 
@@ -98,6 +100,10 @@ template<typename C, typename...Args>
 intrusive_ptr<C> make_intrusive(Args &&...args) {
     return intrusive_ptr<C>(new C(std::forward<Args>(args)...));
 }
+
+// Logging macros
+#define CO_SIM_IO_INFO(label) std::cout << label << ": "
+#define CO_SIM_IO_INFO_IF(label, conditional) if (conditional) CO_SIM_IO_INFO(label)
 
 } //namespace CoSimIO
 

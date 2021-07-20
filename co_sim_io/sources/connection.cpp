@@ -15,7 +15,6 @@
 
 // Project includes
 #include "includes/define.hpp"
-#include "includes/macros.hpp"
 #include "includes/connection.hpp"
 #include "includes/communication/file_communication.hpp"
 #include "includes/communication/sockets_communication.hpp"

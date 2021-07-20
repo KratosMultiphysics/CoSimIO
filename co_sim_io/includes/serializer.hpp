@@ -30,7 +30,6 @@
 
 // Project includes
 #include "define.hpp"
-#include "macros.hpp"
 
 #define CO_SIM_IO_SERIALIZATION_DIRECT_LOAD(type)                    \
     void load(std::string const & rTag, type& rValue)                \
@@ -922,6 +921,12 @@ private:
 
 ///@}
 
+#define CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(Serializer, BaseType) \
+    Serializer.save_base("BaseClass",*static_cast<const BaseType *>(this));
+
+#define CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(Serializer, BaseType) \
+    Serializer.load_base("BaseClass",*static_cast<BaseType *>(this));
+
 } // namespace Internals
 } // namespace CoSimIO
 
@@ -931,12 +936,5 @@ private:
 
 #undef CO_SIM_IO_SERIALIZATION_DIRECT_LOAD
 #undef CO_SIM_IO_SERIALIZATION_DIRECT_SAVE
-
-
-#define CO_SIM_IO_SERIALIZE_SAVE_BASE_CLASS(Serializer, BaseType) \
-    Serializer.save_base("BaseClass",*static_cast<const BaseType *>(this));
-
-#define CO_SIM_IO_SERIALIZE_LOAD_BASE_CLASS(Serializer, BaseType) \
-    Serializer.load_base("BaseClass",*static_cast<BaseType *>(this));
 
 #endif // CO_SIM_IO_SERIALIZER_INCLUDED

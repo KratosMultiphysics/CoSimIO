@@ -20,7 +20,6 @@
 
 // Project includes
 #include "define.hpp"
-#include "macros.hpp"
 #include "serializer.hpp"
 
 namespace CoSimIO {
