@@ -14,7 +14,6 @@
 #include <algorithm>
 
 // Project includes
-#include "includes/macros.hpp"
 #include "includes/model_part.hpp"
 #include "includes/utilities.hpp"
 

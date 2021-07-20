@@ -17,7 +17,6 @@
 
 // Project includes
 #include "includes/utilities.hpp"
-#include "includes/macros.hpp"
 
 namespace CoSimIO {
 namespace Internals {

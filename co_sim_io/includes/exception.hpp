@@ -119,6 +119,22 @@ class Exception : public std::exception
     }
 }; // class Exception
 
+// Exception macros
+#define CO_SIM_IO_ERROR throw CoSimIO::Internals::Exception("Error: ", CO_SIM_IO_CODE_LOCATION)
+#define CO_SIM_IO_ERROR_IF(conditional) if (conditional) CO_SIM_IO_ERROR
+#define CO_SIM_IO_ERROR_IF_NOT(conditional) if (!(conditional)) CO_SIM_IO_ERROR
+
+// debug exception macros
+#ifdef CO_SIM_IO_DEBUG
+    #define CO_SIM_IO_DEBUG_ERROR CO_SIM_IO_ERROR
+    #define CO_SIM_IO_DEBUG_ERROR_IF(conditional) CO_SIM_IO_ERROR_IF(conditional)
+    #define CO_SIM_IO_DEBUG_ERROR_IF_NOT(conditional)  CO_SIM_IO_ERROR_IF_NOT(conditional)
+#else
+    #define CO_SIM_IO_DEBUG_ERROR if(false) CO_SIM_IO_ERROR
+    #define CO_SIM_IO_DEBUG_ERROR_IF(conditional) if(false) CO_SIM_IO_ERROR_IF(conditional)
+    #define CO_SIM_IO_DEBUG_ERROR_IF_NOT(conditional) if(false) CO_SIM_IO_ERROR_IF_NOT(conditional)
+#endif
+
 } // namespace Internals
 } // namespace CoSimIO
 

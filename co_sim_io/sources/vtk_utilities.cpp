@@ -16,7 +16,6 @@
 
 // Project includes
 #include "includes/vtk_utilities.hpp"
-#include "includes/macros.hpp"
 #include "includes/utilities.hpp"
 
 namespace CoSimIO {

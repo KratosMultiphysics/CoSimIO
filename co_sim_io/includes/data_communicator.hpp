@@ -25,7 +25,6 @@
 
 // Project includes
 #include "define.hpp"
-#include "macros.hpp"
 #include "stream_serializer.hpp"
 
 // Using a macro instead of a function to get the correct line in the error message.
