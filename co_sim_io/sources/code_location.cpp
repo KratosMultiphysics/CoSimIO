@@ -13,15 +13,16 @@
 // System includes
 
 // Project includes
-#include "includes/code_location.h"
+#include "includes/code_location.hpp"
 #include "includes/filesystem_inc.hpp"
 
 namespace CoSimIO {
+namespace Internals {
 
 std::string CodeLocation::GetCleanFileName() const
 {
     return fs::canonical(fs::path(GetFileName())).lexically_relative(fs::absolute(".")).string();
 }
 
-}  // namespace CoSimIO.
-
+} // namespace Interals
+} // namespace CoSimIO

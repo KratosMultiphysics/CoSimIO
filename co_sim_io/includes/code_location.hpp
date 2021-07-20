@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#if !defined(CO_SIM_IO_CODE_LOCATION_H_INCLUDED)
-#define CO_SIM_IO_CODE_LOCATION_H_INCLUDED
+#ifndef CO_SIM_IO_CODE_LOCATION_INCLUDED
+#define CO_SIM_IO_CODE_LOCATION_INCLUDED
 
 // System includes
 #include <string>
@@ -20,10 +20,8 @@
 // Project includes
 #include "co_sim_io_api.hpp"
 
-namespace CoSimIO
-{
-
-// TODO put in namespace Internals
+namespace CoSimIO {
+namespace Internals {
 
 ///@addtogroup CoSimIO
 ///@{
@@ -143,11 +141,11 @@ inline std::ostream & operator <<(std::ostream& rOStream,
 #endif
 
 
-#define CO_SIM_IO_CODE_LOCATION CoSimIO::CodeLocation(__FILE__, CO_SIM_IO_CURRENT_FUNCTION, __LINE__)
-
+#define CO_SIM_IO_CODE_LOCATION CoSimIO::Internals::CodeLocation(__FILE__, CO_SIM_IO_CURRENT_FUNCTION, __LINE__)
 
 ///@} addtogroup block
 
-}  // namespace CoSimIO.
+} // namespace Internals
+} // namespace CoSimIO
 
-#endif // CO_SIM_IO_CODE_LOCATION_H_INCLUDED
+#endif // CO_SIM_IO_CODE_LOCATION_INCLUDED
