@@ -5,8 +5,8 @@
 # export CXX=icpc
 # export CC=icc
 
-export CXX=clang++-10
-export CC=clang-10
+# export CXX=clang++-10
+# export CC=clang-10
 
 cmake -H"." -B"build" \
     -DBUILD_C=ON \
@@ -14,4 +14,4 @@ cmake -H"." -B"build" \
     -DCO_SIM_IO_ENABLE_MPI=ON \
     -DCMAKE_BUILD_TYPE=DEBUG \
     -DCO_SIM_IO_STRICT_COMPILER=ON
-cmake --build "build" --target install -- -j5
+cmake --build "build" --target install -- -j$(nproc)
