@@ -105,6 +105,26 @@ intrusive_ptr<C> make_intrusive(Args &&...args) {
 #define CO_SIM_IO_INFO(label) std::cout << label << ": "
 #define CO_SIM_IO_INFO_IF(label, conditional) if (conditional) CO_SIM_IO_INFO(label)
 
+// Exceptions
+#define _CO_SIM_IO_CATCH_AND_THROW(ExceptionType) catch(ExceptionType& e) { CO_SIM_IO_ERROR << e.what(); }
+
+#define CO_SIM_IO_TRY try {
+
+#define CO_SIM_IO_CATCH                             \
+}                                                   \
+_CO_SIM_IO_CATCH_AND_THROW(std::overflow_error)     \
+_CO_SIM_IO_CATCH_AND_THROW(std::underflow_error)    \
+_CO_SIM_IO_CATCH_AND_THROW(std::range_error)        \
+_CO_SIM_IO_CATCH_AND_THROW(std::out_of_range)       \
+_CO_SIM_IO_CATCH_AND_THROW(std::length_error)       \
+_CO_SIM_IO_CATCH_AND_THROW(std::invalid_argument)   \
+_CO_SIM_IO_CATCH_AND_THROW(std::domain_error)       \
+_CO_SIM_IO_CATCH_AND_THROW(std::logic_error)        \
+_CO_SIM_IO_CATCH_AND_THROW(std::runtime_error)      \
+catch(Exception& e)      { throw Exception(e) << CO_SIM_IO_CODE_LOCATION << std::endl; } \
+catch(std::exception& e) { CO_SIM_IO_ERROR << e.what() << std::endl; }                   \
+catch(...)               { CO_SIM_IO_ERROR << "Unknown error" << std::endl; }
+
 } //namespace CoSimIO
 
 #endif // CO_SIM_IO_DEFINE_INCLUDED
