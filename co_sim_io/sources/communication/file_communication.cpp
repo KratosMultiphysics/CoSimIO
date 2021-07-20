@@ -395,8 +395,6 @@ void FileCommunication::MakeFileVisible(const fs::path& rPath) const
     fs::rename(GetTempFileName(rPath), rPath, ec);
     CO_SIM_IO_ERROR_IF(ec) << rPath << " could not be made visible!\nError code: " << ec.message() << std::endl;
 
-    CO_SIM_IO_ERROR << "Error deep down" << std::endl;
-
     CO_SIM_IO_CATCH
 }
 
