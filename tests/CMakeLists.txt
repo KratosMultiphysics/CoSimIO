@@ -82,7 +82,7 @@ if (CO_SIM_IO_ENABLE_MPI)
 endif()
 
 ### C tests ###
-if(BUILD_C)
+if(CO_SIM_IO_BUILD_C)
     function(add_c_test TEST_SOURCE_FILE)
         get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
         string(REGEX REPLACE "[.]c" "_c_test" TEST_NAME ${TEST_FILENAME})
@@ -145,7 +145,7 @@ endif()
 
 
 ### Fortran tests ###
-if(BUILD_FORTRAN)
+if(CO_SIM_IO_BUILD_FORTRAN)
     enable_language( Fortran )
     include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io/fortran )
     link_directories( ${CMAKE_SOURCE_DIR}/bin )
