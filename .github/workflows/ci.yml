@@ -219,7 +219,6 @@ jobs:
       run: |
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
-          -DCO_SIM_IO_BUILD_C=ON               \
           -DCO_SIM_IO_BUILD_PYTHON=ON          \
           -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }} \
           -DCO_SIM_IO_STRICT_COMPILER=ON
