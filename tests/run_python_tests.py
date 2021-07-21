@@ -16,7 +16,7 @@ import unittest, sys, os
 from testing_utilities import IsOptionEnabled
 
 if __name__ == '__main__':
-    if not IsOptionEnabled("BUILD_PYTHON"):
+    if not IsOptionEnabled("CO_SIM_IO_BUILD_PYTHON"):
         sys.exit(0)
 
     verbosity = 0
