@@ -23,52 +23,6 @@ namespace CoSimIO {
 //     std::once_flag flag_once;
 // }
 
-void Info::Save(std::ostream& O_OutStream) const
-{
-    static std::map<std::string, std::string> s_registered_object_names {
-        {typeid(Internals::InfoData<int>).name(),         "InfoData_int"},
-        {typeid(Internals::InfoData<double>).name(),      "InfoData_double"},
-        {typeid(Internals::InfoData<bool>).name(),        "InfoData_bool"},
-        {typeid(Internals::InfoData<std::string>).name(), "InfoData_string"}
-    };
-
-    O_OutStream << Size() << "\n";
-    for (const auto& r_pair: mOptions) {
-        const auto& r_val = *(r_pair.second);
-        auto it_obj = s_registered_object_names.find(typeid(r_val).name());
-        CO_SIM_IO_ERROR_IF(it_obj == s_registered_object_names.end()) << "No name registered" << std::endl;
-        O_OutStream << r_pair.first << "\n";
-        O_OutStream << it_obj->second << "\n";
-        r_pair.second->Save(O_OutStream);
-        O_OutStream << "\n";
-    }
-}
-void Info::Load(std::istream& I_InStream)
-{
-    static std::map<std::string, std::shared_ptr<Internals::InfoDataBase>> s_registered_object_prototypes {
-        {"InfoData_int"    , std::make_shared<Internals::InfoData<int>>(1)},
-        {"InfoData_double" , std::make_shared<Internals::InfoData<double>>(1)},
-        {"InfoData_bool"   , std::make_shared<Internals::InfoData<bool>>(1)},
-        {"InfoData_string" , std::make_shared<Internals::InfoData<std::string>>("")}
-    };
-
-    std::string key, registered_name;
-
-    int size;
-    I_InStream >> size;
-
-    for (int i=0; i<size; ++i) {
-        I_InStream >> key;
-        I_InStream >> registered_name;
-        auto it_prototype = s_registered_object_prototypes.find(registered_name);
-        CO_SIM_IO_ERROR_IF(it_prototype == s_registered_object_prototypes.end()) << "No prototype registered for " << registered_name << std::endl;
-
-        auto p_clone = it_prototype->second->Clone();
-        p_clone->Load(I_InStream);
-        mOptions[key] = p_clone;
-    }
-}
-
 void Info::Print(std::ostream& rOStream) const
 {
     rOStream << "CoSimIO-Info; containing " << Size() << " entries\n";
