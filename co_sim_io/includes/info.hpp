@@ -121,6 +121,8 @@ public:
     template<typename TDataType>
     const TDataType& Get(const std::string& I_Key) const
     {
+        ValidateType<TDataType>();
+
         CO_SIM_IO_ERROR_IF_NOT(Has(I_Key)) << "Trying to get \"" << I_Key << "\" which does not exist!" << std::endl;
         return GetExistingKey<TDataType>(I_Key);
     }
@@ -128,6 +130,8 @@ public:
     template<typename TDataType>
     const TDataType& Get(const std::string& I_Key, const TDataType& I_Default) const
     {
+        ValidateType<TDataType>();
+
         if (Has(I_Key)) {
             return GetExistingKey<TDataType>(I_Key);
         } else {
@@ -144,13 +148,7 @@ public:
     template<typename TDataType>
     void Set(const std::string& I_Key, TDataType I_Value)
     {
-        static_assert(
-            std::is_same<TDataType, double>::value ||
-            std::is_same<TDataType, int>::value    ||
-            std::is_same<TDataType, bool>::value   ||
-            // std::is_same<TDataType, Info>::value   || // makes it recursive
-            std::is_same<TDataType, std::string>::value,
-                "Only allowed types are double, int, bool, string");
+        ValidateType<TDataType>();
 
         mOptions[I_Key] = std::make_shared<Internals::InfoData<TDataType>>(I_Value);
     }
@@ -185,9 +183,23 @@ private:
     template<typename TDataType>
     const TDataType& GetExistingKey(const std::string& I_Key) const
     {
+        ValidateType<TDataType>();
+
         const auto& r_val = mOptions.at(I_Key);
         CO_SIM_IO_ERROR_IF(r_val->GetDataTypeName() != Internals::Name<TDataType>()) << "Wrong DataType! Trying to get \"" << I_Key << "\" which is of type \"" << r_val->GetDataTypeName() << "\" with \"" << Internals::Name<TDataType>() << "\"!" << std::endl;
         return *static_cast<const TDataType*>(r_val->GetData());
+    }
+
+    template<typename TDataType>
+    static void ValidateType()
+    {
+        static_assert(
+            std::is_same<TDataType, double>::value ||
+            std::is_same<TDataType, int>::value    ||
+            std::is_same<TDataType, bool>::value   ||
+            // std::is_same<TDataType, Info>::value   || // makes it recursive
+            std::is_same<TDataType, std::string>::value,
+                "Only allowed types are double, int, bool, string");
     }
 
     friend class CoSimIO::Internals::Serializer; // needs "CoSimIO::Internals::" because it is in different namespace
