@@ -26,10 +26,8 @@
 namespace CoSimIO {
 namespace Internals {
 
-inline std::string Name(int dummy)         {return "int";}
-inline std::string Name(double dummy)      {return "double";}
-inline std::string Name(bool dummy)        {return "bool";}
-inline std::string Name(std::string dummy) {return "string";}
+template<typename T>
+std::string Name();
 
 class InfoDataBase
 {
@@ -38,9 +36,6 @@ public:
     virtual const void* GetData() const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
     virtual std::string GetDataTypeName() const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
     virtual std::shared_ptr<InfoDataBase> Clone() const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
-    // virtual void Print(const void* pSource, std::ostream& rOStream) const;
-    virtual void Save(std::ostream& O_OutStream) const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
-    virtual void Load(std::istream& I_InStream) {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
     virtual void Print(std::ostream& rOStream) const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
 
 protected:
@@ -68,7 +63,7 @@ class InfoData : public InfoDataBase
 public:
     explicit InfoData(const TDataType Source) : mData(Source) {}
 
-    std::string GetDataTypeName() const override {return Internals::Name(TDataType());}
+    std::string GetDataTypeName() const override {return Internals::Name<TDataType>();}
 
     const void* GetData() const override
     {
@@ -78,15 +73,6 @@ public:
     std::shared_ptr<InfoDataBase> Clone() const override
     {
         return std::make_shared<InfoData<TDataType>>(TDataType());
-    }
-
-    void Save(std::ostream& O_OutStream) const override
-    {
-        O_OutStream << mData;
-    }
-    void Load(std::istream& I_InStream) override
-    {
-        I_InStream >> mData;
     }
 
     void Print(std::ostream& rOStream) const override
@@ -189,10 +175,6 @@ public:
         return mOptions.size();
     }
 
-    // DEPRECATED, use serializer!
-    void Save(std::ostream& O_OutStream) const;
-    void Load(std::istream& I_InStream);
-
     void Print(std::ostream& rOStream) const;
 
 private:
@@ -204,7 +186,7 @@ private:
     const TDataType& GetExistingKey(const std::string& I_Key) const
     {
         const auto& r_val = mOptions.at(I_Key);
-        CO_SIM_IO_ERROR_IF(r_val->GetDataTypeName() != Internals::Name(TDataType())) << "Wrong DataType! Trying to get \"" << I_Key << "\" which is of type \"" << r_val->GetDataTypeName() << "\" with \"" << Internals::Name(TDataType()) << "\"!" << std::endl;
+        CO_SIM_IO_ERROR_IF(r_val->GetDataTypeName() != Internals::Name<TDataType>()) << "Wrong DataType! Trying to get \"" << I_Key << "\" which is of type \"" << r_val->GetDataTypeName() << "\" with \"" << Internals::Name<TDataType>() << "\"!" << std::endl;
         return *static_cast<const TDataType*>(r_val->GetData());
     }
 
@@ -226,6 +208,14 @@ inline std::ostream & operator <<(
     return rOStream;
 }
 
+namespace Internals {
+
+template<> inline std::string Name<int>()         {return "int";}
+template<> inline std::string Name<double>()      {return "double";}
+template<> inline std::string Name<bool>()        {return "bool";}
+template<> inline std::string Name<std::string>() {return "string";}
+
+} // namespace Internals
 } // namespace CoSimIO
 
 #endif // CO_SIM_IO_INFO_INCLUDED
