@@ -197,7 +197,7 @@ private:
             std::is_same<TDataType, double>::value ||
             std::is_same<TDataType, int>::value    ||
             std::is_same<TDataType, bool>::value   ||
-            // std::is_same<TDataType, Info>::value   || // makes it recursive
+            std::is_same<TDataType, Info>::value   || // makes it recursive
             std::is_same<TDataType, std::string>::value,
                 "Only allowed types are double, int, bool, string");
     }
@@ -226,6 +226,7 @@ template<> inline std::string Name<int>()         {return "int";}
 template<> inline std::string Name<double>()      {return "double";}
 template<> inline std::string Name<bool>()        {return "bool";}
 template<> inline std::string Name<std::string>() {return "string";}
+template<> inline std::string Name<Info>()        {return "info";}
 
 } // namespace Internals
 } // namespace CoSimIO
