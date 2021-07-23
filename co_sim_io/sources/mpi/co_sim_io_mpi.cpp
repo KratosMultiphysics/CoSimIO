@@ -17,7 +17,9 @@ This file contains the implementation of the functions defined in "co_sim_io_mpi
 // System includes
 
 // Project includes
-#include "../../co_sim_io_mpi.hpp"
+#include "co_sim_io_mpi.hpp"
+#include "includes/mpi/mpi_data_communicator.hpp"
+#include "includes/connect_impl.hpp"
 
 namespace CoSimIO {
 
@@ -32,7 +34,7 @@ Info ConnectMPI(
     MPI_Initialized(&flag_initialized);
     CO_SIM_IO_ERROR_IF_NOT(flag_initialized) << "MPI must be initialized before calling \"ConnectMPI\"!" << std::endl;
 
-    return Info(); // TODO use this
+    return Internals::ConnectImpl(I_Settings, std::make_shared<CoSimIO::Internals::MPIDataCommunicator>(ThisMPIComm));
 }
 
 } // namespace CoSimIO

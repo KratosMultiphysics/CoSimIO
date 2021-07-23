@@ -15,6 +15,7 @@
 
 // Project includes
 #include "co_sim_io.hpp"
+#include "includes/connect_impl.hpp"
 #include "includes/connection.hpp"
 #include "includes/utilities.hpp"
 
@@ -61,24 +62,7 @@ Info Hello()
 
 Info Connect(const Info& I_Settings)
 {
-    const std::string my_name = I_Settings.Get<std::string>("my_name");
-    const std::string connect_to = I_Settings.Get<std::string>("connect_to");
-
-    // perform some checks
-    Internals::CheckEntry(my_name, "my_name");
-    Internals::CheckEntry(connect_to, "connect_to");
-    CO_SIM_IO_ERROR_IF(my_name == connect_to) << "Connecting to self is not allowed!" << std::endl;
-
-    const std::string connection_name = Internals::CreateConnectionName(my_name, connect_to);
-
-    CO_SIM_IO_ERROR_IF(HasIO(connection_name)) << "A connection from \"" << my_name << "\" to \"" << connect_to << "\"already exists!" << std::endl;
-
-    s_co_sim_connections[connection_name] = std::unique_ptr<Internals::Connection>(new Internals::Connection(I_Settings));
-
-    auto info = GetConnection(connection_name).Connect(I_Settings);
-    info.Set<std::string>("connection_name", connection_name);
-
-    return info;
+    return Internals::ConnectImpl(I_Settings, std::make_shared<DataCommunicator>());
 }
 
 
@@ -202,4 +186,4 @@ Info CO_SIM_IO_API Register(
     return GetConnection(connection_name).Register(function_name, fct_callback);
 }
 
-}
+} // namespace CoSimIO
