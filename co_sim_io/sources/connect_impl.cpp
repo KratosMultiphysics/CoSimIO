@@ -53,7 +53,7 @@ Info ConnectImpl(const Info& I_Settings, std::shared_ptr<DataCommunicator> I_Dat
 
     CO_SIM_IO_ERROR_IF(HasConnection(connection_name)) << "A connection from \"" << my_name << "\" to \"" << connect_to << "\"already exists!" << std::endl;
 
-    s_co_sim_connections[connection_name] = std::unique_ptr<Internals::Connection>(new Internals::Connection(I_Settings));
+    s_co_sim_connections[connection_name] = CoSimIO::make_unique<Connection>(I_Settings, I_DataComm);
 
     auto info = GetConnection(connection_name).Connect(I_Settings);
     info.Set<std::string>("connection_name", connection_name);

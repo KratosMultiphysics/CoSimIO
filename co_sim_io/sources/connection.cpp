@@ -22,7 +22,10 @@
 namespace CoSimIO {
 namespace Internals {
 
-Connection::Connection(const Info& I_Settings)
+Connection::Connection(
+    const Info& I_Settings,
+    std::shared_ptr<DataCommunicator> I_DataComm)
+    : mpDatacomm(I_DataComm)
 {
     Initialize(I_Settings);
 }
