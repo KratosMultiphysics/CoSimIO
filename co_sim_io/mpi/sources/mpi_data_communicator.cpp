@@ -14,8 +14,8 @@
 //
 
 // Project includes
-#include "includes/mpi/mpi_data_communicator.hpp"
-#include "includes/mpi/mpi_message.hpp"
+#include "mpi/includes/mpi_data_communicator.hpp"
+#include "mpi/includes/mpi_message.hpp"
 
 
 #ifndef KRATOS_MPI_DATA_COMMUNICATOR_DEFINE_REDUCE_INTERFACE_FOR_TYPE
@@ -236,10 +236,10 @@ MPIDataCommunicator::MPIDataCommunicator(MPI_Comm MPIComm):
 
 MPIDataCommunicator::~MPIDataCommunicator()
 {
-    // If the MPI_Comm object is not one of the standard ones, it is our responsibility to manage its lifetime.
-    if(mComm != MPI_COMM_WORLD && mComm != MPI_COMM_SELF && mComm != MPI_COMM_NULL) {
-        MPI_Comm_free(&mComm);
-    }
+    // // If the MPI_Comm object is not one of the standard ones, it is our responsibility to manage its lifetime.
+    // if(mComm != MPI_COMM_WORLD && mComm != MPI_COMM_SELF && mComm != MPI_COMM_NULL) {
+    //     MPI_Comm_free(&mComm);
+    // }
 }
 
 // New communicator creation

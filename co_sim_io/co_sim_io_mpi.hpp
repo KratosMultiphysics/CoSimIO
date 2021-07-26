@@ -29,7 +29,6 @@ Info ConnectMPI(
     const Info& I_Settings,
     MPI_Comm ThisMPIComm);
 
-
 } // namespace CoSimIO
 
 #endif // CO_SIM_IO_MPI_INCLUDED

@@ -24,7 +24,9 @@ namespace Internals {
 class CO_SIM_IO_API SocketsCommunication : public Communication
 {
 public:
-    explicit SocketsCommunication(const Info& I_Settings);
+    SocketsCommunication(
+        const Info& I_Settings,
+        std::shared_ptr<DataCommunicator> I_DataComm);
 
     Info ConnectDetail(const Info& I_Info) override;
 
