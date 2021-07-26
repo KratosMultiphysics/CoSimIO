@@ -26,7 +26,10 @@
 namespace CoSimIO {
 namespace Internals {
 
-SocketsCommunication::SocketsCommunication(const Info& I_Settings) : Communication(I_Settings)
+SocketsCommunication::SocketsCommunication(
+    const Info& I_Settings,
+    std::shared_ptr<DataCommunicator> I_DataComm)
+    : Communication(I_Settings, I_DataComm)
 {
     CO_SIM_IO_ERROR << "Sockets Communication is not implemented yet" << std::endl;
 }

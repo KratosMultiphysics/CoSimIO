@@ -22,6 +22,7 @@
 
 // Project includes
 #include "includes/info.hpp"
+#include "includes/data_communicator.hpp"
 #include "includes/communication/communication.hpp"
 
 namespace CoSimIO {
@@ -34,7 +35,9 @@ public:
 
     using FunctionPointerType = std::function<Info(const Info&)>;
 
-    explicit Connection(const Info& I_Settings);
+    Connection(
+        const Info& I_Settings,
+        std::shared_ptr<DataCommunicator> I_DataComm);
 
     Info Connect(const Info& I_Info);
 
@@ -84,6 +87,8 @@ public:
 
 private:
     std::unique_ptr<Communication> mpComm; // handles communication (File, Sockets, MPI, ...)
+
+    std::shared_ptr<DataCommunicator> mpDatacomm;
 
     std::unordered_map<std::string, FunctionPointerType> mRegisteredFunctions;
 

@@ -20,6 +20,7 @@
 #include "includes/info.hpp"
 #include "includes/data_container.hpp"
 #include "includes/model_part.hpp"
+#include "includes/data_communicator.hpp"
 #include "includes/filesystem_inc.hpp"
 
 namespace CoSimIO {
@@ -29,8 +30,11 @@ namespace Internals {
 class CO_SIM_IO_API Communication
 {
 public:
-    explicit Communication(const Info& I_Settings);
+    Communication(
+        const Info& I_Settings,
+        std::shared_ptr<DataCommunicator> I_DataComm);
 
+    // might throw when trying to remove files!
     virtual ~Communication() noexcept(false) {}; // impl of disconnect has to be in derived class due to order of class destruction
 
     Info Connect(const Info& I_Info);
@@ -82,9 +86,12 @@ protected:
     bool GetIsConnected() const           {return mIsConnected;}
 
 private:
+    std::shared_ptr<DataCommunicator> mpDataComm;
+
     std::string mConnectionName;
     std::string mMyName;
     std::string mConnectTo;
+
     fs::path mWorkingDirectory;
     int mEchoLevel = 1;
     bool mIsPrimaryConnection;

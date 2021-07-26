@@ -20,12 +20,15 @@
 namespace CoSimIO {
 namespace Internals {
 
-Communication::Communication(const Info& I_Settings)
-    : mMyName(I_Settings.Get<std::string>("my_name")),
-        mConnectTo(I_Settings.Get<std::string>("connect_to")),
-        mWorkingDirectory(I_Settings.Get<std::string>("working_directory", fs::relative(fs::current_path()).string())),
-        mEchoLevel(I_Settings.Get<int>("echo_level", 0)),
-        mPrintTiming(I_Settings.Get<bool>("print_timing", false))
+Communication::Communication(
+    const Info& I_Settings,
+    std::shared_ptr<DataCommunicator> I_DataComm)
+    : mpDataComm(I_DataComm),
+      mMyName(I_Settings.Get<std::string>("my_name")),
+      mConnectTo(I_Settings.Get<std::string>("connect_to")),
+      mWorkingDirectory(I_Settings.Get<std::string>("working_directory", fs::relative(fs::current_path()).string())),
+      mEchoLevel(I_Settings.Get<int>("echo_level", 0)),
+      mPrintTiming(I_Settings.Get<bool>("print_timing", false))
 {
     CO_SIM_IO_TRY
 
