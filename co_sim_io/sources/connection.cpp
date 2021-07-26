@@ -94,9 +94,9 @@ void Connection::Initialize(const Info& I_Settings)
     CO_SIM_IO_INFO("CoSimIO") << "CoSimIO from \"" << I_Settings.Get<std::string>("my_name") << "\" to \"" << I_Settings.Get<std::string>("connect_to") << "\" uses communication format: " << comm_format << std::endl;
 
     if (comm_format == "file") {
-        mpComm = CoSimIO::make_unique<FileCommunication>(I_Settings);
+        mpComm = CoSimIO::make_unique<FileCommunication>(I_Settings, mpDatacomm);
     } else if (comm_format == "sockets") {
-        mpComm = CoSimIO::make_unique<SocketsCommunication>(I_Settings);
+        mpComm = CoSimIO::make_unique<SocketsCommunication>(I_Settings, mpDatacomm);
     } else {
         CO_SIM_IO_ERROR << "Unsupported communication format: " << comm_format << std::endl;
     }
