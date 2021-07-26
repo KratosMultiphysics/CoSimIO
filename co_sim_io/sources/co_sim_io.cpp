@@ -17,6 +17,7 @@
 #include "co_sim_io.hpp"
 #include "includes/connect_impl.hpp"
 #include "includes/connection.hpp"
+#include "includes/data_communicator.hpp"
 #include "includes/utilities.hpp"
 
 // This file contains the implementation of the functions defined in "co_sim_io.hpp"
@@ -62,7 +63,7 @@ Info Hello()
 
 Info Connect(const Info& I_Settings)
 {
-    return Internals::ConnectImpl(I_Settings, std::make_shared<DataCommunicator>());
+    return Internals::ConnectImpl(I_Settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 }
 
 
