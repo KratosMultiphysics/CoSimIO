@@ -105,9 +105,8 @@ endif()
 file(REMOVE_RECURSE bin)
 
 # Adding CoSimIO library
-file(GLOB co_sim_io_source_files
+file(GLOB_RECURSE co_sim_io_source_files
     ${CMAKE_SOURCE_DIR}/co_sim_io/sources/*.cpp
-    ${CMAKE_SOURCE_DIR}/co_sim_io/sources/communication/*.cpp
 )
 add_library (co_sim_io SHARED ${co_sim_io_source_files})
 
@@ -121,7 +120,7 @@ install(TARGETS co_sim_io DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
 if (CO_SIM_IO_ENABLE_MPI)
     # Adding CoSimIO library
-    file(GLOB co_sim_io_mpi_source_files ${CMAKE_SOURCE_DIR}/co_sim_io/sources/mpi/*.cpp)
+    file(GLOB_RECURSE co_sim_io_mpi_source_files ${CMAKE_SOURCE_DIR}/co_sim_io/mpi/sources/*.cpp)
     add_library (co_sim_io_mpi SHARED ${co_sim_io_mpi_source_files})
 
     target_link_libraries(co_sim_io_mpi co_sim_io)
