@@ -235,7 +235,7 @@ class CoSimIO_Info(unittest.TestCase):
         info.SetInt("echo_level", 2)
         info.SetInt("checking", 22)
 
-        exp_string = "CoSimIO-Info; containing 5 entries\n  name: checking | value: 22 | type: int\n  name: echo_level | value: 2 | type: int\n  name: is_converged | value: 1 | type: bool\n  name: keyword | value: awesome | type: string\n  name: tol | value: 0.008 | type: double\n"
+        exp_string = "CoSimIO-Info; containing 5 entries\n  name: checking | value: 22 | type: int\n  name: echo_level | value: 2 | type: int\n  name: is_converged | value: true | type: bool\n  name: keyword | value: awesome | type: string\n  name: tol | value: 0.008 | type: double\n"
 
         self.assertMultiLineEqual(str(info), exp_string)
 
