@@ -53,7 +53,10 @@ void SerializeFromFile(const fs::path& rPath, const std::string& rTag, TObject& 
 
 }
 
-FileCommunication::FileCommunication(const Info& I_Settings) : Communication(I_Settings)
+FileCommunication::FileCommunication(
+    const Info& I_Settings,
+    std::shared_ptr<DataCommunicator> I_DataComm)
+    : Communication(I_Settings, I_DataComm)
 {
     CO_SIM_IO_TRY
 

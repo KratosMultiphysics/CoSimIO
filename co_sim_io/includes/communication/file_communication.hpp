@@ -25,7 +25,9 @@ namespace Internals {
 class CO_SIM_IO_API FileCommunication : public Communication
 {
 public:
-    explicit FileCommunication(const Info& I_Settings);
+    FileCommunication(
+        const Info& I_Settings,
+        std::shared_ptr<DataCommunicator> I_DataComm);
 
     ~FileCommunication() override;
 
