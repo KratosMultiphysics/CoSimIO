@@ -105,6 +105,26 @@ TEST_CASE("info_basics_info")
     CHECK_EQ(info.Get<Info>("identifier").Size(), 0);
 }
 
+TEST_CASE("info_basics_info_nested")
+{
+    Info info;
+
+    CHECK_UNARY_FALSE(info.Has("identifier"));
+
+    Info sub_info;
+
+    info.Set<Info>("identifier", sub_info);
+
+    CHECK_UNARY(info.Has("identifier"));
+
+    CHECK_EQ(info.Get<Info>("identifier").Size(), 0);
+
+    sub_info.Set<int>("integer", 13);
+
+    // sub-info is added by copy!
+    CHECK_EQ(info.Get<Info>("identifier").Size(), 0);
+}
+
 TEST_CASE("info_int_default")
 {
     Info info;
