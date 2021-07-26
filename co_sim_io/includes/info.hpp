@@ -36,7 +36,9 @@ public:
     virtual const void* GetData() const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
     virtual std::string GetDataTypeName() const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
     virtual std::shared_ptr<InfoDataBase> Clone() const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
-    virtual void Print(std::ostream& rOStream) const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
+    virtual void Print(
+        std::ostream& rOStream,
+        const std::string& rPrefixString) const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
 
 protected:
     InfoDataBase() = default; // needed for Serializer
@@ -47,15 +49,6 @@ private:
     virtual void load(Serializer& rSerializer) {};
 };
 
-/// output stream function
-inline std::ostream & operator <<(
-    std::ostream& rOStream,
-    const InfoDataBase& rThis)
-{
-    rThis.Print(rOStream);
-
-    return rOStream;
-}
 
 template<class TDataType>
 class InfoData : public InfoDataBase
@@ -75,11 +68,12 @@ public:
         return std::make_shared<InfoData<TDataType>>(TDataType());
     }
 
-    void Print(std::ostream& rOStream) const override
+    void Print(
+        std::ostream& rOStream,
+        const std::string& rPrefixString) const override
     {
-        rOStream << "value: " << mData << " | type: " << GetDataTypeName();
+        rOStream << "value: " << mData << " | type: " << GetDataTypeName() << "\n";
     }
-
 
 private:
     TDataType mData;
@@ -173,7 +167,9 @@ public:
         return mOptions.size();
     }
 
-    void Print(std::ostream& rOStream) const;
+    void Print(
+        std::ostream& rOStream,
+        const std::string& rPrefixString="") const;
 
 private:
     std::map<std::string, std::shared_ptr<Internals::InfoDataBase>> mOptions;
@@ -197,7 +193,7 @@ private:
             std::is_same<TDataType, double>::value ||
             std::is_same<TDataType, int>::value    ||
             std::is_same<TDataType, bool>::value   ||
-            // std::is_same<TDataType, Info>::value   || // makes it recursive
+            std::is_same<TDataType, Info>::value   || // makes it recursive
             std::is_same<TDataType, std::string>::value,
                 "Only allowed types are double, int, bool, string");
     }
@@ -226,6 +222,24 @@ template<> inline std::string Name<int>()         {return "int";}
 template<> inline std::string Name<double>()      {return "double";}
 template<> inline std::string Name<bool>()        {return "bool";}
 template<> inline std::string Name<std::string>() {return "string";}
+template<> inline std::string Name<Info>()        {return "info";}
+
+template<>
+inline void InfoData<bool>::Print(
+    std::ostream& rOStream,
+    const std::string& rPrefixString) const
+{
+    rOStream << "value: " << std::boolalpha << mData << std::noboolalpha << " | type: " << GetDataTypeName() << "\n";
+}
+
+template<>
+inline void InfoData<Info>::Print(
+    std::ostream& rOStream,
+    const std::string& rPrefixString) const
+{
+    rOStream << "type: ";
+    mData.Print(rOStream, rPrefixString);
+}
 
 } // namespace Internals
 } // namespace CoSimIO

@@ -23,12 +23,15 @@ namespace CoSimIO {
 //     std::once_flag flag_once;
 // }
 
-void Info::Print(std::ostream& rOStream) const
+void Info::Print(
+    std::ostream& rOStream,
+    const std::string& rPrefixString) const
 {
     rOStream << "CoSimIO-Info; containing " << Size() << " entries\n";
 
     for (const auto& r_pair: mOptions) {
-        rOStream << "  name: " << r_pair.first << " | " << *(r_pair.second) << std::endl;
+        rOStream << rPrefixString << "  name: " << r_pair.first << " | ";
+        r_pair.second->Print(rOStream, rPrefixString + "  ");
     }
 }
 
