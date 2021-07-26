@@ -27,7 +27,7 @@ constexpr int GetMinorVersion() {
 }
 
 inline std::string GetPatchVersion() {
-    return "0";
+    return "1";
 }
 
 } // namespace CoSimIO
