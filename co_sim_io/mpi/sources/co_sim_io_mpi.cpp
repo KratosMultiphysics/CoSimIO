@@ -18,8 +18,8 @@ This file contains the implementation of the functions defined in "co_sim_io_mpi
 
 // Project includes
 #include "co_sim_io_mpi.hpp"
-#include "includes/mpi/mpi_data_communicator.hpp"
 #include "includes/connect_impl.hpp"
+#include "mpi/includes/mpi_data_communicator.hpp"
 
 namespace CoSimIO {
 

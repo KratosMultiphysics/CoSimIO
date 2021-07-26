@@ -14,8 +14,8 @@
 //
 
 // Project includes
-#include "includes/mpi/mpi_data_communicator.hpp"
-#include "includes/mpi/mpi_message.hpp"
+#include "mpi/includes/mpi_data_communicator.hpp"
+#include "mpi/includes/mpi_message.hpp"
 
 
 #ifndef KRATOS_MPI_DATA_COMMUNICATOR_DEFINE_REDUCE_INTERFACE_FOR_TYPE
