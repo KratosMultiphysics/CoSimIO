@@ -403,6 +403,53 @@ TEST_CASE("info_ostream")
     CHECK_EQ(test_stream.str(), exp_string);
 }
 
+TEST_CASE("info_ostream_nested")
+{
+    Info info;
+    Info sub_info;
+    Info sub_sub_info;
+    info.Set<std::string>("keyword", "awesome");
+    info.Set<bool>("is_converged", true);
+    info.Set<std::string>("keyword", "awesome");
+    info.Set<double>("tol", 0.008);
+    info.Set<int>("echo_level", 2);
+    info.Set<int>("checking", 22);
+
+    sub_info.Set<std::string>("abc", "something");
+    sub_info.Set<bool>("minor", false);
+    sub_info.Set<double>("abs", -78.8);
+    sub_info.Set<int>("verb", 8);
+
+    sub_sub_info.Set<bool>("hello", true);
+    sub_sub_info.Set<int>("id", 8189);
+
+    sub_info.Set<Info>("sub_sub", sub_sub_info);
+    info.Set<Info>("sub", sub_info);
+
+    std::stringstream test_stream;
+
+    test_stream << info;
+
+    const std::string exp_string =
+R"(CoSimIO-Info; containing 6 entries
+  name: checking | value: 22 | type: int
+  name: echo_level | value: 2 | type: int
+  name: is_converged | value: true | type: bool
+  name: keyword | value: awesome | type: string
+  name: sub | type: CoSimIO-Info; containing 5 entries
+    name: abc | value: something | type: string
+    name: abs | value: -78.8 | type: double
+    name: minor | value: false | type: bool
+    name: sub_sub | type: CoSimIO-Info; containing 2 entries
+      name: hello | value: true | type: bool
+      name: id | value: 8189 | type: int
+    name: verb | value: 8 | type: int
+  name: tol | value: 0.008 | type: double
+)";
+
+    CHECK_EQ(test_stream.str(), exp_string);
+}
+
 TEST_CASE("info_copy_constructor")
 {
     Info info;
