@@ -10,21 +10,22 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#define DOCTEST_CONFIG_IMPLEMENT
-
+// External includes
+#define DOCTEST_CONFIG_IMPLEMENT // must be defined before including doctest!
 #include "doctest/extensions/doctest_mpi.h"
 
-int main(int argc, char** argv) {
-  MPI_Init(&argc, &argv);
+int main(int argc, char** argv)
+{
+    MPI_Init(&argc, &argv);
 
-  doctest::Context ctx;
-  ctx.setOption("reporters", "MpiConsoleReporter");
-  // ctx.setOption("force-colors", true); // this messes up the test detection for CTest
-  ctx.applyCommandLine(argc, argv);
+    doctest::Context ctx;
+    ctx.setOption("reporters", "MpiConsoleReporter");
+    // ctx.setOption("force-colors", true); // this messes up the test detection for CTest
+    ctx.applyCommandLine(argc, argv);
 
-  int test_result = ctx.run();
+    int test_result = ctx.run();
 
-  MPI_Finalize();
+    MPI_Finalize();
 
-  return test_result;
+    return test_result;
 }
