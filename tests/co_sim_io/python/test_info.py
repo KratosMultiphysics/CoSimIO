@@ -65,6 +65,37 @@ class CoSimIO_Info(unittest.TestCase):
 
         self.assertEqual(info.GetString("identifier"), "pressure")
 
+    def test_basics_info(self):
+        info = CoSimIO.Info()
+
+        self.assertFalse(info.Has("identifier"))
+
+        sub_info = CoSimIO.Info()
+
+        info.SetInfo("identifier", sub_info)
+
+        self.assertTrue(info.Has("identifier"))
+
+        self.assertEqual(info.GetInfo("identifier").Size(), 0)
+
+    def test_basics_info_nested(self):
+        info = CoSimIO.Info()
+
+        self.assertFalse(info.Has("identifier"))
+
+        sub_info = CoSimIO.Info()
+
+        info.SetInfo("identifier", sub_info)
+
+        self.assertTrue(info.Has("identifier"))
+
+        self.assertEqual(info.GetInfo("identifier").Size(), 0)
+
+        sub_info.SetInt("integer", 13)
+
+        # sub-info is added by copy, changing the original object doesn't have an effect on the sub-info!
+        self.assertEqual(info.GetInfo("identifier").Size(), 0)
+
     def test_int_default(self):
         info = CoSimIO.Info()
 
@@ -99,6 +130,17 @@ class CoSimIO_Info(unittest.TestCase):
         self.assertFalse(info.Has("identifier"))
 
         self.assertEqual(info.GetString("identifier", "dummy"), "dummy")
+
+        self.assertFalse(info.Has("identifier")) # getting the default must not insert it!
+
+    def test_info_default(self):
+        info = CoSimIO.Info()
+        info_default = CoSimIO.Info()
+        info_default.SetString("identifier", "pressure")
+
+        self.assertFalse(info.Has("identifier"))
+
+        self.assertEqual(info.GetInfo("identifier", info_default).Size(), 1)
 
         self.assertFalse(info.Has("identifier")) # getting the default must not insert it!
 

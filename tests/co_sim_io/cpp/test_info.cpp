@@ -121,7 +121,7 @@ TEST_CASE("info_basics_info_nested")
 
     sub_info.Set<int>("integer", 13);
 
-    // sub-info is added by copy!
+    // sub-info is added by copy, changing the original object doesn't have an effect on the sub-info!
     CHECK_EQ(info.Get<Info>("identifier").Size(), 0);
 }
 
@@ -175,10 +175,11 @@ TEST_CASE("info_info_default")
     Info info;
 
     Info other_info;
+    other_info.Set<int>("integer", 13);
 
     CHECK_UNARY_FALSE(info.Has("identifier"));
 
-    CHECK_EQ(info.Get<Info>("identifier", other_info).Size(), 0);
+    CHECK_EQ(info.Get<Info>("identifier", other_info).Size(), 1);
 
     CHECK_UNARY_FALSE(info.Has("identifier")); // getting the default must not insert it!
 }
