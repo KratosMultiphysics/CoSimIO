@@ -18,6 +18,7 @@
 #include "co_sim_io_testing.hpp"
 #include "includes/define.hpp"
 #include "includes/stream_serializer.hpp"
+#include "includes/file_serializer.hpp"
 
 
 namespace CoSimIO {
@@ -526,6 +527,26 @@ TEST_CASE("Serializer_trace_all")
 {
     CoSimIO::Internals::StreamSerializer serializer(CoSimIO::Internals::Serializer::TraceType::SERIALIZER_TRACE_ALL);
     RunAllSerializationTests(serializer);
+}
+
+TEST_CASE("FileSerializer_trace_all")
+{
+    CoSimIO::Internals::FileSerializer serializer("file_serializer_file", CoSimIO::Internals::Serializer::TraceType::SERIALIZER_TRACE_ALL);
+
+
+    const std::string tag_string("TestString");
+
+    int to_save = 125;
+    int to_load;
+
+    serializer.save(tag_string, to_save);
+
+
+    CoSimIO::Internals::FileSerializer serializer2("file_serializer_file", CoSimIO::Internals::Serializer::TraceType::SERIALIZER_TRACE_ALL);
+    serializer2.load(tag_string, to_load);
+
+    std::cout << "out: " << std::boolalpha << to_load << std::endl;
+
 }
 
 } // TEST_SUITE("Serializer")
