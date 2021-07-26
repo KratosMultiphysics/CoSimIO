@@ -20,12 +20,19 @@
 // Project includes
 #include "define.hpp"
 #include "info.hpp"
+#include "connection.hpp"
 #include "data_communicator.hpp"
 
 namespace CoSimIO {
 namespace Internals {
 
 Info ConnectImpl(const Info& I_Settings, std::shared_ptr<DataCommunicator> I_DataComm);
+
+bool HasConnection(const std::string& rConnectionName);
+
+Connection& GetConnection(const std::string& rConnectionName);
+
+void RemoveConnection(const std::string& rConnectionName);
 
 } // namespace Internals
 } // namespace CoSimIO

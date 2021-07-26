@@ -11,7 +11,6 @@
 //
 
 // System includes
-#include <unordered_map>
 
 // Project includes
 #include "co_sim_io.hpp"
@@ -23,23 +22,6 @@
 // This file contains the implementation of the functions defined in "co_sim_io.hpp"
 
 namespace CoSimIO {
-
-namespace {
-// TODO make sure this is unique even across compilation units (test somehow)
-static std::unordered_map<std::string, std::unique_ptr<Internals::Connection>> s_co_sim_connections;
-
-bool HasIO(const std::string& rConnectionName)
-{
-    return s_co_sim_connections.find(rConnectionName) != s_co_sim_connections.end();
-}
-
-Internals::Connection& GetConnection(const std::string& rConnectionName)
-{
-    CO_SIM_IO_ERROR_IF_NOT(HasIO(rConnectionName)) << "Trying to use connection \"" << rConnectionName << "\" which does not exist!" << std::endl;
-    return *s_co_sim_connections.at(rConnectionName);
-}
-
-} // anonymous namespace
 
 Info Hello()
 {
@@ -71,10 +53,10 @@ Info Disconnect(const Info& I_Info)
 {
     using namespace Internals;
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    CO_SIM_IO_ERROR_IF_NOT(HasIO(connection_name)) << "Trying to disconnect connection \"" << connection_name << "\" which does not exist!" << std::endl;
+    CO_SIM_IO_ERROR_IF_NOT(HasConnection(connection_name)) << "Trying to disconnect connection \"" << connection_name << "\" which does not exist!" << std::endl;
 
     auto info = GetConnection(connection_name).Disconnect(I_Info);
-    s_co_sim_connections.erase(connection_name);
+    RemoveConnection(connection_name);
 
     return info;
 }
@@ -99,7 +81,7 @@ Info CO_SIM_IO_API ImportData(
     CoSimIO::Internals::DataContainer<double>& rData)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    return GetConnection(connection_name).ImportData(I_Info, rData);
+    return CoSimIO::Internals::GetConnection(connection_name).ImportData(I_Info, rData);
 }
 
 // Version for C++, there this input is a std::vector, which we have to wrap before passing it on
@@ -121,7 +103,7 @@ Info CO_SIM_IO_API ExportData(
     const CoSimIO::Internals::DataContainer<double>& rData)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    return GetConnection(connection_name).ExportData(I_Info, rData);
+    return CoSimIO::Internals::GetConnection(connection_name).ExportData(I_Info, rData);
 }
 
 Info ImportMesh(
@@ -129,7 +111,7 @@ Info ImportMesh(
     ModelPart& O_ModelPart)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    return CoSimIO::GetConnection(connection_name).ImportMesh(I_Info, O_ModelPart);
+    return CoSimIO::Internals::GetConnection(connection_name).ImportMesh(I_Info, O_ModelPart);
 }
 
 Info ExportMesh(
@@ -137,27 +119,27 @@ Info ExportMesh(
     const ModelPart& I_ModelPart)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    return CoSimIO::GetConnection(connection_name).ExportMesh(I_Info, I_ModelPart);
+    return CoSimIO::Internals::GetConnection(connection_name).ExportMesh(I_Info, I_ModelPart);
 }
 
 Info ImportInfo(
     const Info& I_Info)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    return GetConnection(connection_name).ImportInfo(I_Info);
+    return CoSimIO::Internals::GetConnection(connection_name).ImportInfo(I_Info);
 }
 
 Info ExportInfo(
     const Info& I_Info)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    return GetConnection(connection_name).ExportInfo(I_Info);
+    return CoSimIO::Internals::GetConnection(connection_name).ExportInfo(I_Info);
 }
 
 Info Run(const Info& I_Info)
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
-    return GetConnection(connection_name).Run(I_Info);
+    return CoSimIO::Internals::GetConnection(connection_name).Run(I_Info);
 }
 
 
@@ -168,7 +150,7 @@ Info CO_SIM_IO_API Register(
 {
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
     const std::string function_name = I_Info.Get<std::string>("function_name");
-    return GetConnection(connection_name).Register(function_name, I_FunctionPointer);
+    return CoSimIO::Internals::GetConnection(connection_name).Register(function_name, I_FunctionPointer);
 }
 
 template<>
@@ -184,7 +166,7 @@ Info CO_SIM_IO_API Register(
 
     const std::string connection_name = I_Info.Get<std::string>("connection_name");
     const std::string function_name = I_Info.Get<std::string>("function_name");
-    return GetConnection(connection_name).Register(function_name, fct_callback);
+    return CoSimIO::Internals::GetConnection(connection_name).Register(function_name, fct_callback);
 }
 
 } // namespace CoSimIO
