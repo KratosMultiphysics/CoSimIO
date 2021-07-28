@@ -35,7 +35,6 @@ public:
     virtual ~InfoDataBase() = default;
     virtual const void* GetData() const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
     virtual std::string GetDataTypeName() const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
-    virtual std::shared_ptr<InfoDataBase> Clone() const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
     virtual void Print(
         std::ostream& rOStream,
         const std::string& rPrefixString) const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
@@ -61,11 +60,6 @@ public:
     const void* GetData() const override
     {
         return &mData;
-    }
-
-    std::shared_ptr<InfoDataBase> Clone() const override
-    {
-        return std::make_shared<InfoData<TDataType>>(TDataType());
     }
 
     void Print(
