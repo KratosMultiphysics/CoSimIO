@@ -58,11 +58,13 @@ void Info::RegisterTypesInSerializer()
             static Internals::InfoData<double> info_data_double(1);
             static Internals::InfoData<bool> info_data_bool(1);
             static Internals::InfoData<std::string> info_data_string("");
+            static Internals::InfoData<Info> info_data_info(Info{});
 
-            CoSimIO::Internals::Serializer::Register("info_data_int", info_data_int);
-            CoSimIO::Internals::Serializer::Register("msInfoDataDouble", info_data_double);
-            CoSimIO::Internals::Serializer::Register("msInfoDataBool", info_data_bool);
-            CoSimIO::Internals::Serializer::Register("msInfoDataString", info_data_string);
+            CoSimIO::Internals::Serializer::Register("info_data_int",    info_data_int);
+            CoSimIO::Internals::Serializer::Register("info_data_double", info_data_double);
+            CoSimIO::Internals::Serializer::Register("info_data_bool",   info_data_bool);
+            CoSimIO::Internals::Serializer::Register("info_data_string", info_data_string);
+            CoSimIO::Internals::Serializer::Register("info_data_info",   info_data_info);
         // });
     }
 }
