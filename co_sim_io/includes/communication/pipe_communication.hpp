@@ -33,16 +33,12 @@ namespace { // helpers namespace
 } // helpers namespace
 
 
-class PipeCommunication : public Communication
+class CO_SIM_IO_API PipeCommunication : public Communication
 {
 public:
-    explicit PipeCommunication(const Info& I_Settings) : Communication(I_Settings)
-    {
-        mCommFolder = GetWorkingDirectory();
-        mCommFolder /= ".CoSimIOFileComm_" + GetConnectionName();
-        mPipeName = mCommInFolder ? mCommFolder / GetConnectionName() : fs::path(GetConnectionName());
-        mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", true);
-    }
+    PipeCommunication(
+        const Info& I_Settings,
+        std::shared_ptr<DataCommunicator> I_DataComm);
 
     ~PipeCommunication() override
     {
@@ -121,27 +117,27 @@ private:
 
     Info ImportInfoImpl(const Info& I_Info) override
     {
-        const std::string identifier = I_Info.Get<std::string>("identifier");
-        CheckEntry(identifier, "identifier");
+        // const std::string identifier = I_Info.Get<std::string>("identifier");
+        // CheckEntry(identifier, "identifier");
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import Info ..." << std::endl;
-
-
-        std::cout << "Receiving size ..." << std::endl;
-        std::size_t received_size = ReceiveSize();
-        std::cout << "received size: " << received_size << std::endl;
-        std::size_t received_size_2 = ReceiveSize();
-        std::cout << "received size 2: " << received_size_2 << std::endl;
+        // CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import Info ..." << std::endl;
 
 
-        std::vector<char> buffer(received_size);
-        // char buffer[25600];
-        std::cout << "BEFORE read (size: " << received_size << ")" << std::endl;
-        read(mPipe, buffer.data(), received_size);
-        std::cout << "Afterread" << std::endl;
+        // std::cout << "Receiving size ..." << std::endl;
+        // std::size_t received_size = ReceiveSize();
+        // std::cout << "received size: " << received_size << std::endl;
+        // std::size_t received_size_2 = ReceiveSize();
+        // std::cout << "received size 2: " << received_size_2 << std::endl;
 
-        std::stringstream conv_stream(std::string(buffer.begin(), buffer.end()));
-        std::cout << "Received info: " << conv_stream.str() << std::endl;
+
+        // std::vector<char> buffer(received_size);
+        // // char buffer[25600];
+        // std::cout << "BEFORE read (size: " << received_size << ")" << std::endl;
+        // read(mPipe, buffer.data(), received_size);
+        // std::cout << "Afterread" << std::endl;
+
+        // std::stringstream conv_stream(std::string(buffer.begin(), buffer.end()));
+        // std::cout << "Received info: " << conv_stream.str() << std::endl;
 
 
         // open pipe in readonly mode
@@ -178,48 +174,48 @@ private:
         // CheckStream(input_file, file_name);
 
         Info imported_info;
-        imported_info.Load(conv_stream);
+        // imported_info.Load(conv_stream);
 
-        std::cout << "The importted INFO: " << imported_info << std::endl;
+        // std::cout << "The importted INFO: " << imported_info << std::endl;
 
-        // input_file.close(); // TODO check return value?
-        // RemovePath(file_name);
+        // // input_file.close(); // TODO check return value?
+        // // RemovePath(file_name);
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing Info" << std::endl;
+        // CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing Info" << std::endl;
 
         return imported_info;
     }
 
     Info ExportInfoImpl(const Info& I_Info) override
     {
-        const std::string identifier = I_Info.Get<std::string>("identifier");
-        CheckEntry(identifier, "identifier");
+        // const std::string identifier = I_Info.Get<std::string>("identifier");
+        // CheckEntry(identifier, "identifier");
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export Info ..." << std::endl;
+        // CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export Info ..." << std::endl;
 
-        std::stringstream info_stream;
-        I_Info.Save(info_stream);
+        // std::stringstream info_stream;
+        // I_Info.Save(info_stream);
 
-        std::size_t sending_size = info_stream.str().length();
+        // std::size_t sending_size = info_stream.str().length();
 
-        std::cout << "sending size of: " << sending_size << std::endl;
-        SendSize(sending_size);
-        std::cout << "sending size of: " << 1234 << std::endl;
-        SendSize(1234);
+        // std::cout << "sending size of: " << sending_size << std::endl;
+        // SendSize(sending_size);
+        // std::cout << "sending size of: " << 1234 << std::endl;
+        // SendSize(1234);
 
 
-        std::cout << "BEFORE write (size: " << sending_size << ")" << std::endl;
-        write(mPipe, info_stream.str().c_str(), sending_size);
-        std::cout << "Afterwrite" << std::endl;
+        // std::cout << "BEFORE write (size: " << sending_size << ")" << std::endl;
+        // write(mPipe, info_stream.str().c_str(), sending_size);
+        // std::cout << "Afterwrite" << std::endl;
 
-        // open pipe in write mode
-        // int pipe;
-        // CO_SIM_IO_ERROR_IF((pipe = open(mPipeName.c_str(), O_WRONLY)) < 0) << "Pipe " << mPipeName << " could not be opened!" << std::endl;
+        // // open pipe in write mode
+        // // int pipe;
+        // // CO_SIM_IO_ERROR_IF((pipe = open(mPipeName.c_str(), O_WRONLY)) < 0) << "Pipe " << mPipeName << " could not be opened!" << std::endl;
 
-        // write(pipe, info_stream.str().c_str(), sending_size);
-        // close(pipe);
+        // // write(pipe, info_stream.str().c_str(), sending_size);
+        // // close(pipe);
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting Info " << std::endl;
+        // CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting Info " << std::endl;
 
         return Info(); // TODO use
     }
