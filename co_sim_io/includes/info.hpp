@@ -195,7 +195,7 @@ private:
             std::is_same<TDataType, bool>::value   ||
             std::is_same<TDataType, Info>::value   || // makes it recursive
             std::is_same<TDataType, std::string>::value,
-                "Only allowed types are double, int, bool, string");
+                "Only allowed types are double, int, bool, string, Info");
     }
 
     friend class CoSimIO::Internals::Serializer; // needs "CoSimIO::Internals::" because it is in different namespace
