@@ -14,10 +14,6 @@
 #define CO_SIM_IO_PIPE_COMMUNICATION_INCLUDED
 
 // System includes
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
 
 // Project includes
 #include "communication.hpp"
