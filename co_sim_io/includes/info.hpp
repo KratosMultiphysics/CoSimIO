@@ -35,7 +35,6 @@ public:
     virtual ~InfoDataBase() = default;
     virtual const void* GetData() const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
     virtual std::string GetDataTypeName() const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
-    virtual std::shared_ptr<InfoDataBase> Clone() const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
     virtual void Print(
         std::ostream& rOStream,
         const std::string& rPrefixString) const {CO_SIM_IO_ERROR << "This is the baseclass!" << std::endl;};
@@ -61,11 +60,6 @@ public:
     const void* GetData() const override
     {
         return &mData;
-    }
-
-    std::shared_ptr<InfoDataBase> Clone() const override
-    {
-        return std::make_shared<InfoData<TDataType>>(TDataType());
     }
 
     void Print(
@@ -195,7 +189,7 @@ private:
             std::is_same<TDataType, bool>::value   ||
             std::is_same<TDataType, Info>::value   || // makes it recursive
             std::is_same<TDataType, std::string>::value,
-                "Only allowed types are double, int, bool, string");
+                "Only allowed types are double, int, bool, string, Info");
     }
 
     friend class CoSimIO::Internals::Serializer; // needs "CoSimIO::Internals::" because it is in different namespace
