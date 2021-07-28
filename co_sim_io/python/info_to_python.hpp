@@ -23,7 +23,7 @@
 #include <pybind11/pybind11.h>
 
 // CoSimIO include
-#include "../co_sim_io.hpp"
+#include "co_sim_io.hpp"
 
 namespace {
 
@@ -59,6 +59,7 @@ void AddCoSimIOInfoToPython(pybind11::module& m)
     AddGetSetInterface<double>(py_info, "Double");
     AddGetSetInterface<bool>(py_info, "Bool");
     AddGetSetInterface<std::string>(py_info, "String");
+    AddGetSetInterface<Info>(py_info, "Info");
 }
 
 } // namespace CoSimIO

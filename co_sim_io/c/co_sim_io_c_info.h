@@ -14,15 +14,17 @@
 #define CO_SIM_IO_C_INFO_INCLUDED
 
 
+#include "define_c.h"
+
 typedef struct CoSimIO_Info
 {
     void* PtrCppInfo;
 } CoSimIO_Info;
 
 
-CoSimIO_Info CoSimIO_CreateInfo();
+CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_CreateInfo();
 
-CoSimIO_Info CoSimIO_CopyInfo(const CoSimIO_Info I_Info);
+CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_CopyInfo(const CoSimIO_Info I_Info);
 
 int CoSimIO_FreeInfo(CoSimIO_Info I_Info);
 

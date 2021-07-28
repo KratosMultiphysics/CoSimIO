@@ -14,7 +14,10 @@
 extern "C" {
 #include "co_sim_io_c.h"
 }
-#include "../co_sim_io.hpp"
+#include "co_sim_io.hpp"
+#include "includes/connection.hpp"
+#include "includes/data_container.hpp"
+#include "includes/utilities.hpp"
 
 namespace {
     // get C Info from C++ Info
@@ -290,7 +293,7 @@ double CoSimIO_Node_Z(CoSimIO_Node I_Node)
 
 double CoSimIO_Node_Coordinate(CoSimIO_Node I_Node, const int I_Index)
 {
-    // add debug error if I_Index is out of bound (admissible values: 0,1,2)
+    // TODO add debug error if I_Index is out of bound (admissible values: 0,1,2)
     return static_cast<CoSimIO::Node*>(I_Node.PtrCppNode)->Coordinates()[I_Index];
 }
 
@@ -351,6 +354,11 @@ CoSimIO_Element CoSimIO_ModelPart_GetElementById(CoSimIO_ModelPart I_ModelPart, 
     CoSimIO_Element elem;
     elem.PtrCppElement = &cpp_elem;
     return elem;
+}
+
+void CoSimIO_ModelPart_Clear(CoSimIO_ModelPart I_ModelPart)
+{
+    static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->Clear();
 }
 
 

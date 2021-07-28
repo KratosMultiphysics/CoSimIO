@@ -18,13 +18,19 @@
 #include <string>
 #include <tuple>
 
+// External includes
+#include "intrusive_ptr/intrusive_ptr.hpp"
+
 // pybind includes
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/numpy.h>
 
+// must be done before CoSimIO includes
+PYBIND11_DECLARE_HOLDER_TYPE(T, CoSimIO::intrusive_ptr<T>)
+
 // CoSimIO includes
-#include "../co_sim_io.hpp"
+#include "co_sim_io.hpp"
 #include "info_to_python.hpp"
 #include "model_part_to_python.hpp"
 #include "vector_to_python.hpp"

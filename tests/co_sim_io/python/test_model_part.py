@@ -241,6 +241,29 @@ class CoSimIO_ModelPart(unittest.TestCase):
             with self.assertRaisesRegex(Exception, 'Error: Element with Id 7 does not exist!'):
                 model_part.GetElement(elem_id+1)
 
+    def test_model_part_clear(self):
+        model_part = CoSimIO.ModelPart("for_test")
+
+        node_ids = [2, 159, 61]
+        node_coords = [1.0, -2.7, 9.44]
+        model_part.CreateNewNode(node_ids[0], node_coords[0], node_coords[1], node_coords[2])
+        model_part.CreateNewNode(node_ids[1], node_coords[1], node_coords[2], node_coords[0])
+        model_part.CreateNewNode(node_ids[2], node_coords[2], node_coords[0], node_coords[1])
+
+        model_part.CreateNewElement(15, CoSimIO.ElementType.Point2D, [node_ids[0]])
+        model_part.CreateNewElement(188, CoSimIO.ElementType.Line2D2, [node_ids[0], node_ids[1]])
+        model_part.CreateNewElement(161, CoSimIO.ElementType.Triangle2D3, [node_ids[0], node_ids[2], node_ids[1]])
+        model_part.CreateNewElement(16, CoSimIO.ElementType.Point3D, [node_ids[0]])
+
+        self.assertEqual(model_part.NumberOfNodes(), 3)
+        self.assertEqual(model_part.NumberOfElements(), 4)
+
+        # remove all Nodes and Elements
+        model_part.Clear()
+
+        self.assertEqual(model_part.NumberOfNodes(), 0)
+        self.assertEqual(model_part.NumberOfElements(), 0)
+
     def test_print_model_part(self):
         model_part = CoSimIO.ModelPart("for_test")
 

@@ -24,7 +24,7 @@
 #include <pybind11/stl.h>
 
 // CoSimIO include
-#include "../impl/model_part.hpp"
+#include "includes/model_part.hpp"
 
 namespace CoSimIO {
 
@@ -73,6 +73,7 @@ void AddCoSimIOModelPartToPython(pybind11::module& m)
         .def_property_readonly("Elements", [](CoSimIO::ModelPart& I_ModelPart) {
             return py::make_iterator(I_ModelPart.ElementsBegin(), I_ModelPart.ElementsEnd());
             }, py::keep_alive<0, 1>()) /* Keep vector alive while iterator is used */
+        .def("Clear", &CoSimIO::ModelPart::Clear)
         .def("__str__",   [](const CoSimIO::ModelPart& I_ModelPart)
             { std::stringstream ss; ss << I_ModelPart; return ss.str(); } )
         ;

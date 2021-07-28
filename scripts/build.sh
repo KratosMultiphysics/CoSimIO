@@ -2,11 +2,16 @@
 
 # rm -r build/
 
+# export CXX=icpc
+# export CC=icc
+
+# export CXX=clang++-10
+# export CC=clang-10
+
 cmake -H"." -B"build" \
-    -DBUILD_C=ON \
-    -DBUILD_PYTHON=ON \
-    -DBUILD_FORTRAN=OFF \
-    -DENABLE_SOCKETS=OFF \
-    -DENABLE_MPI=OFF \
-    -DCMAKE_BUILD_TYPE=Debug
+    -DCO_SIM_IO_BUILD_C=ON \
+    -DCO_SIM_IO_BUILD_PYTHON=ON \
+    -DCO_SIM_IO_ENABLE_MPI=ON \
+    -DCMAKE_BUILD_TYPE=DEBUG \
+    -DCO_SIM_IO_STRICT_COMPILER=ON
 cmake --build "build" --target install -- -j$(nproc)
