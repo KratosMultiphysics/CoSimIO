@@ -31,6 +31,16 @@ bool ControlOtherCode(const std::string& I_FunctionName)
 
     ctrl_info.Set("control_signal", I_FunctionName);
 
+    // give some additional information when doing Import/Export
+    if (I_FunctionName == "ImportMesh" ||
+        I_FunctionName == "ExportMesh" ||
+        I_FunctionName == "ImportData" ||
+        I_FunctionName == "ExportData") {
+        CoSimIO::Info sub_settings;
+        sub_settings.Set("identifier", I_FunctionName);
+        ctrl_info.Set("settings", sub_settings); // must be named "settings"!
+    }
+
     CoSimIO::ExportInfo(ctrl_info); // here we tell the other code which function to call
 
     // this is for testing to make sure the function
@@ -39,6 +49,20 @@ bool ControlOtherCode(const std::string& I_FunctionName)
     import_info.Set("connection_name", s_connection_name);
     import_info.Set("identifier", "info_for_test");
     auto check_info = CoSimIO::ImportInfo(import_info);
+
+    if (I_FunctionName == "ImportMesh" ||
+        I_FunctionName == "ExportMesh" ||
+        I_FunctionName == "ImportData" ||
+        I_FunctionName == "ExportData") {
+        if (!check_info.Has("identifier_control")) {
+            std::cout << "ERROR: runner.cpp: missing \"identifier_control\"!" << std::endl;
+            return false;
+        }
+        if (check_info.Get<std::string>("identifier_control") != I_FunctionName) {
+            std::cout << "ERROR: runner.cpp: wrong \"identifier_control\"! Expected: " << I_FunctionName << ", got: " << check_info.Get<std::string>("identifier_control") << std::endl;
+            return false;
+        }
+    }
 
     return check_info.Get<std::string>("name_for_check") == I_FunctionName;
 }
