@@ -19,82 +19,90 @@ s_connection_name = ""
 
 def AdvanceInTime(info):
     settings = CoSimIO.Info()
-    info.SetString("connection_name", s_connection_name)
-    info.SetString("identifier", "info_for_test")
-    info.SetString("name_for_check", "AdvanceInTime")
-    CoSimIO.ExportInfo(info)
+    settings.SetString("connection_name", s_connection_name)
+    settings.SetString("identifier", "info_for_test")
+    settings.SetString("name_for_check", "AdvanceInTime")
+    CoSimIO.ExportInfo(settings)
     return CoSimIO.Info()
 
 def InitializeSolutionStep(info):
     settings = CoSimIO.Info()
-    info.SetString("connection_name", s_connection_name)
-    info.SetString("identifier", "info_for_test")
-    info.SetString("name_for_check", "InitializeSolutionStep")
-    CoSimIO.ExportInfo(info)
+    settings.SetString("connection_name", s_connection_name)
+    settings.SetString("identifier", "info_for_test")
+    settings.SetString("name_for_check", "InitializeSolutionStep")
+    CoSimIO.ExportInfo(settings)
     return CoSimIO.Info()
 
 def Predict(info):
     settings = CoSimIO.Info()
-    info.SetString("connection_name", s_connection_name)
-    info.SetString("identifier", "info_for_test")
-    info.SetString("name_for_check", "Predict")
-    CoSimIO.ExportInfo(info)
+    settings.SetString("connection_name", s_connection_name)
+    settings.SetString("identifier", "info_for_test")
+    settings.SetString("name_for_check", "Predict")
+    CoSimIO.ExportInfo(settings)
     return CoSimIO.Info()
 
 def SolveSolutionStep(info):
     settings = CoSimIO.Info()
-    info.SetString("connection_name", s_connection_name)
-    info.SetString("identifier", "info_for_test")
-    info.SetString("name_for_check", "SolveSolutionStep")
-    CoSimIO.ExportInfo(info)
+    settings.SetString("connection_name", s_connection_name)
+    settings.SetString("identifier", "info_for_test")
+    settings.SetString("name_for_check", "SolveSolutionStep")
+    CoSimIO.ExportInfo(settings)
     return CoSimIO.Info()
 
 def FinalizeSolutionStep(info):
     settings = CoSimIO.Info()
-    info.SetString("connection_name", s_connection_name)
-    info.SetString("identifier", "info_for_test")
-    info.SetString("name_for_check", "FinalizeSolutionStep")
-    CoSimIO.ExportInfo(info)
+    settings.SetString("connection_name", s_connection_name)
+    settings.SetString("identifier", "info_for_test")
+    settings.SetString("name_for_check", "FinalizeSolutionStep")
+    CoSimIO.ExportInfo(settings)
     return CoSimIO.Info()
 
 def OutputSolutionStep(info):
     settings = CoSimIO.Info()
-    info.SetString("connection_name", s_connection_name)
-    info.SetString("identifier", "info_for_test")
-    info.SetString("name_for_check", "OutputSolutionStep")
-    CoSimIO.ExportInfo(info)
+    settings.SetString("connection_name", s_connection_name)
+    settings.SetString("identifier", "info_for_test")
+    settings.SetString("name_for_check", "OutputSolutionStep")
+    CoSimIO.ExportInfo(settings)
     return CoSimIO.Info()
 
 def ImportData(info):
     settings = CoSimIO.Info()
-    info.SetString("connection_name", s_connection_name)
-    info.SetString("identifier", "info_for_test")
-    info.SetString("name_for_check", "ImportData")
-    CoSimIO.ExportInfo(info)
+    settings.SetString("connection_name", s_connection_name)
+    settings.SetString("identifier", "info_for_test")
+    settings.SetString("name_for_check", "ImportData")
+    if (info.Has("identifier")):
+        settings.SetString("identifier_control", info.GetString("identifier"))
+    CoSimIO.ExportInfo(settings)
     return CoSimIO.Info()
 
 def ExportData(info):
     settings = CoSimIO.Info()
-    info.SetString("connection_name", s_connection_name)
-    info.SetString("identifier", "info_for_test")
-    info.SetString("name_for_check", "ExportData")
-    CoSimIO.ExportInfo(info)
+    settings.SetString("connection_name", s_connection_name)
+    settings.SetString("identifier", "info_for_test")
+    settings.SetString("name_for_check", "ExportData")
+    if (info.Has("identifier")):
+        settings.SetString("identifier_control", info.GetString("identifier"))
+    CoSimIO.ExportInfo(settings)
     return CoSimIO.Info()
 
 def ImportMesh(info):
     settings = CoSimIO.Info()
-    info.SetString("connection_name", s_connection_name)
-    info.SetString("identifier", "info_for_test")
-    info.SetString("name_for_check", "ImportMesh")
-    CoSimIO.ExportInfo(info)
+    settings.SetString("connection_name", s_connection_name)
+    settings.SetString("identifier", "info_for_test")
+    settings.SetString("name_for_check", "ImportMesh")
+    if (info.Has("identifier")):
+        settings.SetString("identifier_control", info.GetString("identifier"))
+    CoSimIO.ExportInfo(settings)
     return CoSimIO.Info()
 
 def ExportMesh(info):
     settings = CoSimIO.Info()
-    info.SetString("connection_name", s_connection_name)
-    info.SetString("identifier", "info_for_test")
-    info.SetString("name_for_check", "ExportMesh")
-    CoSimIO.ExportInfo(info)
+    settings.SetString("connection_name", s_connection_name)
+    settings.SetString("identifier", "info_for_test")
+    settings.SetString("name_for_check", "ExportMesh")
+    if (info.Has("identifier")):
+        settings.SetString("identifier_control", info.GetString("identifier"))
+    CoSimIO.ExportInfo(settings)
     return CoSimIO.Info()
 
 # Connection Settings
