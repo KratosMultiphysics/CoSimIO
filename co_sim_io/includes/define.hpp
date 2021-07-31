@@ -101,6 +101,11 @@ intrusive_ptr<C> make_intrusive(Args &&...args) {
     return intrusive_ptr<C>(new C(std::forward<Args>(args)...));
 }
 
+// OS detection
+#if defined(_WIN32)
+    #define CO_SIM_IO_COMPILED_IN_WINDOWS
+#endif
+
 // Logging macros
 #define CO_SIM_IO_INFO(label) std::cout << label << ": "
 #define CO_SIM_IO_INFO_IF(label, conditional) if (conditional) CO_SIM_IO_INFO(label)
