@@ -351,7 +351,7 @@ fs::path FileCommunication::GetFileName(const fs::path& rPath, const std::string
     CO_SIM_IO_TRY
 
     fs::path local_copy(rPath);
-    local_copy += "_" + std::to_string((mFileIndex++)%100) + "." + rExtension;
+    local_copy += "." + rExtension;
 
     if (mCommInFolder) {
         return mCommFolder / local_copy;

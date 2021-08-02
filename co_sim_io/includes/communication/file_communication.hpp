@@ -35,7 +35,6 @@ private:
 
     fs::path mCommFolder;
     bool mCommInFolder = true;
-    mutable int mFileIndex = 0;
 
     Info ConnectDetail(const Info& I_Info) override;
 
