@@ -117,17 +117,17 @@ void Communication::PerformCompatibilityCheck()
     my_info.Set("version_patch", GetPatchVersion());
     my_info.Set<bool>("primary_was_explicitly_specified", mPrimaryWasExplicitlySpecified);
 
-    my_info.Set("identifier", "compatibility_checks");
-
     if (GetIsPrimaryConnection()) {
+        my_info.Set("identifier", "compatibility_checks_1");
         ExportInfo(my_info);
         CoSimIO::Info partner_import_info;
-        partner_import_info.Set("identifier", "compatibility_checks");
+        partner_import_info.Set("identifier", "compatibility_checks_2");
         partner_info = ImportInfo(partner_import_info);
     } else {
         CoSimIO::Info partner_import_info;
-        partner_import_info.Set("identifier", "compatibility_checks");
+        partner_import_info.Set("identifier", "compatibility_checks_1");
         partner_info = ImportInfo(partner_import_info);
+        my_info.Set("identifier", "compatibility_checks_2");
         ExportInfo(my_info);
     }
 
