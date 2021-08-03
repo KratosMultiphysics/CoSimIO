@@ -85,12 +85,29 @@ protected:
     bool GetPrintTiming() const           {return mPrintTiming;}
     bool GetIsConnected() const           {return mIsConnected;}
 
+    fs::path GetTempFileName(const fs::path& rPath) const;
+
+    fs::path GetFileName(const fs::path& rPath, const std::string& rExtension) const;
+
+    void WaitForPath(const fs::path& rPath) const;
+
+    void WaitUntilFileIsRemoved(const fs::path& rPath) const;
+
+    void MakeFileVisible(const fs::path& rPath) const;
+
+    void RemovePath(const fs::path& rPath) const;
+
+    void ExchangeSyncFileWithPartner(const std::string& rIdentifier) const;
+
 private:
     std::shared_ptr<DataCommunicator> mpDataComm;
 
     std::string mConnectionName;
     std::string mMyName;
     std::string mConnectTo;
+
+    fs::path mCommFolder;
+    bool mCommInFolder = true;
 
     fs::path mWorkingDirectory;
     int mEchoLevel = 1;
@@ -105,8 +122,8 @@ private:
     }
 
     // new interface, functions return Info
-    virtual Info ConnectDetail(const Info& I_Info) = 0;
-    virtual Info DisconnectDetail(const Info& I_Info) = 0;
+    virtual Info ConnectDetail(const Info& I_Info);
+    virtual Info DisconnectDetail(const Info& I_Info);
 
     virtual Info ImportInfoImpl(const Info& I_Info)
     {
