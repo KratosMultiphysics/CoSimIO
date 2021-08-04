@@ -12,17 +12,10 @@
 
 // System includes
 #include <chrono>
-#include <thread>
-#include <fstream>
-#include <iomanip>
-#include <limits>
-#include <system_error>
-#include <unordered_map>
 
 // Project includes
 #include "includes/communication/file_communication.hpp"
 #include "includes/utilities.hpp"
-#include "includes/vtk_utilities.hpp"
 #include "includes/file_serializer.hpp"
 
 namespace CoSimIO {
@@ -58,13 +51,6 @@ FileCommunication::FileCommunication(
     std::shared_ptr<DataCommunicator> I_DataComm)
     : Communication(I_Settings, I_DataComm)
 {
-    CO_SIM_IO_TRY
-
-    mCommFolder = GetWorkingDirectory();
-    mCommFolder /= ".CoSimIOFileComm_" + GetConnectionName();
-    mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", true);
-
-    CO_SIM_IO_CATCH
 }
 
 FileCommunication::~FileCommunication()
@@ -75,89 +61,6 @@ FileCommunication::~FileCommunication()
         CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not performed, attempting automatic disconnection!" << std::endl;
         Info tmp;
         Disconnect(tmp);
-    }
-
-    CO_SIM_IO_CATCH
-}
-
-Info FileCommunication::ConnectDetail(const Info& I_Info)
-{
-    CO_SIM_IO_TRY
-
-    if (mCommInFolder) {
-        if (GetIsPrimaryConnection()) {
-            // delete and recreate directory to remove potential leftovers
-            std::error_code ec;
-            fs::remove_all(mCommFolder, ec);
-            if (ec) {
-                CO_SIM_IO_INFO("CoSimIO") << "Warning, communication directory (" << mCommFolder << ")could not be deleted!\nError code: " << ec.message() << std::endl;
-            }
-            if (!fs::exists(mCommFolder)) {
-                fs::create_directory(mCommFolder);
-            }
-        }
-    }
-
-    ExchangeSyncFileWithPartner("connect");
-
-    Info info;
-    info.Set("is_connected", true);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
-Info FileCommunication::DisconnectDetail(const Info& I_Info)
-{
-    CO_SIM_IO_TRY
-
-    ExchangeSyncFileWithPartner("disconnect");
-
-    if (mCommInFolder && GetIsPrimaryConnection()) {
-        // delete directory to remove potential leftovers
-        std::error_code ec;
-        fs::remove_all(mCommFolder, ec);
-        if (ec) {
-            CO_SIM_IO_INFO("CoSimIO") << "Warning, communication directory (" << mCommFolder << ")could not be deleted!\nError code: " << ec.message() << std::endl;
-        }
-    }
-
-    Info info;
-    info.Set("is_connected", false);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
-void FileCommunication::ExchangeSyncFileWithPartner(const std::string& rIdentifier) const
-{
-    CO_SIM_IO_TRY
-
-    const fs::path file_name_primary(GetFileName("CoSimIO_primary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
-    const fs::path file_name_secondary(GetFileName("CoSimIO_secondary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
-
-    if (GetIsPrimaryConnection()) {
-        std::ofstream sync_file;
-        sync_file.open(GetTempFileName(file_name_primary));
-        sync_file.close();
-        CO_SIM_IO_ERROR_IF_NOT(fs::exists(GetTempFileName(file_name_primary))) << "Primary sync file " << file_name_primary << " could not be created!" << std::endl;
-        MakeFileVisible(file_name_primary);
-
-        WaitForPath(file_name_secondary);
-        RemovePath(file_name_secondary);
-
-        WaitUntilFileIsRemoved(file_name_primary);
-    } else {
-        WaitForPath(file_name_primary);
-        RemovePath(file_name_primary);
-
-        std::ofstream sync_file;
-        sync_file.open(GetTempFileName(file_name_secondary));
-        sync_file.close();
-        CO_SIM_IO_ERROR_IF_NOT(fs::exists(GetTempFileName(file_name_secondary))) << "Secondary sync file " << file_name_secondary << " could not be created!" << std::endl;
-        MakeFileVisible(file_name_secondary);
-
-        WaitUntilFileIsRemoved(file_name_secondary);
     }
 
     CO_SIM_IO_CATCH
@@ -329,92 +232,6 @@ Info FileCommunication::ExportMeshImpl(
     CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Mesh \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
 
     return Info(); // TODO use
-
-    CO_SIM_IO_CATCH
-}
-
-fs::path FileCommunication::GetTempFileName(const fs::path& rPath) const
-{
-    CO_SIM_IO_TRY
-
-    if (mCommInFolder) {
-        return rPath.string().insert(mCommFolder.string().length()+1, ".");
-    } else {
-        return "." + rPath.string();
-    }
-
-    CO_SIM_IO_CATCH
-}
-
-fs::path FileCommunication::GetFileName(const fs::path& rPath, const std::string& rExtension) const
-{
-    CO_SIM_IO_TRY
-
-    fs::path local_copy(rPath);
-    local_copy += "." + rExtension;
-
-    if (mCommInFolder) {
-        return mCommFolder / local_copy;
-    } else {
-        return local_copy;
-    }
-
-    CO_SIM_IO_CATCH
-}
-
-void FileCommunication::WaitForPath(const fs::path& rPath) const
-{
-    CO_SIM_IO_TRY
-
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << std::endl;
-    while(!fs::exists(rPath)) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
-    }
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found: " << rPath << std::endl;
-
-    CO_SIM_IO_CATCH
-}
-
-void FileCommunication::WaitUntilFileIsRemoved(const fs::path& rPath) const
-{
-    CO_SIM_IO_TRY
-
-    if (fs::exists(rPath)) { // only issue the wating message if the file exists initially
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << " to be removed" << std::endl;
-        while(fs::exists(rPath)) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
-        }
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << rPath << " was removed" << std::endl;
-    }
-
-    CO_SIM_IO_CATCH
-}
-
-void FileCommunication::MakeFileVisible(const fs::path& rPath) const
-{
-    CO_SIM_IO_TRY
-
-    std::error_code ec;
-    fs::rename(GetTempFileName(rPath), rPath, ec);
-    CO_SIM_IO_ERROR_IF(ec) << rPath << " could not be made visible!\nError code: " << ec.message() << std::endl;
-
-    CO_SIM_IO_CATCH
-}
-
-void FileCommunication::RemovePath(const fs::path& rPath) const
-{
-    CO_SIM_IO_TRY
-
-    // In windows the file cannot be removed if another file handle is using it
-    // this can be the case here if the partner checks if the file (still) exists
-    // hence we try multiple times to delete it
-    std::error_code ec;
-    for (std::size_t i=0; i<5; ++i) {
-        if (fs::remove(rPath, ec)) {
-            return; // if file could be removed succesfully then return
-        }
-    }
-    CO_SIM_IO_ERROR << rPath << " could not be deleted!\nError code: " << ec.message() << std::endl;
 
     CO_SIM_IO_CATCH
 }
