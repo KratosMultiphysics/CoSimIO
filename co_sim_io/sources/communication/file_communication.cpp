@@ -12,15 +12,12 @@
 
 // System includes
 #include <chrono>
-#include <fstream>
-#include <iomanip>
 #include <limits>
 #include <unordered_map>
 
 // Project includes
 #include "includes/communication/file_communication.hpp"
 #include "includes/utilities.hpp"
-#include "includes/vtk_utilities.hpp"
 #include "includes/file_serializer.hpp"
 
 namespace CoSimIO {
