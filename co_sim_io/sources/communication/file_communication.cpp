@@ -12,8 +12,6 @@
 
 // System includes
 #include <chrono>
-#include <limits>
-#include <unordered_map>
 
 // Project includes
 #include "includes/communication/file_communication.hpp"
