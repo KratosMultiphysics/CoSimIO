@@ -17,7 +17,6 @@
 
 // Project includes
 #include "communication.hpp"
-#include "../filesystem_inc.hpp"
 
 namespace CoSimIO {
 namespace Internals {
