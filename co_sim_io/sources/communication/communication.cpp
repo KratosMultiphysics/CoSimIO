@@ -16,6 +16,7 @@
 
 // Project includes
 #include "includes/communication/communication.hpp"
+#include "includes/file_serializer.hpp"
 #include "includes/utilities.hpp"
 #include "includes/version.hpp"
 
@@ -292,18 +293,33 @@ void Communication::PerformCompatibilityCheck()
     my_info.Set("version_patch", GetPatchVersion());
     my_info.Set<bool>("primary_was_explicitly_specified", mPrimaryWasExplicitlySpecified);
 
+    const fs::path file_name_p2s(GetFileName("CoSimIO_" + GetConnectionName() + "_compatibility_check_primary_to_secondary", "dat"));
+    const fs::path file_name_s2p(GetFileName("CoSimIO_" + GetConnectionName() + "_compatibility_check_secondary_to_primary", "dat"));
+
+    auto exchange_data_for_compatibility_check = [this, &my_info, &partner_info](
+        const fs::path& rMyFileName, const fs::path& rOtherFileName){
+
+        // first export my info
+        WaitUntilFileIsRemoved(rMyFileName); // in case of leftovers
+
+        FileSerializer serializer_save(GetTempFileName(rMyFileName).string(), Serializer::TraceType::SERIALIZER_TRACE_ERROR); // check if NO_TRACE can be used
+        serializer_save.save("info", my_info);
+
+        MakeFileVisible(rMyFileName);
+
+        // now get the info from the other
+        WaitForPath(rOtherFileName);
+
+        FileSerializer serializer_load(rOtherFileName.string(), Serializer::TraceType::SERIALIZER_TRACE_ERROR); // check if NO_TRACE can be used
+        serializer_load.load("info", partner_info);
+
+        RemovePath(rOtherFileName);
+    };
+
     if (GetIsPrimaryConnection()) {
-        my_info.Set("identifier", "compatibility_checks_1");
-        ExportInfo(my_info);
-        CoSimIO::Info partner_import_info;
-        partner_import_info.Set("identifier", "compatibility_checks_2");
-        partner_info = ImportInfo(partner_import_info);
+        exchange_data_for_compatibility_check(file_name_p2s, file_name_s2p);
     } else {
-        CoSimIO::Info partner_import_info;
-        partner_import_info.Set("identifier", "compatibility_checks_1");
-        partner_info = ImportInfo(partner_import_info);
-        my_info.Set("identifier", "compatibility_checks_2");
-        ExportInfo(my_info);
+        exchange_data_for_compatibility_check(file_name_s2p, file_name_p2s);
     }
 
     // perform checks for compatibility
