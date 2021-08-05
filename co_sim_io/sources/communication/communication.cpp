@@ -16,6 +16,7 @@
 
 // Project includes
 #include "includes/communication/communication.hpp"
+#include "includes/file_serializer.hpp"
 #include "includes/utilities.hpp"
 #include "includes/version.hpp"
 
@@ -66,16 +67,19 @@ Info Communication::Connect(const Info& I_Info)
 
     CO_SIM_IO_ERROR_IF(mIsConnected) << "A connection was already established!" << std::endl;
 
+    BaseConnectDetail(I_Info);
+
+    PerformCompatibilityCheck();
+
     Info connect_detail_info = ConnectDetail(I_Info);
-    mIsConnected = connect_detail_info.Get<bool>("is_connected");
+    mIsConnected = true;
+    connect_detail_info.Set<bool>("is_connected", true);
     connect_detail_info.Set<int>("connection_status", ConnectionStatus::Connected);
     connect_detail_info.Set<std::string>("working_directory", mWorkingDirectory.string());
 
     CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "Connection was not successful!" << std::endl;
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Connection established" << std::endl;
-
-    PerformCompatibilityCheck();
 
     return connect_detail_info;
 
@@ -90,7 +94,10 @@ Info Communication::Disconnect(const Info& I_Info)
 
     if (mIsConnected) {
         Info disconnect_detail_info = DisconnectDetail(I_Info);
-        mIsConnected = disconnect_detail_info.Get<bool>("is_connected");
+        mIsConnected = false;
+        disconnect_detail_info.Set<bool>("is_connected", false);
+
+        BaseDisconnectDetail(I_Info);
 
         if (mIsConnected) {
             CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not successful!" << std::endl;
@@ -112,7 +119,7 @@ Info Communication::Disconnect(const Info& I_Info)
     CO_SIM_IO_CATCH
 }
 
-Info Communication::ConnectDetail(const Info& I_Info)
+void Communication::BaseConnectDetail(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
@@ -132,14 +139,10 @@ Info Communication::ConnectDetail(const Info& I_Info)
 
     ExchangeSyncFileWithPartner("connect");
 
-    Info info;
-    info.Set("is_connected", true);
-    return info;
-
     CO_SIM_IO_CATCH
 }
 
-Info Communication::DisconnectDetail(const Info& I_Info)
+void Communication::BaseDisconnectDetail(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
@@ -153,10 +156,6 @@ Info Communication::DisconnectDetail(const Info& I_Info)
             CO_SIM_IO_INFO("CoSimIO") << "Warning, communication directory (" << mCommFolder << ")could not be deleted!\nError code: " << ec.message() << std::endl;
         }
     }
-
-    Info info;
-    info.Set("is_connected", false);
-    return info;
 
     CO_SIM_IO_CATCH
 }
@@ -292,18 +291,37 @@ void Communication::PerformCompatibilityCheck()
     my_info.Set("version_patch", GetPatchVersion());
     my_info.Set<bool>("primary_was_explicitly_specified", mPrimaryWasExplicitlySpecified);
 
+    const fs::path file_name_p2s(GetFileName("CoSimIO_" + GetConnectionName() + "_compatibility_check_primary_to_secondary", "dat"));
+    const fs::path file_name_s2p(GetFileName("CoSimIO_" + GetConnectionName() + "_compatibility_check_secondary_to_primary", "dat"));
+
+    auto exchange_data_for_compatibility_check = [this, &my_info, &partner_info](
+        const fs::path& rMyFileName, const fs::path& rOtherFileName){
+
+        // first export my info
+        WaitUntilFileIsRemoved(rMyFileName); // in case of leftovers
+
+        { // necessary as FileSerializer releases resources on destruction!
+            FileSerializer serializer_save(GetTempFileName(rMyFileName).string());
+            serializer_save.save("info", my_info);
+        }
+
+        MakeFileVisible(rMyFileName);
+
+        // now get the info from the other
+        WaitForPath(rOtherFileName);
+
+        { // necessary as FileSerializer releases resources on destruction!
+            FileSerializer serializer_load(rOtherFileName.string());
+            serializer_load.load("info", partner_info);
+        }
+
+        RemovePath(rOtherFileName);
+    };
+
     if (GetIsPrimaryConnection()) {
-        my_info.Set("identifier", "compatibility_checks_1");
-        ExportInfo(my_info);
-        CoSimIO::Info partner_import_info;
-        partner_import_info.Set("identifier", "compatibility_checks_2");
-        partner_info = ImportInfo(partner_import_info);
+        exchange_data_for_compatibility_check(file_name_p2s, file_name_s2p);
     } else {
-        CoSimIO::Info partner_import_info;
-        partner_import_info.Set("identifier", "compatibility_checks_1");
-        partner_info = ImportInfo(partner_import_info);
-        my_info.Set("identifier", "compatibility_checks_2");
-        ExportInfo(my_info);
+        exchange_data_for_compatibility_check(file_name_s2p, file_name_p2s);
     }
 
     // perform checks for compatibility

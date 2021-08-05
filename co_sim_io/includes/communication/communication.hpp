@@ -122,8 +122,10 @@ private:
     }
 
     // new interface, functions return Info
-    virtual Info ConnectDetail(const Info& I_Info);
-    virtual Info DisconnectDetail(const Info& I_Info);
+    virtual void BaseConnectDetail(const Info& I_Info);
+    virtual void BaseDisconnectDetail(const Info& I_Info);
+    virtual Info ConnectDetail(const Info& I_Info){return Info();}
+    virtual Info DisconnectDetail(const Info& I_Info){return Info();}
 
     virtual Info ImportInfoImpl(const Info& I_Info)
     {
