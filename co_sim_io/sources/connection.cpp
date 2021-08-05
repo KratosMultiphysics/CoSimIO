@@ -64,8 +64,8 @@ Info Connection::Run(const Info& I_Info)
     CoSimIO::Info ctrl_info;
     ctrl_info.Set("identifier", "run_control");
 
-    while(true) {
-        auto info = ImportInfo(ctrl_info);
+    while (true) {
+        CoSimIO::Info info = ImportInfo(ctrl_info);
         const std::string control_signal = info.Get<std::string>("control_signal");
         CheckIfNameIsValid(control_signal);
         if (control_signal == "exit") {
@@ -81,8 +81,7 @@ Info Connection::Run(const Info& I_Info)
                 err_msg << "\n    end" << std::endl;
                 CO_SIM_IO_ERROR << err_msg.str();
             }
-            Info info;
-            it_fct->second(info);
+            it_fct->second(info.Get<Info>("settings", Info{})); // pass settings if specified
         }
     }
     return Info(); // TODO use this

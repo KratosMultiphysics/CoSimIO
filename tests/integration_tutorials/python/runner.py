@@ -29,6 +29,15 @@ def control_other_code(function_name):
 
     ctrl_info.SetString("control_signal", function_name)
 
+    # give some additional information when doing Import/Export
+    if (function_name == "ImportMesh" or
+        function_name == "ExportMesh" or
+        function_name == "ImportData" or
+        function_name == "ExportData"):
+        sub_settings = CoSimIO.Info()
+        sub_settings.SetString("identifier", function_name)
+        ctrl_info.SetInfo("settings", sub_settings) # must be named "settings"!
+
     CoSimIO.ExportInfo(ctrl_info) # here we tell the other code which function to call
 
     # this is for testing to make sure the function
@@ -37,6 +46,18 @@ def control_other_code(function_name):
     import_info.SetString("connection_name", s_connection_name)
     import_info.SetString("identifier", "info_for_test")
     check_info = CoSimIO.ImportInfo(import_info)
+
+    if (function_name == "ImportMesh" or
+        function_name == "ExportMesh" or
+        function_name == "ImportData" or
+        function_name == "ExportData"):
+        if (not check_info.Has("identifier_control")):
+            print("ERROR: runner.py: missing \"identifier_control\"!")
+            return False
+
+        if (check_info.GetString("identifier_control") != function_name):
+            print("ERROR: runner.py: wrong \"identifier_control\"! Expected:", function_name, ", got:", check_info.GetString("identifier_control"))
+            return False
 
     return check_info.GetString("name_for_check") == function_name
 

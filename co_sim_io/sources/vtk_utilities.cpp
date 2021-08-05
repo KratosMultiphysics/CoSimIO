@@ -12,7 +12,9 @@
 
 // System includes
 #include <map>
+#include <unordered_map>
 #include <iomanip>
+#include <fstream>
 
 // Project includes
 #include "includes/vtk_utilities.hpp"

@@ -11,9 +11,9 @@ All important and notable changes in the _CoSimIO_ will be documented in this fi
     - Simplified version of [`Kratos::ModelPart`](https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/model_part.h)
     - Simplifies and unifies the usage of `Import-/ExportMesh`
     - See the tutorials on how to use it:
-        - [C++](tutorial/cpp/model_part.md)
-        - [C](tutorial/c/model_part.md)
-        - [Python](tutorial/python/model_part.md)
+        - [C++](docs/model_part/model_part_cpp.md)
+        - [C](docs/model_part/model_part_c.md)
+        - [Python](docs/model_part/model_part_python.md)
 - FileCommunication:
     - By default now done in folder. This way leftovers from previous simulations can be easily deleted (done automatically).
     - working directory can be specified
