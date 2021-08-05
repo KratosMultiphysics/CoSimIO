@@ -11,10 +11,14 @@
 //
 
 // System includes
+#ifdef CO_SIM_IO_COMPILED_IN_WINDOWS
+
+#else
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#endif
 
 // External includes
 
