@@ -67,10 +67,13 @@ Info Communication::Connect(const Info& I_Info)
 
     CO_SIM_IO_ERROR_IF(mIsConnected) << "A connection was already established!" << std::endl;
 
+    BaseConnectDetail(I_Info);
+
     PerformCompatibilityCheck();
 
     Info connect_detail_info = ConnectDetail(I_Info);
-    mIsConnected = connect_detail_info.Get<bool>("is_connected");
+    mIsConnected = true;
+    connect_detail_info.Set<bool>("is_connected", true);
     connect_detail_info.Set<int>("connection_status", ConnectionStatus::Connected);
     connect_detail_info.Set<std::string>("working_directory", mWorkingDirectory.string());
 
@@ -91,7 +94,10 @@ Info Communication::Disconnect(const Info& I_Info)
 
     if (mIsConnected) {
         Info disconnect_detail_info = DisconnectDetail(I_Info);
-        mIsConnected = disconnect_detail_info.Get<bool>("is_connected");
+        mIsConnected = false;
+        disconnect_detail_info.Set<bool>("is_connected", false);
+
+        BaseDisconnectDetail(I_Info);
 
         if (mIsConnected) {
             CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not successful!" << std::endl;
@@ -113,7 +119,7 @@ Info Communication::Disconnect(const Info& I_Info)
     CO_SIM_IO_CATCH
 }
 
-Info Communication::ConnectDetail(const Info& I_Info)
+void Communication::BaseConnectDetail(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
@@ -133,14 +139,10 @@ Info Communication::ConnectDetail(const Info& I_Info)
 
     ExchangeSyncFileWithPartner("connect");
 
-    Info info;
-    info.Set("is_connected", true);
-    return info;
-
     CO_SIM_IO_CATCH
 }
 
-Info Communication::DisconnectDetail(const Info& I_Info)
+void Communication::BaseDisconnectDetail(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
@@ -154,10 +156,6 @@ Info Communication::DisconnectDetail(const Info& I_Info)
             CO_SIM_IO_INFO("CoSimIO") << "Warning, communication directory (" << mCommFolder << ")could not be deleted!\nError code: " << ec.message() << std::endl;
         }
     }
-
-    Info info;
-    info.Set("is_connected", false);
-    return info;
 
     CO_SIM_IO_CATCH
 }
@@ -302,16 +300,20 @@ void Communication::PerformCompatibilityCheck()
         // first export my info
         WaitUntilFileIsRemoved(rMyFileName); // in case of leftovers
 
-        FileSerializer serializer_save(GetTempFileName(rMyFileName).string(), Serializer::TraceType::SERIALIZER_TRACE_ERROR); // check if NO_TRACE can be used
-        serializer_save.save("info", my_info);
+        { // necessary as FileSerializer releases resources on destruction!
+            FileSerializer serializer_save(GetTempFileName(rMyFileName).string());
+            serializer_save.save("info", my_info);
+        }
 
         MakeFileVisible(rMyFileName);
 
         // now get the info from the other
         WaitForPath(rOtherFileName);
 
-        FileSerializer serializer_load(rOtherFileName.string(), Serializer::TraceType::SERIALIZER_TRACE_ERROR); // check if NO_TRACE can be used
-        serializer_load.load("info", partner_info);
+        { // necessary as FileSerializer releases resources on destruction!
+            FileSerializer serializer_load(rOtherFileName.string());
+            serializer_load.load("info", partner_info);
+        }
 
         RemovePath(rOtherFileName);
     };
