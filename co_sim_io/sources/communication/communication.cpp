@@ -67,6 +67,8 @@ Info Communication::Connect(const Info& I_Info)
 
     CO_SIM_IO_ERROR_IF(mIsConnected) << "A connection was already established!" << std::endl;
 
+    PerformCompatibilityCheck();
+
     Info connect_detail_info = ConnectDetail(I_Info);
     mIsConnected = connect_detail_info.Get<bool>("is_connected");
     connect_detail_info.Set<int>("connection_status", ConnectionStatus::Connected);
@@ -75,8 +77,6 @@ Info Communication::Connect(const Info& I_Info)
     CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "Connection was not successful!" << std::endl;
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Connection established" << std::endl;
-
-    PerformCompatibilityCheck();
 
     return connect_detail_info;
 
