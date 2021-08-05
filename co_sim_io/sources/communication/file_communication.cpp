@@ -23,6 +23,7 @@ namespace Internals {
 
 namespace {
 
+// Important: having this in a file also makes sure that the FileSerializer releases its resources (i.e. the file) at destruction
 template<class TObject>
 void SerializeToFile(const fs::path& rPath, const std::string& rTag, const TObject& rObject, const Serializer::TraceType SerializerTrace)
 {
@@ -33,6 +34,8 @@ void SerializeToFile(const fs::path& rPath, const std::string& rTag, const TObje
 
     CO_SIM_IO_CATCH
 }
+
+// important: having this in a file also makes sure that the FileSerializer releases its resources (i.e. the file) at destruction
 template<class TObject>
 void SerializeFromFile(const fs::path& rPath, const std::string& rTag, TObject& rObject, const Serializer::TraceType SerializerTrace)
 {
