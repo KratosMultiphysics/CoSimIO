@@ -27,8 +27,6 @@ Info ConnectMPI(
     const Info& I_Settings,
     MPI_Comm ThisMPIComm)
 {
-    CO_SIM_IO_ERROR << "Not implemented!" << std::endl;
-
     // make sure MPI was already initialized by the host
     int flag_initialized;
     MPI_Initialized(&flag_initialized);

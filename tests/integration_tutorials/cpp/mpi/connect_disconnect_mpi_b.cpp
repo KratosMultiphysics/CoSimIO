@@ -30,7 +30,6 @@ int main(int argc, char** argv)
     CoSimIO::Info settings;
     settings.Set("my_name", "cpp_connect_disconnect_b");
     settings.Set("connect_to", "cpp_connect_disconnect_a");
-    settings.Set("is_distributed", true);
     settings.Set("echo_level", 1);
     settings.Set("version", "1.25");
 

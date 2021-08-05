@@ -123,17 +123,15 @@ void Communication::BaseConnectDetail(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    if (mCommInFolder) {
-        if (GetIsPrimaryConnection()) {
-            // delete and recreate directory to remove potential leftovers
-            std::error_code ec;
-            fs::remove_all(mCommFolder, ec);
-            if (ec) {
-                CO_SIM_IO_INFO("CoSimIO") << "Warning, communication directory (" << mCommFolder << ")could not be deleted!\nError code: " << ec.message() << std::endl;
-            }
-            if (!fs::exists(mCommFolder)) {
-                fs::create_directory(mCommFolder);
-            }
+    if (mCommInFolder && GetIsPrimaryConnection() && mpDataComm->Rank() == 0) {
+        // delete and recreate directory to remove potential leftovers
+        std::error_code ec;
+        fs::remove_all(mCommFolder, ec);
+        if (ec) {
+            CO_SIM_IO_INFO("CoSimIO") << "Warning, communication directory (" << mCommFolder << ")could not be deleted!\nError code: " << ec.message() << std::endl;
+        }
+        if (!fs::exists(mCommFolder)) {
+            fs::create_directory(mCommFolder);
         }
     }
 
@@ -148,7 +146,7 @@ void Communication::BaseDisconnectDetail(const Info& I_Info)
 
     ExchangeSyncFileWithPartner("disconnect");
 
-    if (mCommInFolder && GetIsPrimaryConnection()) {
+    if (mCommInFolder && GetIsPrimaryConnection() && mpDataComm->Rank() == 0) {
         // delete directory to remove potential leftovers
         std::error_code ec;
         fs::remove_all(mCommFolder, ec);
@@ -250,32 +248,36 @@ void Communication::ExchangeSyncFileWithPartner(const std::string& rIdentifier) 
 {
     CO_SIM_IO_TRY
 
-    const fs::path file_name_primary(GetFileName("CoSimIO_primary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
-    const fs::path file_name_secondary(GetFileName("CoSimIO_secondary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
+    if (mpDataComm->Rank() == 0) {
+        const fs::path file_name_primary(GetFileName("CoSimIO_primary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
+        const fs::path file_name_secondary(GetFileName("CoSimIO_secondary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
 
-    if (GetIsPrimaryConnection()) {
-        std::ofstream sync_file;
-        sync_file.open(GetTempFileName(file_name_primary));
-        sync_file.close();
-        CO_SIM_IO_ERROR_IF_NOT(fs::exists(GetTempFileName(file_name_primary))) << "Primary sync file " << file_name_primary << " could not be created!" << std::endl;
-        MakeFileVisible(file_name_primary);
+        if (GetIsPrimaryConnection()) {
+            std::ofstream sync_file;
+            sync_file.open(GetTempFileName(file_name_primary));
+            sync_file.close();
+            CO_SIM_IO_ERROR_IF_NOT(fs::exists(GetTempFileName(file_name_primary))) << "Primary sync file " << file_name_primary << " could not be created!" << std::endl;
+            MakeFileVisible(file_name_primary);
 
-        WaitForPath(file_name_secondary);
-        RemovePath(file_name_secondary);
+            WaitForPath(file_name_secondary);
+            RemovePath(file_name_secondary);
 
-        WaitUntilFileIsRemoved(file_name_primary);
-    } else {
-        WaitForPath(file_name_primary);
-        RemovePath(file_name_primary);
+            WaitUntilFileIsRemoved(file_name_primary);
+        } else {
+            WaitForPath(file_name_primary);
+            RemovePath(file_name_primary);
 
-        std::ofstream sync_file;
-        sync_file.open(GetTempFileName(file_name_secondary));
-        sync_file.close();
-        CO_SIM_IO_ERROR_IF_NOT(fs::exists(GetTempFileName(file_name_secondary))) << "Secondary sync file " << file_name_secondary << " could not be created!" << std::endl;
-        MakeFileVisible(file_name_secondary);
+            std::ofstream sync_file;
+            sync_file.open(GetTempFileName(file_name_secondary));
+            sync_file.close();
+            CO_SIM_IO_ERROR_IF_NOT(fs::exists(GetTempFileName(file_name_secondary))) << "Secondary sync file " << file_name_secondary << " could not be created!" << std::endl;
+            MakeFileVisible(file_name_secondary);
 
-        WaitUntilFileIsRemoved(file_name_secondary);
+            WaitUntilFileIsRemoved(file_name_secondary);
+        }
     }
+
+    mpDataComm->Barrier();
 
     CO_SIM_IO_CATCH
 }
@@ -283,6 +285,8 @@ void Communication::ExchangeSyncFileWithPartner(const std::string& rIdentifier) 
 void Communication::PerformCompatibilityCheck()
 {
     CO_SIM_IO_TRY
+
+    if (mpDataComm->Rank() != 0) return; // performing check only on one rank
 
     CoSimIO::Info my_info;
     CoSimIO::Info partner_info;
