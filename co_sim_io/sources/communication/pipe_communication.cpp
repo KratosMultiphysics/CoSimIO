@@ -29,28 +29,11 @@ PipeCommunication::PipeCommunication(
     std::shared_ptr<DataCommunicator> I_DataComm)
     : Communication(I_Settings, I_DataComm)
 {
-    mCommFolder = GetWorkingDirectory();
-    mCommFolder /= ".CoSimIOFileComm_" + GetConnectionName();
-    mPipeName = mCommInFolder ? mCommFolder / GetConnectionName() : fs::path(GetConnectionName());
-    mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", true);
+    mPipeName = GetCommunicationDirectory() / GetConnectionName();
 }
 
 Info PipeCommunication::ConnectDetail(const Info& I_Info)
 {
-    if (mCommInFolder) {
-        if (GetIsPrimaryConnection()) {
-            // delete and recreate directory to remove potential leftovers
-            std::error_code ec;
-            fs::remove_all(mCommFolder, ec);
-            if (ec) {
-                CO_SIM_IO_INFO("CoSimIO") << "Warning, communication directory (" << mCommFolder << ")could not be deleted!\nError code: " << ec.message() << std::endl;
-            }
-            if (!fs::exists(mCommFolder)) {
-                fs::create_directory(mCommFolder);
-            }
-        }
-    }
-
     if (GetIsPrimaryConnection()) {
         fs::remove(mPipeName);
         std::cout << "PIPE exists: " << fs::exists(mPipeName) << std::endl;
@@ -63,35 +46,13 @@ Info PipeCommunication::ConnectDetail(const Info& I_Info)
         CO_SIM_IO_ERROR_IF((mPipe = open(mPipeName.c_str(), O_RDONLY)) < 0) << "Pipe " << mPipeName << " could not be opened!" << std::endl;
     }
 
-    // ExchangeSyncFileWithPartner();
-
-    Info info;
-    info.Set("is_connected", true);
-    return info;
+    return Info(); // TODO use
 }
 
 Info PipeCommunication::DisconnectDetail(const Info& I_Info)
 {
-    // ExchangeSyncFileWithPartner();
-
     close(mPipe);
-
-    if (GetIsPrimaryConnection()) {
-        // fs::remove(mPipeName);
-    }
-
-    if (mCommInFolder && GetIsPrimaryConnection()) {
-        // delete directory to remove potential leftovers
-        std::error_code ec;
-        fs::remove_all(mCommFolder, ec);
-        if (ec) {
-            CO_SIM_IO_INFO("CoSimIO") << "Warning, communication directory (" << mCommFolder << ")could not be deleted!\nError code: " << ec.message() << std::endl;
-        }
-    }
-
-    Info info;
-    info.Set("is_connected", false);
-    return info;
+    return Info(); // TODO use
 }
 
 Info PipeCommunication::ImportInfoImpl(const Info& I_Info)

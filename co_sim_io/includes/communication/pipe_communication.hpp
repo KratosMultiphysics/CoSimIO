@@ -47,9 +47,7 @@ public:
 
 private:
 
-    fs::path mCommFolder;
     fs::path mPipeName;
-    bool mCommInFolder = true;
     int mPipe;
 
     Info ConnectDetail(const Info& I_Info) override;
