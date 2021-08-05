@@ -99,7 +99,7 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: "CTest Log Ubuntu C++ & C (${{ matrix.compiler }} / ${{ matrix.mpi }})"
+        name: "CTest Log Ubuntu C++ & C (${{ matrix.compiler }}-${{ matrix.mpi }})"
         path: ${{ github.workspace }}/build/Testing/
 
 
