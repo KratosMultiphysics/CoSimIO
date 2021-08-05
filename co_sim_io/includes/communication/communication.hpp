@@ -78,12 +78,13 @@ public:
     }
 
 protected:
-    std::string GetConnectionName() const {return mConnectionName;}
-    fs::path GetWorkingDirectory() const  {return mWorkingDirectory;}
-    int GetEchoLevel() const              {return mEchoLevel;}
-    bool GetIsPrimaryConnection() const   {return mIsPrimaryConnection;}
-    bool GetPrintTiming() const           {return mPrintTiming;}
-    bool GetIsConnected() const           {return mIsConnected;}
+    std::string GetConnectionName() const      {return mConnectionName;}
+    fs::path GetWorkingDirectory() const       {return mWorkingDirectory;}
+    fs::path GetCommunicationDirectory() const {return mCommFolder;}
+    int GetEchoLevel() const                   {return mEchoLevel;}
+    bool GetIsPrimaryConnection() const        {return mIsPrimaryConnection;}
+    bool GetPrintTiming() const                {return mPrintTiming;}
+    bool GetIsConnected() const                {return mIsConnected;}
 
     fs::path GetTempFileName(const fs::path& rPath) const;
 
