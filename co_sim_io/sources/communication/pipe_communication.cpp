@@ -24,6 +24,7 @@
 
 // Project includes
 #include "includes/communication/pipe_communication.hpp"
+#include "includes/stream_serializer.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -39,14 +40,13 @@ PipeCommunication::PipeCommunication(
 Info PipeCommunication::ConnectDetail(const Info& I_Info)
 {
     if (GetIsPrimaryConnection()) {
-        fs::remove(mPipeName);
-        std::cout << "PIPE exists: " << fs::exists(mPipeName) << std::endl;
         CO_SIM_IO_ERROR_IF(mkfifo(mPipeName.c_str(), 0666) != 0) << "Pipe " << mPipeName << " could not be created!" << std::endl;
     }
 
     if (GetIsPrimaryConnection()) {
         CO_SIM_IO_ERROR_IF((mPipe = open(mPipeName.c_str(), O_WRONLY)) < 0) << "Pipe " << mPipeName << " could not be opened!" << std::endl;
     } else {
+        WaitForPath(mPipeName);
         CO_SIM_IO_ERROR_IF((mPipe = open(mPipeName.c_str(), O_RDONLY)) < 0) << "Pipe " << mPipeName << " could not be opened!" << std::endl;
     }
 
@@ -67,9 +67,9 @@ Info PipeCommunication::ImportInfoImpl(const Info& I_Info)
     // CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import Info ..." << std::endl;
 
 
-    // std::cout << "Receiving size ..." << std::endl;
-    // std::size_t received_size = ReceiveSize();
-    // std::cout << "received size: " << received_size << std::endl;
+    std::cout << "Receiving size ..." << std::endl;
+    std::size_t received_size = ReceiveSize();
+    std::cout << "received size: " << received_size << std::endl;
     // std::size_t received_size_2 = ReceiveSize();
     // std::cout << "received size 2: " << received_size_2 << std::endl;
 
@@ -88,13 +88,16 @@ Info PipeCommunication::ImportInfoImpl(const Info& I_Info)
     // int pipe;
     // CO_SIM_IO_ERROR_IF((pipe = open(mPipeName.c_str(), O_RDONLY)) < 0) << "Pipe " << mPipeName << " could not be opened!" << std::endl;
 
-    // std::cout << "before buffer creation" << std::endl;
-    // std::vector<char> buffer(10*received_size);
-    // char buffer2[25600];
-    // std::cout << "before READING" << std::endl;
-    // read(pipe, buffer2, received_size);
-    // std::cout << "after READING" << std::endl;
-    // close(pipe);
+    std::cout << "before buffer creation" << std::endl;
+    std::vector<char> buffer(10*received_size);
+    char buffer2[25600];
+    std::cout << "before READING" << std::endl;
+    read(mPipe, buffer2, received_size);
+    std::cout << "after READING" << std::endl;
+
+    std::string string_buffer(buffer2, received_size);
+
+    std::cout << "String buffer: " << string_buffer << std::endl;
 
 
     // std::cout << "Received info: " << conv_stream.str() << std::endl;
@@ -118,6 +121,8 @@ Info PipeCommunication::ImportInfoImpl(const Info& I_Info)
     // CheckStream(input_file, file_name);
 
     Info imported_info;
+    StreamSerializer serializer(string_buffer);
+    serializer.load("info", imported_info);
     // imported_info.Load(conv_stream);
 
     // std::cout << "The importted INFO: " << imported_info << std::endl;
@@ -132,6 +137,13 @@ Info PipeCommunication::ImportInfoImpl(const Info& I_Info)
 
 Info PipeCommunication::ExportInfoImpl(const Info& I_Info)
 {
+    StreamSerializer serializer;
+    serializer.save("info", I_Info);
+
+    std::string serialized_string = serializer.GetStringRepresentation();
+
+    std::cout << "Serialized size: " << serialized_string.size() << std::endl;
+
     // const std::string identifier = I_Info.Get<std::string>("identifier");
     // CheckEntry(identifier, "identifier");
 
@@ -145,11 +157,11 @@ Info PipeCommunication::ExportInfoImpl(const Info& I_Info)
     // std::cout << "sending size of: " << sending_size << std::endl;
     // SendSize(sending_size);
     // std::cout << "sending size of: " << 1234 << std::endl;
-    // SendSize(1234);
+    SendSize(serialized_string.size());
 
 
     // std::cout << "BEFORE write (size: " << sending_size << ")" << std::endl;
-    // write(mPipe, info_stream.str().c_str(), sending_size);
+    write(mPipe, serialized_string.c_str(), serialized_string.size());
     // std::cout << "Afterwrite" << std::endl;
 
     // // open pipe in write mode
