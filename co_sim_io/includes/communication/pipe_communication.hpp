@@ -14,6 +14,8 @@
 #define CO_SIM_IO_PIPE_COMMUNICATION_INCLUDED
 
 // System includes
+#include <unordered_map>
+#include <utility> // std::pair
 
 // Project includes
 #include "communication.hpp"
@@ -46,8 +48,16 @@ public:
 
 private:
 
+    using PipeDescriptorType = int; // https://man7.org/linux/man-pages/man2/open.2.html
+    using PipeNameType = fs::path;
+    using PipeType = std::pair<PipeNameType, PipeDescriptorType>;
+    using BidirecionalPipeType = std::pair<PipeType, PipeType>;
+    using PipeMapType = std::unordered_map<std::size_t, BidirecionalPipeType>;
+
     fs::path mPipeName;
     int mPipe;
+
+    PipeMapType mPipeMap;
 
     Info ConnectDetail(const Info& I_Info) override;
 
