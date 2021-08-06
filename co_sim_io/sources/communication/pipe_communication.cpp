@@ -89,15 +89,15 @@ Info PipeCommunication::ImportInfoImpl(const Info& I_Info)
     // CO_SIM_IO_ERROR_IF((pipe = open(mPipeName.c_str(), O_RDONLY)) < 0) << "Pipe " << mPipeName << " could not be opened!" << std::endl;
 
     std::cout << "before buffer creation" << std::endl;
-    std::vector<char> buffer(10*received_size);
-    char buffer2[25600];
+    std::string buffer3;
+    buffer3.resize(received_size);
     std::cout << "before READING" << std::endl;
-    read(mPipe, buffer2, received_size);
+    read(mPipe, &(buffer3.front()), received_size); // using front as other methods that access the underlying char are const
     std::cout << "after READING" << std::endl;
 
-    std::string string_buffer(buffer2, received_size);
+    // std::string string_buffer(buffer2, received_size);
 
-    std::cout << "String buffer: " << string_buffer << std::endl;
+    std::cout << "String buffer: " << buffer3 << std::endl;
 
 
     // std::cout << "Received info: " << conv_stream.str() << std::endl;
@@ -121,7 +121,7 @@ Info PipeCommunication::ImportInfoImpl(const Info& I_Info)
     // CheckStream(input_file, file_name);
 
     Info imported_info;
-    StreamSerializer serializer(string_buffer);
+    StreamSerializer serializer(buffer3);
     serializer.load("info", imported_info);
     // imported_info.Load(conv_stream);
 
