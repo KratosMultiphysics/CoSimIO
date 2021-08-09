@@ -13,7 +13,7 @@ set_target_properties(co_sim_io_tests PROPERTIES
     CXX_EXTENSIONS NO
 )
 
-doctest_discover_tests(co_sim_io_tests TEST_PREFIX "cpp_" WORKING_DIRECTORY $<TARGET_FILE_DIR:co_sim_io>)
+doctest_discover_tests(co_sim_io_tests TEST_PREFIX "cpp_" WORKING_DIRECTORY $<TARGET_FILE_DIR:co_sim_io> ADD_LABELS 1)
 
 if (CO_SIM_IO_ENABLE_MPI)
     file( GLOB CO_SIM_IO_MPI_TEST_FILES co_sim_io/cpp/mpi/*.cpp )
@@ -26,7 +26,7 @@ if (CO_SIM_IO_ENABLE_MPI)
         CXX_EXTENSIONS NO
     )
 
-    doctest_discover_tests(co_sim_io_mpi_tests TEST_PREFIX "cpp_mpi_" WORKING_DIRECTORY $<TARGET_FILE_DIR:co_sim_io_mpi> TEST_EXECUTOR mpiexec TEST_EXECUTOR_ARGS -np 4)
+    doctest_discover_tests(co_sim_io_mpi_tests TEST_PREFIX "cpp_mpi_" WORKING_DIRECTORY $<TARGET_FILE_DIR:co_sim_io_mpi> ADD_LABELS 0 TEST_EXECUTOR mpiexec TEST_EXECUTOR_ARGS -np 4) # todo LABELS not yet working for MPI
 
 endif()
 
