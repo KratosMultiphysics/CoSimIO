@@ -162,10 +162,14 @@ fs::path Communication::GetTempFileName(const fs::path& rPath) const
 {
     CO_SIM_IO_TRY
 
-    if (mCommInFolder) {
-        return rPath.string().insert(mCommFolder.string().length()+1, ".");
+    if (!mUseAvailFile) {
+        if (mCommInFolder) {
+            return rPath.string().insert(mCommFolder.string().length()+1, ".");
+        } else {
+            return "." + rPath.string();
+        }
     } else {
-        return "." + rPath.string();
+        return rPath;
     }
 
     CO_SIM_IO_CATCH
@@ -192,8 +196,17 @@ void Communication::WaitForPath(const fs::path& rPath) const
     CO_SIM_IO_TRY
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << std::endl;
-    while(!fs::exists(rPath)) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
+    if (!mUseAvailFile) {
+        while(!fs::exists(rPath)) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
+        }
+    } else {
+        fs::path avail_file = fs::path(rPath.string()+".avail");
+        while(!fs::exists(avail_file)) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
+        }
+
+        fs::remove(avail_file);
     }
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found: " << rPath << std::endl;
 
@@ -220,9 +233,15 @@ void Communication::MakeFileVisible(const fs::path& rPath) const
 {
     CO_SIM_IO_TRY
 
-    std::error_code ec;
-    fs::rename(GetTempFileName(rPath), rPath, ec);
-    CO_SIM_IO_ERROR_IF(ec) << rPath << " could not be made visible!\nError code: " << ec.message() << std::endl;
+    if (!mUseAvailFile) {
+        std::error_code ec;
+        fs::rename(GetTempFileName(rPath), rPath, ec);
+        CO_SIM_IO_ERROR_IF(ec) << rPath << " could not be made visible!\nError code: " << ec.message() << std::endl;
+    } else {
+        std::ofstream avail_file;
+        avail_file.open(rPath.string() + ".avail");
+        avail_file.close();
+    }
 
     CO_SIM_IO_CATCH
 }
