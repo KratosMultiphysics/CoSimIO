@@ -20,6 +20,9 @@
 #include "co_sim_io_testing.hpp"
 #include "includes/communication/communication.hpp"
 
+#include "includes/communication/file_communication.hpp"
+#include "includes/communication/sockets_communication.hpp"
+
 namespace {
 
 using CoSimIO::ElementType;
@@ -328,10 +331,9 @@ void ExportMeshHelper(const std::vector<std::shared_ptr<CoSimIO::ModelPart>>& Mo
 }
 
 // neither of the tests should take more than 5.0 seconds. If it does it means that it hangs!
-TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(25.0), TCommType, COMM_TESTS)
+template<class TCommType>
+void RunAllCommunication(CoSimIO::Info settings)
 {
-    CoSimIO::Info settings;
-
     settings.Set<std::string>("my_name", "main");
     settings.Set<std::string>("connect_to", "thread");
     settings.Set<bool>("is_primary_connection", true);
@@ -546,14 +548,12 @@ TEST_CASE_TEMPLATE_DEFINE("Communication"* doctest::timeout(25.0), TCommType, CO
     }
 }
 
-// Registering tests for different types of Communication
-#include "includes/communication/file_communication.hpp"
-using FileCommunication = CoSimIO::Internals::FileCommunication;
-TYPE_TO_STRING(FileCommunication);
 
-TEST_CASE_TEMPLATE_INVOKE(COMM_TESTS, FileCommunication);
+TEST_SUITE("Communication") {
 
-#include "includes/communication/sockets_communication.hpp"
-using SocketsCommunication = CoSimIO::Internals::SocketsCommunication;
-TYPE_TO_STRING(SocketsCommunication);
-// TEST_CASE_TEMPLATE_INVOKE(COMM_TESTS, SocketsCommunication);
+TEST_CASE("FileCommunication_default_settings" * doctest::timeout(25.0))
+{
+    RunAllCommunication<CoSimIO::Internals::FileCommunication>(CoSimIO::Info());
+}
+
+} // TEST_SUITE("Communication")
