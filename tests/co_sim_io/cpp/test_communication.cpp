@@ -183,10 +183,8 @@ std::shared_ptr<CoSimIO::ModelPart> CreateVolumeModelPart()
 }
 
 template<class TCommType>
-void ConnectDisconnect()
+void ConnectDisconnect(CoSimIO::Info settings)
 {
-    CoSimIO::Info settings;
-
     settings.Set<std::string>("my_name", "thread");
     settings.Set<std::string>("connect_to", "main");
     settings.Set<bool>("is_primary_connection", false);
@@ -213,10 +211,10 @@ void ConnectDisconnect()
 }
 
 template<class TCommType>
-void ExportInfoHelper(const std::size_t NumExports)
+void ExportInfoHelper(
+    CoSimIO::Info settings,
+    const std::size_t NumExports)
 {
-    CoSimIO::Info settings;
-
     settings.Set<std::string>("my_name", "thread");
     settings.Set<std::string>("connect_to", "main");
     settings.Set<bool>("is_primary_connection", false);
@@ -254,10 +252,10 @@ void ExportInfoHelper(const std::size_t NumExports)
 }
 
 template<class TCommType>
-void ExportDataHelper(const std::vector<std::vector<double>>& DataToExport)
+void ExportDataHelper(
+    CoSimIO::Info settings,
+    const std::vector<std::vector<double>>& DataToExport)
 {
-    CoSimIO::Info settings;
-
     settings.Set<std::string>("my_name", "thread");
     settings.Set<std::string>("connect_to", "main");
     settings.Set<bool>("is_primary_connection", false);
@@ -292,10 +290,10 @@ void ExportDataHelper(const std::vector<std::vector<double>>& DataToExport)
 }
 
 template<class TCommType>
-void ExportMeshHelper(const std::vector<std::shared_ptr<CoSimIO::ModelPart>>& ModelPartsToExport)
+void ExportMeshHelper(
+    CoSimIO::Info settings,
+    const std::vector<std::shared_ptr<CoSimIO::ModelPart>>& ModelPartsToExport)
 {
-    CoSimIO::Info settings;
-
     settings.Set<std::string>("my_name", "thread");
     settings.Set<std::string>("connect_to", "main");
     settings.Set<bool>("is_primary_connection", false);
@@ -332,7 +330,7 @@ void ExportMeshHelper(const std::vector<std::shared_ptr<CoSimIO::ModelPart>>& Mo
 
 // neither of the tests should take more than 5.0 seconds. If it does it means that it hangs!
 template<class TCommType>
-void RunAllCommunication(CoSimIO::Info settings)
+void RunAllCommunication(CoSimIO::Info settings=CoSimIO::Info())
 {
     settings.Set<std::string>("my_name", "main");
     settings.Set<std::string>("connect_to", "thread");
@@ -347,7 +345,7 @@ void RunAllCommunication(CoSimIO::Info settings)
 
     SUBCASE("connect_disconnect_once")
     {
-        std::thread ext_thread(ConnectDisconnect<TCommType>);
+        std::thread ext_thread(ConnectDisconnect<TCommType>, settings);
 
         CoSimIO::Info connect_info;
         p_comm->Connect(connect_info);
@@ -369,7 +367,7 @@ void RunAllCommunication(CoSimIO::Info settings)
                     settings,
                     std::make_shared<CoSimIO::Internals::DataCommunicator>()));
 
-            std::thread ext_thread(ConnectDisconnect<TCommType>);
+            std::thread ext_thread(ConnectDisconnect<TCommType>, settings);
 
             CoSimIO::Info connect_info;
             p_internal_comm->Connect(connect_info);
@@ -383,7 +381,7 @@ void RunAllCommunication(CoSimIO::Info settings)
 
     SUBCASE("import_export_info_once")
     {
-        std::thread ext_thread(ExportInfoHelper<TCommType>, 1);
+        std::thread ext_thread(ExportInfoHelper<TCommType>, settings, 1);
 
         CoSimIO::Info connect_info;
         p_comm->Connect(connect_info);
@@ -411,7 +409,7 @@ void RunAllCommunication(CoSimIO::Info settings)
     SUBCASE("import_export_info_multiple")
     {
         const std::size_t num_exports = 4;
-        std::thread ext_thread(ExportInfoHelper<TCommType>, num_exports);
+        std::thread ext_thread(ExportInfoHelper<TCommType>, settings, num_exports);
 
         CoSimIO::Info connect_info;
         p_comm->Connect(connect_info);
@@ -443,7 +441,7 @@ void RunAllCommunication(CoSimIO::Info settings)
         const std::vector<std::vector<double>> exp_data {
             {1.0, -6.1, 55.789, 547}
         };
-        std::thread ext_thread(ExportDataHelper<TCommType>, exp_data);
+        std::thread ext_thread(ExportDataHelper<TCommType>, settings, exp_data);
 
         CoSimIO::Info connect_info;
         p_comm->Connect(connect_info);
@@ -472,7 +470,7 @@ void RunAllCommunication(CoSimIO::Info settings)
             {1.4, -6.0001, 551.789, 5647, -1.0, 44.5, -876.123, -6.1, -63455.789, 91.567},
             {-11.56}
         };
-        std::thread ext_thread(ExportDataHelper<TCommType>, exp_data);
+        std::thread ext_thread(ExportDataHelper<TCommType>, settings, exp_data);
 
         CoSimIO::Info connect_info;
         p_comm->Connect(connect_info);
@@ -499,7 +497,7 @@ void RunAllCommunication(CoSimIO::Info settings)
         const std::vector<std::shared_ptr<CoSimIO::ModelPart>> model_parts {
             CreateLinesAndPointElementsModelPart()
         };
-        std::thread ext_thread(ExportMeshHelper<TCommType>, model_parts);
+        std::thread ext_thread(ExportMeshHelper<TCommType>, settings, model_parts);
 
         CoSimIO::Info connect_info;
         p_comm->Connect(connect_info);
@@ -527,7 +525,7 @@ void RunAllCommunication(CoSimIO::Info settings)
             CreateSurfaceModelPart(),
             CreateVolumeModelPart()
         };
-        std::thread ext_thread(ExportMeshHelper<TCommType>, model_parts);
+        std::thread ext_thread(ExportMeshHelper<TCommType>, settings, model_parts);
 
         CoSimIO::Info connect_info;
         p_comm->Connect(connect_info);
@@ -553,7 +551,14 @@ TEST_SUITE("Communication") {
 
 TEST_CASE("FileCommunication_default_settings" * doctest::timeout(25.0))
 {
-    RunAllCommunication<CoSimIO::Internals::FileCommunication>(CoSimIO::Info());
+    RunAllCommunication<CoSimIO::Internals::FileCommunication>();
+}
+
+TEST_CASE("FileCommunication_avail_file" * doctest::timeout(25.0))
+{
+    CoSimIO::Info settings;
+    settings.Set<bool>("use_avail_file", true);
+    RunAllCommunication<CoSimIO::Internals::FileCommunication>(settings);
 }
 
 } // TEST_SUITE("Communication")
