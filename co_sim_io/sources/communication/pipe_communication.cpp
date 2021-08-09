@@ -11,6 +11,8 @@
 //
 
 // System includes
+#include "includes/define.hpp" // for "CO_SIM_IO_COMPILED_IN_WINDOWS"
+
 #ifdef CO_SIM_IO_COMPILED_IN_WINDOWS
 
 #else
