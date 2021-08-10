@@ -136,7 +136,7 @@ void Communication::BaseConnectDetail(const Info& I_Info)
         }
     }
 
-    SynchronizeAll("connect");
+    SynchronizeAll();
 
     CO_SIM_IO_CATCH
 }
@@ -145,7 +145,7 @@ void Communication::BaseDisconnectDetail(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    SynchronizeAll("disconnect");
+    SynchronizeAll();
 
     if (mCommInFolder && GetIsPrimaryConnection() && mpDataComm->Rank() == 0) {
         // delete directory to remove potential leftovers
@@ -278,7 +278,7 @@ void Communication::RemovePath(const fs::path& rPath) const
     CO_SIM_IO_CATCH
 }
 
-void Communication::SynchronizeAll(const std::string& rIdentifier) const
+void Communication::SynchronizeAll() const
 {
     CO_SIM_IO_TRY
 
@@ -287,8 +287,8 @@ void Communication::SynchronizeAll(const std::string& rIdentifier) const
 
     // then synchronize among the partners
     if (mpDataComm->Rank() == 0) {
-        const fs::path file_name_primary(GetFileName("CoSimIO_primary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
-        const fs::path file_name_secondary(GetFileName("CoSimIO_secondary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
+        const fs::path file_name_primary(GetFileName("CoSimIO_primary_" + GetConnectionName(), "sync"));
+        const fs::path file_name_secondary(GetFileName("CoSimIO_secondary_" + GetConnectionName(), "sync"));
 
         if (GetIsPrimaryConnection()) {
             std::ofstream sync_file;

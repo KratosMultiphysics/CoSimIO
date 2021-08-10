@@ -102,7 +102,7 @@ protected:
 
     void RemovePath(const fs::path& rPath) const;
 
-    void SynchronizeAll(const std::string& rIdentifier) const;
+    void SynchronizeAll() const;
 
 private:
     std::shared_ptr<DataCommunicator> mpDataComm;
