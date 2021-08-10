@@ -108,6 +108,7 @@ private:
 
     fs::path mCommFolder;
     bool mCommInFolder = true;
+    bool mUseAuxFileForFileAvailability = false;
 
     fs::path mWorkingDirectory;
     int mEchoLevel = 1;

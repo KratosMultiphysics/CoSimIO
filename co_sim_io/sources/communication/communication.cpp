@@ -29,6 +29,7 @@ Communication::Communication(
     : mpDataComm(I_DataComm),
       mMyName(I_Settings.Get<std::string>("my_name")),
       mConnectTo(I_Settings.Get<std::string>("connect_to")),
+      mUseAuxFileForFileAvailability(I_Settings.Get<bool>("use_aux_file_for_file_availability", false)),
       mWorkingDirectory(I_Settings.Get<std::string>("working_directory", fs::relative(fs::current_path()).string())),
       mEchoLevel(I_Settings.Get<int>("echo_level", 0)),
       mPrintTiming(I_Settings.Get<bool>("print_timing", false))
@@ -162,10 +163,14 @@ fs::path Communication::GetTempFileName(const fs::path& rPath) const
 {
     CO_SIM_IO_TRY
 
-    if (mCommInFolder) {
-        return rPath.string().insert(mCommFolder.string().length()+1, ".");
+    if (!mUseAuxFileForFileAvailability) {
+        if (mCommInFolder) {
+            return rPath.string().insert(mCommFolder.string().length()+1, ".");
+        } else {
+            return "." + rPath.string();
+        }
     } else {
-        return "." + rPath.string();
+        return rPath;
     }
 
     CO_SIM_IO_CATCH
@@ -192,8 +197,18 @@ void Communication::WaitForPath(const fs::path& rPath) const
     CO_SIM_IO_TRY
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << std::endl;
-    while(!fs::exists(rPath)) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
+    if (!mUseAuxFileForFileAvailability) {
+        while(!fs::exists(rPath)) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
+        }
+    } else {
+        fs::path avail_file = fs::path(rPath.string()+".avail");
+        while(!fs::exists(avail_file)) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
+        }
+
+        // once the file exists it means that the real file was written, hence it can be removed
+        fs::remove(avail_file);
     }
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found: " << rPath << std::endl;
 
@@ -220,9 +235,15 @@ void Communication::MakeFileVisible(const fs::path& rPath) const
 {
     CO_SIM_IO_TRY
 
-    std::error_code ec;
-    fs::rename(GetTempFileName(rPath), rPath, ec);
-    CO_SIM_IO_ERROR_IF(ec) << rPath << " could not be made visible!\nError code: " << ec.message() << std::endl;
+    if (!mUseAuxFileForFileAvailability) {
+        std::error_code ec;
+        fs::rename(GetTempFileName(rPath), rPath, ec);
+        CO_SIM_IO_ERROR_IF(ec) << rPath << " could not be made visible!\nError code: " << ec.message() << std::endl;
+    } else {
+        std::ofstream avail_file;
+        avail_file.open(rPath.string() + ".avail");
+        avail_file.close();
+    }
 
     CO_SIM_IO_CATCH
 }
