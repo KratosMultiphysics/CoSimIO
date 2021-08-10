@@ -106,6 +106,19 @@ intrusive_ptr<C> make_intrusive(Args &&...args) {
     #define CO_SIM_IO_COMPILED_IN_WINDOWS
 #endif
 
+inline std::string GetOsName()
+{
+#ifdef _WIN32
+    return "Windows";
+#elif __APPLE__ || __MACH__
+    return "Mac OSX";
+#elif __linux__
+    return "Linux";
+#else
+    return "Other";
+#endif
+}
+
 // Logging macros
 #define CO_SIM_IO_INFO(label) std::cout << label << ": "
 #define CO_SIM_IO_INFO_IF(label, conditional) if (conditional) CO_SIM_IO_INFO(label)
