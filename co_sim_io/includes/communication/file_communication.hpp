@@ -32,6 +32,7 @@ public:
     ~FileCommunication() override;
 
 private:
+    std::string GetCommunicationName() const override {return "file";}
 
     Info ImportInfoImpl(const Info& I_Info) override;
 
