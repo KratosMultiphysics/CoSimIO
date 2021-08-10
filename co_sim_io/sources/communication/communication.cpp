@@ -282,6 +282,8 @@ void Communication::ExchangeSyncFileWithPartner(const std::string& rIdentifier) 
 {
     CO_SIM_IO_TRY
 
+    mpDataComm->Barrier();
+
     if (mpDataComm->Rank() == 0) {
         const fs::path file_name_primary(GetFileName("CoSimIO_primary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
         const fs::path file_name_secondary(GetFileName("CoSimIO_secondary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
@@ -310,8 +312,6 @@ void Communication::ExchangeSyncFileWithPartner(const std::string& rIdentifier) 
             WaitUntilFileIsRemoved(file_name_secondary);
         }
     }
-
-    mpDataComm->Barrier();
 
     CO_SIM_IO_CATCH
 }
