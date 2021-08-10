@@ -85,6 +85,9 @@ protected:
     bool GetPrintTiming() const           {return mPrintTiming;}
     bool GetIsConnected() const           {return mIsConnected;}
 
+    Info GetMyInfo() const;
+    Info GetPartnerInfo() const {return mPartnerInfo;};
+
     fs::path GetTempFileName(const fs::path& rPath) const;
 
     fs::path GetFileName(const fs::path& rPath, const std::string& rExtension) const;
@@ -106,6 +109,8 @@ private:
     std::string mMyName;
     std::string mConnectTo;
 
+    Info mPartnerInfo;
+
     fs::path mCommFolder;
     bool mCommInFolder = true;
     bool mUseAuxFileForFileAvailability = false;
@@ -122,7 +127,9 @@ private:
         CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "No active connection exists!" << std::endl;;
     }
 
-    // new interface, functions return Info
+    virtual std::string GetCommunicationName() const = 0;
+    virtual Info GetCommunicationSettings() const {return Info();}
+
     virtual void BaseConnectDetail(const Info& I_Info);
     virtual void BaseDisconnectDetail(const Info& I_Info);
     virtual Info ConnectDetail(const Info& I_Info){return Info();}
@@ -172,7 +179,9 @@ private:
         return Info();
     }
 
-    void PerformCompatibilityCheck();
+    void HandShake(const Info& I_Info);
+
+    virtual void DerivedHandShake() {};
 };
 
 } // namespace Internals
