@@ -92,6 +92,8 @@ protected:
 
     fs::path GetFileName(const fs::path& rPath, const std::string& rExtension) const;
 
+    fs::path GetFileName(const fs::path& rPath, const int Rank, const std::string& rExtension) const;
+
     void WaitForPath(const fs::path& rPath) const;
 
     void WaitUntilFileIsRemoved(const fs::path& rPath) const;

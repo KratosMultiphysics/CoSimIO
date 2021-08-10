@@ -89,6 +89,8 @@ if (CO_SIM_IO_ENABLE_MPI)
     add_test(NAME connect_disconnect_cpp_mpi_test_2_3 COMMAND sh run_mpi.sh $<TARGET_FILE:connect_disconnect_mpi_a_cpp_test> $<TARGET_FILE:connect_disconnect_mpi_b_cpp_test> 2 3)
     add_test(NAME connect_disconnect_cpp_mpi_test_2_4 COMMAND sh run_mpi.sh $<TARGET_FILE:connect_disconnect_mpi_a_cpp_test> $<TARGET_FILE:connect_disconnect_mpi_b_cpp_test> 2 4)
     add_test(NAME connect_disconnect_cpp_serial_mpi_test COMMAND sh run_serial_mpi.sh $<TARGET_FILE:connect_disconnect_a_cpp_test> $<TARGET_FILE:connect_disconnect_mpi_b_cpp_test> 4)
+
+    add_test(NAME import_export_info_cpp_mpi_test COMMAND sh run_mpi.sh $<TARGET_FILE:export_info_mpi_cpp_test> $<TARGET_FILE:import_info_mpi_cpp_test> 4 4)
 endif()
 
 ### C tests ###
