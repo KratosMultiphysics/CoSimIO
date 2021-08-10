@@ -557,7 +557,7 @@ TEST_CASE("FileCommunication_default_settings" * doctest::timeout(25.0))
 TEST_CASE("FileCommunication_avail_file" * doctest::timeout(25.0))
 {
     CoSimIO::Info settings;
-    settings.Set<bool>("use_avail_file", true);
+    settings.Set<bool>("use_aux_file_for_file_availability", true);
     RunAllCommunication<CoSimIO::Internals::FileCommunication>(settings);
 }
 
