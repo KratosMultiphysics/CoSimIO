@@ -136,7 +136,7 @@ void Communication::BaseConnectDetail(const Info& I_Info)
         }
     }
 
-    ExchangeSyncFileWithPartner("connect");
+    SynchronizeAll("connect");
 
     CO_SIM_IO_CATCH
 }
@@ -145,7 +145,7 @@ void Communication::BaseDisconnectDetail(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    ExchangeSyncFileWithPartner("disconnect");
+    SynchronizeAll("disconnect");
 
     if (mCommInFolder && GetIsPrimaryConnection() && mpDataComm->Rank() == 0) {
         // delete directory to remove potential leftovers
@@ -278,12 +278,14 @@ void Communication::RemovePath(const fs::path& rPath) const
     CO_SIM_IO_CATCH
 }
 
-void Communication::ExchangeSyncFileWithPartner(const std::string& rIdentifier) const
+void Communication::SynchronizeAll(const std::string& rIdentifier) const
 {
     CO_SIM_IO_TRY
 
+    // first synchronize among the partitions
     mpDataComm->Barrier();
 
+    // then synchronize among the partners
     if (mpDataComm->Rank() == 0) {
         const fs::path file_name_primary(GetFileName("CoSimIO_primary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
         const fs::path file_name_secondary(GetFileName("CoSimIO_secondary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
@@ -312,6 +314,9 @@ void Communication::ExchangeSyncFileWithPartner(const std::string& rIdentifier) 
             WaitUntilFileIsRemoved(file_name_secondary);
         }
     }
+
+    // and finally synchronize again among the partitions
+    mpDataComm->Barrier();
 
     CO_SIM_IO_CATCH
 }

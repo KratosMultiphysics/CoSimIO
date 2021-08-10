@@ -102,7 +102,7 @@ protected:
 
     void RemovePath(const fs::path& rPath) const;
 
-    void ExchangeSyncFileWithPartner(const std::string& rIdentifier) const;
+    void SynchronizeAll(const std::string& rIdentifier) const;
 
 private:
     std::shared_ptr<DataCommunicator> mpDataComm;
