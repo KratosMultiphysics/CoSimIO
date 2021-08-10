@@ -192,6 +192,18 @@ fs::path Communication::GetFileName(const fs::path& rPath, const std::string& rE
     CO_SIM_IO_CATCH
 }
 
+fs::path Communication::GetFileName(const fs::path& rPath, const int Rank, const std::string& rExtension) const
+{
+    CO_SIM_IO_TRY
+
+    fs::path local_copy(rPath);
+    local_copy += "_s" + std::to_string(mpDataComm->Rank()) + "_d" + std::to_string(Rank);
+
+    return GetFileName(local_copy, rExtension);
+
+    CO_SIM_IO_CATCH
+}
+
 void Communication::WaitForPath(const fs::path& rPath) const
 {
     CO_SIM_IO_TRY
