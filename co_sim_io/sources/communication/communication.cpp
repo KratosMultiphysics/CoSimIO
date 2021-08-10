@@ -70,7 +70,7 @@ Info Communication::Connect(const Info& I_Info)
 
     BaseConnectDetail(I_Info);
 
-    PerformCompatibilityCheck();
+    HandShake(I_Info);
 
     Info connect_detail_info = ConnectDetail(I_Info);
     mIsConnected = true;
@@ -304,23 +304,36 @@ void Communication::ExchangeSyncFileWithPartner(const std::string& rIdentifier) 
     CO_SIM_IO_CATCH
 }
 
-void Communication::PerformCompatibilityCheck()
+Info Communication::GetMyInfo() const
+{
+    CoSimIO::Info my_info;
+
+    my_info.Set<int>("version_major", GetMajorVersion());
+    my_info.Set<int>("version_minor", GetMinorVersion());
+    my_info.Set<std::string>("version_patch", GetPatchVersion());
+
+    my_info.Set<bool>("primary_was_explicitly_specified", mPrimaryWasExplicitlySpecified);
+    my_info.Set<std::string>("communication_format", GetCommunicationName());
+    my_info.Set<std::string>("operating_system", GetOsName());
+
+    my_info.Set<bool>("is_distributed", mpDataComm->IsDistributed());
+    my_info.Set<int>("num_processes", mpDataComm->Size());
+
+    my_info.Set<Info>("communication_settings", GetCommunicationSettings());
+
+    return my_info;
+}
+
+void Communication::HandShake(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    if (mpDataComm->Rank() != 0) return; // performing check only on one rank
-
-    CoSimIO::Info my_info;
-    CoSimIO::Info partner_info;
-    my_info.Set<int>("version_major", GetMajorVersion());
-    my_info.Set<int>("version_minor", GetMinorVersion());
-    my_info.Set("version_patch", GetPatchVersion());
-    my_info.Set<bool>("primary_was_explicitly_specified", mPrimaryWasExplicitlySpecified);
+    if (mpDataComm->Rank() != 0) return; // performing only on one rank
 
     const fs::path file_name_p2s(GetFileName("CoSimIO_" + GetConnectionName() + "_compatibility_check_primary_to_secondary", "dat"));
     const fs::path file_name_s2p(GetFileName("CoSimIO_" + GetConnectionName() + "_compatibility_check_secondary_to_primary", "dat"));
 
-    auto exchange_data_for_compatibility_check = [this, &my_info, &partner_info](
+    auto exchange_data_for_handshake = [this](
         const fs::path& rMyFileName, const fs::path& rOtherFileName){
 
         // first export my info
@@ -328,7 +341,7 @@ void Communication::PerformCompatibilityCheck()
 
         { // necessary as FileSerializer releases resources on destruction!
             FileSerializer serializer_save(GetTempFileName(rMyFileName).string());
-            serializer_save.save("info", my_info);
+            serializer_save.save("info", GetMyInfo());
         }
 
         MakeFileVisible(rMyFileName);
@@ -338,22 +351,28 @@ void Communication::PerformCompatibilityCheck()
 
         { // necessary as FileSerializer releases resources on destruction!
             FileSerializer serializer_load(rOtherFileName.string());
-            serializer_load.load("info", partner_info);
+            serializer_load.load("info", mPartnerInfo);
         }
 
         RemovePath(rOtherFileName);
     };
 
     if (GetIsPrimaryConnection()) {
-        exchange_data_for_compatibility_check(file_name_p2s, file_name_s2p);
+        exchange_data_for_handshake(file_name_p2s, file_name_s2p);
     } else {
-        exchange_data_for_compatibility_check(file_name_s2p, file_name_p2s);
+        exchange_data_for_handshake(file_name_s2p, file_name_p2s);
     }
 
     // perform checks for compatibility
-    CO_SIM_IO_ERROR_IF(GetMajorVersion() != partner_info.Get<int>("version_major")) << "Major version mismatch! My version: " << GetMajorVersion() << "; partner version: " << partner_info.Get<int>("version_major") << std::endl;
-    CO_SIM_IO_ERROR_IF(GetMinorVersion() != partner_info.Get<int>("version_minor")) << "Minor version mismatch! My version: " << GetMinorVersion() << "; partner version: " << partner_info.Get<int>("version_minor") << std::endl;
-    CO_SIM_IO_ERROR_IF(mPrimaryWasExplicitlySpecified != partner_info.Get<bool>("primary_was_explicitly_specified")) << std::boolalpha << "Mismatch in how the primary connection was specified!\nPrimary connection was explicitly specified for me: " << mPrimaryWasExplicitlySpecified << "\nPrimary connection was explicitly specified for partner: " << partner_info.Get<bool>("primary_was_explicitly_specified") << std::endl;
+    CO_SIM_IO_ERROR_IF(GetMajorVersion() != mPartnerInfo.Get<int>("version_major")) << "Major version mismatch! My version: " << GetMajorVersion() << "; partner version: " << mPartnerInfo.Get<int>("version_major") << std::endl;
+    CO_SIM_IO_ERROR_IF(GetMinorVersion() != mPartnerInfo.Get<int>("version_minor")) << "Minor version mismatch! My version: " << GetMinorVersion() << "; partner version: " << mPartnerInfo.Get<int>("version_minor") << std::endl;
+
+    CO_SIM_IO_ERROR_IF(mPrimaryWasExplicitlySpecified != mPartnerInfo.Get<bool>("primary_was_explicitly_specified")) << std::boolalpha << "Mismatch in how the primary connection was specified!\nPrimary connection was explicitly specified for me: " << mPrimaryWasExplicitlySpecified << "\nPrimary connection was explicitly specified for partner: " << mPartnerInfo.Get<bool>("primary_was_explicitly_specified") << std::noboolalpha << std::endl;
+
+    CO_SIM_IO_ERROR_IF(GetCommunicationName() != mPartnerInfo.Get<std::string>("communication_format")) << "Mismatch in communication_format!\nMy communication_format: " << GetCommunicationName() << "\nPartner communication_format: " << mPartnerInfo.Get<std::string>("communication_format") << std::endl;
+
+    // more things can be done in derived class if necessary
+    DerivedHandShake();
 
     CO_SIM_IO_CATCH
 }
