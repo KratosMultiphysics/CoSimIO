@@ -59,7 +59,7 @@ Info Communication::Connect(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0)
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0 && mpDataComm->Rank() == 0)
         << "Establishing connection for \"" << mConnectionName
         << "\"\n    from: \"" << mMyName
         << "\"\n    to:   \"" << mConnectTo
@@ -80,7 +80,7 @@ Info Communication::Connect(const Info& I_Info)
 
     CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "Connection was not successful!" << std::endl;
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Connection established" << std::endl;
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0 && mpDataComm->Rank() == 0) << "Connection established" << std::endl;
 
     return connect_detail_info;
 
@@ -91,7 +91,7 @@ Info Communication::Disconnect(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Disconnecting \"" << mConnectionName << "\" ..." << std::endl;
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0 && mpDataComm->Rank() == 0) << "Disconnecting \"" << mConnectionName << "\" ..." << std::endl;
 
     if (mIsConnected) {
         Info disconnect_detail_info = DisconnectDetail(I_Info);
@@ -104,7 +104,7 @@ Info Communication::Disconnect(const Info& I_Info)
             CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not successful!" << std::endl;
             disconnect_detail_info.Set<int>("connection_status", ConnectionStatus::DisconnectionError);
         } else {
-            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Disconnecting successful" << std::endl;
+            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0 && mpDataComm->Rank() == 0) << "Disconnecting successful" << std::endl;
             disconnect_detail_info.Set<int>("connection_status", ConnectionStatus::Disconnected);
         }
         return disconnect_detail_info;
