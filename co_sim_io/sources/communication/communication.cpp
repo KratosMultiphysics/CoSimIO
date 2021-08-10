@@ -354,6 +354,9 @@ void Communication::HandShake(const Info& I_Info)
             serializer_load.load("info", mPartnerInfo);
         }
 
+        // sync the partner info among the partitions
+        mpDataComm->Broadcast(mPartnerInfo, 0);
+
         RemovePath(rOtherFileName);
     };
 
