@@ -76,7 +76,14 @@ Info FileCommunication::ImportInfoImpl(const Info& I_Info)
     const std::string identifier = I_Info.Get<std::string>("identifier");
     CheckEntry(identifier, "identifier");
 
-    const fs::path file_name(GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, "dat"));
+    fs::path file_name;
+    // when running in MPI it is required to specify the ranks
+    if (GetMyInfo().Get<bool>("is_distributed") || GetPartnerInfo().Get<bool>("is_distributed")) {
+        const int source_rank = I_Info.Get<int>("source_rank");
+        file_name = GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, source_rank, "dat");
+    } else {
+        file_name = GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, "dat");
+    }
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import Info in file " << file_name << " ..." << std::endl;
 
@@ -101,7 +108,14 @@ Info FileCommunication::ExportInfoImpl(const Info& I_Info)
     const std::string identifier = I_Info.Get<std::string>("identifier");
     CheckEntry(identifier, "identifier");
 
-    const fs::path file_name(GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, "dat"));
+    fs::path file_name;
+    // when running in MPI it is required to specify the ranks
+    if (GetMyInfo().Get<bool>("is_distributed") || GetPartnerInfo().Get<bool>("is_distributed")) {
+        const int destination_rank = I_Info.Get<int>("destination_rank");
+        file_name = GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, destination_rank, "dat");
+    } else {
+        file_name = GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, "dat");
+    }
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export Info in file " << file_name << " ..." << std::endl;
 
