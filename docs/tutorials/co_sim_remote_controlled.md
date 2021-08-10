@@ -1,13 +1,6 @@
 # Tutorial for performing coupled simulations with the remote control approach
 
-This tutorial shows how to perform coupled simulations with the Kratos CoSimulationApplication using the remoted control approach.
-
-
-
-
-
-
-<!-- This means that the coupling sequence is implemented in the application side and has to match the Kratos side. See [here](kratos_co_simulation.md) for more details on the different approaches.
+This tutorial shows how to perform coupled simulations with the Kratos CoSimulationApplication using the remoted control approach. This means that the coupling sequence is not implemented in the application side, only functions that are required for CoSimulation are defined by the application and registered in the _CoSimIO_. See [here](kratos_co_simulation.md) for more details on the different approaches.
 
 Note that this page shows the Kratos side, please refer to the corresponding tutorials for the application side, depending on the language.
 
@@ -34,15 +27,16 @@ Aside from the input files, we need two more files in order to integrate the sol
 
 Before setting up the configuration file we need to create the `SolverWrapper` for our solver such that it can be used in the CoSimulationApplication workflow.
 
-Based on our setup from above, we can directly use the [ExternalSolverWrapper.py](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/python_scripts/solver_wrappers/external/external_solver_wrapper.py) which implements the functionalities that we need:
+Based on our setup from above, we can directly use the [RemoteControlledSolverWrapper.py](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/python_scripts/solver_wrappers/external/remote_controlled_solver_wrapper.py) which implements the functionalities that we need:
 - At the beginning it imports the coupling interfaces/meshes that are exported by the solver
 - During the solving phase it first exports the data (which is to be imported by the solver). This is done to synchronize the data in the solver with the data in the CoSimulationApplication, which can be modified by coupling features such as prediction or relaxation. After the solver solved, the CoSimulationApplication then imports the new data such that it can be used in the coupling.
+Note that it controls the external solver with the `__SendControlSignal` function.
 
 ### The ProjectParameters file
 
 The configuration file for a basic FSI example can be found [here](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/README.md#basic-fsi-example). For our example we will arrive to a very similar setup, we only need to modify the `solvers` section in the `solver_settings`.
 
-There we need to use the `SolverWrapper` which we implemented before. In this case the `ExternalSolverWrapper` is being used for both solvers, i.e. the `type` is `"solver_wrappers.external.external_solver_wrapper"`
+There we need to use the `SolverWrapper` which we implemented before. In this case the `RemoteControlledSolverWrapper` is being used for both solvers, i.e. the `type` is `"solver_wrappers.external.remote_controlled_solver_wrapper"`
 
 In the `data` section we have to specify the fields that are being used. E.g. `field_A` and `field_B` as well as the meshes they belong to:
 
@@ -107,6 +101,6 @@ This completes the setup of one of the solvers:
 }
 ```
 
-The same has to be repeated for the other solver.
+On the application side the functions required for CoSimulation have to be registered. Check the [small test](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/cpp/run.cpp) for the syntax.
 
-Now the Kratos side is ready to perform coupled simulations. -->
+Now the Kratos side is ready to perform coupled simulations.
