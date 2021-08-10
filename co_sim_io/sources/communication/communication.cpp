@@ -328,54 +328,54 @@ void Communication::HandShake(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    if (mpDataComm->Rank() != 0) return; // performing only on one rank
+    if (mpDataComm->Rank() == 0) {
+        const fs::path file_name_p2s(GetFileName("CoSimIO_" + GetConnectionName() + "_compatibility_check_primary_to_secondary", "dat"));
+        const fs::path file_name_s2p(GetFileName("CoSimIO_" + GetConnectionName() + "_compatibility_check_secondary_to_primary", "dat"));
 
-    const fs::path file_name_p2s(GetFileName("CoSimIO_" + GetConnectionName() + "_compatibility_check_primary_to_secondary", "dat"));
-    const fs::path file_name_s2p(GetFileName("CoSimIO_" + GetConnectionName() + "_compatibility_check_secondary_to_primary", "dat"));
+        auto exchange_data_for_handshake = [this](
+            const fs::path& rMyFileName, const fs::path& rOtherFileName){
 
-    auto exchange_data_for_handshake = [this](
-        const fs::path& rMyFileName, const fs::path& rOtherFileName){
+            // first export my info
+            WaitUntilFileIsRemoved(rMyFileName); // in case of leftovers
 
-        // first export my info
-        WaitUntilFileIsRemoved(rMyFileName); // in case of leftovers
+            { // necessary as FileSerializer releases resources on destruction!
+                FileSerializer serializer_save(GetTempFileName(rMyFileName).string());
+                serializer_save.save("info", GetMyInfo());
+            }
 
-        { // necessary as FileSerializer releases resources on destruction!
-            FileSerializer serializer_save(GetTempFileName(rMyFileName).string());
-            serializer_save.save("info", GetMyInfo());
+            MakeFileVisible(rMyFileName);
+
+            // now get the info from the other
+            WaitForPath(rOtherFileName);
+
+            { // necessary as FileSerializer releases resources on destruction!
+                FileSerializer serializer_load(rOtherFileName.string());
+                serializer_load.load("info", mPartnerInfo);
+            }
+
+            RemovePath(rOtherFileName);
+        };
+
+        if (GetIsPrimaryConnection()) {
+            exchange_data_for_handshake(file_name_p2s, file_name_s2p);
+        } else {
+            exchange_data_for_handshake(file_name_s2p, file_name_p2s);
         }
 
-        MakeFileVisible(rMyFileName);
+        // perform checks for compatibility
+        CO_SIM_IO_ERROR_IF(GetMajorVersion() != mPartnerInfo.Get<int>("version_major")) << "Major version mismatch! My version: " << GetMajorVersion() << "; partner version: " << mPartnerInfo.Get<int>("version_major") << std::endl;
+        CO_SIM_IO_ERROR_IF(GetMinorVersion() != mPartnerInfo.Get<int>("version_minor")) << "Minor version mismatch! My version: " << GetMinorVersion() << "; partner version: " << mPartnerInfo.Get<int>("version_minor") << std::endl;
 
-        // now get the info from the other
-        WaitForPath(rOtherFileName);
+        CO_SIM_IO_ERROR_IF(mPrimaryWasExplicitlySpecified != mPartnerInfo.Get<bool>("primary_was_explicitly_specified")) << std::boolalpha << "Mismatch in how the primary connection was specified!\nPrimary connection was explicitly specified for me: " << mPrimaryWasExplicitlySpecified << "\nPrimary connection was explicitly specified for partner: " << mPartnerInfo.Get<bool>("primary_was_explicitly_specified") << std::noboolalpha << std::endl;
 
-        { // necessary as FileSerializer releases resources on destruction!
-            FileSerializer serializer_load(rOtherFileName.string());
-            serializer_load.load("info", mPartnerInfo);
-        }
+        CO_SIM_IO_ERROR_IF(GetCommunicationName() != mPartnerInfo.Get<std::string>("communication_format")) << "Mismatch in communication_format!\nMy communication_format: " << GetCommunicationName() << "\nPartner communication_format: " << mPartnerInfo.Get<std::string>("communication_format") << std::endl;
 
-        // sync the partner info among the partitions
-        mpDataComm->Broadcast(mPartnerInfo, 0);
-
-        RemovePath(rOtherFileName);
-    };
-
-    if (GetIsPrimaryConnection()) {
-        exchange_data_for_handshake(file_name_p2s, file_name_s2p);
-    } else {
-        exchange_data_for_handshake(file_name_s2p, file_name_p2s);
+        // more things can be done in derived class if necessary
+        DerivedHandShake();
     }
 
-    // perform checks for compatibility
-    CO_SIM_IO_ERROR_IF(GetMajorVersion() != mPartnerInfo.Get<int>("version_major")) << "Major version mismatch! My version: " << GetMajorVersion() << "; partner version: " << mPartnerInfo.Get<int>("version_major") << std::endl;
-    CO_SIM_IO_ERROR_IF(GetMinorVersion() != mPartnerInfo.Get<int>("version_minor")) << "Minor version mismatch! My version: " << GetMinorVersion() << "; partner version: " << mPartnerInfo.Get<int>("version_minor") << std::endl;
-
-    CO_SIM_IO_ERROR_IF(mPrimaryWasExplicitlySpecified != mPartnerInfo.Get<bool>("primary_was_explicitly_specified")) << std::boolalpha << "Mismatch in how the primary connection was specified!\nPrimary connection was explicitly specified for me: " << mPrimaryWasExplicitlySpecified << "\nPrimary connection was explicitly specified for partner: " << mPartnerInfo.Get<bool>("primary_was_explicitly_specified") << std::noboolalpha << std::endl;
-
-    CO_SIM_IO_ERROR_IF(GetCommunicationName() != mPartnerInfo.Get<std::string>("communication_format")) << "Mismatch in communication_format!\nMy communication_format: " << GetCommunicationName() << "\nPartner communication_format: " << mPartnerInfo.Get<std::string>("communication_format") << std::endl;
-
-    // more things can be done in derived class if necessary
-    DerivedHandShake();
+    // sync the partner info among the partitions
+    mpDataComm->Broadcast(mPartnerInfo, 0);
 
     CO_SIM_IO_CATCH
 }
