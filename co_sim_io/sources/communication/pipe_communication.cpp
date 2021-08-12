@@ -52,17 +52,25 @@ Info PipeCommunication::ConnectDetail(const Info& I_Info)
         CO_SIM_IO_ERROR_IF((mPipe = open(mPipeName.c_str(), O_RDONLY)) < 0) << "Pipe " << mPipeName << " could not be opened!" << std::endl;
     }
 
+    mpPipe = std::make_shared<BidirectionalPipeUnix>(GetCommunicationDirectory(), GetConnectionName(), GetIsPrimaryConnection());
+
     return Info(); // TODO use
 }
 
 Info PipeCommunication::DisconnectDetail(const Info& I_Info)
 {
     close(mPipe);
+
+    mpPipe->Close();
     return Info(); // TODO use
 }
 
 Info PipeCommunication::ImportInfoImpl(const Info& I_Info)
 {
+    Info imported_info;
+    mpPipe->Receive(imported_info);
+
+    /*
     // const std::string identifier = I_Info.Get<std::string>("identifier");
     // CheckEntry(identifier, "identifier");
 
@@ -133,12 +141,16 @@ Info PipeCommunication::ImportInfoImpl(const Info& I_Info)
     // // RemovePath(file_name);
 
     // CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing Info" << std::endl;
+    */
 
     return imported_info;
 }
 
 Info PipeCommunication::ExportInfoImpl(const Info& I_Info)
 {
+    mpPipe->Send(I_Info);
+
+    /*
     StreamSerializer serializer;
     serializer.save("info", I_Info);
 
@@ -174,7 +186,7 @@ Info PipeCommunication::ExportInfoImpl(const Info& I_Info)
     // // close(pipe);
 
     // CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting Info " << std::endl;
-
+    */
     return Info(); // TODO use
 }
 
