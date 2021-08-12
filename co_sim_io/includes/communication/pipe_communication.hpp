@@ -147,9 +147,6 @@ private:
     using BidirecionalPipeType = std::pair<PipeType, PipeType>;
     using PipeMapType = std::unordered_map<std::size_t, BidirecionalPipeType>;
 
-    fs::path mPipeName;
-    int mPipe;
-
     PipeMapType mPipeMap;
 
     std::shared_ptr<BidirectionalPipeUnix> mpPipe;
@@ -164,9 +161,21 @@ private:
 
     Info ExportInfoImpl(const Info& I_Info) override;
 
-    void SendSize(const std::uint64_t Size);
+    Info ImportDataImpl(
+        const Info& I_Info,
+        Internals::DataContainer<double>& rData) override;
 
-    std::uint64_t ReceiveSize();
+    Info ExportDataImpl(
+        const Info& I_Info,
+        const Internals::DataContainer<double>& rData) override;
+
+    Info ImportMeshImpl(
+        const Info& I_Info,
+        ModelPart& O_ModelPart) override;
+
+    Info ExportMeshImpl(
+        const Info& I_Info,
+        const ModelPart& I_ModelPart) override;
 };
 
 } // namespace Internals
