@@ -21,6 +21,7 @@
 #include "includes/communication/communication.hpp"
 
 #include "includes/communication/file_communication.hpp"
+#include "includes/communication/pipe_communication.hpp"
 #include "includes/communication/sockets_communication.hpp"
 
 namespace {
@@ -559,6 +560,11 @@ TEST_CASE("FileCommunication_avail_file" * doctest::timeout(25.0))
     CoSimIO::Info settings;
     settings.Set<bool>("use_aux_file_for_file_availability", true);
     RunAllCommunication<CoSimIO::Internals::FileCommunication>(settings);
+}
+
+TEST_CASE("PipeCommunication" * doctest::timeout(25.0))
+{
+    RunAllCommunication<CoSimIO::Internals::PipeCommunication>();
 }
 
 } // TEST_SUITE("Communication")
