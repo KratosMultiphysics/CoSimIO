@@ -59,6 +59,8 @@ private:
 
     PipeMapType mPipeMap;
 
+    std::string GetCommunicationName() const override {return "pipe";}
+
     Info ConnectDetail(const Info& I_Info) override;
 
     Info DisconnectDetail(const Info& I_Info) override;
