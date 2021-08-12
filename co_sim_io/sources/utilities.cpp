@@ -14,6 +14,7 @@
 #include <string>
 #include <map>
 #include <chrono>
+#include <thread>
 
 // Project includes
 #include "includes/utilities.hpp"
@@ -87,6 +88,11 @@ int GetNumberOfNodesForElementType(ElementType Type)
     auto type_iter = type_num_nodes_map.find(Type);
     CO_SIM_IO_ERROR_IF(type_iter == type_num_nodes_map.end()) << "Unsupported element type: " << static_cast<int>(Type) << std::endl;
     return type_iter->second;
+}
+
+void WaitUntilPathExists(const fs::path& rPath)
+{
+    while(!fs::exists(rPath)) {std::this_thread::sleep_for(std::chrono::milliseconds(5));} // wait 0.005s before next check
 }
 
 } // namespace Internals

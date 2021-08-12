@@ -19,6 +19,7 @@
 
 // Project includes
 #include "define.hpp"
+#include "filesystem_inc.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -41,6 +42,8 @@ static void CheckStream(const TStream& rStream, const TPath& rPath)
 double CO_SIM_IO_API ElapsedSeconds(const std::chrono::steady_clock::time_point& rStartTime);
 
 int CO_SIM_IO_API GetNumberOfNodesForElementType(ElementType Type);
+
+void CO_SIM_IO_API WaitUntilPathExists(const fs::path& rPath);
 
 } // namespace Internals
 } // namespace CoSimIO
