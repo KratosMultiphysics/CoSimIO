@@ -29,6 +29,7 @@ Communication::Communication(
     : mpDataComm(I_DataComm),
       mMyName(I_Settings.Get<std::string>("my_name")),
       mConnectTo(I_Settings.Get<std::string>("connect_to")),
+      mUseAuxFileForFileAvailability(I_Settings.Get<bool>("use_aux_file_for_file_availability", false)),
       mWorkingDirectory(I_Settings.Get<std::string>("working_directory", fs::relative(fs::current_path()).string())),
       mEchoLevel(I_Settings.Get<int>("echo_level", 0)),
       mPrintTiming(I_Settings.Get<bool>("print_timing", false))
@@ -60,7 +61,7 @@ Info Communication::Connect(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0)
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0 && mpDataComm->Rank() == 0)
         << "Establishing connection for \"" << mConnectionName
         << "\"\n    from: \"" << mMyName
         << "\"\n    to:   \"" << mConnectTo
@@ -71,7 +72,7 @@ Info Communication::Connect(const Info& I_Info)
 
     BaseConnectDetail(I_Info);
 
-    PerformCompatibilityCheck();
+    HandShake(I_Info);
 
     Info connect_detail_info = ConnectDetail(I_Info);
     mIsConnected = true;
@@ -81,7 +82,7 @@ Info Communication::Connect(const Info& I_Info)
 
     CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "Connection was not successful!" << std::endl;
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Connection established" << std::endl;
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0 && mpDataComm->Rank() == 0) << "Connection established" << std::endl;
 
     return connect_detail_info;
 
@@ -92,7 +93,7 @@ Info Communication::Disconnect(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Disconnecting \"" << mConnectionName << "\" ..." << std::endl;
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0 && mpDataComm->Rank() == 0) << "Disconnecting \"" << mConnectionName << "\" ..." << std::endl;
 
     if (mIsConnected) {
         Info disconnect_detail_info = DisconnectDetail(I_Info);
@@ -105,7 +106,7 @@ Info Communication::Disconnect(const Info& I_Info)
             CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not successful!" << std::endl;
             disconnect_detail_info.Set<int>("connection_status", ConnectionStatus::DisconnectionError);
         } else {
-            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Disconnecting successful" << std::endl;
+            CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0 && mpDataComm->Rank() == 0) << "Disconnecting successful" << std::endl;
             disconnect_detail_info.Set<int>("connection_status", ConnectionStatus::Disconnected);
         }
         return disconnect_detail_info;
@@ -137,7 +138,7 @@ void Communication::BaseConnectDetail(const Info& I_Info)
         }
     }
 
-    ExchangeSyncFileWithPartner("connect");
+    SynchronizeAll();
 
     CO_SIM_IO_CATCH
 }
@@ -146,7 +147,7 @@ void Communication::BaseDisconnectDetail(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    ExchangeSyncFileWithPartner("disconnect");
+    SynchronizeAll();
 
     if (mCommInFolder && GetIsPrimaryConnection() && mpDataComm->Rank() == 0) {
         // delete directory to remove potential leftovers
@@ -164,10 +165,14 @@ fs::path Communication::GetTempFileName(const fs::path& rPath) const
 {
     CO_SIM_IO_TRY
 
-    if (mCommInFolder) {
-        return rPath.string().insert(mCommFolder.string().length()+1, ".");
+    if (!mUseAuxFileForFileAvailability) {
+        if (mCommInFolder) {
+            return rPath.string().insert(mCommFolder.string().length()+1, ".");
+        } else {
+            return "." + rPath.string();
+        }
     } else {
-        return "." + rPath.string();
+        return rPath;
     }
 
     CO_SIM_IO_CATCH
@@ -189,13 +194,35 @@ fs::path Communication::GetFileName(const fs::path& rPath, const std::string& rE
     CO_SIM_IO_CATCH
 }
 
+fs::path Communication::GetFileName(const fs::path& rPath, const int Rank, const std::string& rExtension) const
+{
+    CO_SIM_IO_TRY
+
+    fs::path local_copy(rPath);
+    local_copy += "_s" + std::to_string(mpDataComm->Rank()) + "_d" + std::to_string(Rank);
+
+    return GetFileName(local_copy, rExtension);
+
+    CO_SIM_IO_CATCH
+}
+
 void Communication::WaitForPath(const fs::path& rPath) const
 {
     CO_SIM_IO_TRY
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << std::endl;
-    while(!fs::exists(rPath)) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
+    if (!mUseAuxFileForFileAvailability) {
+        while(!fs::exists(rPath)) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
+        }
+    } else {
+        fs::path avail_file = fs::path(rPath.string()+".avail");
+        while(!fs::exists(avail_file)) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
+        }
+
+        // once the file exists it means that the real file was written, hence it can be removed
+        fs::remove(avail_file);
     }
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found: " << rPath << std::endl;
 
@@ -206,9 +233,10 @@ void Communication::WaitUntilFileIsRemoved(const fs::path& rPath) const
 {
     CO_SIM_IO_TRY
 
-    if (fs::exists(rPath)) { // only issue the wating message if the file exists initially
+    std::error_code ec;
+    if (fs::exists(rPath, ec)) { // only issue the wating message if the file exists initially
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << " to be removed" << std::endl;
-        while(fs::exists(rPath)) {
+        while(fs::exists(rPath, ec)) {
             std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
         }
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << rPath << " was removed" << std::endl;
@@ -221,9 +249,15 @@ void Communication::MakeFileVisible(const fs::path& rPath) const
 {
     CO_SIM_IO_TRY
 
-    std::error_code ec;
-    fs::rename(GetTempFileName(rPath), rPath, ec);
-    CO_SIM_IO_ERROR_IF(ec) << rPath << " could not be made visible!\nError code: " << ec.message() << std::endl;
+    if (!mUseAuxFileForFileAvailability) {
+        std::error_code ec;
+        fs::rename(GetTempFileName(rPath), rPath, ec);
+        CO_SIM_IO_ERROR_IF(ec) << rPath << " could not be made visible!\nError code: " << ec.message() << std::endl;
+    } else {
+        std::ofstream avail_file;
+        avail_file.open(rPath.string() + ".avail");
+        avail_file.close();
+    }
 
     CO_SIM_IO_CATCH
 }
@@ -246,13 +280,17 @@ void Communication::RemovePath(const fs::path& rPath) const
     CO_SIM_IO_CATCH
 }
 
-void Communication::ExchangeSyncFileWithPartner(const std::string& rIdentifier) const
+void Communication::SynchronizeAll() const
 {
     CO_SIM_IO_TRY
 
+    // first synchronize among the partitions
+    mpDataComm->Barrier();
+
+    // then synchronize among the partners
     if (mpDataComm->Rank() == 0) {
-        const fs::path file_name_primary(GetFileName("CoSimIO_primary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
-        const fs::path file_name_secondary(GetFileName("CoSimIO_secondary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
+        const fs::path file_name_primary(GetFileName("CoSimIO_primary_" + GetConnectionName(), "sync"));
+        const fs::path file_name_secondary(GetFileName("CoSimIO_secondary_" + GetConnectionName(), "sync"));
 
         if (GetIsPrimaryConnection()) {
             std::ofstream sync_file;
@@ -279,61 +317,84 @@ void Communication::ExchangeSyncFileWithPartner(const std::string& rIdentifier) 
         }
     }
 
+    // and finally synchronize again among the partitions
     mpDataComm->Barrier();
 
     CO_SIM_IO_CATCH
 }
 
-void Communication::PerformCompatibilityCheck()
+Info Communication::GetMyInfo() const
+{
+    CoSimIO::Info my_info;
+
+    my_info.Set<int>("version_major", GetMajorVersion());
+    my_info.Set<int>("version_minor", GetMinorVersion());
+    my_info.Set<std::string>("version_patch", GetPatchVersion());
+
+    my_info.Set<bool>("primary_was_explicitly_specified", mPrimaryWasExplicitlySpecified);
+    my_info.Set<std::string>("communication_format", GetCommunicationName());
+    my_info.Set<std::string>("operating_system", GetOsName());
+
+    my_info.Set<bool>("is_distributed", mpDataComm->IsDistributed());
+    my_info.Set<int>("num_processes", mpDataComm->Size());
+
+    my_info.Set<Info>("communication_settings", GetCommunicationSettings());
+
+    return my_info;
+}
+
+void Communication::HandShake(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    if (mpDataComm->Rank() != 0) return; // performing check only on one rank
+    if (mpDataComm->Rank() == 0) {
+        const fs::path file_name_p2s(GetFileName("CoSimIO_" + GetConnectionName() + "_compatibility_check_primary_to_secondary", "dat"));
+        const fs::path file_name_s2p(GetFileName("CoSimIO_" + GetConnectionName() + "_compatibility_check_secondary_to_primary", "dat"));
 
-    CoSimIO::Info my_info;
-    CoSimIO::Info partner_info;
-    my_info.Set<int>("version_major", GetMajorVersion());
-    my_info.Set<int>("version_minor", GetMinorVersion());
-    my_info.Set("version_patch", GetPatchVersion());
-    my_info.Set<bool>("primary_was_explicitly_specified", mPrimaryWasExplicitlySpecified);
+        auto exchange_data_for_handshake = [this](
+            const fs::path& rMyFileName, const fs::path& rOtherFileName){
 
-    const fs::path file_name_p2s(GetFileName("CoSimIO_" + GetConnectionName() + "_compatibility_check_primary_to_secondary", "dat"));
-    const fs::path file_name_s2p(GetFileName("CoSimIO_" + GetConnectionName() + "_compatibility_check_secondary_to_primary", "dat"));
+            // first export my info
+            WaitUntilFileIsRemoved(rMyFileName); // in case of leftovers
 
-    auto exchange_data_for_compatibility_check = [this, &my_info, &partner_info](
-        const fs::path& rMyFileName, const fs::path& rOtherFileName){
+            { // necessary as FileSerializer releases resources on destruction!
+                FileSerializer serializer_save(GetTempFileName(rMyFileName).string());
+                serializer_save.save("info", GetMyInfo());
+            }
 
-        // first export my info
-        WaitUntilFileIsRemoved(rMyFileName); // in case of leftovers
+            MakeFileVisible(rMyFileName);
 
-        { // necessary as FileSerializer releases resources on destruction!
-            FileSerializer serializer_save(GetTempFileName(rMyFileName).string());
-            serializer_save.save("info", my_info);
+            // now get the info from the other
+            WaitForPath(rOtherFileName);
+
+            { // necessary as FileSerializer releases resources on destruction!
+                FileSerializer serializer_load(rOtherFileName.string());
+                serializer_load.load("info", mPartnerInfo);
+            }
+
+            RemovePath(rOtherFileName);
+        };
+
+        if (GetIsPrimaryConnection()) {
+            exchange_data_for_handshake(file_name_p2s, file_name_s2p);
+        } else {
+            exchange_data_for_handshake(file_name_s2p, file_name_p2s);
         }
 
-        MakeFileVisible(rMyFileName);
+        // perform checks for compatibility
+        CO_SIM_IO_ERROR_IF(GetMajorVersion() != mPartnerInfo.Get<int>("version_major")) << "Major version mismatch! My version: " << GetMajorVersion() << "; partner version: " << mPartnerInfo.Get<int>("version_major") << std::endl;
+        CO_SIM_IO_ERROR_IF(GetMinorVersion() != mPartnerInfo.Get<int>("version_minor")) << "Minor version mismatch! My version: " << GetMinorVersion() << "; partner version: " << mPartnerInfo.Get<int>("version_minor") << std::endl;
 
-        // now get the info from the other
-        WaitForPath(rOtherFileName);
+        CO_SIM_IO_ERROR_IF(mPrimaryWasExplicitlySpecified != mPartnerInfo.Get<bool>("primary_was_explicitly_specified")) << std::boolalpha << "Mismatch in how the primary connection was specified!\nPrimary connection was explicitly specified for me: " << mPrimaryWasExplicitlySpecified << "\nPrimary connection was explicitly specified for partner: " << mPartnerInfo.Get<bool>("primary_was_explicitly_specified") << std::noboolalpha << std::endl;
 
-        { // necessary as FileSerializer releases resources on destruction!
-            FileSerializer serializer_load(rOtherFileName.string());
-            serializer_load.load("info", partner_info);
-        }
+        CO_SIM_IO_ERROR_IF(GetCommunicationName() != mPartnerInfo.Get<std::string>("communication_format")) << "Mismatch in communication_format!\nMy communication_format: " << GetCommunicationName() << "\nPartner communication_format: " << mPartnerInfo.Get<std::string>("communication_format") << std::endl;
 
-        RemovePath(rOtherFileName);
-    };
-
-    if (GetIsPrimaryConnection()) {
-        exchange_data_for_compatibility_check(file_name_p2s, file_name_s2p);
-    } else {
-        exchange_data_for_compatibility_check(file_name_s2p, file_name_p2s);
+        // more things can be done in derived class if necessary
+        DerivedHandShake();
     }
 
-    // perform checks for compatibility
-    CO_SIM_IO_ERROR_IF(GetMajorVersion() != partner_info.Get<int>("version_major")) << "Major version mismatch! My version: " << GetMajorVersion() << "; partner version: " << partner_info.Get<int>("version_major") << std::endl;
-    CO_SIM_IO_ERROR_IF(GetMinorVersion() != partner_info.Get<int>("version_minor")) << "Minor version mismatch! My version: " << GetMinorVersion() << "; partner version: " << partner_info.Get<int>("version_minor") << std::endl;
-    CO_SIM_IO_ERROR_IF(mPrimaryWasExplicitlySpecified != partner_info.Get<bool>("primary_was_explicitly_specified")) << std::boolalpha << "Mismatch in how the primary connection was specified!\nPrimary connection was explicitly specified for me: " << mPrimaryWasExplicitlySpecified << "\nPrimary connection was explicitly specified for partner: " << partner_info.Get<bool>("primary_was_explicitly_specified") << std::endl;
+    // sync the partner info among the partitions
+    mpDataComm->Broadcast(mPartnerInfo, 0);
 
     // check if comm format is the same
     // exchange info if running in MPI and with how many cores

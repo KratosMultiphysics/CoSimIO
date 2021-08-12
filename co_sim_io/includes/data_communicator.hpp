@@ -706,7 +706,7 @@ class DataCommunicator
                 send_serializer.save("data", rBroadcastObject);
                 broadcast_message = send_serializer.GetStringRepresentation();
 
-                message_size = broadcast_message.size();
+                message_size = static_cast<unsigned int>(broadcast_message.size());
             }
 
             this->Broadcast(message_size, SourceRank);
