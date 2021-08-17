@@ -25,7 +25,6 @@ int main()
     CoSimIO::Info settings;
     settings.Set("my_name", "cpp_import_info_solver");
     settings.Set("connect_to", "cpp_export_info_solver");
-    settings.Set("communication_format", "pipe");
     settings.Set("echo_level", 1);
     settings.Set("version", "1.25");
 
@@ -38,12 +37,10 @@ int main()
     exp_info.Set<std::string>("identifier", "cpp_info_exchange");
     auto imported_info = CoSimIO::ImportInfo(exp_info);
 
-    std::cout << "Imported info: " << imported_info << std::endl;
-
-    // COSIMIO_CHECK_EQUAL(imported_info.Get<std::string>("id"), "convergence_information");
-    // COSIMIO_CHECK_EQUAL(imported_info.Get<bool>("is_converged"), true);
-    // COSIMIO_CHECK_EQUAL(imported_info.Get<double>("tol"), 0.008);
-    // COSIMIO_CHECK_EQUAL(imported_info.Get<int>("echo_level"), 2);
+    COSIMIO_CHECK_EQUAL(imported_info.Get<std::string>("id"), "convergence_information");
+    COSIMIO_CHECK_EQUAL(imported_info.Get<bool>("is_converged"), true);
+    COSIMIO_CHECK_EQUAL(imported_info.Get<double>("tol"), 0.008);
+    COSIMIO_CHECK_EQUAL(imported_info.Get<int>("echo_level"), 2);
 
     CoSimIO::Info disconnect_settings;
     disconnect_settings.Set("connection_name", connection_name);
