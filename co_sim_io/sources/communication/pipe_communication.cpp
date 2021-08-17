@@ -41,7 +41,7 @@ PipeCommunication::PipeCommunication(
 
 Info PipeCommunication::ConnectDetail(const Info& I_Info)
 {
-    mpPipe = std::make_shared<BidirectionalPipeUnix>(GetCommunicationDirectory(), GetConnectionName(), GetIsPrimaryConnection());
+    mpPipe = std::make_shared<BidirectionalPipe>(GetCommunicationDirectory(), GetConnectionName(), GetIsPrimaryConnection());
 
     return Info(); // TODO use
 }
@@ -103,7 +103,10 @@ void PipeCommunication::DerivedHandShake()
 }
 
 
-PipeCommunication::BidirectionalPipeUnix::BidirectionalPipeUnix(const fs::path& rPipeDir, const fs::path& rBasePipeName, const bool IsPrimary)
+PipeCommunication::BidirectionalPipe::BidirectionalPipe(
+    const fs::path& rPipeDir,
+    const fs::path& rBasePipeName,
+    const bool IsPrimary)
 {
     mPipeNameWrite = rPipeDir / rBasePipeName;
     mPipeNameRead  = rPipeDir / rBasePipeName;
@@ -128,38 +131,33 @@ PipeCommunication::BidirectionalPipeUnix::BidirectionalPipeUnix(const fs::path& 
     }
 }
 
-void PipeCommunication::BidirectionalPipeUnix::Write(const std::string& rData)
+void PipeCommunication::BidirectionalPipe::Write(const std::string& rData)
 {
     SendSize(rData.size());
     write(mPipeHandleWrite, rData.c_str(), rData.size());
 }
 
-void PipeCommunication::BidirectionalPipeUnix::Read(std::string& rData)
+void PipeCommunication::BidirectionalPipe::Read(std::string& rData)
 {
     std::size_t received_size = ReceiveSize();
     rData.resize(received_size);
-    std::cout << "before READING" << std::endl;
     read(mPipeHandleRead, &(rData.front()), received_size); // using front as other methods that access the underlying char are const
 }
 
-void PipeCommunication::BidirectionalPipeUnix::Close()
+void PipeCommunication::BidirectionalPipe::Close()
 {
     close(mPipeHandleWrite);
     close(mPipeHandleRead);
 }
 
-void PipeCommunication::BidirectionalPipeUnix::SendSize(const std::uint64_t Size)
+void PipeCommunication::BidirectionalPipe::SendSize(const std::uint64_t Size)
 {
-    std::cout << "preparing to send size: " << Size << " (sizeof: " << sizeof(Size) << ")" << std::endl;
-
     write(mPipeHandleWrite, &Size, sizeof(Size));
 }
 
-std::uint64_t PipeCommunication::BidirectionalPipeUnix::ReceiveSize()
+std::uint64_t PipeCommunication::BidirectionalPipe::ReceiveSize()
 {
     std::uint64_t imp_size_u;
-    std::cout << "preparing to receive size (sizeof: " << sizeof(imp_size_u) << ")" << std::endl;
-
     read(mPipeHandleRead, &imp_size_u, sizeof(imp_size_u));
 
     return imp_size_u;

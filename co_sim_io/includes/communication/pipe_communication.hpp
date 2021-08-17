@@ -15,7 +15,6 @@
 
 // System includes
 #include <unordered_map>
-#include <utility> // std::pair
 
 // Project includes
 #include "communication.hpp"
@@ -40,10 +39,13 @@ public:
     }
 
 private:
-class BidirectionalPipeUnix
+class BidirectionalPipe
 {
 public:
-    BidirectionalPipeUnix(const fs::path& rPipeDir, const fs::path& rBasePipeName, const bool IsPrimary);
+    BidirectionalPipe(
+        const fs::path& rPipeDir,
+        const fs::path& rBasePipeName,
+        const bool IsPrimary);
 
     void Write(const std::string& rData);
 
@@ -82,15 +84,7 @@ private:
     std::uint64_t ReceiveSize();
 };
 
-    using PipeDescriptorType = int; // https://man7.org/linux/man-pages/man2/open.2.html
-    using PipeNameType = fs::path;
-    using PipeType = std::pair<PipeNameType, PipeDescriptorType>;
-    using BidirecionalPipeType = std::pair<PipeType, PipeType>;
-    using PipeMapType = std::unordered_map<std::size_t, BidirecionalPipeType>;
-
-    PipeMapType mPipeMap;
-
-    std::shared_ptr<BidirectionalPipeUnix> mpPipe;
+    std::shared_ptr<BidirectionalPipe> mpPipe;
 
     std::string GetCommunicationName() const override {return "pipe";}
 
