@@ -110,7 +110,9 @@ PipeCommunication::BidirectionalPipe::BidirectionalPipe(
 {
     mPipeNameWrite = rPipeDir / rBasePipeName;
     mPipeNameRead  = rPipeDir / rBasePipeName;
-
+    #ifdef CO_SIM_IO_COMPILED_IN_WINDOWS
+    CO_SIM_IO_ERROR << "Pipe communication is not yet implemented for Windows!" << std::endl;
+    #else
     if (IsPrimary) {
         mPipeNameWrite += "_p2s";
         mPipeNameRead  += "_s2p";
@@ -129,38 +131,51 @@ PipeCommunication::BidirectionalPipe::BidirectionalPipe(
         CO_SIM_IO_ERROR_IF((mPipeHandleRead = open(mPipeNameRead.c_str(), O_RDONLY)) < 0) << "Pipe " << mPipeNameRead << " could not be opened!" << std::endl;
         CO_SIM_IO_ERROR_IF((mPipeHandleWrite = open(mPipeNameWrite.c_str(), O_WRONLY)) < 0) << "Pipe " << mPipeNameWrite << " could not be opened!" << std::endl;
     }
+    #endif
 }
 
 void PipeCommunication::BidirectionalPipe::Write(const std::string& rData)
 {
+    #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
     SendSize(rData.size());
     write(mPipeHandleWrite, rData.c_str(), rData.size());
+    #endif
 }
 
 void PipeCommunication::BidirectionalPipe::Read(std::string& rData)
 {
+    #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
     std::size_t received_size = ReceiveSize();
     rData.resize(received_size);
     read(mPipeHandleRead, &(rData.front()), received_size); // using front as other methods that access the underlying char are const
+    #endif
 }
 
 void PipeCommunication::BidirectionalPipe::Close()
 {
+    #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
     close(mPipeHandleWrite);
     close(mPipeHandleRead);
+    #endif
 }
 
 void PipeCommunication::BidirectionalPipe::SendSize(const std::uint64_t Size)
 {
+    #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
     write(mPipeHandleWrite, &Size, sizeof(Size));
+    #endif
 }
 
 std::uint64_t PipeCommunication::BidirectionalPipe::ReceiveSize()
 {
+    #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
     std::uint64_t imp_size_u;
     read(mPipeHandleRead, &imp_size_u, sizeof(imp_size_u));
-
     return imp_size_u;
+    #else
+    return 0;
+    #endif
+
 }
 
 } // namespace Internals
