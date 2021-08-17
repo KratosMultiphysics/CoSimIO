@@ -27,6 +27,7 @@
 // Project includes
 #include "includes/communication/pipe_communication.hpp"
 #include "includes/stream_serializer.hpp"
+#include "includes/utilities.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -99,6 +100,69 @@ Info PipeCommunication::ExportMeshImpl(
 void PipeCommunication::DerivedHandShake()
 {
     CO_SIM_IO_ERROR_IF(GetMyInfo().Get<std::string>("operating_system") != GetPartnerInfo().Get<std::string>("operating_system")) << "Pipe communication cannot be used between different operating systems!" << std::endl;
+}
+
+
+PipeCommunication::BidirectionalPipeUnix::BidirectionalPipeUnix(const fs::path& rPipeDir, const fs::path& rBasePipeName, const bool IsPrimary)
+{
+    mPipeNameWrite = rPipeDir / rBasePipeName;
+    mPipeNameRead  = rPipeDir / rBasePipeName;
+
+    if (IsPrimary) {
+        mPipeNameWrite += "_p2s";
+        mPipeNameRead  += "_s2p";
+
+        CO_SIM_IO_ERROR_IF(mkfifo(mPipeNameWrite.c_str(), 0666) != 0) << "Pipe " << mPipeNameWrite << " could not be created!" << std::endl;
+        CO_SIM_IO_ERROR_IF(mkfifo(mPipeNameRead.c_str(), 0666) != 0) << "Pipe " << mPipeNameRead << " could not be created!" << std::endl;
+        CO_SIM_IO_ERROR_IF((mPipeHandleWrite = open(mPipeNameWrite.c_str(), O_WRONLY)) < 0) << "Pipe " << mPipeNameWrite << " could not be opened!" << std::endl;
+        CO_SIM_IO_ERROR_IF((mPipeHandleRead = open(mPipeNameRead.c_str(), O_RDONLY)) < 0) << "Pipe " << mPipeNameRead << " could not be opened!" << std::endl;
+
+    } else {
+        mPipeNameWrite += "_s2p";
+        mPipeNameRead  += "_p2s";
+
+        WaitUntilPathExists(mPipeNameWrite); // written last hence wait for it
+
+        CO_SIM_IO_ERROR_IF((mPipeHandleRead = open(mPipeNameRead.c_str(), O_RDONLY)) < 0) << "Pipe " << mPipeNameRead << " could not be opened!" << std::endl;
+        CO_SIM_IO_ERROR_IF((mPipeHandleWrite = open(mPipeNameWrite.c_str(), O_WRONLY)) < 0) << "Pipe " << mPipeNameWrite << " could not be opened!" << std::endl;
+    }
+}
+
+void PipeCommunication::BidirectionalPipeUnix::Write(const std::string& rData)
+{
+    SendSize(rData.size());
+    write(mPipeHandleWrite, rData.c_str(), rData.size());
+}
+
+void PipeCommunication::BidirectionalPipeUnix::Read(std::string& rData)
+{
+    std::size_t received_size = ReceiveSize();
+    rData.resize(received_size);
+    std::cout << "before READING" << std::endl;
+    read(mPipeHandleRead, &(rData.front()), received_size); // using front as other methods that access the underlying char are const
+}
+
+void PipeCommunication::BidirectionalPipeUnix::Close()
+{
+    close(mPipeHandleWrite);
+    close(mPipeHandleRead);
+}
+
+void PipeCommunication::BidirectionalPipeUnix::SendSize(const std::uint64_t Size)
+{
+    std::cout << "preparing to send size: " << Size << " (sizeof: " << sizeof(Size) << ")" << std::endl;
+
+    write(mPipeHandleWrite, &Size, sizeof(Size));
+}
+
+std::uint64_t PipeCommunication::BidirectionalPipeUnix::ReceiveSize()
+{
+    std::uint64_t imp_size_u;
+    std::cout << "preparing to receive size (sizeof: " << sizeof(imp_size_u) << ")" << std::endl;
+
+    read(mPipeHandleRead, &imp_size_u, sizeof(imp_size_u));
+
+    return imp_size_u;
 }
 
 } // namespace Internals
