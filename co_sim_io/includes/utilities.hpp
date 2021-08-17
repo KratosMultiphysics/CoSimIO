@@ -16,6 +16,7 @@
 // System includes
 #include <string>
 #include <chrono>
+#include <unordered_set>
 
 // Project includes
 #include "define.hpp"
@@ -44,6 +45,11 @@ double CO_SIM_IO_API ElapsedSeconds(const std::chrono::steady_clock::time_point&
 int CO_SIM_IO_API GetNumberOfNodesForElementType(ElementType Type);
 
 void CO_SIM_IO_API WaitUntilPathExists(const fs::path& rPath);
+
+std::unordered_set<std::size_t> ComputeNeighborRanks(
+    const std::size_t MyRank,
+    const std::size_t MySize,
+    const std::size_t PartnerSize);
 
 } // namespace Internals
 } // namespace CoSimIO

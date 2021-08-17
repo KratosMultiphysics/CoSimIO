@@ -95,5 +95,26 @@ void WaitUntilPathExists(const fs::path& rPath)
     while(!fs::exists(rPath)) {std::this_thread::sleep_for(std::chrono::milliseconds(5));} // wait 0.005s before next check
 }
 
+std::unordered_set<std::size_t> ComputeNeighborRanks(
+    const std::size_t MyRank,
+    const std::size_t MySize,
+    const std::size_t PartnerSize)
+{
+    // assert(MySize>0)
+    // assert(MyRank<MySize)
+    // assert(PartnerSize>0)
+
+    if (MyRank == 0 && MySize == 1 && PartnerSize == 1) { // serial case
+        return {0};
+    } else if (MyRank == 0 && MySize == 1 && PartnerSize > 1) { // partner is distributed
+        std::unordered_set<std::size_t> partner_ranks;
+        for (std::size_t i=0; i<PartnerSize; ++i) {partner_ranks.insert(i);}
+        return partner_ranks;
+    } else if (MyRank < MySize && MyRank > PartnerSize) {
+        return {};
+    }
+    return {};
+}
+
 } // namespace Internals
 } // namespace CoSimIO
