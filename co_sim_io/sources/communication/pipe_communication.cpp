@@ -96,5 +96,10 @@ Info PipeCommunication::ExportMeshImpl(
     return Info(); // TODO use
 }
 
+void PipeCommunication::DerivedHandShake()
+{
+    CO_SIM_IO_ERROR_IF(GetMyInfo().Get<std::string>("operating_system") != GetPartnerInfo().Get<std::string>("operating_system")) << "Pipe communication cannot be used between different operating systems!" << std::endl;
+}
+
 } // namespace Internals
 } // namespace CoSimIO

@@ -102,7 +102,6 @@ private:
     fs::path mPipeNameWrite;
     fs::path mPipeNameRead;
 
-
     void SendSize(const std::uint64_t Size)
     {
         std::cout << "preparing to send size: " << Size << " (sizeof: " << sizeof(Size) << ")" << std::endl;
@@ -176,6 +175,8 @@ private:
     Info ExportMeshImpl(
         const Info& I_Info,
         const ModelPart& I_ModelPart) override;
+
+    void DerivedHandShake() override;
 };
 
 } // namespace Internals
