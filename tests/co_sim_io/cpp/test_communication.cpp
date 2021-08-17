@@ -564,7 +564,9 @@ TEST_CASE("FileCommunication_avail_file" * doctest::timeout(25.0))
 
 TEST_CASE("PipeCommunication" * doctest::timeout(25.0))
 {
+#ifndef CO_SIM_IO_COMPILED_IN_WINDOWS // pipe comm is currenlty not implemented in Win
     RunAllCommunication<CoSimIO::Internals::PipeCommunication>();
+#endif
 }
 
 } // TEST_SUITE("Communication")
