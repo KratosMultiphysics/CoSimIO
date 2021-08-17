@@ -14,6 +14,10 @@
 #define CO_SIM_IO_TESTING_INCLUDED
 
 // External includes
+#include <vector>
+#include <unordered_set>
+
+// External includes
 #include "doctest/doctest.h"
 
 // Project includes
@@ -66,5 +70,30 @@ void CheckElementsAreEqual(
 void CheckModelPartsAreEqual(
     const CoSimIO::ModelPart& ModelPart1,
     const CoSimIO::ModelPart& ModelPart2);
+
+template<class T>
+std::ostream& operator<<(std::ostream& rOStream, const std::vector<T>& rVec) {
+
+    std::size_t vector_size = rVec.size();
+
+    rOStream << "[";
+    if(vector_size>0) rOStream << rVec[0];
+    if(vector_size>1) {
+        for(std::size_t i = 1; i < vector_size; i++)
+            rOStream<<", "<<rVec[i];
+    }
+    rOStream << "]";
+
+    return rOStream;
+}
+
+template<class T>
+std::ostream &operator<<(std::ostream &os, const std::unordered_set<T> &s)
+{
+    for (auto const &i: s) {
+        os << i << " ";
+    }
+    return os;
+}
 
 #endif // CO_SIM_IO_UTILITIES_INCLUDED
