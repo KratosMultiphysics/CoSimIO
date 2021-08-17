@@ -396,10 +396,6 @@ void Communication::HandShake(const Info& I_Info)
     // sync the partner info among the partitions
     mpDataComm->Broadcast(mPartnerInfo, 0);
 
-    // check if comm format is the same
-    // exchange info if running in MPI and with how many cores
-    // check OSs and if the Comm format supports inter-OS communication
-
     CO_SIM_IO_CATCH
 }
 
