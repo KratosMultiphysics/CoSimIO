@@ -48,9 +48,11 @@ Communication::Communication(
 
     CO_SIM_IO_ERROR_IF_NOT(fs::exists(mWorkingDirectory)) << "The working directory " << mWorkingDirectory << " does not exist!" << std::endl;
 
-    mCommFolder = GetWorkingDirectory();
-    mCommFolder /= ".CoSimIOFileComm_" + GetConnectionName();
     mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", true);
+    mCommFolder = GetWorkingDirectory();
+    if (mCommInFolder) {
+        mCommFolder /= ".CoSimIOComm_" + GetConnectionName();
+    }
 
     CO_SIM_IO_CATCH
 }
