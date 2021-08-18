@@ -352,7 +352,7 @@ TEST_CASE("ComputePartnerRanksAsImporter")
         }
     }
 
-    SUBCASE("distributed_distributed_partner_size_larger_1")
+    SUBCASE("distributed_distributed_partner_size_larger_2")
     {
         const std::size_t my_size = 3;
         const std::size_t partner_size = 7;
@@ -764,7 +764,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         }
     }
 
-    SUBCASE("distributed_distributed_partner_size_larger_1")
+    SUBCASE("distributed_distributed_partner_size_larger_2")
     {
         const std::size_t my_size = 3;
         const std::size_t partner_size = 7;
