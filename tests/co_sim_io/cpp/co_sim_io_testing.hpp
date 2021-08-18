@@ -106,4 +106,9 @@ std::ostream& operator<<(
 
 } // namespace CoSimIO
 
+namespace doctest {
+// for printing the variables in the check macros (otherwise e.g. vector is displayed as { ? })
+using CoSimIO::operator<<;
+} // namespace doctest
+
 #endif // CO_SIM_IO_UTILITIES_INCLUDED
