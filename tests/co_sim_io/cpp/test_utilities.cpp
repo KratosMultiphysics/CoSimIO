@@ -430,6 +430,45 @@ TEST_CASE("ComputePartnerRanksAsImporter")
         }
     }
 
+    SUBCASE("distributed_distributed_partner_size_larger_4")
+    {
+        const std::size_t my_size = 3;
+        const std::size_t partner_size = 8;
+
+        SUBCASE("MyRank=0")
+        {
+            const std::size_t my_rank = 0;
+            exp_partner_ranks = {0,1,2};
+
+            neighbor_ranks = Utilities::ComputePartnerRanksAsImporter(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=1")
+        {
+            const std::size_t my_rank = 1;
+            exp_partner_ranks = {3,4,5};
+
+            neighbor_ranks = Utilities::ComputePartnerRanksAsImporter(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=2")
+        {
+            const std::size_t my_rank = 2;
+            exp_partner_ranks = {6,7};
+
+            neighbor_ranks = Utilities::ComputePartnerRanksAsImporter(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+    }
+
     // unordered sets can be compared, it is provided by the standard
     CHECK_EQ(exp_partner_ranks, neighbor_ranks);
 }
