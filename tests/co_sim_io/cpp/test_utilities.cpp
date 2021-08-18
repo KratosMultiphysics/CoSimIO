@@ -371,7 +371,7 @@ TEST_CASE("ComputePartnerRanksAsImporter")
         SUBCASE("MyRank=1")
         {
             const std::size_t my_rank = 1;
-            exp_partner_ranks = {3,4};
+            exp_partner_ranks = {3,4,5};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsImporter(
                 my_rank,
@@ -382,7 +382,7 @@ TEST_CASE("ComputePartnerRanksAsImporter")
         SUBCASE("MyRank=2")
         {
             const std::size_t my_rank = 2;
-            exp_partner_ranks = {5,6};
+            exp_partner_ranks = {6};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsImporter(
                 my_rank,
@@ -461,6 +461,56 @@ TEST_CASE("ComputePartnerRanksAsImporter")
         {
             const std::size_t my_rank = 2;
             exp_partner_ranks = {6,7};
+
+            neighbor_ranks = Utilities::ComputePartnerRanksAsImporter(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+    }
+
+    SUBCASE("distributed_distributed_partner_size_larger_5")
+    {
+        const std::size_t my_size = 4;
+        const std::size_t partner_size = 14;
+
+        SUBCASE("MyRank=0")
+        {
+            const std::size_t my_rank = 0;
+            exp_partner_ranks = {0,1,2,3};
+
+            neighbor_ranks = Utilities::ComputePartnerRanksAsImporter(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=1")
+        {
+            const std::size_t my_rank = 1;
+            exp_partner_ranks = {4,5,6,7};
+
+            neighbor_ranks = Utilities::ComputePartnerRanksAsImporter(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=2")
+        {
+            const std::size_t my_rank = 2;
+            exp_partner_ranks = {8,9,10,11};
+
+            neighbor_ranks = Utilities::ComputePartnerRanksAsImporter(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=3")
+        {
+            const std::size_t my_rank = 3;
+            exp_partner_ranks = {12,13};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsImporter(
                 my_rank,

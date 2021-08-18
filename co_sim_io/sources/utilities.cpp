@@ -122,8 +122,17 @@ std::unordered_set<std::size_t> ComputePartnerRanksAsImporter(
         }
     } else {
         // several of partner ranks communicate with one rank of me
-        const std::size_t num_ranks_per_partner_rank = std::ceil(MySize / static_cast<double>(PartnerSize));
-        return {MyRank/num_ranks_per_partner_rank};
+        const std::size_t num_ranks_per_partner_rank = std::ceil(PartnerSize / static_cast<double>(MySize));
+        std::unordered_set<std::size_t> partner_ranks;
+        const std::size_t lower_end = MyRank*num_ranks_per_partner_rank;
+        const std::size_t upper_end = (MyRank+1)*num_ranks_per_partner_rank;
+
+        for (std::size_t i=0; i<PartnerSize; ++i) {
+            if (i >= lower_end && i < upper_end) {
+                partner_ranks.insert(i);
+            }
+        }
+        return partner_ranks;
     }
 }
 
