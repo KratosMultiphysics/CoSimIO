@@ -22,46 +22,273 @@ namespace CoSimIO {
 
 TEST_SUITE("Utilities") {
 
-TEST_CASE("ComputeNeighborRanks")
+TEST_CASE("ComputePartnerRanks")
 {
-    std::unordered_set<std::size_t> exp_neighbor_ranks;
+    std::unordered_set<std::size_t> exp_partner_ranks;
     std::unordered_set<std::size_t> neighbor_ranks;
 
-    SUBCASE("serial")
+    SUBCASE("serial_serial")
     {
         const std::size_t my_rank = 0;
         const std::size_t my_size = 1;
         const std::size_t partner_size = 1;
-        exp_neighbor_ranks = {0};
-        neighbor_ranks = Utilities::ComputeNeighborRanks(
+        exp_partner_ranks = {0};
+        neighbor_ranks = Utilities::ComputePartnerRanks(
             my_rank,
             my_size,
             partner_size);
     }
 
-    SUBCASE("partner_distributed")
+    SUBCASE("serial_distributed")
     {
         const std::size_t my_rank = 0;
         const std::size_t my_size = 1;
         const std::size_t partner_size = 5;
-        exp_neighbor_ranks = {0,1,2,3,4};
+        exp_partner_ranks = {0,1,2,3,4};
 
-        // std::cout << exp_neighbor_ranks << std::endl;
-
-        neighbor_ranks = Utilities::ComputeNeighborRanks(
+        neighbor_ranks = Utilities::ComputePartnerRanks(
             my_rank,
             my_size,
             partner_size);
     }
 
+    SUBCASE("distributed_serial")
+    {
+        const std::size_t my_rank = 2; // can be any from 0-3
+        const std::size_t my_size = 4;
+        const std::size_t partner_size = 1;
+        exp_partner_ranks = {0};
 
-    CHECK_EQ(exp_neighbor_ranks, neighbor_ranks);
+        neighbor_ranks = Utilities::ComputePartnerRanks(
+            my_rank,
+            my_size,
+            partner_size);
+    }
 
+    SUBCASE("distributed_distributed_same_size")
+    {
+        const std::size_t my_size = 2;
+        const std::size_t partner_size = 2;
 
-// std::unordered_set<std::size_t> ComputeNeighborRanks(
-//     const std::size_t MyRank,
-//     const std::size_t MySize,
-//     const std::size_t PartnerSize);
+        SUBCASE("MyRank=0")
+        {
+            const std::size_t my_rank = 0;
+            exp_partner_ranks = {0};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=1")
+        {
+            const std::size_t my_rank = 1;
+            exp_partner_ranks = {1};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+    }
+
+    SUBCASE("distributed_distributed_my_size_larger_1")
+    {
+        const std::size_t my_size = 4;
+        const std::size_t partner_size = 2;
+
+        SUBCASE("MyRank=0")
+        {
+            const std::size_t my_rank = 0;
+            exp_partner_ranks = {0};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=1")
+        {
+            const std::size_t my_rank = 1;
+            exp_partner_ranks = {0};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=2")
+        {
+            const std::size_t my_rank = 2;
+            exp_partner_ranks = {1};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=3")
+        {
+            const std::size_t my_rank = 3;
+            exp_partner_ranks = {1};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+    }
+
+    SUBCASE("distributed_distributed_my_size_larger_2")
+    {
+        const std::size_t my_size = 7;
+        const std::size_t partner_size = 2;
+
+        SUBCASE("MyRank=0")
+        {
+            const std::size_t my_rank = 0;
+            exp_partner_ranks = {0};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=1")
+        {
+            const std::size_t my_rank = 1;
+            exp_partner_ranks = {0};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=2")
+        {
+            const std::size_t my_rank = 2;
+            exp_partner_ranks = {0};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=3")
+        {
+            const std::size_t my_rank = 3;
+            exp_partner_ranks = {0};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=4")
+        {
+            const std::size_t my_rank = 4;
+            exp_partner_ranks = {1};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=5")
+        {
+            const std::size_t my_rank = 5;
+            exp_partner_ranks = {1};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=6")
+        {
+            const std::size_t my_rank = 6;
+            exp_partner_ranks = {1};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+    }
+
+    SUBCASE("distributed_distributed_my_size_larger_3")
+    {
+        const std::size_t my_size = 5;
+        const std::size_t partner_size = 3;
+
+        SUBCASE("MyRank=0")
+        {
+            const std::size_t my_rank = 0;
+            exp_partner_ranks = {0};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=1")
+        {
+            const std::size_t my_rank = 1;
+            exp_partner_ranks = {0};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=2")
+        {
+            const std::size_t my_rank = 2;
+            exp_partner_ranks = {1};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=3")
+        {
+            const std::size_t my_rank = 3;
+            exp_partner_ranks = {1};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=4")
+        {
+            const std::size_t my_rank = 4;
+            exp_partner_ranks = {2};
+
+            neighbor_ranks = Utilities::ComputePartnerRanks(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+    }
+
+    // unordered sets can be compared, it is provided by the standard
+    CHECK_EQ(exp_partner_ranks, neighbor_ranks);
 }
 
 } // TEST_SUITE("VtkUtilities")

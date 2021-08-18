@@ -15,6 +15,7 @@
 #include <map>
 #include <chrono>
 #include <thread>
+#include <cmath>
 
 // Project includes
 #include "includes/utilities.hpp"
@@ -95,7 +96,7 @@ void WaitUntilPathExists(const fs::path& rPath)
     while(!fs::exists(rPath)) {std::this_thread::sleep_for(std::chrono::milliseconds(5));} // wait 0.005s before next check
 }
 
-std::unordered_set<std::size_t> ComputeNeighborRanks(
+std::unordered_set<std::size_t> ComputePartnerRanks(
     const std::size_t MyRank,
     const std::size_t MySize,
     const std::size_t PartnerSize)
@@ -104,16 +105,25 @@ std::unordered_set<std::size_t> ComputeNeighborRanks(
     // assert(MyRank<MySize)
     // assert(PartnerSize>0)
 
-    if (MyRank == 0 && MySize == 1 && PartnerSize == 1) { // serial case
-        return {0};
-    } else if (MyRank == 0 && MySize == 1 && PartnerSize > 1) { // partner is distributed
+    if (MySize == 1) {
+        // I am serial, communicate with all partner ranks (doesn't matter if partner is distributed or not)
         std::unordered_set<std::size_t> partner_ranks;
         for (std::size_t i=0; i<PartnerSize; ++i) {partner_ranks.insert(i);}
         return partner_ranks;
-    } else if (MyRank < MySize && MyRank > PartnerSize) {
+    } else if (PartnerSize == 1) {
+        // partner is serial, all of my ranks communicate with one rank (rank 0)
+        return {0};
+    } else if (MySize == PartnerSize) {
+        // special case when both run with the same size
+        return {MyRank};
+    } else {
+        if (MySize > PartnerSize) {
+            // several of my ranks communicate with one rank of partner
+            const std::size_t num_ranks_per_partner_rank = std::ceil(MySize / static_cast<double>(PartnerSize));
+            return {MyRank/num_ranks_per_partner_rank};
+        }
         return {};
     }
-    return {};
 }
 
 } // namespace Utilities

@@ -46,7 +46,7 @@ int CO_SIM_IO_API GetNumberOfNodesForElementType(ElementType Type);
 
 void CO_SIM_IO_API WaitUntilPathExists(const fs::path& rPath);
 
-std::unordered_set<std::size_t> ComputeNeighborRanks(
+std::unordered_set<std::size_t> ComputePartnerRanks(
     const std::size_t MyRank,
     const std::size_t MySize,
     const std::size_t PartnerSize);
