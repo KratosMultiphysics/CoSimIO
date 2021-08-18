@@ -121,8 +121,10 @@ std::unordered_set<std::size_t> ComputePartnerRanks(
             // several of my ranks communicate with one rank of partner
             const std::size_t num_ranks_per_partner_rank = std::ceil(MySize / static_cast<double>(PartnerSize));
             return {MyRank/num_ranks_per_partner_rank};
+        } else {
+            // partner has more ranks, we only communicate with one
+            return {MyRank};
         }
-        return {};
     }
 }
 
