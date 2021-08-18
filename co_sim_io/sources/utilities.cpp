@@ -96,7 +96,7 @@ void WaitUntilPathExists(const fs::path& rPath)
     while(!fs::exists(rPath)) {std::this_thread::sleep_for(std::chrono::milliseconds(5));} // wait 0.005s before next check
 }
 
-std::unordered_set<std::size_t> ComputePartnerRanksAsImporter(
+std::set<std::size_t> ComputePartnerRanksAsImporter(
     const std::size_t MyRank,
     const std::size_t MySize,
     const std::size_t PartnerSize)
@@ -108,7 +108,7 @@ std::unordered_set<std::size_t> ComputePartnerRanksAsImporter(
 
     if (MySize == 1) {
         // I am serial, communicate with all partner ranks (doesn't matter if partner is distributed or not)
-        std::unordered_set<std::size_t> partner_ranks;
+        std::set<std::size_t> partner_ranks;
         for (std::size_t i=0; i<PartnerSize; ++i) {partner_ranks.insert(i);}
         return partner_ranks;
     } else if (MySize == PartnerSize) {
@@ -124,7 +124,7 @@ std::unordered_set<std::size_t> ComputePartnerRanksAsImporter(
     } else {
         // several of partner ranks communicate with one rank of me
         const std::size_t num_ranks_per_partner_rank = static_cast<std::size_t>(std::ceil(PartnerSize / static_cast<double>(MySize)));
-        std::unordered_set<std::size_t> partner_ranks;
+        std::set<std::size_t> partner_ranks;
         const std::size_t lower_end = MyRank*num_ranks_per_partner_rank;
         const std::size_t upper_end = (MyRank+1)*num_ranks_per_partner_rank;
 
@@ -137,7 +137,7 @@ std::unordered_set<std::size_t> ComputePartnerRanksAsImporter(
     }
 }
 
-std::unordered_set<std::size_t> ComputePartnerRanksAsExporter(
+std::set<std::size_t> ComputePartnerRanksAsExporter(
     const std::size_t MyRank,
     const std::size_t MySize,
     const std::size_t PartnerSize)

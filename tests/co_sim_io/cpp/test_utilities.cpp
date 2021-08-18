@@ -24,8 +24,8 @@ TEST_SUITE("Utilities") {
 
 TEST_CASE("ComputePartnerRanksAsImporter")
 {
-    std::unordered_set<std::size_t> exp_partner_ranks;
-    std::unordered_set<std::size_t> neighbor_ranks;
+    std::set<std::size_t> exp_partner_ranks;
+    std::set<std::size_t> neighbor_ranks;
 
     SUBCASE("serial_serial")
     {
@@ -525,8 +525,8 @@ TEST_CASE("ComputePartnerRanksAsImporter")
 
 TEST_CASE("ComputePartnerRanksAsExporter")
 {
-    std::unordered_set<std::size_t> exp_partner_ranks;
-    std::unordered_set<std::size_t> neighbor_ranks;
+    std::set<std::size_t> exp_partner_ranks;
+    std::set<std::size_t> neighbor_ranks;
 
     SUBCASE("serial_serial")
     {
