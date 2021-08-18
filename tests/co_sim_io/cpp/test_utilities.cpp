@@ -456,7 +456,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         const std::size_t my_rank = 0;
         const std::size_t my_size = 1;
         const std::size_t partner_size = 5;
-        exp_partner_ranks = {0,1,2,3,4};
+        exp_partner_ranks = {0};
 
         neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
             my_rank,
@@ -483,7 +483,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         SUBCASE("MyRank=1")
         {
             const std::size_t my_rank = 1;
-            exp_partner_ranks = {};
+            exp_partner_ranks = {0};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
                 my_rank,
@@ -494,7 +494,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         SUBCASE("MyRank=2")
         {
             const std::size_t my_rank = 2;
-            exp_partner_ranks = {};
+            exp_partner_ranks = {0};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
                 my_rank,
@@ -505,7 +505,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         SUBCASE("MyRank=3")
         {
             const std::size_t my_rank = 3;
-            exp_partner_ranks = {};
+            exp_partner_ranks = {0};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
                 my_rank,
@@ -561,7 +561,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         SUBCASE("MyRank=1")
         {
             const std::size_t my_rank = 1;
-            exp_partner_ranks = {1};
+            exp_partner_ranks = {0};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
                 my_rank,
@@ -572,7 +572,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         SUBCASE("MyRank=2")
         {
             const std::size_t my_rank = 2;
-            exp_partner_ranks = {};
+            exp_partner_ranks = {1};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
                 my_rank,
@@ -583,7 +583,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         SUBCASE("MyRank=3")
         {
             const std::size_t my_rank = 3;
-            exp_partner_ranks = {};
+            exp_partner_ranks = {1};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
                 my_rank,
@@ -611,7 +611,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         SUBCASE("MyRank=1")
         {
             const std::size_t my_rank = 1;
-            exp_partner_ranks = {1};
+            exp_partner_ranks = {0};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
                 my_rank,
@@ -622,7 +622,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         SUBCASE("MyRank=2")
         {
             const std::size_t my_rank = 2;
-            exp_partner_ranks = {};
+            exp_partner_ranks = {0};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
                 my_rank,
@@ -633,7 +633,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         SUBCASE("MyRank=3")
         {
             const std::size_t my_rank = 3;
-            exp_partner_ranks = {};
+            exp_partner_ranks = {0};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
                 my_rank,
@@ -644,7 +644,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         SUBCASE("MyRank=4")
         {
             const std::size_t my_rank = 4;
-            exp_partner_ranks = {};
+            exp_partner_ranks = {1};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
                 my_rank,
@@ -655,7 +655,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         SUBCASE("MyRank=5")
         {
             const std::size_t my_rank = 5;
-            exp_partner_ranks = {};
+            exp_partner_ranks = {1};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
                 my_rank,
@@ -666,7 +666,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         SUBCASE("MyRank=6")
         {
             const std::size_t my_rank = 6;
-            exp_partner_ranks = {};
+            exp_partner_ranks = {1};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
                 my_rank,
@@ -679,6 +679,95 @@ TEST_CASE("ComputePartnerRanksAsExporter")
     {
         const std::size_t my_size = 5;
         const std::size_t partner_size = 3;
+
+        SUBCASE("MyRank=0")
+        {
+            const std::size_t my_rank = 0;
+            exp_partner_ranks = {0};
+
+            neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=1")
+        {
+            const std::size_t my_rank = 1;
+            exp_partner_ranks = {0};
+
+            neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=2")
+        {
+            const std::size_t my_rank = 2;
+            exp_partner_ranks = {1};
+
+            neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=3")
+        {
+            const std::size_t my_rank = 3;
+            exp_partner_ranks = {1};
+
+            neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=4")
+        {
+            const std::size_t my_rank = 4;
+            exp_partner_ranks = {2};
+
+            neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+    }
+
+    SUBCASE("distributed_distributed_partner_size_larger_1")
+    {
+        const std::size_t my_size = 2;
+        const std::size_t partner_size = 4;
+
+        SUBCASE("MyRank=0")
+        {
+            const std::size_t my_rank = 0;
+            exp_partner_ranks = {0};
+
+            neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+
+        SUBCASE("MyRank=1")
+        {
+            const std::size_t my_rank = 1;
+            exp_partner_ranks = {1};
+
+            neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
+                my_rank,
+                my_size,
+                partner_size);
+        }
+    }
+
+    SUBCASE("distributed_distributed_partner_size_larger_1")
+    {
+        const std::size_t my_size = 3;
+        const std::size_t partner_size = 7;
 
         SUBCASE("MyRank=0")
         {
@@ -712,95 +801,6 @@ TEST_CASE("ComputePartnerRanksAsExporter")
                 my_size,
                 partner_size);
         }
-
-        SUBCASE("MyRank=3")
-        {
-            const std::size_t my_rank = 3;
-            exp_partner_ranks = {};
-
-            neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
-                my_rank,
-                my_size,
-                partner_size);
-        }
-
-        SUBCASE("MyRank=4")
-        {
-            const std::size_t my_rank = 4;
-            exp_partner_ranks = {};
-
-            neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
-                my_rank,
-                my_size,
-                partner_size);
-        }
-    }
-
-    SUBCASE("distributed_distributed_partner_size_larger_1")
-    {
-        const std::size_t my_size = 2;
-        const std::size_t partner_size = 4;
-
-        SUBCASE("MyRank=0")
-        {
-            const std::size_t my_rank = 0;
-            exp_partner_ranks = {0,1};
-
-            neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
-                my_rank,
-                my_size,
-                partner_size);
-        }
-
-        SUBCASE("MyRank=1")
-        {
-            const std::size_t my_rank = 1;
-            exp_partner_ranks = {2,3};
-
-            neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
-                my_rank,
-                my_size,
-                partner_size);
-        }
-    }
-
-    SUBCASE("distributed_distributed_partner_size_larger_1")
-    {
-        const std::size_t my_size = 3;
-        const std::size_t partner_size = 7;
-
-        SUBCASE("MyRank=0")
-        {
-            const std::size_t my_rank = 0;
-            exp_partner_ranks = {0,1,2};
-
-            neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
-                my_rank,
-                my_size,
-                partner_size);
-        }
-
-        SUBCASE("MyRank=1")
-        {
-            const std::size_t my_rank = 1;
-            exp_partner_ranks = {3,4};
-
-            neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
-                my_rank,
-                my_size,
-                partner_size);
-        }
-
-        SUBCASE("MyRank=2")
-        {
-            const std::size_t my_rank = 2;
-            exp_partner_ranks = {5,6};
-
-            neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
-                my_rank,
-                my_size,
-                partner_size);
-        }
     }
 
     SUBCASE("distributed_distributed_partner_size_larger_3")
@@ -811,7 +811,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         SUBCASE("MyRank=0")
         {
             const std::size_t my_rank = 0;
-            exp_partner_ranks = {0,1,2,3,4};
+            exp_partner_ranks = {0};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
                 my_rank,
@@ -822,7 +822,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         SUBCASE("MyRank=1")
         {
             const std::size_t my_rank = 1;
-            exp_partner_ranks = {5,6,7,8,9};
+            exp_partner_ranks = {1};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
                 my_rank,
@@ -833,7 +833,7 @@ TEST_CASE("ComputePartnerRanksAsExporter")
         SUBCASE("MyRank=2")
         {
             const std::size_t my_rank = 2;
-            exp_partner_ranks = {10,11,12,13,14};
+            exp_partner_ranks = {2};
 
             neighbor_ranks = Utilities::ComputePartnerRanksAsExporter(
                 my_rank,
