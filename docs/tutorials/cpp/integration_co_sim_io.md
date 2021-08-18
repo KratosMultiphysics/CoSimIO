@@ -152,6 +152,8 @@ This example can be found in [integration_tutorials/cpp/export_data.cpp](https:/
 
 
 ## Mesh Exchange
+Make sure to connect (refer [Connecting and Disconnecting](#connecting-and-disconnecting)) before Mesh Exchange.
+
 After seeing how we transfer raw data between solvers/software-tools, it is time to see how we can export and import meshes. For exporting the mesh one may use the `ExportMesh` method:
 
 
