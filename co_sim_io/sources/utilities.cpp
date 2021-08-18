@@ -101,9 +101,10 @@ std::unordered_set<std::size_t> ComputePartnerRanksAsImporter(
     const std::size_t MySize,
     const std::size_t PartnerSize)
 {
-    // assert(MySize>0)
-    // assert(MyRank<MySize)
-    // assert(PartnerSize>0)
+    // validate input
+    CO_SIM_IO_ERROR_IF(MySize==0) << "MySize cannot be zero!" << std::endl;
+    CO_SIM_IO_ERROR_IF(PartnerSize==0) << "PartnerSize cannot be zero!" << std::endl;
+    CO_SIM_IO_ERROR_IF_NOT(MyRank<MySize) << "MyRank must be smaller MySize!" << std::endl;
 
     if (MySize == 1) {
         // I am serial, communicate with all partner ranks (doesn't matter if partner is distributed or not)
@@ -141,9 +142,10 @@ std::unordered_set<std::size_t> ComputePartnerRanksAsExporter(
     const std::size_t MySize,
     const std::size_t PartnerSize)
 {
-    // assert(MySize>0)
-    // assert(MyRank<MySize)
-    // assert(PartnerSize>0)
+    // validate input
+    CO_SIM_IO_ERROR_IF(MySize==0) << "MySize cannot be zero!" << std::endl;
+    CO_SIM_IO_ERROR_IF(PartnerSize==0) << "PartnerSize cannot be zero!" << std::endl;
+    CO_SIM_IO_ERROR_IF_NOT(MyRank<MySize) << "MyRank must be smaller MySize!" << std::endl;
 
     if (MySize == 1) {
         return {0};
