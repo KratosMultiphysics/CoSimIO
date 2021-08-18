@@ -96,7 +96,7 @@ void WaitUntilPathExists(const fs::path& rPath)
     while(!fs::exists(rPath)) {std::this_thread::sleep_for(std::chrono::milliseconds(5));} // wait 0.005s before next check
 }
 
-std::unordered_set<std::size_t> ComputePartnerRanks(
+std::unordered_set<std::size_t> ComputePartnerRanksAsImporter(
     const std::size_t MyRank,
     const std::size_t MySize,
     const std::size_t PartnerSize)
@@ -110,6 +110,34 @@ std::unordered_set<std::size_t> ComputePartnerRanks(
         std::unordered_set<std::size_t> partner_ranks;
         for (std::size_t i=0; i<PartnerSize; ++i) {partner_ranks.insert(i);}
         return partner_ranks;
+    } else if (MySize == PartnerSize) {
+        // special case when both run with the same size
+        return {MyRank};
+    } else if (MySize > PartnerSize) {
+        // partner is serial, only my rank 0 communicates with this rank
+        if (MyRank < PartnerSize) {
+            return {MyRank};
+        } else {
+            return {};
+        }
+    } else {
+        // several of partner ranks communicate with one rank of me
+        const std::size_t num_ranks_per_partner_rank = std::ceil(MySize / static_cast<double>(PartnerSize));
+        return {MyRank/num_ranks_per_partner_rank};
+    }
+}
+
+std::unordered_set<std::size_t> ComputePartnerRanksAsExporter(
+    const std::size_t MyRank,
+    const std::size_t MySize,
+    const std::size_t PartnerSize)
+{
+    // assert(MySize>0)
+    // assert(MyRank<MySize)
+    // assert(PartnerSize>0)
+
+    if (MySize == 1) {
+        return {0};
     } else if (PartnerSize == 1) {
         // partner is serial, all of my ranks communicate with one rank (rank 0)
         return {0};
