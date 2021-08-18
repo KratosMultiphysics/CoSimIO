@@ -126,7 +126,7 @@ PipeCommunication::BidirectionalPipe::BidirectionalPipe(
         mPipeNameWrite += "_s2p";
         mPipeNameRead  += "_p2s";
 
-        WaitUntilPathExists(mPipeNameWrite); // created last hence wait for it
+        Utilities::WaitUntilPathExists(mPipeNameWrite); // created last hence wait for it
 
         CO_SIM_IO_ERROR_IF((mPipeHandleRead = open(mPipeNameRead.c_str(), O_RDONLY)) < 0) << "Pipe " << mPipeNameRead << " could not be opened!" << std::endl;
         CO_SIM_IO_ERROR_IF((mPipeHandleWrite = open(mPipeNameWrite.c_str(), O_WRONLY)) < 0) << "Pipe " << mPipeNameWrite << " could not be opened!" << std::endl;

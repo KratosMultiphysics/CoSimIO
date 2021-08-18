@@ -23,7 +23,7 @@
 #include "filesystem_inc.hpp"
 
 namespace CoSimIO {
-namespace Internals {
+namespace Utilities {
 
 // Create the name for the connection
 // In a function bcs maybe in the future this will
@@ -51,7 +51,7 @@ std::unordered_set<std::size_t> ComputeNeighborRanks(
     const std::size_t MySize,
     const std::size_t PartnerSize);
 
-} // namespace Internals
+} // namespace Utilities
 } // namespace CoSimIO
 
 #endif // CO_SIM_IO_UTILITIES_INCLUDED

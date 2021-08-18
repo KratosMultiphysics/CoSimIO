@@ -20,7 +20,7 @@
 #include "includes/utilities.hpp"
 
 namespace CoSimIO {
-namespace Internals {
+namespace Utilities {
 
 // Create the name for the connection
 // In a function bcs maybe in the future this will
@@ -116,5 +116,5 @@ std::unordered_set<std::size_t> ComputeNeighborRanks(
     return {};
 }
 
-} // namespace Internals
+} // namespace Utilities
 } // namespace CoSimIO

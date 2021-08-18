@@ -19,7 +19,6 @@
 
 
 namespace CoSimIO {
-namespace Internals {
 
 TEST_SUITE("Utilities") {
 
@@ -34,7 +33,7 @@ TEST_CASE("ComputeNeighborRanks")
         const std::size_t my_size = 1;
         const std::size_t partner_size = 1;
         exp_neighbor_ranks = {0};
-        neighbor_ranks = ComputeNeighborRanks(
+        neighbor_ranks = Utilities::ComputeNeighborRanks(
             my_rank,
             my_size,
             partner_size);
@@ -47,9 +46,9 @@ TEST_CASE("ComputeNeighborRanks")
         const std::size_t partner_size = 5;
         exp_neighbor_ranks = {0,1,2,3,4};
 
-        std::cout << exp_neighbor_ranks << std::endl;
+        // std::cout << exp_neighbor_ranks << std::endl;
 
-        neighbor_ranks = ComputeNeighborRanks(
+        neighbor_ranks = Utilities::ComputeNeighborRanks(
             my_rank,
             my_size,
             partner_size);
@@ -67,5 +66,4 @@ TEST_CASE("ComputeNeighborRanks")
 
 } // TEST_SUITE("VtkUtilities")
 
-} // namespace Internals
 } // namespace CoSimIO
