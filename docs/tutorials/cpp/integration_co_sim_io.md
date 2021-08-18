@@ -63,13 +63,13 @@ This example can be found in [integration_tutorials/cpp/hello.cpp](https://githu
 
 
 ## Connecting and Disconnecting
-The first step to establishing a connection to Kratos CoSimulation is to use the `Connect` method:
+The first step to establish a connection to Kratos CoSimulation is to use the `Connect` method:
 ```c++
 // The connect must be called before any CosimIO method called
 auto info = CoSimIO::Connect(settings);
 ```
 
-First of all, you may notice that `Connect` method takes a `CoSimIO::Info` as its arguments. This container can be used to pass additional information about the solver/software-tool or connection settings to the _CoSimIO_:
+First of all, you may notice that `Connect` method takes a `CoSimIO::Info` as its argument. This container can be used to pass additional information about the solver/software-tool or connection settings to the _CoSimIO_:
 
 ```c++
 CoSimIO::Info settings;
@@ -88,7 +88,7 @@ This method returns a `Info` object containing information about the connection 
 ```c++
 std::string connection_name = info.Get<std::string>("connection_name");
 ```
-
+Similar things work for `Disconnect` Method.\
 Now putting together everything:
 
 ```c++
@@ -125,7 +125,9 @@ This example can be found in [integration_tutorials/cpp/connect_disconnect_a.cpp
 
 
 ## Data Exchange
-One of the important missions of the CoSimIO is to send and recieve data between processes. The `ExportData` method can be used to send data to the Kratos or directly to another solver/software-tool:
+Make sure to connect (refer [Connecting and Disconnecting](#connecting)) before the Data Exchange.
+
+One of the important missions of the CoSimIO is to send and recieve data between different solvers/software tools. The `ExportData` method can be used to send data to the Kratos or directly to another solver/software-tool:
 
 ```c++
 std::vector<double> data_to_send(4, 3.14);
