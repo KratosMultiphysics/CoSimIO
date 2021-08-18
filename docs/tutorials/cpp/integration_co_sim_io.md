@@ -125,7 +125,7 @@ This example can be found in [integration_tutorials/cpp/connect_disconnect_a.cpp
 
 
 ## Data Exchange
-Make sure to connect (refer [Connecting and Disconnecting](#connecting)) before the Data Exchange.
+Make sure to connect (refer [Connecting and Disconnecting](##connecting)) before Data Exchange.
 
 One of the important missions of the CoSimIO is to send and recieve data between different solvers/software tools. The `ExportData` method can be used to send data to the Kratos or directly to another solver/software-tool:
 
