@@ -16,7 +16,7 @@
 // System includes
 #include <string>
 #include <chrono>
-#include <unordered_set>
+#include <set>
 
 // Project includes
 #include "define.hpp"
@@ -46,12 +46,12 @@ int CO_SIM_IO_API GetNumberOfNodesForElementType(ElementType Type);
 
 void CO_SIM_IO_API WaitUntilPathExists(const fs::path& rPath);
 
-std::unordered_set<std::size_t> CO_SIM_IO_API ComputePartnerRanksAsImporter(
+std::set<std::size_t> CO_SIM_IO_API ComputePartnerRanksAsImporter(
     const std::size_t MyRank,
     const std::size_t MySize,
     const std::size_t PartnerSize);
 
-std::unordered_set<std::size_t> CO_SIM_IO_API ComputePartnerRanksAsExporter(
+std::set<std::size_t> CO_SIM_IO_API ComputePartnerRanksAsExporter(
     const std::size_t MyRank,
     const std::size_t MySize,
     const std::size_t PartnerSize);
