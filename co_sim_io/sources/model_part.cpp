@@ -64,7 +64,7 @@ Element::Element(
 {
     CO_SIM_IO_ERROR_IF(I_Id < 1) << "Id must be >= 1!" << std::endl;
     CO_SIM_IO_ERROR_IF(NumberOfNodes() < 1) << "No nodes were passed!" << std::endl;
-    const int num_nodes_elem_type = CoSimIO::Internals::GetNumberOfNodesForElementType(I_Type);
+    const int num_nodes_elem_type = Utilities::GetNumberOfNodesForElementType(I_Type);
     CO_SIM_IO_ERROR_IF_NOT(num_nodes_elem_type == static_cast<int>(NumberOfNodes())) << "Number of nodes (" << NumberOfNodes() << ") does not match expected number for element type (" << num_nodes_elem_type << ")!" << std::endl;
 }
 

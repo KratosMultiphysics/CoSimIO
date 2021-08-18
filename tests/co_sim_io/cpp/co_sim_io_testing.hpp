@@ -14,6 +14,11 @@
 #define CO_SIM_IO_TESTING_INCLUDED
 
 // External includes
+#include <ostream>
+#include <vector>
+#include <unordered_set>
+
+// External includes
 #include "doctest/doctest.h"
 
 // Project includes
@@ -66,5 +71,44 @@ void CheckElementsAreEqual(
 void CheckModelPartsAreEqual(
     const CoSimIO::ModelPart& ModelPart1,
     const CoSimIO::ModelPart& ModelPart2);
+
+namespace CoSimIO {
+// stream fcts must be in CoSimIO namespace
+
+template<class T>
+std::ostream& operator<<(
+    std::ostream& rOStream,
+    const std::vector<T>& rVec) {
+
+    std::size_t vector_size = rVec.size();
+
+    rOStream << "[";
+    if(vector_size>0) rOStream << rVec[0];
+    if(vector_size>1) {
+        for(std::size_t i = 1; i < vector_size; i++)
+            rOStream<<", "<<rVec[i];
+    }
+    rOStream << "]";
+
+    return rOStream;
+}
+
+template<class T>
+std::ostream& operator<<(
+    std::ostream& rOStream,
+    const std::unordered_set<T>& rSet)
+{
+    for (auto const& i: rSet) {
+        rOStream << i << " ";
+    }
+    return rOStream;
+}
+
+} // namespace CoSimIO
+
+namespace doctest {
+// for printing the variables in the check macros (otherwise e.g. vector is displayed as { ? })
+using CoSimIO::operator<<;
+} // namespace doctest
 
 #endif // CO_SIM_IO_UTILITIES_INCLUDED

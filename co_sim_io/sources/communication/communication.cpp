@@ -44,7 +44,7 @@ Communication::Communication(
         mIsPrimaryConnection = mMyName < mConnectTo;
         mPrimaryWasExplicitlySpecified = false;
     }
-    mConnectionName = CreateConnectionName(mMyName, mConnectTo);
+    mConnectionName = Utilities::CreateConnectionName(mMyName, mConnectTo);
 
     CO_SIM_IO_ERROR_IF_NOT(fs::exists(mWorkingDirectory)) << "The working directory " << mWorkingDirectory << " does not exist!" << std::endl;
 
