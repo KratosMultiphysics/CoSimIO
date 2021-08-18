@@ -74,7 +74,7 @@ model_part.Clear()
 ```
 
 ## Python interface of _CoSimIO.Node_
-The _CoSimIO.Node_ an be used in the following way:
+The _CoSimIO.Node_ can be used in the following way:
 ```python
 # access Id of node:
 node_id = node.Id()
