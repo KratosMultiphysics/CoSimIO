@@ -79,7 +79,7 @@ template<typename T> void MPIDataCommunicatorSumIntegralTypeTest()
         KRATOS_CHECK_EQUAL(result, world_size);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     // passing invalid rank as argument
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         mpi_world_communicator.Sum(local, world_size),"is not a valid rank.");
@@ -118,7 +118,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorSumDouble, KratosMPICor
         KRATOS_CHECK_EQUAL(result, 2.0*world_size);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     // passing invalid rank as argument
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         mpi_world_communicator.Sum(local, world_size),"is not a valid rank.");
@@ -160,7 +160,7 @@ template<typename T> void MPIDataCommunicatorSumIntegralTypeVectorTest()
         }
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     // One of the inputs has a different size
     if (world_size > 1)
     {
@@ -223,7 +223,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorSumDoubleVector, Kratos
         }
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     // One of the inputs has a different size
     if (world_size > 1)
     {
@@ -255,7 +255,7 @@ template<typename T> void MPIDataCommunicatorMinIntegralTypeTest()
         KRATOS_CHECK_EQUAL(result, 0);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     const int world_size = mpi_world_communicator.Size();
     // passing invalid rank as argument
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
@@ -294,7 +294,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorMinDouble, KratosMPICor
         KRATOS_CHECK_EQUAL(result, 0.0);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     const int world_size = mpi_world_communicator.Size();
     // passing invalid rank as argument
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
@@ -331,7 +331,7 @@ template<typename T> void MPIDataCommunicatorMinIntegralVectorTypeTest()
         KRATOS_CHECK_EQUAL(returned_result[1], 0);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     const int world_size = mpi_world_communicator.Size();
     // One of the inputs has a different size
     if (world_size > 1)
@@ -391,7 +391,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorMinDoubleVector, Kratos
         KRATOS_CHECK_EQUAL(returned_result[1], -2.0*(world_size-1));
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     // One of the inputs has a different size
     if (world_size > 1)
     {
@@ -425,7 +425,7 @@ template<typename T> void MPIDataCommunicatorMaxIntegralTypeTest()
         KRATOS_CHECK_EQUAL(result, (T)(world_size-1));
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     // passing invalid rank as argument
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         mpi_world_communicator.Max(local, world_size),"is not a valid rank.");
@@ -464,7 +464,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorMaxDouble, KratosMPICor
         KRATOS_CHECK_EQUAL(result, 2.0*(world_size-1));
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     // passing invalid rank as argument
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         mpi_world_communicator.Max(local, world_size),"is not a valid rank.");
@@ -502,7 +502,7 @@ template<typename T> void MPIDataCommunicatorMaxIntegralTypeVectorTest()
         KRATOS_CHECK_EQUAL(returned_result[1], 0);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     // One of the inputs has a different size
     if (world_size > 1)
     {
@@ -561,7 +561,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorMaxDoubleVector, Kratos
         KRATOS_CHECK_EQUAL(returned_result[1], 0.0);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     // One of the inputs has a different size
     if (world_size > 1)
     {
@@ -643,7 +643,7 @@ template<typename T> void MPIDataCommunicatorSumAllIntegralTypeVectorTest()
         KRATOS_CHECK_EQUAL(returned_result[i], expected);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     if (world_size > 1)
     {
         // One of the inputs has a different size
@@ -698,7 +698,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorSumAllDoubleVector, Kra
         KRATOS_CHECK_EQUAL(returned_result[i], 2.0*world_size);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     if (world_size > 1)
     {
         // One of the inputs has a different size
@@ -773,7 +773,7 @@ template<typename T> void MPIDataCommunicatorMinAllIntegralTypeVectorTest()
     KRATOS_CHECK_EQUAL(returned_result[0], 0);
     KRATOS_CHECK_EQUAL(returned_result[1], 0);
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     const int world_size = mpi_world_communicator.Size();
     if (world_size > 1)
     {
@@ -826,7 +826,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorMinAllDoubleVector, Kra
     KRATOS_CHECK_EQUAL(returned_result[0], 0.0);
     KRATOS_CHECK_EQUAL(returned_result[1], -2.0*(world_size-1));
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     if (world_size > 1)
     {
         // One of the inputs has a different size
@@ -907,7 +907,7 @@ template<typename T> void MPIDataCommunicatorMaxAllIntegralTypeVectorTest()
     KRATOS_CHECK_EQUAL(returned_result[0], expected);
     KRATOS_CHECK_EQUAL(returned_result[1], 0);
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     if (world_size > 1)
     {
         // One of the inputs has a different size
@@ -959,7 +959,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorMaxAllDoubleVector, Kra
     KRATOS_CHECK_EQUAL(returned_result[0], 2.0*(world_size-1));
     KRATOS_CHECK_EQUAL(returned_result[1], 0.0);
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     if (world_size > 1)
     {
         // One of the inputs has a different size
@@ -1038,7 +1038,7 @@ template<typename T> void MPIDataCommunicatorScanSumIntegralVectorTypeTest()
     KRATOS_CHECK_EQUAL(partial_sum[0], expected);
     KRATOS_CHECK_EQUAL(partial_sum[1], expected);
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     if (mpi_world_communicator.Size() > 1)
     {
         // One of the inputs has a different size
@@ -1091,7 +1091,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorScanSumVectorDouble, Kr
     KRATOS_CHECK_EQUAL(partial_sum[0], 2.0*(rank + 1));
     KRATOS_CHECK_EQUAL(partial_sum[1], 2.0*(rank + 1));
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     if (mpi_world_communicator.Size() > 1)
     {
         // One of the inputs has a different size
@@ -1293,7 +1293,7 @@ template<typename T> void MPIDataCommunicatorBroadcastIntegralTypeVectorTest()
         KRATOS_CHECK_EQUAL(send[i], 1);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     if (mpi_world_communicator.Size() > 1)
     {
         // One of the ranks has a different size
@@ -1338,7 +1338,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorBroadcastDoubleVector, 
         KRATOS_CHECK_EQUAL(send[i], 2.0);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     if (mpi_world_communicator.Size() > 1)
     {
         // One of the ranks has a different size
@@ -1390,7 +1390,7 @@ template<typename T> void MPIDataCommunicatorScatterIntegralTypeVectorTest()
         KRATOS_CHECK_EQUAL(return_buffer[i], 1);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     if (mpi_world_communicator.Size() > 1)
     {
         // One of the ranks has a different size
@@ -1463,7 +1463,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorScatterDoubleVector, Kr
         KRATOS_CHECK_EQUAL(return_buffer[i], 2.0);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     if (mpi_world_communicator.Size() > 1)
     {
         // One of the ranks has a different size
@@ -1562,7 +1562,7 @@ template<typename T> void MPIDataCommunicatorScattervIntegralTypeVectorTest()
         KRATOS_CHECK_EQUAL(result[i], (T)world_rank);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     // send sizes do not match
     std::vector<int> wrong_send_sizes = send_sizes;
     if (world_rank == send_rank) {
@@ -1688,7 +1688,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorScattervDouble, KratosM
         KRATOS_CHECK_EQUAL(result[i], 2.0*world_rank);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     // send sizes do not match
     std::vector<int> wrong_send_sizes = send_sizes;
     if (world_rank == send_rank) {
@@ -1771,7 +1771,7 @@ template<typename T> void MPIDataCommunicatorGatherIntegralTypeVectorTest()
         }
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     if (mpi_world_communicator.Size() > 1)
     {
         // One of the ranks has a different size
@@ -1848,7 +1848,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorGatherDouble, KratosMPI
         }
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     if (mpi_world_communicator.Size() > 1)
     {
         // One of the ranks has a different size
@@ -1948,7 +1948,7 @@ template<typename T> void MPIDataCommunicatorGathervIntegralTypeVectorTest()
         }
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     // recv sizes do not match
     std::vector<int> wrong_recv_sizes = recv_sizes;
     if (world_rank == recv_rank) {
@@ -2077,7 +2077,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorGathervDouble, KratosMP
         }
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     // recv sizes do not match
     std::vector<int> wrong_recv_sizes = recv_sizes;
     if (world_rank == recv_rank) {
@@ -2147,7 +2147,7 @@ template<typename T> void MPIDataCommunicatorAllGatherIntegralTypeTest()
         }
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     if (mpi_world_communicator.Size() > 1)
     {
         // One of the ranks has a different size
@@ -2217,7 +2217,7 @@ KRATOS_DISTRIBUTED_TEST_CASE_IN_SUITE(MPIDataCommunicatorAllGatherDouble, Kratos
         }
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     if (mpi_world_communicator.Size() > 1)
     {
         // One of the ranks has a different size
