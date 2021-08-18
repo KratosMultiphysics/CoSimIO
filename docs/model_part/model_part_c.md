@@ -42,6 +42,7 @@ CoSimIO_Element element = CoSimIO_ModelPart_CreateNewElement(
     connectivity // Connectivity information, i.e. Ids of nodes that the element has
 );
 ```
+Note: Node and Element Ids start with 1 (0 is not accepted).
 
 Use the following functions to get the number of nodes and elements:
 ```c
