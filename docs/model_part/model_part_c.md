@@ -120,4 +120,4 @@ for (int i=0; i<CoSimIO_Element_NumberOfNodes(element); ++i) {
 ```
 
 ## Further information (C interface)
-For more information check the [implementation](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/c/co_sim_io_c_model_part.h) and the [tests](https://github.com/KratosMultiphysics/CoSimIO/tree/master/tests/co_sim_io/c/model_part).
+For more information check the [implementation](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/c/co_sim_io_c_model_part.h) and the [tests](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/co_sim_io/c/model_part/test_model_part.c).
