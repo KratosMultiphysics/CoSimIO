@@ -83,7 +83,7 @@ CoSimIO_ModelPart_Clear(model_part);
 ```
 
 ## C interface of _CoSimIO_Node_
-The _CoSimIO_Node_ an be used in the following way:
+The _CoSimIO_Node_ can be used in the following way:
 ```c
 // access Id of node:
 int node_id = CoSimIO_Node_Id(node);
