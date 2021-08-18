@@ -139,7 +139,7 @@ _CO_SIM_IO_CATCH_AND_THROW(std::invalid_argument)   \
 _CO_SIM_IO_CATCH_AND_THROW(std::domain_error)       \
 _CO_SIM_IO_CATCH_AND_THROW(std::logic_error)        \
 _CO_SIM_IO_CATCH_AND_THROW(std::runtime_error)      \
-catch(Exception& e)      {  throw Exception(e) << CO_SIM_IO_CODE_LOCATION; } \
+catch(CoSimIO::Internals::Exception& e)      {  throw CoSimIO::Internals::Exception(e) << CO_SIM_IO_CODE_LOCATION; } \
 catch(std::exception& e) { CO_SIM_IO_ERROR << e.what(); }                   \
 catch(...)               { CO_SIM_IO_ERROR << "Unknown error"; }
 
