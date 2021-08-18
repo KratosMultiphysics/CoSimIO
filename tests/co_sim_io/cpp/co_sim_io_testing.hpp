@@ -14,6 +14,7 @@
 #define CO_SIM_IO_TESTING_INCLUDED
 
 // External includes
+#include <ostream>
 #include <vector>
 #include <unordered_set>
 
@@ -71,8 +72,13 @@ void CheckModelPartsAreEqual(
     const CoSimIO::ModelPart& ModelPart1,
     const CoSimIO::ModelPart& ModelPart2);
 
+namespace CoSimIO {
+// stream fcts must be in CoSimIO namespace
+
 template<class T>
-std::ostream& operator<<(std::ostream& rOStream, const std::vector<T>& rVec) {
+std::ostream& operator<<(
+    std::ostream& rOStream,
+    const std::vector<T>& rVec) {
 
     std::size_t vector_size = rVec.size();
 
@@ -88,12 +94,16 @@ std::ostream& operator<<(std::ostream& rOStream, const std::vector<T>& rVec) {
 }
 
 template<class T>
-std::ostream &operator<<(std::ostream &os, const std::unordered_set<T> &s)
+std::ostream& operator<<(
+    std::ostream& rOStream,
+    const std::unordered_set<T>& rSet)
 {
-    for (auto const &i: s) {
-        os << i << " ";
+    for (auto const& i: rSet) {
+        rOStream << i << " ";
     }
-    return os;
+    return rOStream;
 }
+
+} // namespace CoSimIO
 
 #endif // CO_SIM_IO_UTILITIES_INCLUDED
