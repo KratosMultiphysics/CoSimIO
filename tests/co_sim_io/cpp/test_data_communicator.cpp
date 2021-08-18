@@ -507,7 +507,7 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorScanSumIntVector, KratosMPICoreFastSui
         KRATOS_CHECK_EQUAL(returned_result[i], local[i]);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     std::vector<int> wrong_size_global{-1};
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         serial_communicator.ScanSum(local, wrong_size_global),
@@ -538,7 +538,7 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorScanSumDoubleVector, KratosMPICoreFast
         KRATOS_CHECK_EQUAL(returned_result[i], local[i]);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     std::vector<double> wrong_size_global{-1};
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         serial_communicator.ScanSum(local, wrong_size_global),
@@ -578,7 +578,7 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorSendRecvInt, KratosMPICoreFastSuite)
         KRATOS_CHECK_EQUAL(return_buffer[i], send_buffer[i]);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     std::vector<int> wrong_size_recv = {-1};
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         serial_communicator.SendRecv(send_buffer, send_rank, 0, wrong_size_recv, recv_rank, 0),
@@ -632,7 +632,7 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorSendRecvDouble, KratosMPICoreFastSuite
         KRATOS_CHECK_EQUAL(return_buffer[i], send_buffer[i]);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     std::vector<double> wrong_size_recv = {-1.0};
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         serial_communicator.SendRecv(send_buffer, send_rank, 0, wrong_size_recv, recv_rank, 0),
@@ -681,7 +681,7 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorSendRecvString, KratosMPICoreFastSuite
     std::string return_buffer = serial_communicator.SendRecv(send_buffer, send_rank, recv_rank);
     KRATOS_CHECK_C_STRING_EQUAL(recv_buffer.c_str(), "Hello world!");
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     std::string wrong_size_recv("*");
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         serial_communicator.SendRecv(send_buffer, send_rank, 0, wrong_size_recv, recv_rank, 0),
@@ -802,7 +802,7 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorScatterIntVector, KratosMPICoreFastSui
         );
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     std::vector<int> wrong_size_recv = {-1, -1, -1};
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         serial_communicator.Scatter(send_buffer, wrong_size_recv, send_rank),
@@ -853,7 +853,7 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorScatterDoubleVector, KratosMPICoreFast
         );
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     std::vector<double> wrong_size_recv = {-1.0, -1.0, -1.0};
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         serial_communicator.Scatter(send_buffer, wrong_size_recv, send_rank),
@@ -911,7 +911,7 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorScattervInt, KratosMPICoreFastSuite)
         );
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     std::vector<int> wrong_size_recv = {-1, -1, -1};
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         serial_communicator.Scatterv(send_buffer_single, send_counts, send_offsets, wrong_size_recv, send_rank),
@@ -977,7 +977,7 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorScattervDouble, KratosMPICoreFastSuite
         );
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     std::vector<double> wrong_size_recv = {-1.0, -1.0, -1.0};
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         serial_communicator.Scatterv(send_buffer_single, send_counts, send_offsets, wrong_size_recv, send_rank),
@@ -1040,7 +1040,7 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorGatherInt, KratosMPICoreFastSuite)
         );
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     std::vector<int> wrong_size_recv = {-1, -1, -1};
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         serial_communicator.Gather(send_buffer, wrong_size_recv, send_rank),
@@ -1091,7 +1091,7 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorGatherDouble, KratosMPICoreFastSuite)
         );
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     std::vector<double> wrong_size_recv = {-1.0, -1.0, -1.0};
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         serial_communicator.Gather(send_buffer, wrong_size_recv, send_rank),
@@ -1149,7 +1149,7 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorGathervInt, KratosMPICoreFastSuite)
         );
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     std::vector<int> wrong_size_recv = {-1, -1, -1};
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         serial_communicator.Gatherv(send_buffer, wrong_size_recv, recv_counts, recv_offsets, send_rank),
@@ -1215,7 +1215,7 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorGathervDouble, KratosMPICoreFastSuite)
         );
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     std::vector<double> wrong_size_recv = {-1.0, -1.0, -1.0};
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         serial_communicator.Gatherv(send_buffer, wrong_size_recv, recv_counts, recv_offsets, send_rank),
@@ -1259,7 +1259,7 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorAllGatherInt, KratosMPICoreFastSuite)
         KRATOS_CHECK_EQUAL(return_buffer[i], send_buffer[i]);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     std::vector<int> wrong_size_recv = {-1, -1, -1};
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         serial_communicator.AllGather(send_buffer, wrong_size_recv),
@@ -1291,7 +1291,7 @@ KRATOS_TEST_CASE_IN_SUITE(DataCommunicatorAllGatherDouble, KratosMPICoreFastSuit
         KRATOS_CHECK_EQUAL(return_buffer[i], send_buffer[i]);
     }
 
-    #ifdef KRATOS_DEBUG
+    #ifdef CO_SIM_IO_DEBUG
     std::vector<double> wrong_size_recv = {-1.0, -1.0, -1.0};
     KRATOS_CHECK_EXCEPTION_IS_THROWN(
         serial_communicator.AllGather(send_buffer, wrong_size_recv),
