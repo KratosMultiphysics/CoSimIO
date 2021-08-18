@@ -115,4 +115,4 @@ for (auto node_it=element.NodesBegin(); node_it!=element.NodesEnd(); ++node_it) 
 ```
 
 ## Further information (C++ interface)
-For more information check the [implementation](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/include/model_part.hpp) and the [tests](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/co_sim_io/include/test_model_part.cpp).
+For more information check the [implementation](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/includes/model_part.hpp) and the [tests](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/co_sim_io/cpp/test_model_part.cpp).
