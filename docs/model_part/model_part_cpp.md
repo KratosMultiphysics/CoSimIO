@@ -40,6 +40,7 @@ CoSimIO::Element& element = model_part.CreateNewElement(
     connectivity // Connectivity information, i.e. Ids of nodes that the element has
 );
 ```
+Note: Node and Element Ids starts with 1 (0 is not accepted).
 
 Use the following functions to get the number of nodes and elements:
 ```c++
@@ -81,7 +82,7 @@ model_part.Clear();
 ```
 
 ## C++ interface of _CoSimIO::Node_
-The _CoSimIO::Node_ an be used in the following way:
+The _CoSimIO::Node_ can be used in the following way:
 ```c++
 // access Id of node:
 CoSimIO::IdType node_id = node.Id();
