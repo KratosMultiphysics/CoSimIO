@@ -74,7 +74,7 @@ Info FileCommunication::ImportInfoImpl(const Info& I_Info)
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    CheckEntry(identifier, "identifier");
+    Utilities::CheckEntry(identifier, "identifier");
 
     fs::path file_name;
     // when running in MPI it is required to specify the ranks
@@ -106,7 +106,7 @@ Info FileCommunication::ExportInfoImpl(const Info& I_Info)
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    CheckEntry(identifier, "identifier");
+    Utilities::CheckEntry(identifier, "identifier");
 
     fs::path file_name;
     // when running in MPI it is required to specify the ranks
@@ -139,7 +139,7 @@ Info FileCommunication::ImportDataImpl(
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    CheckEntry(identifier, "identifier");
+    Utilities::CheckEntry(identifier, "identifier");
 
     const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier, "dat"));
 
@@ -155,7 +155,7 @@ Info FileCommunication::ImportDataImpl(
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing array with size: " << rData.size() << std::endl;
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Array \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Array \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
 
     return Info(); // TODO use
 
@@ -169,7 +169,7 @@ Info FileCommunication::ExportDataImpl(
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    CheckEntry(identifier, "identifier");
+    Utilities::CheckEntry(identifier, "identifier");
 
     const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier, "dat"));
 
@@ -186,7 +186,7 @@ Info FileCommunication::ExportDataImpl(
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting array" << std::endl;
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Array \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Array \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
 
     return Info(); // TODO use
 
@@ -200,7 +200,7 @@ Info FileCommunication::ImportMeshImpl(
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    CheckEntry(identifier, "identifier");
+    Utilities::CheckEntry(identifier, "identifier");
 
     const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier, "vtk"));
 
@@ -216,7 +216,7 @@ Info FileCommunication::ImportMeshImpl(
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing mesh" << std::endl;
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Mesh \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Mesh \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
 
     return Info(); // TODO use
 
@@ -230,7 +230,7 @@ Info FileCommunication::ExportMeshImpl(
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    CheckEntry(identifier, "identifier");
+    Utilities::CheckEntry(identifier, "identifier");
 
     const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier, "vtk"));
 
@@ -246,7 +246,7 @@ Info FileCommunication::ExportMeshImpl(
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting mesh" << std::endl;
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Mesh \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Mesh \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
 
     return Info(); // TODO use
 
