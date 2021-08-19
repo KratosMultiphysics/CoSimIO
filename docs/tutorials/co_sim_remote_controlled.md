@@ -80,6 +80,7 @@ This completes the setup of one of the solvers:
 
 ```js
 "solver_s" : {
+    "type" : "solver_wrappers.external.remote_controlled_solver_wrapper",
     "data" : {
         "field_A" : {
             "model_part_name" : "mesh_1",
