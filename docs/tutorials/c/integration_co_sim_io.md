@@ -57,6 +57,9 @@ int main(){
 ```
 
 Please don't forget to add the CoSimIO folder to your include path.
+Add below line in your bashrc
+```bash
+export C_INCLUDE_PATH=$C_INCLUDE_PATH:/path/to/CoSimIO/co_sim_io
 
 
 ## Tutorial 2: Hello CosimIO
