@@ -53,6 +53,9 @@ sh scripts/build_python.sh
 This will compile the binaries in the build folder and installs them into the bin subfolder of _CoSimIO_.
 
 Please don't forget to add the binaries in the bin folder to your `PYTHONPATH`.
+```bash
+export PYTHONPATH=$PYTHONPATH:/path/to/CoSimIO/bin
+```
 
 Usually pybind automatically detects the Python installation. Sometimes it can however be necessary to explicitly specify the target Python version. This can be achieved through CMake by setting PYBIND11_PYTHON_VERSION or an exact Python installation can be specified with PYTHON_EXECUTABLE. For example:
 ```cmake
