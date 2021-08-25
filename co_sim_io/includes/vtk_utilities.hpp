@@ -21,7 +21,7 @@
 #include "model_part.hpp"
 
 namespace CoSimIO {
-namespace Internals {
+namespace VtkUtilities {
 
 // see https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf ; figure 2
 enum class VtkCellType {
@@ -47,7 +47,7 @@ void CO_SIM_IO_API WriteVtk(const Info& I_Settings, const ModelPart& I_ModelPart
 
 void CO_SIM_IO_API ReadVtk(const Info& I_Settings, ModelPart& O_ModelPart);
 
-} // namespace Internals
+} // namespace VtkUtilities
 } // namespace CoSimIO
 
 #endif // CO_SIM_IO_VTK_UTILITIES_INCLUDED

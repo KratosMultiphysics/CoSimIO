@@ -88,6 +88,9 @@ CoSimIO::Info ImportData(const CoSimIO::Info& I_Info)
     info.Set("connection_name", s_connection_name);
     info.Set("identifier", "info_for_test");
     info.Set("name_for_check", "ImportData");
+    if (I_Info.Has("identifier")) {
+        info.Set("identifier_control", I_Info.Get<std::string>("identifier"));
+    }
     CoSimIO::ExportInfo(info);
     return CoSimIO::Info();
 }
@@ -98,6 +101,9 @@ CoSimIO::Info ExportData(const CoSimIO::Info& I_Info)
     info.Set("connection_name", s_connection_name);
     info.Set("identifier", "info_for_test");
     info.Set("name_for_check", "ExportData");
+    if (I_Info.Has("identifier")) {
+        info.Set("identifier_control", I_Info.Get<std::string>("identifier"));
+    }
     CoSimIO::ExportInfo(info);
     return CoSimIO::Info();
 }
@@ -108,6 +114,9 @@ CoSimIO::Info ImportMesh(const CoSimIO::Info& I_Info)
     info.Set("connection_name", s_connection_name);
     info.Set("identifier", "info_for_test");
     info.Set("name_for_check", "ImportMesh");
+    if (I_Info.Has("identifier")) {
+        info.Set("identifier_control", I_Info.Get<std::string>("identifier"));
+    }
     CoSimIO::ExportInfo(info);
     return CoSimIO::Info();
 }
@@ -118,6 +127,9 @@ CoSimIO::Info ExportMesh(const CoSimIO::Info& I_Info)
     info.Set("connection_name", s_connection_name);
     info.Set("identifier", "info_for_test");
     info.Set("name_for_check", "ExportMesh");
+    if (I_Info.Has("identifier")) {
+        info.Set("identifier_control", I_Info.Get<std::string>("identifier"));
+    }
     CoSimIO::ExportInfo(info);
     return CoSimIO::Info();
 }

@@ -7,7 +7,7 @@
 //
 //  License:         BSD License, see license.txt
 //
-//  Main authors:    Philipp Bucher (https://github.com/philbucher)
+//  Main authors:    Philipp Bucher
 //
 
 // External includes
@@ -26,16 +26,26 @@
 int main(int argc, char** argv)
 {
     MPI_Init(&argc, &argv);
+    int rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    int size;
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
 
     CoSimIO::Info settings;
-    settings.Set("my_name", "cpp_connect_disconnect_b");
-    settings.Set("connect_to", "cpp_connect_disconnect_a");
+    settings.Set("my_name", "cpp_export_solver");
+    settings.Set("connect_to", "cpp_import_solver");
     settings.Set("echo_level", 1);
     settings.Set("version", "1.25");
 
     auto info = CoSimIO::ConnectMPI(settings, MPI_COMM_WORLD);
     COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
     const std::string connection_name = info.Get<std::string>("connection_name");
+
+    std::vector<double> data_to_send(rank+5, 3.14*(size+rank));
+    info.Clear();
+    info.Set("identifier", "vector_of_pi");
+    info.Set("connection_name", connection_name);
+    info = CoSimIO::ExportData(info, data_to_send);
 
     CoSimIO::Info disconnect_settings;
     disconnect_settings.Set("connection_name", connection_name);

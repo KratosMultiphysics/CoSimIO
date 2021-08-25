@@ -14,12 +14,14 @@
 #include <string>
 #include <map>
 #include <chrono>
+#include <thread>
+#include <cmath>
 
 // Project includes
 #include "includes/utilities.hpp"
 
 namespace CoSimIO {
-namespace Internals {
+namespace Utilities {
 
 // Create the name for the connection
 // In a function bcs maybe in the future this will
@@ -89,5 +91,81 @@ int GetNumberOfNodesForElementType(ElementType Type)
     return type_iter->second;
 }
 
-} // namespace Internals
+void WaitUntilPathExists(const fs::path& rPath)
+{
+    while(!fs::exists(rPath)) {std::this_thread::sleep_for(std::chrono::milliseconds(5));} // wait 0.005s before next check
+}
+
+std::set<std::size_t> ComputePartnerRanksAsImporter(
+    const std::size_t MyRank,
+    const std::size_t MySize,
+    const std::size_t PartnerSize)
+{
+    // validate input
+    CO_SIM_IO_ERROR_IF(MySize==0) << "MySize cannot be zero!" << std::endl;
+    CO_SIM_IO_ERROR_IF(PartnerSize==0) << "PartnerSize cannot be zero!" << std::endl;
+    CO_SIM_IO_ERROR_IF_NOT(MyRank<MySize) << "MyRank must be smaller MySize!" << std::endl;
+
+    if (MySize == 1) {
+        // I am serial, communicate with all partner ranks (doesn't matter if partner is distributed or not)
+        std::set<std::size_t> partner_ranks;
+        for (std::size_t i=0; i<PartnerSize; ++i) {partner_ranks.insert(i);}
+        return partner_ranks;
+    } else if (MySize == PartnerSize) {
+        // special case when both run with the same size
+        return {MyRank};
+    } else if (MySize > PartnerSize) {
+        // partner is serial, only my rank 0 communicates with this rank
+        if (MyRank < PartnerSize) {
+            return {MyRank};
+        } else {
+            return {};
+        }
+    } else {
+        // several of partner ranks communicate with one rank of me
+        const std::size_t num_ranks_per_partner_rank = static_cast<std::size_t>(std::ceil(PartnerSize / static_cast<double>(MySize)));
+        std::set<std::size_t> partner_ranks;
+        const std::size_t lower_end = MyRank*num_ranks_per_partner_rank;
+        const std::size_t upper_end = (MyRank+1)*num_ranks_per_partner_rank;
+
+        for (std::size_t i=0; i<PartnerSize; ++i) {
+            if (i >= lower_end && i < upper_end) {
+                partner_ranks.insert(i);
+            }
+        }
+        return partner_ranks;
+    }
+}
+
+std::set<std::size_t> ComputePartnerRanksAsExporter(
+    const std::size_t MyRank,
+    const std::size_t MySize,
+    const std::size_t PartnerSize)
+{
+    // validate input
+    CO_SIM_IO_ERROR_IF(MySize==0) << "MySize cannot be zero!" << std::endl;
+    CO_SIM_IO_ERROR_IF(PartnerSize==0) << "PartnerSize cannot be zero!" << std::endl;
+    CO_SIM_IO_ERROR_IF_NOT(MyRank<MySize) << "MyRank must be smaller MySize!" << std::endl;
+
+    if (MySize == 1) {
+        return {0};
+    } else if (PartnerSize == 1) {
+        // partner is serial, all of my ranks communicate with one rank (rank 0)
+        return {0};
+    } else if (MySize == PartnerSize) {
+        // special case when both run with the same size
+        return {MyRank};
+    } else {
+        if (MySize > PartnerSize) {
+            // several of my ranks communicate with one rank of partner
+            const std::size_t num_ranks_per_partner_rank = static_cast<std::size_t>(std::ceil(MySize / static_cast<double>(PartnerSize)));
+            return {MyRank/num_ranks_per_partner_rank};
+        } else {
+            // partner has more ranks, we only communicate with one
+            return {MyRank};
+        }
+    }
+}
+
+} // namespace Utilities
 } // namespace CoSimIO

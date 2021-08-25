@@ -31,6 +31,9 @@ public:
     Info ConnectDetail(const Info& I_Info) override;
 
     Info DisconnectDetail(const Info& I_Info) override;
+
+private:
+    std::string GetCommunicationName() const override {return "sockets";}
 };
 
 } // namespace Internals

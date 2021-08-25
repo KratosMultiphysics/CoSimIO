@@ -45,11 +45,11 @@ Info ConnectImpl(const Info& I_Settings, std::shared_ptr<DataCommunicator> I_Dat
     const std::string connect_to = I_Settings.Get<std::string>("connect_to");
 
     // perform some checks
-    Internals::CheckEntry(my_name, "my_name");
-    Internals::CheckEntry(connect_to, "connect_to");
+    Utilities::CheckEntry(my_name, "my_name");
+    Utilities::CheckEntry(connect_to, "connect_to");
     CO_SIM_IO_ERROR_IF(my_name == connect_to) << "Connecting to self is not allowed!" << std::endl;
 
-    const std::string connection_name = Internals::CreateConnectionName(my_name, connect_to);
+    const std::string connection_name = Utilities::CreateConnectionName(my_name, connect_to);
 
     CO_SIM_IO_ERROR_IF(HasConnection(connection_name)) << "A connection from \"" << my_name << "\" to \"" << connect_to << "\"already exists!" << std::endl;
 

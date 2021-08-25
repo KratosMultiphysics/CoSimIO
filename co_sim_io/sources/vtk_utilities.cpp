@@ -12,14 +12,16 @@
 
 // System includes
 #include <map>
+#include <unordered_map>
 #include <iomanip>
+#include <fstream>
 
 // Project includes
 #include "includes/vtk_utilities.hpp"
 #include "includes/utilities.hpp"
 
 namespace CoSimIO {
-namespace Internals {
+namespace VtkUtilities {
 
 VtkCellType GetVtkCellTypeForElementType(ElementType I_ElementType)
 {
@@ -58,7 +60,7 @@ void WriteVtk(const Info& I_Settings, const ModelPart& I_ModelPart)
 
     std::ofstream output_file;
     output_file.open(file_name);
-    CheckStream(output_file, file_name);
+    Utilities::CheckStream(output_file, file_name);
 
     output_file << std::scientific << std::setprecision(precision);
 
@@ -143,7 +145,7 @@ void ReadVtk(const Info& I_Settings, ModelPart& O_ModelPart)
     const std::string file_name = I_Settings.Get<std::string>("file_name");
 
     std::ifstream input_file(file_name);
-    CheckStream(input_file, file_name);
+    Utilities::CheckStream(input_file, file_name);
 
     // reading file
     std::string current_line;
@@ -234,5 +236,5 @@ void ReadVtk(const Info& I_Settings, ModelPart& O_ModelPart)
     input_file.close();
 }
 
-} // namespace Internals
+} // namespace VtkUtilities
 } // namespace CoSimIO

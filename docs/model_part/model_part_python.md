@@ -1,6 +1,6 @@
 # ModelPart
 
-This page describes the Python interface of `CoSimIO::ModelPart`. See [here](model_model_part_cpp.md) for more information and the native (C++) interface.
+This page describes the Python interface of `CoSimIO::ModelPart`. See [here](model_part_cpp.md) for more information and the native (C++) interface.
 
 ## Python interface of _CoSimIO.ModelPart_
 
@@ -36,6 +36,7 @@ element = model_part.CreateNewElement(
     connectivity # Connectivity information, i.e. Ids of nodes that the element has
 )
 ```
+Note: Node and Element Ids start with 1 (0 is not accepted).
 
 Use the following functions to get the number of nodes and elements:
 ```python
@@ -73,7 +74,7 @@ model_part.Clear()
 ```
 
 ## Python interface of _CoSimIO.Node_
-The _CoSimIO.Node_ an be used in the following way:
+The _CoSimIO.Node_ can be used in the following way:
 ```python
 # access Id of node:
 node_id = node.Id()

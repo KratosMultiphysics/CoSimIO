@@ -43,8 +43,8 @@ TEST_CASE("write_read_vtk")
     Info info_vtk;
     info_vtk.Set<std::string>("file_name", file_name);
 
-    CoSimIO::Internals::WriteVtk(info_vtk, model_part_write);
-    CoSimIO::Internals::ReadVtk(info_vtk, model_part_read);
+    CoSimIO::VtkUtilities::WriteVtk(info_vtk, model_part_write);
+    CoSimIO::VtkUtilities::ReadVtk(info_vtk, model_part_read);
 
     fs::remove(file_name);
 

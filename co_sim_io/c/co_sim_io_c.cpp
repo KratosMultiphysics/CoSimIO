@@ -260,7 +260,7 @@ CoSimIO_Element CoSimIO_ModelPart_CreateNewElement(
     const int* I_Connectivities)
 {
     const CoSimIO::ElementType cpp_element_type = static_cast<CoSimIO::ElementType>(I_Type);
-    const std::size_t num_nodes = CoSimIO::Internals::GetNumberOfNodesForElementType(cpp_element_type);
+    const std::size_t num_nodes = CoSimIO::Utilities::GetNumberOfNodesForElementType(cpp_element_type);
     // convert the C-connectivities to C++ connectivities
     CoSimIO::ConnectivitiesType connectivities(I_Connectivities, I_Connectivities+num_nodes);
 

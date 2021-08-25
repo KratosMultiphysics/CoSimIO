@@ -13,7 +13,7 @@ git clone https://github.com/KratosMultiphysics/CoSimIO.git
 
 
 ## Building the CoSimIO
-The C++ version of the CoSimIO is implemented in [co_sim_io.hpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp). It can be used after compiling CoSimIO into a shared library and linking against it. One can use [build_cpp.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build.sh) for compiling it.
+The C++ version of the CoSimIO is implemented in [co_sim_io.hpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp). It can be used after compiling CoSimIO into a shared library and linking against it. One can use [build_cpp.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_cpp.sh) for compiling it.
 
 ```bash
 $ bash scripts/build_cpp.sh
@@ -31,7 +31,11 @@ int main()
 }
 ```
 
-Please don't forget to add the CoSimIO folder to your include path.
+Please don't forget to add the folder `co_sim_io` to your include path so that the compiler can find the includes
+Example:
+```bash
+export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/path/to/CoSimIO/co_sim_io
+```
 
 
 ## Hello CosimIO
@@ -59,13 +63,13 @@ This example can be found in [integration_tutorials/cpp/hello.cpp](https://githu
 
 
 ## Connecting and Disconnecting
-The first step to establishing a connection to Kratos CoSimulation is to use the `Connect` method:
+The first step to establish a connection to Kratos CoSimulation is to use the `Connect` method:
 ```c++
 // The connect must be called before any CosimIO method called
 auto info = CoSimIO::Connect(settings);
 ```
 
-First of all, you may notice that `Connect` method takes a `CoSimIO::Info` as its arguments. This container can be used to pass additional information about the solver/software-tool or connection settings to the _CoSimIO_:
+First of all, you may notice that `Connect` method takes a `CoSimIO::Info` as its argument. This container can be used to pass additional information about the solver/software-tool or connection settings to the _CoSimIO_:
 
 ```c++
 CoSimIO::Info settings;
@@ -84,7 +88,7 @@ This method returns a `Info` object containing information about the connection 
 ```c++
 std::string connection_name = info.Get<std::string>("connection_name");
 ```
-
+Similar things work for `Disconnect` Method.
 Now putting together everything:
 
 ```c++
@@ -121,7 +125,9 @@ This example can be found in [integration_tutorials/cpp/connect_disconnect_a.cpp
 
 
 ## Data Exchange
-One of the important missions of the CoSimIO is to send and recieve data between processes. The `ExportData` method can be used to send data to the Kratos or directly to another solver/software-tool:
+Make sure to connect (refer [Connecting and Disconnecting](#connecting-and-disconnecting)) before Data Exchange.
+
+One of the important missions of the CoSimIO is to send and recieve data between different solvers/software tools. The `ExportData` method can be used to send data to the Kratos or directly to another solver/software-tool:
 
 ```c++
 std::vector<double> data_to_send(4, 3.14);
@@ -146,6 +152,8 @@ This example can be found in [integration_tutorials/cpp/export_data.cpp](https:/
 
 
 ## Mesh Exchange
+Make sure to connect (refer [Connecting and Disconnecting](#connecting-and-disconnecting)) before Mesh Exchange.
+
 After seeing how we transfer raw data between solvers/software-tools, it is time to see how we can export and import meshes. For exporting the mesh one may use the `ExportMesh` method:
 
 

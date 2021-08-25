@@ -12,17 +12,10 @@
 
 // System includes
 #include <chrono>
-#include <thread>
-#include <fstream>
-#include <iomanip>
-#include <limits>
-#include <system_error>
-#include <unordered_map>
 
 // Project includes
 #include "includes/communication/file_communication.hpp"
 #include "includes/utilities.hpp"
-#include "includes/vtk_utilities.hpp"
 #include "includes/file_serializer.hpp"
 
 namespace CoSimIO {
@@ -30,6 +23,7 @@ namespace Internals {
 
 namespace {
 
+// Important: having this in a function also makes sure that the FileSerializer releases its resources (i.e. the file) at destruction
 template<class TObject>
 void SerializeToFile(const fs::path& rPath, const std::string& rTag, const TObject& rObject, const Serializer::TraceType SerializerTrace)
 {
@@ -40,6 +34,8 @@ void SerializeToFile(const fs::path& rPath, const std::string& rTag, const TObje
 
     CO_SIM_IO_CATCH
 }
+
+// important: having this in a function also makes sure that the FileSerializer releases its resources (i.e. the file) at destruction
 template<class TObject>
 void SerializeFromFile(const fs::path& rPath, const std::string& rTag, TObject& rObject, const Serializer::TraceType SerializerTrace)
 {
@@ -58,13 +54,6 @@ FileCommunication::FileCommunication(
     std::shared_ptr<DataCommunicator> I_DataComm)
     : Communication(I_Settings, I_DataComm)
 {
-    CO_SIM_IO_TRY
-
-    mCommFolder = GetWorkingDirectory();
-    mCommFolder /= ".CoSimIOFileComm_" + GetConnectionName();
-    mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", true);
-
-    CO_SIM_IO_CATCH
 }
 
 FileCommunication::~FileCommunication()
@@ -80,97 +69,21 @@ FileCommunication::~FileCommunication()
     CO_SIM_IO_CATCH
 }
 
-Info FileCommunication::ConnectDetail(const Info& I_Info)
-{
-    CO_SIM_IO_TRY
-
-    if (mCommInFolder) {
-        if (GetIsPrimaryConnection()) {
-            // delete and recreate directory to remove potential leftovers
-            std::error_code ec;
-            fs::remove_all(mCommFolder, ec);
-            if (ec) {
-                CO_SIM_IO_INFO("CoSimIO") << "Warning, communication directory (" << mCommFolder << ")could not be deleted!\nError code: " << ec.message() << std::endl;
-            }
-            if (!fs::exists(mCommFolder)) {
-                fs::create_directory(mCommFolder);
-            }
-        }
-    }
-
-    ExchangeSyncFileWithPartner("connect");
-
-    Info info;
-    info.Set("is_connected", true);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
-Info FileCommunication::DisconnectDetail(const Info& I_Info)
-{
-    CO_SIM_IO_TRY
-
-    ExchangeSyncFileWithPartner("disconnect");
-
-    if (mCommInFolder && GetIsPrimaryConnection()) {
-        // delete directory to remove potential leftovers
-        std::error_code ec;
-        fs::remove_all(mCommFolder, ec);
-        if (ec) {
-            CO_SIM_IO_INFO("CoSimIO") << "Warning, communication directory (" << mCommFolder << ")could not be deleted!\nError code: " << ec.message() << std::endl;
-        }
-    }
-
-    Info info;
-    info.Set("is_connected", false);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
-void FileCommunication::ExchangeSyncFileWithPartner(const std::string& rIdentifier) const
-{
-    CO_SIM_IO_TRY
-
-    const fs::path file_name_primary(GetFileName("CoSimIO_primary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
-    const fs::path file_name_secondary(GetFileName("CoSimIO_secondary_" + rIdentifier + "_" + GetConnectionName(), "sync"));
-
-    if (GetIsPrimaryConnection()) {
-        std::ofstream sync_file;
-        sync_file.open(GetTempFileName(file_name_primary));
-        sync_file.close();
-        CO_SIM_IO_ERROR_IF_NOT(fs::exists(GetTempFileName(file_name_primary))) << "Primary sync file " << file_name_primary << " could not be created!" << std::endl;
-        MakeFileVisible(file_name_primary);
-
-        WaitForPath(file_name_secondary);
-        RemovePath(file_name_secondary);
-
-        WaitUntilFileIsRemoved(file_name_primary);
-    } else {
-        WaitForPath(file_name_primary);
-        RemovePath(file_name_primary);
-
-        std::ofstream sync_file;
-        sync_file.open(GetTempFileName(file_name_secondary));
-        sync_file.close();
-        CO_SIM_IO_ERROR_IF_NOT(fs::exists(GetTempFileName(file_name_secondary))) << "Secondary sync file " << file_name_secondary << " could not be created!" << std::endl;
-        MakeFileVisible(file_name_secondary);
-
-        WaitUntilFileIsRemoved(file_name_secondary);
-    }
-
-    CO_SIM_IO_CATCH
-}
-
 Info FileCommunication::ImportInfoImpl(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    CheckEntry(identifier, "identifier");
+    Utilities::CheckEntry(identifier, "identifier");
 
-    const fs::path file_name(GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, "dat"));
+    fs::path file_name;
+    // when running in MPI it is required to specify the ranks
+    if (GetMyInfo().Get<bool>("is_distributed") || GetPartnerInfo().Get<bool>("is_distributed")) {
+        const int source_rank = I_Info.Get<int>("source_rank");
+        file_name = GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, source_rank, "dat");
+    } else {
+        file_name = GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, "dat");
+    }
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import Info in file " << file_name << " ..." << std::endl;
 
@@ -193,9 +106,16 @@ Info FileCommunication::ExportInfoImpl(const Info& I_Info)
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    CheckEntry(identifier, "identifier");
+    Utilities::CheckEntry(identifier, "identifier");
 
-    const fs::path file_name(GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, "dat"));
+    fs::path file_name;
+    // when running in MPI it is required to specify the ranks
+    if (GetMyInfo().Get<bool>("is_distributed") || GetPartnerInfo().Get<bool>("is_distributed")) {
+        const int destination_rank = I_Info.Get<int>("destination_rank");
+        file_name = GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, destination_rank, "dat");
+    } else {
+        file_name = GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, "dat");
+    }
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export Info in file " << file_name << " ..." << std::endl;
 
@@ -219,23 +139,33 @@ Info FileCommunication::ImportDataImpl(
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    CheckEntry(identifier, "identifier");
+    Utilities::CheckEntry(identifier, "identifier");
 
-    const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier, "dat"));
+    const auto partner_ranks = Utilities::ComputePartnerRanksAsImporter(
+        GetDataCommunicator().Rank(),
+        GetDataCommunicator().Size(),
+        GetPartnerInfo().Get<int>("num_processes")
+    );
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import array \"" << identifier << "\" in file " << file_name << " ..." << std::endl;
+    CO_SIM_IO_ERROR_IF(partner_ranks.size() > 1) << "Communicating with more than one rank is not yet implemented!" << std::endl;
 
-    WaitForPath(file_name);
+    for (std::size_t partner_rank : partner_ranks) {
+        const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(partner_rank), "dat"));
 
-    const auto start_time(std::chrono::steady_clock::now());
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import array \"" << identifier << "\" in file " << file_name << " ..." << std::endl;
 
-    SerializeFromFile(file_name, "data", rData, Serializer::TraceType::SERIALIZER_NO_TRACE);
+        WaitForPath(file_name);
 
-    RemovePath(file_name);
+        const auto start_time(std::chrono::steady_clock::now());
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing array with size: " << rData.size() << std::endl;
+        SerializeFromFile(file_name, "data", rData, Serializer::TraceType::SERIALIZER_NO_TRACE);
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Array \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+        RemovePath(file_name);
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing array with size: " << rData.size() << std::endl;
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Array \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
+    }
 
     return Info(); // TODO use
 
@@ -249,24 +179,36 @@ Info FileCommunication::ExportDataImpl(
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    CheckEntry(identifier, "identifier");
+    Utilities::CheckEntry(identifier, "identifier");
 
-    const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier, "dat"));
+    const auto partner_ranks = Utilities::ComputePartnerRanksAsExporter(
+        GetDataCommunicator().Rank(),
+        GetDataCommunicator().Size(),
+        GetPartnerInfo().Get<int>("num_processes")
+    );
 
-    WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
+    CO_SIM_IO_ERROR_IF(partner_ranks.size() > 1) << "Communicating with more than one rank is not yet implemented!" << std::endl;
 
-    const std::size_t size = rData.size();
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export array \"" << identifier << "\" with size: " << size << " in file " << file_name << " ..." << std::endl;
+    for (std::size_t partner_rank : partner_ranks) {
+        const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(partner_rank), "dat"));
 
-    const auto start_time(std::chrono::steady_clock::now());
+        std::cout << file_name << std::endl;
 
-    SerializeToFile(GetTempFileName(file_name), "data", rData, Serializer::TraceType::SERIALIZER_NO_TRACE);
+        WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
-    MakeFileVisible(file_name);
+        const std::size_t size = rData.size();
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export array \"" << identifier << "\" with size: " << size << " in file " << file_name << " ..." << std::endl;
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting array" << std::endl;
+        const auto start_time(std::chrono::steady_clock::now());
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Array \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+        SerializeToFile(GetTempFileName(file_name), "data", rData, Serializer::TraceType::SERIALIZER_NO_TRACE);
+
+        MakeFileVisible(file_name);
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting array" << std::endl;
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Array \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
+    }
 
     return Info(); // TODO use
 
@@ -280,23 +222,33 @@ Info FileCommunication::ImportMeshImpl(
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    CheckEntry(identifier, "identifier");
+    Utilities::CheckEntry(identifier, "identifier");
 
-    const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier, "vtk"));
+    const auto partner_ranks = Utilities::ComputePartnerRanksAsImporter(
+        GetDataCommunicator().Rank(),
+        GetDataCommunicator().Size(),
+        GetPartnerInfo().Get<int>("num_processes")
+    );
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import mesh \"" << identifier << "\" in file " << file_name << " ..." << std::endl;
+    CO_SIM_IO_ERROR_IF(partner_ranks.size() > 1) << "Communicating with more than one rank is not yet implemented!" << std::endl;
 
-    WaitForPath(file_name);
+    for (std::size_t partner_rank : partner_ranks) {
+        const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(partner_rank), "vtk"));
 
-    const auto start_time(std::chrono::steady_clock::now());
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import mesh \"" << identifier << "\" in file " << file_name << " ..." << std::endl;
 
-    SerializeFromFile(file_name, "model_part", O_ModelPart, Serializer::TraceType::SERIALIZER_NO_TRACE);
+        WaitForPath(file_name);
 
-    RemovePath(file_name);
+        const auto start_time(std::chrono::steady_clock::now());
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing mesh" << std::endl;
+        SerializeFromFile(file_name, "model_part", O_ModelPart, Serializer::TraceType::SERIALIZER_NO_TRACE);
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Mesh \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+        RemovePath(file_name);
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing mesh" << std::endl;
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Mesh \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
+    }
 
     return Info(); // TODO use
 
@@ -310,111 +262,35 @@ Info FileCommunication::ExportMeshImpl(
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    CheckEntry(identifier, "identifier");
+    Utilities::CheckEntry(identifier, "identifier");
 
-    const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier, "vtk"));
+    const auto partner_ranks = Utilities::ComputePartnerRanksAsExporter(
+        GetDataCommunicator().Rank(),
+        GetDataCommunicator().Size(),
+        GetPartnerInfo().Get<int>("num_processes")
+    );
 
-    WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
+    CO_SIM_IO_ERROR_IF(partner_ranks.size() > 1) << "Communicating with more than one rank is not yet implemented!" << std::endl;
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export mesh \"" << identifier << "\" with " << I_ModelPart.NumberOfNodes() << " Nodes | " << I_ModelPart.NumberOfElements() << " Elements in file " << file_name << " ..." << std::endl;
+    for (std::size_t partner_rank : partner_ranks) {
+        const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(partner_rank), "vtk"));
 
-    const auto start_time(std::chrono::steady_clock::now());
+        WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
-    SerializeToFile(GetTempFileName(file_name), "model_part", I_ModelPart, Serializer::TraceType::SERIALIZER_NO_TRACE);
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export mesh \"" << identifier << "\" with " << I_ModelPart.NumberOfNodes() << " Nodes | " << I_ModelPart.NumberOfElements() << " Elements in file " << file_name << " ..." << std::endl;
 
-    MakeFileVisible(file_name);
+        const auto start_time(std::chrono::steady_clock::now());
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting mesh" << std::endl;
+        SerializeToFile(GetTempFileName(file_name), "model_part", I_ModelPart, Serializer::TraceType::SERIALIZER_NO_TRACE);
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Mesh \"" << identifier << "\" took: " << ElapsedSeconds(start_time) << " [sec]" << std::endl;
+        MakeFileVisible(file_name);
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting mesh" << std::endl;
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Mesh \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
+    }
 
     return Info(); // TODO use
-
-    CO_SIM_IO_CATCH
-}
-
-fs::path FileCommunication::GetTempFileName(const fs::path& rPath) const
-{
-    CO_SIM_IO_TRY
-
-    if (mCommInFolder) {
-        return rPath.string().insert(mCommFolder.string().length()+1, ".");
-    } else {
-        return "." + rPath.string();
-    }
-
-    CO_SIM_IO_CATCH
-}
-
-fs::path FileCommunication::GetFileName(const fs::path& rPath, const std::string& rExtension) const
-{
-    CO_SIM_IO_TRY
-
-    fs::path local_copy(rPath);
-    local_copy += "_" + std::to_string((mFileIndex++)%100) + "." + rExtension;
-
-    if (mCommInFolder) {
-        return mCommFolder / local_copy;
-    } else {
-        return local_copy;
-    }
-
-    CO_SIM_IO_CATCH
-}
-
-void FileCommunication::WaitForPath(const fs::path& rPath) const
-{
-    CO_SIM_IO_TRY
-
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << std::endl;
-    while(!fs::exists(rPath)) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
-    }
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found: " << rPath << std::endl;
-
-    CO_SIM_IO_CATCH
-}
-
-void FileCommunication::WaitUntilFileIsRemoved(const fs::path& rPath) const
-{
-    CO_SIM_IO_TRY
-
-    if (fs::exists(rPath)) { // only issue the wating message if the file exists initially
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << " to be removed" << std::endl;
-        while(fs::exists(rPath)) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
-        }
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << rPath << " was removed" << std::endl;
-    }
-
-    CO_SIM_IO_CATCH
-}
-
-void FileCommunication::MakeFileVisible(const fs::path& rPath) const
-{
-    CO_SIM_IO_TRY
-
-    std::error_code ec;
-    fs::rename(GetTempFileName(rPath), rPath, ec);
-    CO_SIM_IO_ERROR_IF(ec) << rPath << " could not be made visible!\nError code: " << ec.message() << std::endl;
-
-    CO_SIM_IO_CATCH
-}
-
-void FileCommunication::RemovePath(const fs::path& rPath) const
-{
-    CO_SIM_IO_TRY
-
-    // In windows the file cannot be removed if another file handle is using it
-    // this can be the case here if the partner checks if the file (still) exists
-    // hence we try multiple times to delete it
-    std::error_code ec;
-    for (std::size_t i=0; i<5; ++i) {
-        if (fs::remove(rPath, ec)) {
-            return; // if file could be removed succesfully then return
-        }
-    }
-    CO_SIM_IO_ERROR << rPath << " could not be deleted!\nError code: " << ec.message() << std::endl;
 
     CO_SIM_IO_CATCH
 }

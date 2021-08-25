@@ -17,6 +17,7 @@
 #include "includes/define.hpp"
 #include "includes/connection.hpp"
 #include "includes/communication/file_communication.hpp"
+#include "includes/communication/pipe_communication.hpp"
 #include "includes/communication/sockets_communication.hpp"
 
 namespace CoSimIO {
@@ -63,8 +64,8 @@ Info Connection::Run(const Info& I_Info)
     CoSimIO::Info ctrl_info;
     ctrl_info.Set("identifier", "run_control");
 
-    while(true) {
-        auto info = ImportInfo(ctrl_info);
+    while (true) {
+        CoSimIO::Info info = ImportInfo(ctrl_info);
         const std::string control_signal = info.Get<std::string>("control_signal");
         CheckIfNameIsValid(control_signal);
         if (control_signal == "exit") {
@@ -80,8 +81,7 @@ Info Connection::Run(const Info& I_Info)
                 err_msg << "\n    end" << std::endl;
                 CO_SIM_IO_ERROR << err_msg.str();
             }
-            Info info;
-            it_fct->second(info);
+            it_fct->second(info.Get<Info>("settings", Info{})); // pass settings if specified
         }
     }
     return Info(); // TODO use this
@@ -95,6 +95,8 @@ void Connection::Initialize(const Info& I_Settings)
 
     if (comm_format == "file") {
         mpComm = CoSimIO::make_unique<FileCommunication>(I_Settings, mpDatacomm);
+    } else if (comm_format == "pipe") {
+        mpComm = CoSimIO::make_unique<PipeCommunication>(I_Settings, mpDatacomm);
     } else if (comm_format == "sockets") {
         mpComm = CoSimIO::make_unique<SocketsCommunication>(I_Settings, mpDatacomm);
     } else {

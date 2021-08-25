@@ -78,12 +78,33 @@ public:
     }
 
 protected:
-    std::string GetConnectionName() const {return mConnectionName;}
-    fs::path GetWorkingDirectory() const  {return mWorkingDirectory;}
-    int GetEchoLevel() const              {return mEchoLevel;}
-    bool GetIsPrimaryConnection() const   {return mIsPrimaryConnection;}
-    bool GetPrintTiming() const           {return mPrintTiming;}
-    bool GetIsConnected() const           {return mIsConnected;}
+    std::string GetConnectionName() const      {return mConnectionName;}
+    fs::path GetWorkingDirectory() const       {return mWorkingDirectory;}
+    fs::path GetCommunicationDirectory() const {return mCommFolder;}
+    int GetEchoLevel() const                   {return mEchoLevel;}
+    bool GetIsPrimaryConnection() const        {return mIsPrimaryConnection;}
+    bool GetPrintTiming() const                {return mPrintTiming;}
+    bool GetIsConnected() const                {return mIsConnected;}
+    const DataCommunicator& GetDataCommunicator() const                {return *mpDataComm;}
+
+    Info GetMyInfo() const;
+    Info GetPartnerInfo() const {return mPartnerInfo;};
+
+    fs::path GetTempFileName(const fs::path& rPath) const;
+
+    fs::path GetFileName(const fs::path& rPath, const std::string& rExtension) const;
+
+    fs::path GetFileName(const fs::path& rPath, const int Rank, const std::string& rExtension) const;
+
+    void WaitForPath(const fs::path& rPath) const;
+
+    void WaitUntilFileIsRemoved(const fs::path& rPath) const;
+
+    void MakeFileVisible(const fs::path& rPath) const;
+
+    void RemovePath(const fs::path& rPath) const;
+
+    void SynchronizeAll() const;
 
 private:
     std::shared_ptr<DataCommunicator> mpDataComm;
@@ -91,6 +112,12 @@ private:
     std::string mConnectionName;
     std::string mMyName;
     std::string mConnectTo;
+
+    Info mPartnerInfo;
+
+    fs::path mCommFolder;
+    bool mCommInFolder = true;
+    bool mUseAuxFileForFileAvailability = false;
 
     fs::path mWorkingDirectory;
     int mEchoLevel = 1;
@@ -104,9 +131,13 @@ private:
         CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "No active connection exists!" << std::endl;;
     }
 
-    // new interface, functions return Info
-    virtual Info ConnectDetail(const Info& I_Info) = 0;
-    virtual Info DisconnectDetail(const Info& I_Info) = 0;
+    virtual std::string GetCommunicationName() const = 0;
+    virtual Info GetCommunicationSettings() const {return Info();}
+
+    virtual void BaseConnectDetail(const Info& I_Info);
+    virtual void BaseDisconnectDetail(const Info& I_Info);
+    virtual Info ConnectDetail(const Info& I_Info){return Info();}
+    virtual Info DisconnectDetail(const Info& I_Info){return Info();}
 
     virtual Info ImportInfoImpl(const Info& I_Info)
     {
@@ -152,7 +183,9 @@ private:
         return Info();
     }
 
-    void PerformCompatibilityCheck();
+    void HandShake(const Info& I_Info);
+
+    virtual void DerivedHandShake() {};
 };
 
 } // namespace Internals

@@ -32,16 +32,7 @@ public:
     ~FileCommunication() override;
 
 private:
-
-    fs::path mCommFolder;
-    bool mCommInFolder = true;
-    mutable int mFileIndex = 0;
-
-    Info ConnectDetail(const Info& I_Info) override;
-
-    Info DisconnectDetail(const Info& I_Info) override;
-
-    void ExchangeSyncFileWithPartner(const std::string& rIdentifier) const;
+    std::string GetCommunicationName() const override {return "file";}
 
     Info ImportInfoImpl(const Info& I_Info) override;
 
@@ -62,19 +53,6 @@ private:
     Info ExportMeshImpl(
         const Info& I_Info,
         const ModelPart& I_ModelPart) override;
-
-    fs::path GetTempFileName(const fs::path& rPath) const;
-
-    fs::path GetFileName(const fs::path& rPath, const std::string& rExtension) const;
-
-    void WaitForPath(const fs::path& rPath) const;
-
-    void WaitUntilFileIsRemoved(const fs::path& rPath) const;
-
-    void MakeFileVisible(const fs::path& rPath) const;
-
-    void RemovePath(const fs::path& rPath) const;
-
 };
 
 } // namespace Internals

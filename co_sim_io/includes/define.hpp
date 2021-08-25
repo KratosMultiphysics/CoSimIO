@@ -101,6 +101,24 @@ intrusive_ptr<C> make_intrusive(Args &&...args) {
     return intrusive_ptr<C>(new C(std::forward<Args>(args)...));
 }
 
+// OS detection
+#if defined(_WIN32)
+    #define CO_SIM_IO_COMPILED_IN_WINDOWS
+#endif
+
+inline std::string GetOsName()
+{
+#ifdef _WIN32
+    return "Windows";
+#elif __APPLE__ || __MACH__
+    return "Mac OSX";
+#elif __linux__
+    return "Linux";
+#else
+    return "Other";
+#endif
+}
+
 // Logging macros
 #define CO_SIM_IO_INFO(label) std::cout << label << ": "
 #define CO_SIM_IO_INFO_IF(label, conditional) if (conditional) CO_SIM_IO_INFO(label)
@@ -121,7 +139,7 @@ _CO_SIM_IO_CATCH_AND_THROW(std::invalid_argument)   \
 _CO_SIM_IO_CATCH_AND_THROW(std::domain_error)       \
 _CO_SIM_IO_CATCH_AND_THROW(std::logic_error)        \
 _CO_SIM_IO_CATCH_AND_THROW(std::runtime_error)      \
-catch(Exception& e)      {  throw Exception(e) << CO_SIM_IO_CODE_LOCATION; } \
+catch(CoSimIO::Internals::Exception& e)      {  throw CoSimIO::Internals::Exception(e) << CO_SIM_IO_CODE_LOCATION; } \
 catch(std::exception& e) { CO_SIM_IO_ERROR << e.what(); }                   \
 catch(...)               { CO_SIM_IO_ERROR << "Unknown error"; }
 

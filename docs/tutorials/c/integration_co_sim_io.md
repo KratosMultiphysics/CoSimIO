@@ -57,6 +57,10 @@ int main(){
 ```
 
 Please don't forget to add the CoSimIO folder to your include path.
+Add below line in your bashrc
+```bash
+export C_INCLUDE_PATH=$C_INCLUDE_PATH:/path/to/CoSimIO/co_sim_io
+```
 
 
 ## Tutorial 2: Hello CosimIO
@@ -66,7 +70,7 @@ After integrating the _CoSimIO_ in your code now it's time to say hello
 CoSimIO_Info hello_info = CoSimIO_Hello();
 ```
 
-Please note that this function like other functions in _CoSimIO_ returns an `Info` object. This object is a versatile container holding important information about the operation that has been done. In this case, it contains the version of the _CoSimIO_ library which can be printed using `CoSimIO_PrintInfo()` function:
+Please note that this function like other functions in _CoSimIO_ returns an `Info` object. This object is a versatile container holding important information about the operation that has been done. See [here](../../info/info_c.md) for the documentation. In this case, it contains the version of the _CoSimIO_ library which can be printed using `CoSimIO_PrintInfo()` function:
 
 ```c
 CoSimIO_PrintInfo(stdout, hello_info);
