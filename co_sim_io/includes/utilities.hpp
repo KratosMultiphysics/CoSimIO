@@ -16,13 +16,14 @@
 // System includes
 #include <string>
 #include <chrono>
+#include <set>
 
 // Project includes
 #include "define.hpp"
 #include "filesystem_inc.hpp"
 
 namespace CoSimIO {
-namespace Internals {
+namespace Utilities {
 
 // Create the name for the connection
 // In a function bcs maybe in the future this will
@@ -45,7 +46,17 @@ int CO_SIM_IO_API GetNumberOfNodesForElementType(ElementType Type);
 
 void CO_SIM_IO_API WaitUntilPathExists(const fs::path& rPath);
 
-} // namespace Internals
+std::set<std::size_t> CO_SIM_IO_API ComputePartnerRanksAsImporter(
+    const std::size_t MyRank,
+    const std::size_t MySize,
+    const std::size_t PartnerSize);
+
+std::set<std::size_t> CO_SIM_IO_API ComputePartnerRanksAsExporter(
+    const std::size_t MyRank,
+    const std::size_t MySize,
+    const std::size_t PartnerSize);
+
+} // namespace Utilities
 } // namespace CoSimIO
 
 #endif // CO_SIM_IO_UTILITIES_INCLUDED

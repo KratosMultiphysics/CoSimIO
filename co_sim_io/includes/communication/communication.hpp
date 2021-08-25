@@ -85,6 +85,7 @@ protected:
     bool GetIsPrimaryConnection() const        {return mIsPrimaryConnection;}
     bool GetPrintTiming() const                {return mPrintTiming;}
     bool GetIsConnected() const                {return mIsConnected;}
+    const DataCommunicator& GetDataCommunicator() const                {return *mpDataComm;}
 
     Info GetMyInfo() const;
     Info GetPartnerInfo() const {return mPartnerInfo;};
