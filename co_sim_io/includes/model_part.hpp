@@ -170,6 +170,19 @@ class CO_SIM_IO_API ModelPart
 {
 public:
 
+template<typename T>
+class PointerVector
+{
+public:
+    PointerVector(const std::vector<T>& rPointerVector) : mPointerVector(rPointerVector) {}
+
+    typename std::vector<T>::const_iterator begin() const {return mPointerVector.begin();}
+    typename std::vector<T>::const_iterator end() const {return mPointerVector.end();}
+
+private:
+    const std::vector<T>& mPointerVector;
+};
+
     using NodePointerType = CoSimIO::intrusive_ptr<Node>;
     using ElementPointerType = CoSimIO::intrusive_ptr<Element>;
     using NodesContainerType = std::vector<NodePointerType>;
@@ -195,6 +208,8 @@ public:
         const IdType I_Id,
         const ElementType I_Type,
         const ConnectivitiesType& I_Connectivities);
+
+    const PointerVector<NodePointerType> Nodes() const {return PointerVector<NodePointerType>(mNodes);}
 
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
     ElementsContainerType::const_iterator ElementsBegin() const { return mElements.begin(); }
