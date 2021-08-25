@@ -52,7 +52,7 @@ sh scripts/build_python.sh
 
 This will compile the binaries in the build folder and installs them into the bin subfolder of _CoSimIO_.
 
-Please don't forget to add the binaries in the bin folder to your `PYTHONPATH`.
+Please don't forget to add the binaries in the bin folder to your `PYTHONPATH`.  For linux this should look like the following:
 ```bash
 export PYTHONPATH=$PYTHONPATH:/path/to/CoSimIO/bin
 ```
