@@ -3,13 +3,13 @@
 This tutorial shows how to exchange meshes with Kratos. It is required to do [this tutorial](basic_data_exchange_with_kratos.md) first.
 
 ## Mesh Exchange with Kratos
-Here we try to send the Mesh (in the form of Model Part) to Kratos and get it back from it. Then we can check if both the meshes are the same. Again the python file for Kratos side is very similar to the one described in the [python tutorial](../python/integration_co_sim_io.md):
+Here we try to send the Mesh (in the form of `CoSimIO::ModelPart`) to Kratos and get it back from it. Then we can check if both meshes are the same. Again the python file for Kratos side is very similar to the one described in the [python tutorial](../python/integration_co_sim_io.md):
 
 ~~~py
 import KratosMultiphysics as KM
 from KratosMultiphysics.CoSimulationApplication import CoSimIO
 
-model = KM.Model()import_export_mesh.py
+model = KM.Model()
 model_part = model.CreateModelPart("mp_test")
 
 connection_settings = CoSimIO.Info()

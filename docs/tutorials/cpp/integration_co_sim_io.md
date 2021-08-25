@@ -31,8 +31,8 @@ int main()
 }
 ```
 
-Please don't forget to add the CoSimIO folder to your include path.
-Add below line in your bashrc
+Please don't forget to add the folder `co_sim_io` to your include path so that the compiler can find the includes
+Example:
 ```bash
 export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/path/to/CoSimIO/co_sim_io
 ```
@@ -88,7 +88,7 @@ This method returns a `Info` object containing information about the connection 
 ```c++
 std::string connection_name = info.Get<std::string>("connection_name");
 ```
-Similar things work for `Disconnect` Method.\
+Similar things work for `Disconnect` Method.
 Now putting together everything:
 
 ```c++
