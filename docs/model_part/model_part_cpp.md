@@ -40,6 +40,7 @@ CoSimIO::Element& element = model_part.CreateNewElement(
     connectivity // Connectivity information, i.e. Ids of nodes that the element has
 );
 ```
+Note: Node and Element Ids start with 1 (0 is not accepted).
 
 Use the following functions to get the number of nodes and elements:
 ```c++
@@ -81,7 +82,7 @@ model_part.Clear();
 ```
 
 ## C++ interface of _CoSimIO::Node_
-The _CoSimIO::Node_ an be used in the following way:
+The _CoSimIO::Node_ can be used in the following way:
 ```c++
 // access Id of node:
 CoSimIO::IdType node_id = node.Id();
@@ -114,4 +115,4 @@ for (auto node_it=element.NodesBegin(); node_it!=element.NodesEnd(); ++node_it) 
 ```
 
 ## Further information (C++ interface)
-For more information check the [implementation](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/include/model_part.hpp) and the [tests](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/co_sim_io/include/test_model_part.cpp).
+For more information check the [implementation](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/includes/model_part.hpp) and the [tests](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/co_sim_io/cpp/test_model_part.cpp).

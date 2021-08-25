@@ -1,6 +1,6 @@
 # ModelPart
 
-This page describes the C interface of `CoSimIO::ModelPart`. See [here](model_model_part_cpp.md) for more information and the native (C++) interface.
+This page describes the C interface of `CoSimIO::ModelPart`. See [here](model_part_cpp.md) for more information and the native (C++) interface.
 
 ## C interface of _CoSimIO_ModelPart_
 Create and free a `ModelPart` like this:
@@ -42,6 +42,7 @@ CoSimIO_Element element = CoSimIO_ModelPart_CreateNewElement(
     connectivity // Connectivity information, i.e. Ids of nodes that the element has
 );
 ```
+Note: Node and Element Ids start with 1 (0 is not accepted).
 
 Use the following functions to get the number of nodes and elements:
 ```c
@@ -83,7 +84,7 @@ CoSimIO_ModelPart_Clear(model_part);
 ```
 
 ## C interface of _CoSimIO_Node_
-The _CoSimIO_Node_ an be used in the following way:
+The _CoSimIO_Node_ can be used in the following way:
 ```c
 // access Id of node:
 int node_id = CoSimIO_Node_Id(node);
@@ -119,4 +120,4 @@ for (int i=0; i<CoSimIO_Element_NumberOfNodes(element); ++i) {
 ```
 
 ## Further information (C interface)
-For more information check the [implementation](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/c/co_sim_io_c_model_part.h) and the [tests](https://github.com/KratosMultiphysics/CoSimIO/tree/master/tests/co_sim_io/c/model_part).
+For more information check the [implementation](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/c/co_sim_io_c_model_part.h) and the [tests](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/co_sim_io/c/model_part/test_model_part.c).

@@ -3,7 +3,7 @@
 This tutorial shows how to exchange meshes with Kratos. It is required to do [this tutorial](basic_data_exchange_with_kratos.md) first.
 
 ## Mesh Exchange with Kratos
-Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one described in the [python tutorial](../python/integration_co_sim_io.md):
+Here we try to send the Mesh (in the form of `CoSimIO::ModelPart`) to Kratos and get it back from it. Then we can check if both meshes are the same. Again the python file for Kratos side is very similar to the one described in the [python tutorial](../python/integration_co_sim_io.md):
 
 ~~~py
 import KratosMultiphysics as KM
@@ -118,12 +118,12 @@ int main()
 }
 ~~~
 
-This example can be found in [integration_tutorials/cpp/mesh_exchange.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/cpp/mesh_exchange.cpp)
+This file can be found in [integration_tutorials/cpp/mesh_exchange.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/cpp/mesh_exchange.cpp)
 
 Then you may run your executable with python script of Kratos from your working directory:
 
 ~~~shell
-path/to/bin/mesh_exchange_cpp_test & python3 path/to/connect_disconnect.py
+path/to/bin/mesh_exchange_cpp_test & python3 path/to/import_export_mesh.py
 ~~~
 
 ## Next steps
