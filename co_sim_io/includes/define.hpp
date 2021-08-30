@@ -67,7 +67,7 @@ enum class PartitionType
 {
     Local,
     Ghost
-}
+};
 
 enum class ElementType
 {
