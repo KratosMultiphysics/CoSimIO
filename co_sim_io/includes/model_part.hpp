@@ -57,6 +57,9 @@ public:
     double Z() const { return mZ; }
     CoordinatesType Coordinates() const { return {mX, mY, mZ}; }
 
+    PartitionType GetPartitionType() const { return mPartitionType; }
+    void SetPartitionType(const PartitionType PType) { mPartitionType = PType; }
+
     void Print(std::ostream& rOStream) const;
 
 private:
@@ -64,6 +67,7 @@ private:
     double mX;
     double mY;
     double mZ;
+    PartitionType mPartitionType;
 
     //*********************************************
     //this block is needed for refcounting
@@ -118,6 +122,10 @@ public:
 
     IdType Id() const { return mId; }
     ElementType Type() const { return mType; }
+
+    PartitionType GetPartitionType() const { return mPartitionType; }
+    void SetPartitionType(const PartitionType PType) { mPartitionType = PType; }
+
     std::size_t NumberOfNodes() const { return mNodes.size(); }
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
     NodesContainerType::const_iterator NodesEnd() const { return mNodes.end(); }
@@ -128,6 +136,7 @@ private:
     IdType mId;
     ElementType mType;
     NodesContainerType mNodes;
+    PartitionType mPartitionType;
 
     //*********************************************
     //this block is needed for refcounting

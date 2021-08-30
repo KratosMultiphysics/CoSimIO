@@ -63,6 +63,12 @@ enum ConnectionStatus
     DisconnectionError
 };
 
+enum class PartitionType
+{
+    Local,
+    Ghost
+}
+
 enum class ElementType
 {
     Hexahedra3D20,
