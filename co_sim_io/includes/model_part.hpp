@@ -43,23 +43,26 @@ public:
     using BaseType = typename TDataType::element_type; // to be used with smart pointers
     using const_iterator_type = typename ContainerType::const_iterator;
 
-	class const_iterator_adaptor : public std::iterator<std::forward_iterator_tag, TDataType>
-	{
-	public:
-		const_iterator_adaptor(const_iterator_type it) : vec_iterator(it) {}
-		const_iterator_adaptor(const const_iterator_adaptor& it) : vec_iterator(it.vec_iterator) {}
-		const_iterator_adaptor& operator++()  { vec_iterator++; return *this; }
-		const_iterator_adaptor operator++(int) { const_iterator_adaptor tmp(*this); operator++(); return tmp; }
-		bool operator==(const const_iterator_adaptor& rhs) const { return vec_iterator == rhs.vec_iterator; }
-		bool operator!=(const const_iterator_adaptor& rhs) const { return vec_iterator != rhs.vec_iterator; }
-		const BaseType& operator*() const { return **(vec_iterator); }
-		// TDataType operator->() const { return *(vec_iterator); }
-		const_iterator_type& base() { return vec_iterator; }
-		const_iterator_type const& base() const { return vec_iterator; }
+    struct const_iterator_adaptor
+    {
+        using iterator_category = std::forward_iterator_tag;
+        using difference_type   = std::ptrdiff_t;
+        using value_type        = TDataType;
+        using pointer           = TDataType*;
+        using reference         = TDataType&;
+
+        const_iterator_adaptor(const_iterator_type ptr) : m_ptr(ptr) {}
+
+        const BaseType& operator*() const { return **m_ptr; }
+        // pointer operator->() { return m_ptr; }
+        const_iterator_adaptor& operator++() { m_ptr++; return *this; }
+        const_iterator_adaptor operator++(int) { const_iterator_adaptor tmp = *this; ++(*this); return tmp; }
+        friend bool operator== (const const_iterator_adaptor& a, const const_iterator_adaptor& b) { return a.m_ptr == b.m_ptr; };
+        friend bool operator!= (const const_iterator_adaptor& a, const const_iterator_adaptor& b) { return a.m_ptr != b.m_ptr; };
 
     private:
-		const_iterator_type vec_iterator;
-	};
+        const_iterator_type m_ptr;
+    };
 
     PointerVector(const ContainerType& rPointerVector) : mPointerVector(rPointerVector) {}
 
