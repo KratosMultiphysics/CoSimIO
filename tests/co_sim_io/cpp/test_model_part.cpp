@@ -176,7 +176,7 @@ TEST_CASE("element_range_based_loop_nodes")
     std::size_t counter=0;
     for (const auto& r_node : element.Nodes()) {
         CAPTURE(counter); // log the current input data (done manually as not fully supported yet by doctest)
-        CHECK_EQ(r_node->Id(), node_ids[counter]);
+        CHECK_EQ(r_node.Id(), node_ids[counter]);
         counter++;
     }
 }
@@ -337,7 +337,7 @@ TEST_CASE("model_part_range_based_loop_nodes")
     std::size_t counter = 0;
     for (const auto& r_node : model_part.Nodes()) {
         CAPTURE(counter); // log the current input data (done manually as not fully supported yet by doctest)
-        CHECK_EQ(r_node->Id(), counter+1);
+        CHECK_EQ(r_node.Id(), counter+1);
         counter++;
     }
 }
@@ -465,7 +465,7 @@ TEST_CASE("model_part_range_based_loop_elements")
     std::size_t counter = 0;
     for (const auto& r_elem : model_part.Elements()) {
         CAPTURE(counter); // log the current input data (done manually as not fully supported yet by doctest)
-        CHECK_EQ(r_elem->Id(), counter+1);
+        CHECK_EQ(r_elem.Id(), counter+1);
         counter++;
     }
 }
