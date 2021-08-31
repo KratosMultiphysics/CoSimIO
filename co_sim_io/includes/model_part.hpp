@@ -34,17 +34,40 @@ namespace CoSimIO {
 
 namespace Internals {
 
-template<typename T>
+template<class TDataType>
 class PointerVector
 {
 public:
-    PointerVector(const std::vector<T>& rPointerVector) : mPointerVector(rPointerVector) {}
 
-    typename std::vector<T>::const_iterator begin() const {return mPointerVector.begin();}
-    typename std::vector<T>::const_iterator end() const {return mPointerVector.end();}
+    using ContainerType = std::vector<TDataType>;
+    using BaseType = typename TDataType::element_type; // to be used with smart pointers
+    using const_iterator_type = typename ContainerType::const_iterator;
+
+	class const_iterator_adaptor : public std::iterator<std::forward_iterator_tag, TDataType>
+	{
+	public:
+		const_iterator_adaptor(const_iterator_type it) : vec_iterator(it) {}
+		const_iterator_adaptor(const const_iterator_adaptor& it) : vec_iterator(it.vec_iterator) {}
+		const_iterator_adaptor& operator++()  { vec_iterator++; return *this; }
+		const_iterator_adaptor operator++(int) { const_iterator_adaptor tmp(*this); operator++(); return tmp; }
+		bool operator==(const const_iterator_adaptor& rhs) const { return vec_iterator == rhs.vec_iterator; }
+		bool operator!=(const const_iterator_adaptor& rhs) const { return vec_iterator != rhs.vec_iterator; }
+		const BaseType& operator*() const { return **(vec_iterator); }
+		// TDataType operator->() const { return *(vec_iterator); }
+		const_iterator_type& base() { return vec_iterator; }
+		const_iterator_type const& base() const { return vec_iterator; }
+
+    private:
+		const_iterator_type vec_iterator;
+	};
+
+    PointerVector(const ContainerType& rPointerVector) : mPointerVector(rPointerVector) {}
+
+    const_iterator_adaptor begin() const {return const_iterator_adaptor(mPointerVector.begin());}
+    const_iterator_adaptor end()   const {return const_iterator_adaptor(mPointerVector.end());}
 
 private:
-    const std::vector<T>& mPointerVector;
+    const ContainerType& mPointerVector;
 };
 
 } //namespace Internals
