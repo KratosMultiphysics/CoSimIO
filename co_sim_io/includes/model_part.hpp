@@ -32,6 +32,46 @@ see https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/mod
 
 namespace CoSimIO {
 
+namespace Internals {
+
+template<class TDataType>
+class PointerVector
+{
+public:
+
+    using ContainerType = std::vector<TDataType>;
+    using BaseType = typename TDataType::element_type; // to be used with smart pointers
+    using const_iterator_type = typename ContainerType::const_iterator;
+
+	class const_iterator_adaptor : public std::iterator<std::forward_iterator_tag, TDataType>
+	{
+	public:
+		const_iterator_adaptor(const_iterator_type it) : vec_iterator(it) {}
+		const_iterator_adaptor(const const_iterator_adaptor& it) : vec_iterator(it.vec_iterator) {}
+		const_iterator_adaptor& operator++()  { vec_iterator++; return *this; }
+		const_iterator_adaptor operator++(int) { const_iterator_adaptor tmp(*this); operator++(); return tmp; }
+		bool operator==(const const_iterator_adaptor& rhs) const { return vec_iterator == rhs.vec_iterator; }
+		bool operator!=(const const_iterator_adaptor& rhs) const { return vec_iterator != rhs.vec_iterator; }
+		const BaseType& operator*() const { return **(vec_iterator); }
+		// TDataType operator->() const { return *(vec_iterator); }
+		const_iterator_type& base() { return vec_iterator; }
+		const_iterator_type const& base() const { return vec_iterator; }
+
+    private:
+		const_iterator_type vec_iterator;
+	};
+
+    PointerVector(const ContainerType& rPointerVector) : mPointerVector(rPointerVector) {}
+
+    const_iterator_adaptor begin() const {return const_iterator_adaptor(mPointerVector.begin());}
+    const_iterator_adaptor end()   const {return const_iterator_adaptor(mPointerVector.end());}
+
+private:
+    const ContainerType& mPointerVector;
+};
+
+} //namespace Internals
+
 class CO_SIM_IO_API Node
 {
 public:
@@ -105,7 +145,8 @@ inline std::ostream & operator <<(
 class CO_SIM_IO_API Element
 {
 public:
-    using NodesContainerType = std::vector<CoSimIO::intrusive_ptr<Node>>;
+    using NodePointerType = CoSimIO::intrusive_ptr<Node>;
+    using NodesContainerType = std::vector<NodePointerType>;
 
     Element(
         const IdType I_Id,
@@ -119,6 +160,7 @@ public:
     IdType Id() const { return mId; }
     ElementType Type() const { return mType; }
     std::size_t NumberOfNodes() const { return mNodes.size(); }
+    const Internals::PointerVector<NodePointerType> Nodes() const {return Internals::PointerVector<NodePointerType>(mNodes);}
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
     NodesContainerType::const_iterator NodesEnd() const { return mNodes.end(); }
 
@@ -195,6 +237,9 @@ public:
         const IdType I_Id,
         const ElementType I_Type,
         const ConnectivitiesType& I_Connectivities);
+
+    const Internals::PointerVector<NodePointerType> Nodes() const {return Internals::PointerVector<NodePointerType>(mNodes);}
+    const Internals::PointerVector<ElementPointerType> Elements() const {return Internals::PointerVector<ElementPointerType>(mElements);}
 
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
     ElementsContainerType::const_iterator ElementsBegin() const { return mElements.begin(); }

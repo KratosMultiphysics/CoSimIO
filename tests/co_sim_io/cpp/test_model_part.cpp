@@ -155,6 +155,32 @@ TEST_CASE("element_nodes")
     }
 }
 
+TEST_CASE("element_range_based_loop_nodes")
+{
+    const int id = 33;
+    const CoSimIO::ElementType type = CoSimIO::ElementType::Triangle2D3;
+
+    const int node_ids[] = {2, 159, 61};
+
+    const std::array<double, 3> dummy_coords = {0,0,0};
+    auto p_node_1 = CoSimIO::make_intrusive<CoSimIO::Node>(node_ids[0], dummy_coords);
+    auto p_node_2 = CoSimIO::make_intrusive<CoSimIO::Node>(node_ids[1], dummy_coords);
+    auto p_node_3 = CoSimIO::make_intrusive<CoSimIO::Node>(node_ids[2], dummy_coords);
+
+    Element element(id, type, {p_node_1, p_node_2, p_node_3});
+
+    CHECK_EQ(element.Id(), id);
+    CHECK_EQ(element.Type(), type);
+    CHECK_EQ(element.NumberOfNodes(), 3);
+
+    std::size_t counter=0;
+    for (const auto& r_node : element.Nodes()) {
+        CAPTURE(counter); // log the current input data (done manually as not fully supported yet by doctest)
+        CHECK_EQ(r_node.Id(), node_ids[counter]);
+        counter++;
+    }
+}
+
 TEST_CASE("element_ostream")
 {
     const std::array<double, 3> dummy_coords = {0,0,0};
@@ -298,6 +324,24 @@ TEST_CASE("model_part_get_node")
     }
 }
 
+TEST_CASE("model_part_range_based_loop_nodes")
+{
+    ModelPart model_part("for_test");
+
+    for (std::size_t i=0; i<5; ++i) {
+        model_part.CreateNewNode(i+1, 0,0,0);
+    }
+
+    REQUIRE_EQ(model_part.NumberOfNodes(), 5);
+
+    std::size_t counter = 0;
+    for (const auto& r_node : model_part.Nodes()) {
+        CAPTURE(counter); // log the current input data (done manually as not fully supported yet by doctest)
+        CHECK_EQ(r_node.Id(), counter+1);
+        counter++;
+    }
+}
+
 TEST_CASE("model_part_create_new_element")
 {
     ModelPart model_part("for_test");
@@ -403,6 +447,26 @@ TEST_CASE("model_part_get_element")
     SUBCASE("non_existing")
     {
         CHECK_THROWS_WITH(model_part.GetElement(elem_id+1), "Error: Element with Id 7 does not exist!\n");
+    }
+}
+
+TEST_CASE("model_part_range_based_loop_elements")
+{
+    ModelPart model_part("for_test");
+
+    model_part.CreateNewNode(1, 0,0,0);
+
+    for (std::size_t i=0; i<4; ++i) {
+        model_part.CreateNewElement(i+1, CoSimIO::ElementType::Point2D, {1});
+    }
+
+    REQUIRE_EQ(model_part.NumberOfElements(), 4);
+
+    std::size_t counter = 0;
+    for (const auto& r_elem : model_part.Elements()) {
+        CAPTURE(counter); // log the current input data (done manually as not fully supported yet by doctest)
+        CHECK_EQ(r_elem.Id(), counter+1);
+        counter++;
     }
 }
 
