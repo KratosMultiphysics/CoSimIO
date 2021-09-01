@@ -1,5 +1,7 @@
 # Tutorial for using the Kratos mapping
 
+[Main Page of Documentation](https://kratosmultiphysics.github.io/CoSimIO/)
+
 This tutorial shows how to use the mapping of Kratos. It is required to do [this tutorial](mesh_exchange_with_kratos.md) first.
 
 This page shows the application side, please see [here](../kratos_mapping.md) for the Kratos side.

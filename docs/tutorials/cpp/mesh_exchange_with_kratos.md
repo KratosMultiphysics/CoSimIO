@@ -1,11 +1,24 @@
 # Tutorial for exchanging meshes with Kratos
 
+[Main Page of Documentation](https://kratosmultiphysics.github.io/CoSimIO/)
+
+**Table of Contents**
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [Mesh Exchange with Kratos](#mesh-exchange-with-kratos)
+- [Next steps](#next-steps)
+
+<!-- /code_chunk_output -->
+---
+
 This tutorial shows how to exchange meshes with Kratos. It is required to do [this tutorial](basic_data_exchange_with_kratos.md) first.
 
 ## Mesh Exchange with Kratos
 Here we try to send the Mesh (in the form of `CoSimIO::ModelPart`) to Kratos and get it back from it. Then we can check if both meshes are the same. Again the python file for Kratos side is very similar to the one described in the [python tutorial](../python/integration_co_sim_io.md):
 
-~~~py
+```py
 import KratosMultiphysics as KM
 from KratosMultiphysics.CoSimulationApplication import CoSimIO
 
@@ -40,13 +53,13 @@ info = CoSimIO.Disconnect(disconnect_settings)
 if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
     raise Exception("Disconnecting failed")
 
-~~~
+```
 
 You may find this python file in [here](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/import_export_mesh.py)
 
 On the other side we use first export mesh and then import it back, following what was done in [this tutorial](integration_co_sim_io.md#mesh-exchange):
 
-~~~c++
+```c++
 // System includes
 #include <cmath> // std::abs
 
@@ -116,15 +129,15 @@ int main()
 
     return 0;
 }
-~~~
+```
 
 This file can be found in [integration_tutorials/cpp/mesh_exchange.cpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/cpp/mesh_exchange.cpp)
 
 Then you may run your executable with python script of Kratos from your working directory:
 
-~~~shell
+```shell
 path/to/bin/mesh_exchange_cpp_test & python3 path/to/import_export_mesh.py
-~~~
+```
 
 ## Next steps
 In the [next tutorial](mapping.md), meshes are exchanged with Kratos and mapping is used.

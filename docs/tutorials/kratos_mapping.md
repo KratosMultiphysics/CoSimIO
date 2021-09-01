@@ -1,5 +1,21 @@
 # Tutorial for using the Kratos mapping
 
+[Main Page of Documentation](https://kratosmultiphysics.github.io/CoSimIO/)
+
+**Table of Contents**
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [Preparing meshes](#preparing-meshes)
+- [Importing meshes](#importing-meshes)
+- [Importing data](#importing-data)
+- [Mapping](#mapping)
+- [Exporting mapped data](#exporting-mapped-data)
+
+<!-- /code_chunk_output -->
+---
+
 This tutorial shows how to map data between (non matching) meshes with Kratos. This page shows the Kratos side, please refer to the corresponding tutorials for the application side, depending on the language.
 
 In this tutorial we first send two meshes based on the same geometry but with different discretizations to Kratos. Those meshes are used as basis for the mapping. In Kratos teminology those are the origin and the destination.

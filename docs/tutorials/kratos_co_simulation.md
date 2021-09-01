@@ -1,5 +1,7 @@
 # Tutorial for performing coupled simulations with the Kratos CoSimulationApplication
 
+[Main Page of Documentation](https://kratosmultiphysics.github.io/CoSimIO/)
+
 This tutorial gives an introduction for performing coupled simulations by using the CoSimulationApplication of Kratos. It is strongly recommended to read the [README of the CoSimulationApplication](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/README.md) first.
 
 The _CoSimIO_ can be used in two different ways for conducting coupled simulations.

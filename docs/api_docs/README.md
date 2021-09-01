@@ -1,5 +1,27 @@
 # API documentation
 
+[Main Page of Documentation](https://kratosmultiphysics.github.io/CoSimIO/)
+
+**Table of Contents**
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=3 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [Public interface of _CoSimIO_](#public-interface-of-_cosimio_)
+  - [Hello](#hello)
+  - [Connect](#connect)
+  - [Disconnect](#disconnect)
+  - [ImportData](#importdata)
+  - [ExportData](#exportdata)
+  - [ImportMesh](#importmesh)
+  - [ExportMesh](#exportmesh)
+  - [Run](#run)
+  - [Register](#register)
+- [Doxygen documentation](#doxygen-documentation)
+
+<!-- /code_chunk_output -->
+---
+
 This page contains the API documentation of the _CoSimIO_. The public interface is documented in detail, the internal documentation with doxygen is currently work in progress.
 
 ## Public interface of _CoSimIO_

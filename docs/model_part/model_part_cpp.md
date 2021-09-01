@@ -1,13 +1,28 @@
 # ModelPart
 
+[Main Page of Documentation](https://kratosmultiphysics.github.io/CoSimIO/)
+
+**Table of Contents**
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [Interface of CoSimIO::ModelPart](#interface-of-cosimiomodelpart)
+- [Interface of CoSimIO::Node](#interface-of-cosimionode)
+- [Interface of CoSimIO::Element](#interface-of-cosimioelement)
+- [Further information (C++ interface)](#further-information-c-interface)
+
+<!-- /code_chunk_output -->
+---
+
 The `ModelPart` is a container for mesh, it contains nodes and elements.
-It is a simplified version of `CoSimIO::ModelPart` ([link](https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/model_part.h)).
+It is a simplified version of `Kratos::ModelPart` ([link](https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/model_part.h)).
 
 This page describes the native (C++) interface of `CoSimIO::ModelPart`.
 
 Click [here](model_part_c.md) for the C interface and [here](model_part_python.md) for the Python interface.
 
-## C++ interface of _CoSimIO::ModelPart_
+## Interface of CoSimIO::ModelPart
 Create a _ModelPart_ like this:
 ```c++
 // create CoSimIO::ModelPart
@@ -81,7 +96,7 @@ Removing all nodes and elements can be done with the following:
 model_part.Clear();
 ```
 
-## C++ interface of _CoSimIO::Node_
+## Interface of CoSimIO::Node
 The _CoSimIO::Node_ can be used in the following way:
 ```c++
 // access Id of node:
@@ -95,7 +110,7 @@ double node_z = node.Z();
 CoSimIO::CoordinatesType coords = node.Coordinates();
 ```
 
-## C++ interface of _CoSimIO::Element_
+## Interface of CoSimIO::Element
 The _CoSimIO::Element_ provides the following interface:
 ```c++
 // access Id of element:

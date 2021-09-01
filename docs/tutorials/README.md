@@ -1,5 +1,20 @@
 # Tutorials for integrating the _CoSimIO_
 
+[Main Page of Documentation](https://kratosmultiphysics.github.io/CoSimIO/)
+
+**Table of Contents**
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [C++ Interface](#c-interface)
+- [C Interface](#c-interface-1)
+- [Python Interface](#python-interface)
+- [Selection of language](#selection-of-language)
+
+<!-- /code_chunk_output -->
+---
+
 The tutorials contain step-by-step instructions for integrating the _CoSimIO_, establishing a connection to Kratos, doing mapping with Kratos and performing CoSimulation with Kratos.
 
 Each language has its specific tutorials:

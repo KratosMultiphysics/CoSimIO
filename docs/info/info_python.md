@@ -1,5 +1,7 @@
 # Info
 
+[Main Page of Documentation](https://kratosmultiphysics.github.io/CoSimIO/)
+
 This page describes the Python interface of `CoSimIO::Info`. See [here](info_cpp.md.md) for more information and the native (C++) interface.
 
 Work in progress
