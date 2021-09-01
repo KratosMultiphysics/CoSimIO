@@ -42,6 +42,7 @@ The following settings are available for all methods of communication:
 |-------------------|--------|---|---|---|
 | my_name               | string | x | - | necessary for establishing a connection |
 | connect_to            | string | x | - | name of partner to connect to |
+| communication_format  | string | - | file | select format of communication, see below |
 | is_primary_connection | bool   | - | determined from other input | whether this is the primary connection, if not specified it is determined automatically from the names of the partners |
 | working_directory     | string | - | current working directory | path to the working directory |
 | use_folder_for_communication | bool | - | true  | whether the files used for communication are written in a dedicated folder. Deadlocks from leftover files from previous executions are less likely to happen as they can be cleanup up. |
@@ -65,15 +66,25 @@ As the name indicates, this method uses files for communicating data. It is robu
 The implementation of the _FileCommunication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/includes/communication/file_communication.hpp).
 
 **Specific Input:**
-none at the moment
+
+Set `communication_format` to `file`.
+
+| name | type | required | default| description |
+|-------------------|--------|---|---|---|
 
 ## Pipe-based communication
 A pipe is a data channel to perform interprocess communication between two processes. No data is written to the filesystem, it is directly exchanged through the memory. This makes it more efficient than the file-based communication.
 
 This form of communication is currently only available under Unix, the Windows implementation is work in progress.
 
+The implementation of the _PipeCommunication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/includes/communication/pipe_communication.hpp).
+
 **Specific Input:**
-none at the moment
+
+Set `communication_format` to `pipe`.
+
+| name | type | required | default| description |
+|-------------------|--------|---|---|---|
 
 ## Socket-based communication
 
