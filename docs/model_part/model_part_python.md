@@ -1,8 +1,23 @@
 # ModelPart
 
+[Main Page of Documentation](https://kratosmultiphysics.github.io/CoSimIO/)
+
+**Table of Contents**
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [Interface of CoSimIO.ModelPart](#interface-of-cosimiomodelpart)
+- [Interface of CoSimIO.Node](#interface-of-cosimionode)
+- [Interface of CoSimIO.Element](#interface-of-cosimioelement)
+- [Further information (Python interface)](#further-information-python-interface)
+
+<!-- /code_chunk_output -->
+---
+
 This page describes the Python interface of `CoSimIO::ModelPart`. See [here](model_part_cpp.md) for more information and the native (C++) interface.
 
-## Python interface of _CoSimIO.ModelPart_
+## Interface of CoSimIO.ModelPart
 
 Create a `ModelPart` like this:
 ```py
@@ -73,7 +88,7 @@ Removing all nodes and elements can be done with the following:
 model_part.Clear()
 ```
 
-## Python interface of _CoSimIO.Node_
+## Interface of CoSimIO.Node
 The _CoSimIO.Node_ can be used in the following way:
 ```python
 # access Id of node:
@@ -87,7 +102,7 @@ node_z = node.Z()
 coords = node.Coordinates() # [x,y,z]
 ```
 
-## Python interface of _CoSimIO.Element_
+## Interface of CoSimIO.Element
 The _CoSimIO.Element_ provides the following interface:
 ```python
 # access Id of element:

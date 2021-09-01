@@ -1,5 +1,18 @@
 # Communication
 
+[Main Page of Documentation](https://kratosmultiphysics.github.io/CoSimIO/)
+
+**Table of Contents**
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [File-based communication](#file-based-communication)
+- [Socket-based communication](#socket-based-communication)
+
+<!-- /code_chunk_output -->
+---
+
 Exchanging data between two codes using interprocess communication (IPC) is the main task of the _CoSimIO_. Different methods with specific advantags / disadvantages exist, see below.
 
 When initially establishing a connection between two codes, a handshake of both partners is performed. During this handshake some basic information is exchanged between the partners, including the check if the versions of _CoSimIO_ are compatible.

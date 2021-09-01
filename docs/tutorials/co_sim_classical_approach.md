@@ -1,5 +1,20 @@
 # Tutorial for performing coupled simulations with the classical approach
 
+[Main Page of Documentation](https://kratosmultiphysics.github.io/CoSimIO/)
+
+**Table of Contents**
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [Setup](#setup)
+- [Input files for Kratos](#input-files-for-kratos)
+  - [The SolverWrapper](#the-solverwrapper)
+  - [The ProjectParameters file](#the-projectparameters-file)
+
+<!-- /code_chunk_output -->
+---
+
 This tutorial shows how to perform coupled simulations with the Kratos CoSimulationApplication using the "classical" approach. This means that the coupling sequence is implemented in the application side and has to match the Kratos side. See [here](kratos_co_simulation.md) for more details on the different approaches.
 
 Note that this page shows the Kratos side, please refer to the corresponding tutorials for the application side, depending on the language.

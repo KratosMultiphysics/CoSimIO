@@ -1,5 +1,20 @@
 # Documentation of the _CoSimIO_
 
+**Table of Contents**
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [Structure of _CoSimIO_ and which part it plays in Kratos CoSimulation](#structure-of-_cosimio_-and-which-part-it-plays-in-kratos-cosimulation)
+  - [Kratos CoSimulation Library Overview](#kratos-cosimulation-library-overview)
+- [Tutorials for integrating the _CoSimIO_](#tutorials-for-integrating-the-_cosimio_)
+- [API documentation](#api-documentation)
+- [Communication](#communication)
+- [Kratos CoSimulation](#kratos-cosimulation)
+- [Miscellaneous](#miscellaneous)
+
+<!-- /code_chunk_output -->
+---
 Welcome to the documentation of _CoSimIO_.
 
 ## Structure of _CoSimIO_ and which part it plays in Kratos CoSimulation

@@ -1,5 +1,25 @@
 # Info
 
+[Main Page of Documentation](https://kratosmultiphysics.github.io/CoSimIO/)
+
+**Table of Contents**
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [Setting values](#setting-values)
+- [Accessing the Info](#accessing-the-info)
+- [Checking if the Info has a certain key](#checking-if-the-info-has-a-certain-key)
+- [Getting values with a default](#getting-values-with-a-default)
+- [Checking the size](#checking-the-size)
+- [Removing specific keys](#removing-specific-keys)
+- [Removing all keys](#removing-all-keys)
+- [Printing the Info](#printing-the-info)
+- [Further information (C++ interface)](#further-information-c-interface)
+
+<!-- /code_chunk_output -->
+---
+
 The `CoSimIO::Info` object plays a very important role in the _CoSimIO_. It is a map (implemented with `std::map`) holding key-value pairs of different value types, similar to the `dict` of Python. It is used as a configuration object and supports the following value types:
 - `int`
 - `double`
@@ -41,7 +61,7 @@ info.Set<int>("echo_level", 2);      // this is allowed
 info.Set<double>("echo_level", 1.5); // this is allowed
 ~~~
 
-## Accessing the _Info_
+## Accessing the Info
 After setting some values in the `CoSimIO::Info`, they can be accessed with the `Get` function (again with specifying the template of the value type):
 
 ~~~c++
@@ -61,7 +81,7 @@ info.Set<int>("echo_level", 1);
 double echo_level = info.Get<double>("echo_level"); // Error, type mismatch, also tells which type was expected
 ~~~
 
-## Checking if the _Info_ has a certain key
+## Checking if the Info has a certain key
 The `Has` method can be used to check if the `CoSimIO::Info` contains a specific key. Note that this function is not a template.
 
 ~~~c++
@@ -125,7 +145,7 @@ info.Set<int>("echo_level", 1);
 info.Clear(); // removes everything form info
 ~~~
 
-## Printing the _Info_
+## Printing the Info
 The `CoSimIO::Info` can be printed to a stream:
 
 ~~~c++

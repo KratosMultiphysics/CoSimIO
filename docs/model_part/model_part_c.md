@@ -1,8 +1,23 @@
 # ModelPart
 
+[Main Page of Documentation](https://kratosmultiphysics.github.io/CoSimIO/)
+
+**Table of Contents**
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [Interface of CoSimIO_ModelPart](#interface-of-cosimio_modelpart)
+- [Interface of CoSimIO_Node](#interface-of-cosimio_node)
+- [Interface of CoSimIO_Element](#interface-of-cosimio_element)
+- [Further information (C interface)](#further-information-c-interface)
+
+<!-- /code_chunk_output -->
+---
+
 This page describes the C interface of `CoSimIO::ModelPart`. See [here](model_part_cpp.md) for more information and the native (C++) interface.
 
-## C interface of _CoSimIO_ModelPart_
+## Interface of CoSimIO_ModelPart
 Create and free a `ModelPart` like this:
 ```c
 // create CoSimIO_ModelPart
@@ -83,7 +98,7 @@ Removing all nodes and elements can be done with the following:
 CoSimIO_ModelPart_Clear(model_part);
 ```
 
-## C interface of _CoSimIO_Node_
+## Interface of CoSimIO_Node
 The _CoSimIO_Node_ can be used in the following way:
 ```c
 // access Id of node:
@@ -100,7 +115,7 @@ double node_y_idx = CoSimIO_Node_Coordinate(node, 1);
 double node_z_idx = CoSimIO_Node_Coordinate(node, 2);
 ```
 
-## C interface of _CoSimIO_Element_
+## Interface of CoSimIO_Element
 The _CoSimIO_Element_ provides the following interface:
 ```c
 // access Id of element:
