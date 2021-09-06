@@ -28,10 +28,10 @@ git clone https://github.com/KratosMultiphysics/CoSimIO.git
 ```
 
 - A C++11 compatible compiler. This includes most of the major CPP compilers in Windows, Linux, and Mac. You may find a detailed list of C++11 compatible compilers [here](https://en.cppreference.com/w/cpp/compiler_support#cpp11)
-
+- [CMake](https://cmake.org/)
 
 ## Building the CoSimIO
-The C++ version of the CoSimIO is implemented in [co_sim_io.hpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp). It can be used after compiling CoSimIO into a shared library and linking against it. One can use [build_cpp.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_cpp.sh) for compiling it.
+The C++ version of the CoSimIO is implemented in [co_sim_io.hpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp). It can be used after compiling CoSimIO into a shared library and linking against it. One can use [build_cpp.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_cpp.sh) for compiling it. Check [here](../../build_options.md) for the available build options.
 
 ```bash
 $ bash scripts/build_cpp.sh
