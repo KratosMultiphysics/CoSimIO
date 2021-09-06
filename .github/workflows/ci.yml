@@ -364,13 +364,20 @@ jobs:
 
   Ubuntu-old-CMake:
     runs-on: ubuntu-latest
+
     steps:
     - name: Setup cmake
       uses: jwlawson/actions-setup-cmake@v1.10
       with:
         cmake-version: '2.8.x'
+
     - name: Use cmake
       run: cmake --version
+
+    - name: Install MPI
+      run: |
+        sudo apt-get update
+        sudo apt-get install libopenmpi-dev openmpi-bin
 
     - uses: actions/checkout@v2
 
