@@ -35,6 +35,8 @@ typedef enum
     CoSimIO_Hexahedra3D8,
     CoSimIO_Prism3D15,
     CoSimIO_Prism3D6,
+    CoSimIO_Pyramid3D13,
+    CoSimIO_Pyramid3D5,
     CoSimIO_Quadrilateral2D4,
     CoSimIO_Quadrilateral2D8,
     CoSimIO_Quadrilateral2D9,
