@@ -70,6 +70,8 @@ enum class ElementType
     Hexahedra3D8,
     Prism3D15,
     Prism3D6,
+    Pyramid3D13,
+    Pyramid3D5,
     Quadrilateral2D4,
     Quadrilateral2D8,
     Quadrilateral2D9,
