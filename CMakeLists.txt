@@ -28,7 +28,7 @@ message("    CO_SIM_IO_ENABLE_MPI:      " ${CO_SIM_IO_ENABLE_MPI})
 message("    BUILD_TESTING:             " ${BUILD_TESTING})
 message("    CO_SIM_IO_BUILD_C:         " ${CO_SIM_IO_BUILD_C})
 message("    CO_SIM_IO_BUILD_PYTHON:    " ${CO_SIM_IO_BUILD_PYTHON})
-message("    CO_SIM_IO_BUILD_FORTRAN:   " ${CO_SIM_IO_BUILD_FORTRAN})
+# message("    CO_SIM_IO_BUILD_FORTRAN:   " ${CO_SIM_IO_BUILD_FORTRAN})
 message("    CO_SIM_IO_STRICT_COMPILER: " ${CO_SIM_IO_STRICT_COMPILER})
 message("")
 
