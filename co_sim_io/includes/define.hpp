@@ -35,25 +35,6 @@ using IdType = std::ptrdiff_t;
 using CoordinatesType = std::array<double,3>;
 using ConnectivitiesType = std::vector<IdType>;
 
-enum class ControlSignal
-{
-    Dummy,
-    BreakSolutionLoop,
-    ConvergenceAchieved,
-
-    AdvanceInTime,
-    InitializeSolutionStep,
-    Predict,
-    SolveSolutionStep,
-    FinalizeSolutionStep,
-    OutputSolutionStep,
-
-    ImportMesh,
-    ExportMesh,
-    ImportData,
-    ExportData,
-};
-
 enum ConnectionStatus
 {
     NotConnected,
