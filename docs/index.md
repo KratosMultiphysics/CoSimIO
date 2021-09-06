@@ -7,7 +7,7 @@
 
 - [Structure of _CoSimIO_ and which part it plays in Kratos CoSimulation](#structure-of-_cosimio_-and-which-part-it-plays-in-kratos-cosimulation)
   - [Kratos CoSimulation Library Overview](#kratos-cosimulation-library-overview)
-- [Tutorials for integrating the _CoSimIO_](#tutorials-for-integrating-the-_cosimio_)
+- [Tutorials for integrating the CoSimIO](#tutorials-for-integrating-the-cosimio)
 - [API documentation](#api-documentation)
 - [Communication](#communication)
 - [Kratos CoSimulation](#kratos-cosimulation)
@@ -34,7 +34,7 @@ Based on these concepts these are the main components of the library:
 Kratos provides an extensive Python interface to its CoSimulation library which is used in the tutorials.
 
 
-## Tutorials for integrating the _CoSimIO_
+## Tutorials for integrating the CoSimIO
 The tutorials can be found [here](tutorials/README.md).
 
 ## API documentation
