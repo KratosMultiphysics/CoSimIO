@@ -360,3 +360,14 @@ jobs:
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
         python3.5 run_python_tests.py
+
+
+  Ubuntu-old-CMake:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup cmake
+      uses: jwlawson/actions-setup-cmake@1.10
+      with:
+        cmake-version: '2.8.6'
+    - name: Use cmake
+      run: cmake --version
