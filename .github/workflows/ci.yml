@@ -360,3 +360,33 @@ jobs:
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
         python3.5 run_python_tests.py
+
+
+  Ubuntu-old-CMake:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup cmake
+      uses: jwlawson/actions-setup-cmake@v1.10
+      with:
+        cmake-version: '2.8.x'
+
+    - name: Use cmake
+      run: cmake --version
+
+    - name: Install MPI
+      run: |
+        sudo apt-get update
+        sudo apt-get install libopenmpi-dev openmpi-bin
+
+    - uses: actions/checkout@v2
+
+    - name: Build CoSimIO
+      run: |
+        cmake -H"." -B"build"        \
+          -DCMAKE_BUILD_TYPE="Debug" \
+          -DCO_SIM_IO_BUILD_C=ON               \
+          -DCO_SIM_IO_BUILD_PYTHON=OFF          \
+          -DBUILD_TESTING=OFF          \
+          -DCO_SIM_IO_ENABLE_MPI=ON    \
+          -DCO_SIM_IO_STRICT_COMPILER=ON
