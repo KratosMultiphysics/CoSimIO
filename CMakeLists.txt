@@ -1,5 +1,14 @@
-project(CoSimIO CXX C)
 cmake_minimum_required (VERSION 2.8.6)
+
+if(CMAKE_MAJOR_VERSION LESS 3)
+    project(CoSimIO CXX C)
+else()
+    if(POLICY CMP0048)
+        # project command manages version
+        cmake_policy(SET CMP0048 NEW)
+    endif(POLICY CMP0048)
+    project(CoSimIO LANGUAGES CXX C VERSION 2.0.1)
+endif()
 
 # this has to be specified BEFORE including CTest!
 # suppressions file has to be included in the options, as using "MEMORYCHECK_SUPPRESSIONS_FILE" doesn't work on all systems
