@@ -5,7 +5,7 @@ The CoSimIO uses [CMake](https://cmake.org/) as build system. The following opti
 | name | default| description |
 |---|---|---|
 | CMAKE_BUILD_TYPE | Release | Build type with which the _CoSimIO_ is built. Use `Release` for production and `Debug` to enable more runtime checks (at the cost of being slower).  |
-| BUILD_TESTING | OFF | Build the tests. Useful for developing and initial installation to check if everything works as expected. |
+| BUILD_TESTING | ON | Build the tests. Useful for developing and initial installation to check if everything works as expected. |
 | CO_SIM_IO_ENABLE_MPI | OFF | Enable MPI support for distributed environments. Requires an installation of [MPI](https://www.mpi-forum.org/). |
 | CO_SIM_IO_BUILD_C | OFF | Build the C-interface |
 | CO_SIM_IO_BUILD_PYTHON | OFF | Build the Python-interface |
