@@ -42,7 +42,9 @@ static void CheckStream(const TStream& rStream, const TPath& rPath)
 
 double CO_SIM_IO_API ElapsedSeconds(const std::chrono::steady_clock::time_point& rStartTime);
 
-int CO_SIM_IO_API GetNumberOfNodesForElementType(ElementType Type);
+int CO_SIM_IO_API GetNumberOfNodesForElementType(const ElementType I_ElementType);
+
+std::string CO_SIM_IO_API GetElementName(const ElementType I_ElementType);
 
 void CO_SIM_IO_API WaitUntilPathExists(const fs::path& rPath);
 

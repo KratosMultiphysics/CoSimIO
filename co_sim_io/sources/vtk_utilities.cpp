@@ -29,6 +29,7 @@ VtkCellType GetVtkCellTypeForElementType(ElementType I_ElementType)
         {ElementType::Hexahedra3D20,        VtkCellType::Quadratic_Hexahedron},
         {ElementType::Hexahedra3D8,         VtkCellType::Hexahedron},
         {ElementType::Prism3D6,             VtkCellType::Wedge},
+        {ElementType::Pyramid3D5,           VtkCellType::Pyramid},
         {ElementType::Quadrilateral2D4,     VtkCellType::Quad},
         {ElementType::Quadrilateral2D8,     VtkCellType::Quadratic_Quad},
         {ElementType::Quadrilateral3D4,     VtkCellType::Quad},
@@ -48,7 +49,7 @@ VtkCellType GetVtkCellTypeForElementType(ElementType I_ElementType)
     };
 
     auto type_iter = element_type_to_cell_Type_map.find(I_ElementType);
-    CO_SIM_IO_ERROR_IF(type_iter == element_type_to_cell_Type_map.end()) << "Unsupported element type: " << static_cast<int>(I_ElementType) << std::endl; // TODO maybe return -1 or so here in the future. This way also types not supported by vtk/Paraview could be used with CoSomIO (but not visualized in Paraview)
+    CO_SIM_IO_ERROR_IF(type_iter == element_type_to_cell_Type_map.end()) << "Vtk does not support element type: " << Utilities::GetElementName(I_ElementType) << std::endl; // TODO maybe return -1 or so here in the future. This way also types not supported by vtk/Paraview could be used with CoSomIO (but not visualized in Paraview)
     return type_iter->second;
 }
 
@@ -74,29 +75,29 @@ void WriteVtk(const Info& I_Settings, const ModelPart& I_ModelPart)
     std::unordered_map<IdType, IdType> id_map;
     IdType vtk_id = 0;
     output_file << "POINTS " << I_ModelPart.NumberOfNodes() << " float\n";
-    for (auto node_it=I_ModelPart.NodesBegin(); node_it!=I_ModelPart.NodesEnd(); ++node_it) {
-        output_file << (*node_it)->X() << " " << (*node_it)->Y() << " " << (*node_it)->Z() << "\n";
-        id_map[(*node_it)->Id()] = vtk_id++;
+    for (const auto& r_node : I_ModelPart.Nodes()) {
+        output_file << r_node.X() << " " << r_node.Y() << " " << r_node.Z() << "\n";
+        id_map[r_node.Id()] = vtk_id++;
     }
     output_file << "\n";
 
     // get cells size information
     std::size_t cell_list_size = 0;
-    for (auto elem_it=I_ModelPart.ElementsBegin(); elem_it!=I_ModelPart.ElementsEnd(); ++elem_it) {
-        cell_list_size += (*elem_it)->NumberOfNodes() + 1; // +1 for size of connectivity
+    for (const auto& r_elem : I_ModelPart.Elements()) {
+        cell_list_size += r_elem.NumberOfNodes() + 1; // +1 for size of connectivity
     }
 
     // write cells connectivity
     const auto const_id_map = id_map; // const reference to not accidentially modify the map
     output_file << "CELLS " << I_ModelPart.NumberOfElements() << " " << cell_list_size << "\n";
-    for (auto elem_it=I_ModelPart.ElementsBegin(); elem_it!=I_ModelPart.ElementsEnd(); ++elem_it) {
-        const std::size_t num_nodes_cell = (*elem_it)->NumberOfNodes();
+    for (const auto& r_elem : I_ModelPart.Elements()) {
+        const std::size_t num_nodes_cell = r_elem.NumberOfNodes();
         output_file << num_nodes_cell << " ";
         std::size_t node_counter = 0;
-        for (auto node_it=(*elem_it)->NodesBegin(); node_it!=(*elem_it)->NodesEnd(); ++node_it) {
-            const IdType node_id = (*node_it)->Id();
+        for (const auto& r_node : r_elem.Nodes()) {
+            const IdType node_id = r_node.Id();
             auto id_iter = const_id_map.find(node_id);
-            CO_SIM_IO_ERROR_IF(id_iter == const_id_map.end()) << "The node with Id " << node_id << " is not part of the ModelPart but used for Element with Id " << (*elem_it)->Id() << std::endl;
+            CO_SIM_IO_ERROR_IF(id_iter == const_id_map.end()) << "The node with Id " << node_id << " is not part of the ModelPart but used for Element with Id " << r_elem.Id() << std::endl;
             output_file << id_iter->second;
             if (node_counter++<num_nodes_cell-1) output_file << " "; // not adding a whitespace after last number
         }
@@ -106,8 +107,8 @@ void WriteVtk(const Info& I_Settings, const ModelPart& I_ModelPart)
 
     // write cell types
     output_file << "CELL_TYPES " << I_ModelPart.NumberOfElements() << "\n";
-    for (auto elem_it=I_ModelPart.ElementsBegin(); elem_it!=I_ModelPart.ElementsEnd(); ++elem_it) {
-        output_file << static_cast<int>(GetVtkCellTypeForElementType((*elem_it)->Type())) << "\n";
+    for (const auto& r_elem : I_ModelPart.Elements()) {
+        output_file << static_cast<int>(GetVtkCellTypeForElementType(r_elem.Type())) << "\n";
     }
     output_file << "\n";
 
@@ -115,8 +116,8 @@ void WriteVtk(const Info& I_Settings, const ModelPart& I_ModelPart)
     output_file << "POINT_DATA " << I_ModelPart.NumberOfNodes() << "\n";
     output_file << "FIELD FieldData 1" << "\n";
     output_file << "NODE_ID 1 " << I_ModelPart.NumberOfNodes() << " int\n";
-    for (auto node_it=I_ModelPart.NodesBegin(); node_it!=I_ModelPart.NodesEnd(); ++node_it) {
-        output_file << (*node_it)->Id() << "\n";
+    for (const auto& r_node : I_ModelPart.Nodes()) {
+        output_file << r_node.Id() << "\n";
     }
     output_file << "\n";
 
@@ -124,8 +125,8 @@ void WriteVtk(const Info& I_Settings, const ModelPart& I_ModelPart)
     output_file << "CELL_DATA " << I_ModelPart.NumberOfElements() << "\n";
     output_file << "FIELD FieldData 1" << "\n";
     output_file << "ELEMENT_ID 1 " << I_ModelPart.NumberOfElements() << " int\n";
-    for (auto elem_it=I_ModelPart.ElementsBegin(); elem_it!=I_ModelPart.ElementsEnd(); ++elem_it) {
-        output_file << (*elem_it)->Id() << "\n";
+    for (const auto& r_elem : I_ModelPart.Elements()) {
+        output_file << r_elem.Id() << "\n";
     }
     output_file << "\n";
 
@@ -133,8 +134,8 @@ void WriteVtk(const Info& I_Settings, const ModelPart& I_ModelPart)
     output_file << "CELL_DATA " << I_ModelPart.NumberOfElements() << "\n";
     output_file << "FIELD FieldData 1" << "\n";
     output_file << "ELEMENT_TYPE 1 " << I_ModelPart.NumberOfElements() << " int\n";
-    for (auto elem_it=I_ModelPart.ElementsBegin(); elem_it!=I_ModelPart.ElementsEnd(); ++elem_it) {
-        output_file << static_cast<int>((*elem_it)->Type()) << "\n";
+    for (const auto& r_elem : I_ModelPart.Elements()) {
+        output_file << static_cast<int>(r_elem.Type()) << "\n";
     }
 
     output_file.close();
