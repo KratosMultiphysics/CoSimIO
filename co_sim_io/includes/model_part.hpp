@@ -297,8 +297,13 @@ private:
 
     bool HasElement(const IdType I_Id) const;
 
-    ModelPart& GetPartitionModelPart(const int PartitionIndex);
+    ModelPart& GetLocalModelPart();
+    const ModelPart& GetLocalModelPart() const;
 
+    ModelPart& GetGhostModelPart();
+    const ModelPart& GetGhostModelPart() const;
+
+    ModelPart& GetPartitionModelPart(const int PartitionIndex);
     const ModelPart& GetPartitionModelPart(const int PartitionIndex) const;
 
     ModelPart() = default; // needed for Serializer

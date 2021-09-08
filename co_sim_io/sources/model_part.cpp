@@ -104,9 +104,6 @@ ModelPart::ModelPart(const std::string& I_Name) : mName(I_Name)
 {
     CO_SIM_IO_ERROR_IF(I_Name.empty()) << "Please don't use empty names (\"\") when creating a ModelPart" << std::endl;
     CO_SIM_IO_ERROR_IF_NOT(I_Name.find(".") == std::string::npos) << "Please don't use names containing (\".\") when creating a ModelPart (used in \"" << I_Name << "\")" << std::endl;
-
-    mpLocalModelPart = CoSimIO::make_unique<ModelPart>("local");
-    mpGhostModelPart = CoSimIO::make_unique<ModelPart>("ghost");
 }
 
 Node& ModelPart::CreateNewNode(
@@ -120,7 +117,7 @@ Node& ModelPart::CreateNewNode(
     CoSimIO::intrusive_ptr<Node> new_node(CoSimIO::make_intrusive<Node>(I_Id, I_X, I_Y, I_Z));
 
     mNodes.push_back(new_node);
-    mpLocalModelPart->mNodes.push_back(new_node);
+    GetLocalModelPart().mNodes.push_back(new_node);
 
     return *new_node;
 }
@@ -137,7 +134,7 @@ Node& ModelPart::CreateNewGhostNode(
     CoSimIO::intrusive_ptr<Node> new_node(CoSimIO::make_intrusive<Node>(I_Id, I_X, I_Y, I_Z));
 
     mNodes.push_back(new_node);
-    mpGhostModelPart->mNodes.push_back(new_node);
+    GetGhostModelPart().mNodes.push_back(new_node);
     GetPartitionModelPart(PartitionIndex).mNodes.push_back(new_node);
 
     return *new_node;
@@ -253,6 +250,34 @@ bool ModelPart::HasNode(const IdType I_Id) const
 bool ModelPart::HasElement(const IdType I_Id) const
 {
     return FindElement(I_Id) != mElements.end();
+}
+
+ModelPart& ModelPart::GetLocalModelPart()
+{
+    if (!mpLocalModelPart) {
+        mpLocalModelPart = CoSimIO::make_unique<ModelPart>("local");
+    }
+    return *mpLocalModelPart;
+}
+
+const ModelPart& ModelPart::GetLocalModelPart() const
+{
+    CO_SIM_IO_ERROR_IF_NOT(mpLocalModelPart) << "No local ModelPart exists and cannot be created in a const function!" << std::endl;
+    return *mpLocalModelPart;
+}
+
+ModelPart& ModelPart::GetGhostModelPart()
+{
+    if (!mpGhostModelPart) {
+        mpGhostModelPart = CoSimIO::make_unique<ModelPart>("ghost");
+    }
+    return *mpGhostModelPart;
+}
+
+const ModelPart& ModelPart::GetGhostModelPart() const
+{
+    CO_SIM_IO_ERROR_IF_NOT(mpGhostModelPart) << "No ghost ModelPart exists and cannot be created in a const function!" << std::endl;
+    return *mpGhostModelPart;
 }
 
 ModelPart& ModelPart::GetPartitionModelPart(const int PartitionIndex)
