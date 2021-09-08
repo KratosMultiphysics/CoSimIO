@@ -45,15 +45,32 @@ void CheckModelPartsAreEqual(
     // basic checks
     CHECK_EQ(ModelPart1.Name(), ModelPart2.Name());
     REQUIRE_EQ(ModelPart1.NumberOfNodes(), ModelPart2.NumberOfNodes());
+    REQUIRE_EQ(ModelPart1.NumberOfLocalNodes(), ModelPart2.NumberOfLocalNodes());
+    REQUIRE_EQ(ModelPart1.NumberOfGhostNodes(), ModelPart2.NumberOfGhostNodes());
     REQUIRE_EQ(ModelPart1.NumberOfElements(), ModelPart2.NumberOfElements());
 
-    // check nodes
-    for (std::size_t i=0; i< ModelPart1.NumberOfNodes(); ++i) {
-        CheckNodesAreEqual(**(ModelPart1.NodesBegin()+i), **(ModelPart2.NodesBegin()+i));
+    auto check_nodes_in_model_parts_are_equal = [](const CoSimIO::ModelPart& mp1, const CoSimIO::ModelPart& mp2){
+        for (std::size_t i=0; i<mp1.NumberOfNodes(); ++i) {
+            CheckNodesAreEqual(**(mp1.NodesBegin()+i), **(mp2.NodesBegin()+i));
+        }
+    };
+
+    check_nodes_in_model_parts_are_equal(ModelPart1, ModelPart2);
+    check_nodes_in_model_parts_are_equal(ModelPart1.GetLocalModelPart(), ModelPart2.GetLocalModelPart());
+    check_nodes_in_model_parts_are_equal(ModelPart1.GetGhostModelPart(), ModelPart2.GetGhostModelPart());
+
+    // check partition ModelParts
+    const auto& partition_model_parts_1 = ModelPart1.GetPartitionModelParts();
+    const auto& partition_model_parts_2 = ModelPart2.GetPartitionModelParts();
+    REQUIRE_EQ(partition_model_parts_1.size(), partition_model_parts_2.size());
+    for (const auto& r_pair_1 : partition_model_parts_1) {
+        const auto iter_mp_2 = partition_model_parts_2.find(r_pair_1.first);
+        REQUIRE_NE(iter_mp_2, partition_model_parts_2.end()); // must exist
+        CheckModelPartsAreEqual(*(r_pair_1.second), *(iter_mp_2->second));
     }
 
     // check elements
-    for (std::size_t i=0; i< ModelPart1.NumberOfElements(); ++i) {
+    for (std::size_t i=0; i<ModelPart1.NumberOfElements(); ++i) {
         CheckElementsAreEqual(**(ModelPart1.ElementsBegin()+i), **(ModelPart2.ElementsBegin()+i));
     }
 }
