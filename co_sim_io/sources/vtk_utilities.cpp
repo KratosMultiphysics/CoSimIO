@@ -29,6 +29,7 @@ VtkCellType GetVtkCellTypeForElementType(ElementType I_ElementType)
         {ElementType::Hexahedra3D20,        VtkCellType::Quadratic_Hexahedron},
         {ElementType::Hexahedra3D8,         VtkCellType::Hexahedron},
         {ElementType::Prism3D6,             VtkCellType::Wedge},
+        {ElementType::Pyramid3D5,           VtkCellType::Pyramid},
         {ElementType::Quadrilateral2D4,     VtkCellType::Quad},
         {ElementType::Quadrilateral2D8,     VtkCellType::Quadratic_Quad},
         {ElementType::Quadrilateral3D4,     VtkCellType::Quad},
