@@ -119,12 +119,12 @@ std::size_t ModelPart::NumberOfNodes() const
 
 std::size_t ModelPart::NumberOfLocalNodes() const
 {
-    return mpLocalModelPart->NumberOfNodes();
+    return GetLocalModelPart().NumberOfNodes();
 }
 
 std::size_t ModelPart::NumberOfGhostNodes() const
 {
-    return mpGhostModelPart->NumberOfNodes();
+    return GetGhostModelPart().NumberOfNodes();
 }
 
 
@@ -174,8 +174,13 @@ Element& ModelPart::CreateNewElement(
     for (const IdType node_id : I_Connectivities) {
         nodes.push_back(pGetNode(node_id));
     }
-    mElements.push_back(CoSimIO::make_intrusive<Element>(I_Id, I_Type, nodes));
-    return *(mElements.back());
+
+    CoSimIO::intrusive_ptr<Element> new_element(CoSimIO::make_intrusive<Element>(I_Id, I_Type, nodes));
+
+    mElements.push_back(new_element);
+    GetLocalModelPart().mElements.push_back(new_element);
+
+    return *new_element;
 }
 
 Node& ModelPart::GetNode(const IdType I_Id)
@@ -280,21 +285,25 @@ bool ModelPart::HasElement(const IdType I_Id) const
 
 ModelPart& ModelPart::GetLocalModelPart()
 {
+    CO_SIM_IO_ERROR_IF_NOT(mpLocalModelPart) << "Uninitialized ModelPart, access is not allowed!" << std::endl;
     return *mpLocalModelPart;
 }
 
 const ModelPart& ModelPart::GetLocalModelPart() const
 {
+    CO_SIM_IO_ERROR_IF_NOT(mpLocalModelPart) << "Uninitialized ModelPart, access is not allowed!" << std::endl;
     return *mpLocalModelPart;
 }
 
 ModelPart& ModelPart::GetGhostModelPart()
 {
+    CO_SIM_IO_ERROR_IF_NOT(mpGhostModelPart) << "Uninitialized ModelPart, access is not allowed!" << std::endl;
     return *mpGhostModelPart;
 }
 
 const ModelPart& ModelPart::GetGhostModelPart() const
 {
+    CO_SIM_IO_ERROR_IF_NOT(mpGhostModelPart) << "Uninitialized ModelPart, access is not allowed!" << std::endl;
     return *mpGhostModelPart;
 }
 

@@ -69,7 +69,6 @@ public:
 
     const_iterator_adaptor begin() const {return const_iterator_adaptor(mPointerVector.begin());}
     const_iterator_adaptor end()   const {return const_iterator_adaptor(mPointerVector.end());}
-    std::size_t size()             const {return mPointerVector.size();}
 
 private:
     const ContainerType& mPointerVector;
@@ -261,6 +260,9 @@ public:
     const Internals::PointerVector<NodePointerType> GhostNodes() const {return Internals::PointerVector<NodePointerType>(GetGhostModelPart().Nodes());}
 
     const Internals::PointerVector<ElementPointerType> Elements() const {return Internals::PointerVector<ElementPointerType>(mElements);}
+
+    const ModelPart& GetLocalModelPart() const;
+    const ModelPart& GetGhostModelPart() const;
     const PartitionModelPartsContainerType& GetPartitionModelParts() const {return mPartitionModelParts;}
 
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
@@ -310,10 +312,8 @@ private:
     bool HasElement(const IdType I_Id) const;
 
     ModelPart& GetLocalModelPart();
-    const ModelPart& GetLocalModelPart() const;
 
     ModelPart& GetGhostModelPart();
-    const ModelPart& GetGhostModelPart() const;
 
     ModelPart& GetPartitionModelPart(const int PartitionIndex);
     const ModelPart& GetPartitionModelPart(const int PartitionIndex) const;

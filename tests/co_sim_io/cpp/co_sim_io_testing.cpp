@@ -38,14 +38,13 @@ void CheckElementsAreEqual(
     }
 }
 
-template<class TContainerType>
-void CheckNodesAreEqual(
-    const TContainerType& rNodes1,
-    const TContainerType& rNodes2)
+void CheckNodesInModelPartAreEqual(
+    const CoSimIO::ModelPart& ModelPart1,
+    const CoSimIO::ModelPart& ModelPart2)
 {
-    REQUIRE_EQ(rNodes1.size(),rNodes2.size());
-    for (std::size_t i=0; i<rNodes1.size(); ++i) {
-        // CheckNodesAreEqual(**(rNodes1[i]), **(rNodes2[i]));
+    REQUIRE_EQ(ModelPart1.NumberOfNodes(), ModelPart2.NumberOfNodes());
+    for (std::size_t i=0; i<ModelPart1.NumberOfNodes(); ++i) {
+        CheckNodesAreEqual(**(ModelPart1.NodesBegin()+i), **(ModelPart2.NodesBegin()+i));
     }
 }
 
@@ -60,9 +59,9 @@ void CheckModelPartsAreEqual(
     REQUIRE_EQ(ModelPart1.NumberOfGhostNodes(), ModelPart2.NumberOfGhostNodes());
     REQUIRE_EQ(ModelPart1.NumberOfElements(), ModelPart2.NumberOfElements());
 
-    CheckNodesAreEqual(ModelPart1.Nodes(), ModelPart2.Nodes());
-    CheckNodesAreEqual(ModelPart1.LocalNodes(), ModelPart2.LocalNodes());
-    CheckNodesAreEqual(ModelPart1.GhostNodes(), ModelPart2.GhostNodes());
+    CheckNodesInModelPartAreEqual(ModelPart1, ModelPart2);
+    CheckNodesInModelPartAreEqual(ModelPart1.GetLocalModelPart(), ModelPart2.GetLocalModelPart());
+    CheckNodesInModelPartAreEqual(ModelPart1.GetGhostModelPart(), ModelPart2.GetGhostModelPart());
 
     // check partition ModelParts
     const auto& partition_model_parts_1 = ModelPart1.GetPartitionModelParts();
