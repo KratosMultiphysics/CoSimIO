@@ -23,6 +23,7 @@ see https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/mod
 // System includes
 #include <vector>
 #include <string>
+#include <unordered_map>
 #include <atomic>
 #include <ostream>
 
@@ -236,12 +237,22 @@ public:
         const double I_Y,
         const double I_Z);
 
+    Node& CreateNewGhostNode(
+        const IdType I_Id,
+        const double I_X,
+        const double I_Y,
+        const double I_Z,
+        const int PartitionIndex);
+
     Element& CreateNewElement(
         const IdType I_Id,
         const ElementType I_Type,
         const ConnectivitiesType& I_Connectivities);
 
     const Internals::PointerVector<NodePointerType> Nodes() const {return Internals::PointerVector<NodePointerType>(mNodes);}
+    const Internals::PointerVector<NodePointerType> LocalNodes() const {return Internals::PointerVector<NodePointerType>(mpLocalModelPart->mNodes);}
+    const Internals::PointerVector<NodePointerType> GhostNodes() const {return Internals::PointerVector<NodePointerType>(mpGhostModelPart->mNodes);}
+
     const Internals::PointerVector<ElementPointerType> Elements() const {return Internals::PointerVector<ElementPointerType>(mElements);}
 
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
@@ -268,8 +279,13 @@ public:
 
 private:
     std::string mName;
-    NodesContainerType mNodes;
-    ElementsContainerType mElements;
+    NodesContainerType mNodes; // contains all nodes, local and ghost
+    ElementsContainerType mElements; // contains all elements, local and ghost
+
+    std::unique_ptr<ModelPart> mpLocalModelPart;
+    std::unique_ptr<ModelPart> mpGhostModelPart;
+
+    std::unordered_map<int, std::unique_ptr<ModelPart>> mPartitionModelParts;
 
     NodesContainerType::const_iterator FindNode(const IdType I_Id) const;
     NodesContainerType::iterator FindNode(const IdType I_Id);

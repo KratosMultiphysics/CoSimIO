@@ -104,6 +104,9 @@ ModelPart::ModelPart(const std::string& I_Name) : mName(I_Name)
 {
     CO_SIM_IO_ERROR_IF(I_Name.empty()) << "Please don't use empty names (\"\") when creating a ModelPart" << std::endl;
     CO_SIM_IO_ERROR_IF_NOT(I_Name.find(".") == std::string::npos) << "Please don't use names containing (\".\") when creating a ModelPart (used in \"" << I_Name << "\")" << std::endl;
+
+    mpLocalModelPart = CoSimIO::make_unique<ModelPart>("local");
+    mpGhostModelPart = CoSimIO::make_unique<ModelPart>("ghost");
 }
 
 Node& ModelPart::CreateNewNode(
@@ -114,8 +117,40 @@ Node& ModelPart::CreateNewNode(
 {
     CO_SIM_IO_ERROR_IF(HasNode(I_Id)) << "The Node with Id " << I_Id << " exists already!" << std::endl;
 
-    mNodes.push_back(CoSimIO::make_intrusive<Node>(I_Id, I_X, I_Y, I_Z));
-    return *(mNodes.back());
+    CoSimIO::intrusive_ptr<Node> new_node(CoSimIO::make_intrusive<Node>(I_Id, I_X, I_Y, I_Z));
+
+    mNodes.push_back(new_node);
+    mpLocalModelPart->mNodes.push_back(new_node);
+
+    return *new_node;
+}
+
+Node& ModelPart::CreateNewGhostNode(
+    const IdType I_Id,
+    const double I_X,
+    const double I_Y,
+    const double I_Z,
+    const int PartitionIndex)
+{
+    CO_SIM_IO_ERROR_IF(HasNode(I_Id)) << "The Node with Id " << I_Id << " exists already!" << std::endl;
+
+    CoSimIO::intrusive_ptr<Node> new_node(CoSimIO::make_intrusive<Node>(I_Id, I_X, I_Y, I_Z));
+
+    ModelPart* p_partition_model_part;
+    auto mp_iter = mPartitionModelParts.find(PartitionIndex);
+    if (mp_iter != mPartitionModelParts.end()) { // a ModelPart for this partition exists already
+        p_partition_model_part = mp_iter->second.get();
+    } else {
+        auto partition_mp = CoSimIO::make_unique<ModelPart>(std::to_string(PartitionIndex));
+        p_partition_model_part = partition_mp.get();
+        mPartitionModelParts[PartitionIndex] = std::move(partition_mp);
+    }
+
+    mNodes.push_back(new_node);
+    mpGhostModelPart->mNodes.push_back(new_node);
+    p_partition_model_part->mNodes.push_back(new_node);
+
+    return *new_node;
 }
 
 Element& ModelPart::CreateNewElement(
