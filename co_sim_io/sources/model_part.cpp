@@ -136,19 +136,9 @@ Node& ModelPart::CreateNewGhostNode(
 
     CoSimIO::intrusive_ptr<Node> new_node(CoSimIO::make_intrusive<Node>(I_Id, I_X, I_Y, I_Z));
 
-    ModelPart* p_partition_model_part;
-    auto mp_iter = mPartitionModelParts.find(PartitionIndex);
-    if (mp_iter != mPartitionModelParts.end()) { // a ModelPart for this partition exists already
-        p_partition_model_part = mp_iter->second.get();
-    } else {
-        auto partition_mp = CoSimIO::make_unique<ModelPart>(std::to_string(PartitionIndex));
-        p_partition_model_part = partition_mp.get();
-        mPartitionModelParts[PartitionIndex] = std::move(partition_mp);
-    }
-
     mNodes.push_back(new_node);
     mpGhostModelPart->mNodes.push_back(new_node);
-    p_partition_model_part->mNodes.push_back(new_node);
+    GetPartitionModelPart(PartitionIndex).mNodes.push_back(new_node);
 
     return *new_node;
 }
@@ -263,6 +253,34 @@ bool ModelPart::HasNode(const IdType I_Id) const
 bool ModelPart::HasElement(const IdType I_Id) const
 {
     return FindElement(I_Id) != mElements.end();
+}
+
+ModelPart& ModelPart::GetPartitionModelPart(const int PartitionIndex)
+{
+    ModelPart* p_partition_model_part;
+    auto mp_iter = mPartitionModelParts.find(PartitionIndex);
+    if (mp_iter != mPartitionModelParts.end()) { // a ModelPart for this partition exists already
+        p_partition_model_part = mp_iter->second.get();
+    } else {
+        auto partition_mp = CoSimIO::make_unique<ModelPart>(std::to_string(PartitionIndex));
+        p_partition_model_part = partition_mp.get();
+        mPartitionModelParts[PartitionIndex] = std::move(partition_mp);
+    }
+
+    return *p_partition_model_part;
+}
+
+const ModelPart& ModelPart::GetPartitionModelPart(const int PartitionIndex) const
+{
+    ModelPart* p_partition_model_part;
+    auto mp_iter = mPartitionModelParts.find(PartitionIndex);
+    if (mp_iter != mPartitionModelParts.end()) { // a ModelPart for this partition exists already
+        p_partition_model_part = mp_iter->second.get();
+    } else {
+        CO_SIM_IO_ERROR << "No ModelPart exists for partition index " << PartitionIndex << " and cannot be created in a const function!" << std::endl;
+    }
+
+    return *p_partition_model_part;
 }
 
 void ModelPart::save(CoSimIO::Internals::Serializer& rSerializer) const
