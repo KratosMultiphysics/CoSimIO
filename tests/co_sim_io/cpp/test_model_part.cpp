@@ -547,10 +547,11 @@ TEST_CASE("model_part_clear")
     // remove all Nodes and Elements
     model_part.Clear();
 
-    REQUIRE_EQ(model_part.NumberOfNodes(), 0);
-    REQUIRE_EQ(model_part.NumberOfLocalNodes(), 0);
-    REQUIRE_EQ(model_part.NumberOfGhostNodes(), 0);
-    REQUIRE_EQ(model_part.NumberOfElements(), 0);
+    CHECK_EQ(model_part.NumberOfNodes(), 0);
+    CHECK_EQ(model_part.NumberOfLocalNodes(), 0);
+    CHECK_EQ(model_part.NumberOfGhostNodes(), 0);
+    CHECK_EQ(model_part.NumberOfElements(), 0);
+    CHECK_EQ(model_part.GetPartitionModelParts().size(), 0);
 }
 
 TEST_CASE("model_part_ostream")
