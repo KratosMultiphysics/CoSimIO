@@ -49,7 +49,7 @@ VtkCellType GetVtkCellTypeForElementType(ElementType I_ElementType)
     };
 
     auto type_iter = element_type_to_cell_Type_map.find(I_ElementType);
-    CO_SIM_IO_ERROR_IF(type_iter == element_type_to_cell_Type_map.end()) << "Unsupported element type: " << static_cast<int>(I_ElementType) << std::endl; // TODO maybe return -1 or so here in the future. This way also types not supported by vtk/Paraview could be used with CoSomIO (but not visualized in Paraview)
+    CO_SIM_IO_ERROR_IF(type_iter == element_type_to_cell_Type_map.end()) << "Vtk does not support element type: " << Utilities::GetElementName(I_ElementType) << std::endl; // TODO maybe return -1 or so here in the future. This way also types not supported by vtk/Paraview could be used with CoSomIO (but not visualized in Paraview)
     return type_iter->second;
 }
 
