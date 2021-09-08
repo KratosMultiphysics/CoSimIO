@@ -58,94 +58,118 @@ double ElapsedSeconds(const std::chrono::steady_clock::time_point& rStartTime)
     return duration_cast<duration<double>>(steady_clock::now() - rStartTime).count();
 }
 
-int GetNumberOfNodesForElementType(ElementType Type)
-{
-    const std::map<ElementType, int> type_num_nodes_map {
-        {ElementType::Hexahedra3D20,        20},
-        {ElementType::Hexahedra3D27,        27},
-        {ElementType::Hexahedra3D8,         8},
-        {ElementType::Prism3D15,            15},
-        {ElementType::Prism3D6,             6},
-        {ElementType::Pyramid3D13,          13},
-        {ElementType::Pyramid3D5,           5},
-        {ElementType::Quadrilateral2D4,     4},
-        {ElementType::Quadrilateral2D8,     8},
-        {ElementType::Quadrilateral2D9,     9},
-        {ElementType::Quadrilateral3D4,     4},
-        {ElementType::Quadrilateral3D8,     8},
-        {ElementType::Quadrilateral3D9,     9},
-        {ElementType::Tetrahedra3D10,       10},
-        {ElementType::Tetrahedra3D4,        4},
-        {ElementType::Triangle2D3,          3},
-        {ElementType::Triangle2D6,          6},
-        {ElementType::Triangle3D3,          3},
-        {ElementType::Triangle3D6,          6},
-        {ElementType::Line2D2,              2},
-        {ElementType::Line2D3,              3},
-        {ElementType::Line3D2,              2},
-        {ElementType::Line3D3,              3},
-        {ElementType::Point2D,              1},
-        {ElementType::Point3D,              1}
-    };
-
-    auto type_iter = type_num_nodes_map.find(Type);
-    CO_SIM_IO_ERROR_IF(type_iter == type_num_nodes_map.end()) << "Unsupported element type: " << static_cast<int>(Type) << std::endl;
-    return type_iter->second;
-}
-
-std::string GetElementName(ElementType I_ElementType)
+int GetNumberOfNodesForElementType(const ElementType I_ElementType)
 {
     // using switch over map as the compiler warns if some enum values are not handled in the switch
     switch(I_ElementType) {
-        case ElementType::Hexahedra3D20 :
+        case ElementType::Hexahedra3D20:
+            return 20;
+        case ElementType::Hexahedra3D27:
+            return 27;
+        case ElementType::Hexahedra3D8:
+            return 8;
+        case ElementType::Prism3D15:
+            return 15;
+        case ElementType::Prism3D6:
+            return 6;
+        case ElementType::Pyramid3D13:
+            return 13;
+        case ElementType::Pyramid3D5:
+            return 5;
+        case ElementType::Quadrilateral2D4:
+            return 4;
+        case ElementType::Quadrilateral2D8:
+            return 8;
+        case ElementType::Quadrilateral2D9:
+            return 9;
+        case ElementType::Quadrilateral3D4:
+            return 4;
+        case ElementType::Quadrilateral3D8:
+            return 8;
+        case ElementType::Quadrilateral3D9:
+            return 9;
+        case ElementType::Tetrahedra3D10:
+            return 10;
+        case ElementType::Tetrahedra3D4:
+            return 4;
+        case ElementType::Triangle2D3:
+            return 3;
+        case ElementType::Triangle2D6:
+            return 6;
+        case ElementType::Triangle3D3:
+            return 3;
+        case ElementType::Triangle3D6:
+            return 6;
+        case ElementType::Line2D2:
+            return 2;
+        case ElementType::Line2D3:
+            return 3;
+        case ElementType::Line3D2:
+            return 2;
+        case ElementType::Line3D3:
+            return 3;
+        case ElementType::Point2D:
+            return 1;
+        case ElementType::Point3D:
+            return 1;
+    };
+
+    CO_SIM_IO_ERROR << "Unknown Element type!" << std::endl;
+}
+
+std::string GetElementName(const ElementType I_ElementType)
+{
+    // using switch over map as the compiler warns if some enum values are not handled in the switch
+    switch(I_ElementType) {
+        case ElementType::Hexahedra3D20:
             return "Hexahedra3D20";
-        case ElementType::Hexahedra3D27 :
+        case ElementType::Hexahedra3D27:
             return "Hexahedra3D27";
-        case ElementType::Hexahedra3D8 :
+        case ElementType::Hexahedra3D8:
             return "Hexahedra3D8";
-        case ElementType::Prism3D15 :
+        case ElementType::Prism3D15:
             return "Prism3D15";
-        case ElementType::Prism3D6 :
+        case ElementType::Prism3D6:
             return "Prism3D6";
-        case ElementType::Pyramid3D13 :
+        case ElementType::Pyramid3D13:
             return "Pyramid3D13";
-        case ElementType::Pyramid3D5 :
+        case ElementType::Pyramid3D5:
             return "Pyramid3D5";
-        case ElementType::Quadrilateral2D4 :
+        case ElementType::Quadrilateral2D4:
             return "Quadrilateral2D4";
-        case ElementType::Quadrilateral2D8 :
+        case ElementType::Quadrilateral2D8:
             return "Quadrilateral2D8";
-        case ElementType::Quadrilateral2D9 :
+        case ElementType::Quadrilateral2D9:
             return "Quadrilateral2D9";
-        case ElementType::Quadrilateral3D4 :
+        case ElementType::Quadrilateral3D4:
             return "Quadrilateral3D4";
-        case ElementType::Quadrilateral3D8 :
+        case ElementType::Quadrilateral3D8:
             return "Quadrilateral3D8";
-        case ElementType::Quadrilateral3D9 :
+        case ElementType::Quadrilateral3D9:
             return "Quadrilateral3D9";
-        case ElementType::Tetrahedra3D10 :
+        case ElementType::Tetrahedra3D10:
             return "Tetrahedra3D10";
-        case ElementType::Tetrahedra3D4 :
+        case ElementType::Tetrahedra3D4:
             return "Tetrahedra3D4";
-        case ElementType::Triangle2D3 :
+        case ElementType::Triangle2D3:
             return "Triangle3D3";
-        case ElementType::Triangle2D6 :
+        case ElementType::Triangle2D6:
             return "Triangle2D6";
-        case ElementType::Triangle3D3 :
+        case ElementType::Triangle3D3:
             return "Triangle3D3";
-        case ElementType::Triangle3D6 :
+        case ElementType::Triangle3D6:
             return "Triangle3D6";
-        case ElementType::Line2D2 :
+        case ElementType::Line2D2:
             return "Line2D2";
-        case ElementType::Line2D3 :
+        case ElementType::Line2D3:
             return "Line2D3";
-        case ElementType::Line3D2 :
+        case ElementType::Line3D2:
             return "Line3D2";
-        case ElementType::Line3D3 :
+        case ElementType::Line3D3:
             return "Line3D3";
-        case ElementType::Point2D :
+        case ElementType::Point2D:
             return "Point2D";
-        case ElementType::Point3D :
+        case ElementType::Point3D:
             return "Point3D";
     };
 
