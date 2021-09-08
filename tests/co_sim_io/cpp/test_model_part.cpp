@@ -358,23 +358,27 @@ TEST_CASE("model_part_ghost_nodes")
         model_part.CreateNewNode(i+1, 0,0,0);
     }
 
+    const int partition_index = 63;
+
     CHECK_EQ(model_part.NumberOfNodes(), 5);
     CHECK_EQ(model_part.NumberOfLocalNodes(), 5);
     CHECK_EQ(model_part.NumberOfGhostNodes(), 0);
 
     SUBCASE("already_existing_regular_node")
     {
-        CHECK_THROWS_WITH(model_part.CreateNewGhostNode(2, 0,0,0, 1), "Error: The Node with Id 2 exists already!\n");
+        CHECK_THROWS_WITH(model_part.CreateNewGhostNode(2, 0,0,0, partition_index), "Error: The Node with Id 2 exists already!\n");
     }
 
     SUBCASE("create_ghost_nodes")
     {
         for (std::size_t i=5; i<8; ++i) {
-            model_part.CreateNewGhostNode(i+1, 0,0,0, 1);
+            model_part.CreateNewGhostNode(i+1, 0,0,0, partition_index);
         }
         CHECK_EQ(model_part.NumberOfNodes(), 8);
         CHECK_EQ(model_part.NumberOfLocalNodes(), 5);
         CHECK_EQ(model_part.NumberOfGhostNodes(), 3);
+
+        CHECK_EQ(model_part.GetPartitionModelParts().count(partition_index), 1);
     }
 }
 
@@ -529,20 +533,27 @@ TEST_CASE("model_part_range_based_loop_elements")
 TEST_CASE("model_part_clear")
 {
     ModelPart model_part("for_test");
+    const ModelPart& r_const_ref = model_part;
 
-    const int node_ids[] = {2, 159, 61};
+    const int node_ids[] = {2, 159, 61, 19, 874};
     const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
     model_part.CreateNewNode(node_ids[0], node_coords[0], node_coords[1], node_coords[2]);
     model_part.CreateNewNode(node_ids[1], node_coords[1], node_coords[2], node_coords[0]);
     model_part.CreateNewNode(node_ids[2], node_coords[2], node_coords[0], node_coords[1]);
+    model_part.CreateNewGhostNode(node_ids[3], node_coords[2], node_coords[0], node_coords[1], 125);
+    model_part.CreateNewGhostNode(node_ids[4], node_coords[2], node_coords[0], node_coords[1], 987);
 
     model_part.CreateNewElement(15, CoSimIO::ElementType::Point2D, {node_ids[0]});
     model_part.CreateNewElement(73, CoSimIO::ElementType::Line2D2, {node_ids[1], node_ids[2]});
     model_part.CreateNewElement(47, CoSimIO::ElementType::Triangle3D3, {node_ids[1], node_ids[2], node_ids[0]});
     model_part.CreateNewElement(18, CoSimIO::ElementType::Point3D, {node_ids[1]});
 
-    REQUIRE_EQ(model_part.NumberOfNodes(), 3);
-    REQUIRE_EQ(model_part.NumberOfElements(), 4);
+    CHECK_EQ(model_part.NumberOfNodes(), 5);
+    CHECK_EQ(model_part.NumberOfElements(), 4);
+    CHECK_EQ(r_const_ref.GetLocalModelPart().NumberOfNodes(), 3);
+    CHECK_EQ(r_const_ref.GetGhostModelPart().NumberOfNodes(), 2);
+    CHECK_EQ(r_const_ref.GetLocalModelPart().NumberOfElements(), 4);
+    CHECK_EQ(r_const_ref.GetGhostModelPart().NumberOfElements(), 0);
 
     // remove all Nodes and Elements
     model_part.Clear();
@@ -551,6 +562,10 @@ TEST_CASE("model_part_clear")
     CHECK_EQ(model_part.NumberOfLocalNodes(), 0);
     CHECK_EQ(model_part.NumberOfGhostNodes(), 0);
     CHECK_EQ(model_part.NumberOfElements(), 0);
+    CHECK_EQ(r_const_ref.GetLocalModelPart().NumberOfNodes(), 0);
+    CHECK_EQ(r_const_ref.GetGhostModelPart().NumberOfNodes(), 0);
+    CHECK_EQ(r_const_ref.GetLocalModelPart().NumberOfElements(), 0);
+    CHECK_EQ(r_const_ref.GetGhostModelPart().NumberOfElements(), 0);
     CHECK_EQ(model_part.GetPartitionModelParts().size(), 0);
 }
 
