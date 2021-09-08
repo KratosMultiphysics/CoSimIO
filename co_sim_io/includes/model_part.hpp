@@ -221,6 +221,8 @@ public:
     using NodesContainerType = std::vector<NodePointerType>;
     using ElementsContainerType = std::vector<ElementPointerType>;
 
+    using PartitionModelPartsContainerType = std::unordered_map<int, std::unique_ptr<ModelPart>>;
+
     explicit ModelPart(const std::string& I_Name);
 
     // delete copy and assignment CTor
@@ -254,10 +256,14 @@ public:
         const ConnectivitiesType& I_Connectivities);
 
     const Internals::PointerVector<NodePointerType> Nodes() const {return Internals::PointerVector<NodePointerType>(mNodes);}
-    const Internals::PointerVector<NodePointerType> LocalNodes() const {return Internals::PointerVector<NodePointerType>(mpLocalModelPart->mNodes);}
-    const Internals::PointerVector<NodePointerType> GhostNodes() const {return Internals::PointerVector<NodePointerType>(mpGhostModelPart->mNodes);}
+    const Internals::PointerVector<NodePointerType> LocalNodes() const {return Internals::PointerVector<NodePointerType>(GetLocalModelPart().Nodes());}
+    const Internals::PointerVector<NodePointerType> GhostNodes() const {return Internals::PointerVector<NodePointerType>(GetGhostModelPart().Nodes());}
 
     const Internals::PointerVector<ElementPointerType> Elements() const {return Internals::PointerVector<ElementPointerType>(mElements);}
+
+    const ModelPart& GetLocalModelPart() const;
+    const ModelPart& GetGhostModelPart() const;
+    const PartitionModelPartsContainerType& GetPartitionModelParts() const {return mPartitionModelParts;}
 
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
     ElementsContainerType::const_iterator ElementsBegin() const { return mElements.begin(); }
@@ -281,6 +287,10 @@ public:
 
     void Clear();
 
+protected:
+    friend class std::unique_ptr<ModelPart>;
+    ModelPart(const std::string& I_Name, const bool InitInternalModelParts);
+
 private:
     std::string mName;
     NodesContainerType mNodes; // contains all nodes, local and ghost
@@ -289,7 +299,7 @@ private:
     std::unique_ptr<ModelPart> mpLocalModelPart;
     std::unique_ptr<ModelPart> mpGhostModelPart;
 
-    std::unordered_map<int, std::unique_ptr<ModelPart>> mPartitionModelParts;
+    PartitionModelPartsContainerType mPartitionModelParts;
 
     NodesContainerType::const_iterator FindNode(const IdType I_Id) const;
     NodesContainerType::iterator FindNode(const IdType I_Id);
@@ -302,13 +312,13 @@ private:
     bool HasElement(const IdType I_Id) const;
 
     ModelPart& GetLocalModelPart();
-    const ModelPart& GetLocalModelPart() const;
 
     ModelPart& GetGhostModelPart();
-    const ModelPart& GetGhostModelPart() const;
 
     ModelPart& GetPartitionModelPart(const int PartitionIndex);
     const ModelPart& GetPartitionModelPart(const int PartitionIndex) const;
+
+    void InitializeInternalModelParts();
 
     ModelPart() = default; // needed for Serializer
 

@@ -100,10 +100,16 @@ void Element::load(CoSimIO::Internals::Serializer& rSerializer)
 }
 
 
-ModelPart::ModelPart(const std::string& I_Name) : mName(I_Name)
+ModelPart::ModelPart(const std::string& I_Name) : ModelPart(I_Name, true) {}
+
+ModelPart::ModelPart(const std::string& I_Name, const bool InitInternalModelParts) : mName(I_Name)
 {
     CO_SIM_IO_ERROR_IF(I_Name.empty()) << "Please don't use empty names (\"\") when creating a ModelPart" << std::endl;
     CO_SIM_IO_ERROR_IF_NOT(I_Name.find(".") == std::string::npos) << "Please don't use names containing (\".\") when creating a ModelPart (used in \"" << I_Name << "\")" << std::endl;
+
+    if (InitInternalModelParts) {
+        InitializeInternalModelParts();
+    }
 }
 
 std::size_t ModelPart::NumberOfNodes() const
@@ -113,20 +119,12 @@ std::size_t ModelPart::NumberOfNodes() const
 
 std::size_t ModelPart::NumberOfLocalNodes() const
 {
-    if (mpLocalModelPart) {
-        return mpLocalModelPart->NumberOfNodes();
-    } else {
-        return 0;
-    }
+    return mpLocalModelPart->NumberOfNodes();
 }
 
 std::size_t ModelPart::NumberOfGhostNodes() const
 {
-    if (mpGhostModelPart) {
-        return mpGhostModelPart->NumberOfNodes();
-    } else {
-        return 0;
-    }
+    return mpGhostModelPart->NumberOfNodes();
 }
 
 
@@ -231,8 +229,7 @@ void ModelPart::Print(std::ostream& rOStream) const
 
 void ModelPart::Clear()
 {
-    mpLocalModelPart.reset();
-    mpGhostModelPart.reset();
+    InitializeInternalModelParts();
 
     mPartitionModelParts.clear();
 
@@ -283,29 +280,21 @@ bool ModelPart::HasElement(const IdType I_Id) const
 
 ModelPart& ModelPart::GetLocalModelPart()
 {
-    if (!mpLocalModelPart) {
-        mpLocalModelPart = CoSimIO::make_unique<ModelPart>("local");
-    }
     return *mpLocalModelPart;
 }
 
 const ModelPart& ModelPart::GetLocalModelPart() const
 {
-    CO_SIM_IO_ERROR_IF_NOT(mpLocalModelPart) << "No local ModelPart exists and cannot be created in a const function!" << std::endl;
     return *mpLocalModelPart;
 }
 
 ModelPart& ModelPart::GetGhostModelPart()
 {
-    if (!mpGhostModelPart) {
-        mpGhostModelPart = CoSimIO::make_unique<ModelPart>("ghost");
-    }
     return *mpGhostModelPart;
 }
 
 const ModelPart& ModelPart::GetGhostModelPart() const
 {
-    CO_SIM_IO_ERROR_IF_NOT(mpGhostModelPart) << "No ghost ModelPart exists and cannot be created in a const function!" << std::endl;
     return *mpGhostModelPart;
 }
 
@@ -335,6 +324,12 @@ const ModelPart& ModelPart::GetPartitionModelPart(const int PartitionIndex) cons
     }
 
     return *p_partition_model_part;
+}
+
+void ModelPart::InitializeInternalModelParts()
+{
+    mpLocalModelPart = std::unique_ptr<ModelPart>(new ModelPart("local", false));
+    mpGhostModelPart = std::unique_ptr<ModelPart>(new ModelPart("ghost", false));
 }
 
 void ModelPart::save(CoSimIO::Internals::Serializer& rSerializer) const
