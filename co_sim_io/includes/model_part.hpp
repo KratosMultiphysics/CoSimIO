@@ -228,7 +228,11 @@ public:
     ModelPart& operator=(ModelPart const&) = delete;
 
     const std::string& Name() const { return mName; }
-    std::size_t NumberOfNodes() const { return mNodes.size(); }
+
+    std::size_t NumberOfNodes() const;
+    std::size_t NumberOfLocalNodes() const;
+    std::size_t NumberOfGhostNodes() const;
+
     std::size_t NumberOfElements() const { return mElements.size(); }
 
     Node& CreateNewNode(

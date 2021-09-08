@@ -106,6 +106,30 @@ ModelPart::ModelPart(const std::string& I_Name) : mName(I_Name)
     CO_SIM_IO_ERROR_IF_NOT(I_Name.find(".") == std::string::npos) << "Please don't use names containing (\".\") when creating a ModelPart (used in \"" << I_Name << "\")" << std::endl;
 }
 
+std::size_t ModelPart::NumberOfNodes() const
+{
+    return mNodes.size();
+}
+
+std::size_t ModelPart::NumberOfLocalNodes() const
+{
+    if (mpLocalModelPart) {
+        return mpLocalModelPart->NumberOfNodes();
+    } else {
+        return 0;
+    }
+}
+
+std::size_t ModelPart::NumberOfGhostNodes() const
+{
+    if (mpGhostModelPart) {
+        return mpGhostModelPart->NumberOfNodes();
+    } else {
+        return 0;
+    }
+}
+
+
 Node& ModelPart::CreateNewNode(
     const IdType I_Id,
     const double I_X,
@@ -207,6 +231,11 @@ void ModelPart::Print(std::ostream& rOStream) const
 
 void ModelPart::Clear()
 {
+    mpLocalModelPart.reset();
+    mpGhostModelPart.reset();
+
+    mPartitionModelParts.clear();
+
     mElements.clear();
     mElements.shrink_to_fit();
 
