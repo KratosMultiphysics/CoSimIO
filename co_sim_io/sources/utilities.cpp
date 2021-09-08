@@ -66,6 +66,8 @@ int GetNumberOfNodesForElementType(ElementType Type)
         {ElementType::Hexahedra3D8,         8},
         {ElementType::Prism3D15,            15},
         {ElementType::Prism3D6,             6},
+        {ElementType::Pyramid3D13,          13},
+        {ElementType::Pyramid3D5,           5},
         {ElementType::Quadrilateral2D4,     4},
         {ElementType::Quadrilateral2D8,     8},
         {ElementType::Quadrilateral2D9,     9},
