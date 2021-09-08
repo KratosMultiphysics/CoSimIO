@@ -44,6 +44,8 @@ double CO_SIM_IO_API ElapsedSeconds(const std::chrono::steady_clock::time_point&
 
 int CO_SIM_IO_API GetNumberOfNodesForElementType(ElementType Type);
 
+std::string CO_SIM_IO_API GetElementName(ElementType I_ElementType);
+
 void CO_SIM_IO_API WaitUntilPathExists(const fs::path& rPath);
 
 std::set<std::size_t> CO_SIM_IO_API ComputePartnerRanksAsImporter(

@@ -93,6 +93,65 @@ int GetNumberOfNodesForElementType(ElementType Type)
     return type_iter->second;
 }
 
+std::string GetElementName(ElementType I_ElementType)
+{
+    // using switch over map as the compiler warns if some enum values are not handled in the switch
+    switch(I_ElementType) {
+        case ElementType::Hexahedra3D20 :
+            return "Hexahedra3D20";
+        case ElementType::Hexahedra3D27 :
+            return "Hexahedra3D27";
+        case ElementType::Hexahedra3D8 :
+            return "Hexahedra3D8";
+        case ElementType::Prism3D15 :
+            return "Prism3D15";
+        case ElementType::Prism3D6 :
+            return "Prism3D6";
+        case ElementType::Pyramid3D13 :
+            return "Pyramid3D13";
+        case ElementType::Pyramid3D5 :
+            return "Pyramid3D5";
+        case ElementType::Quadrilateral2D4 :
+            return "Quadrilateral2D4";
+        case ElementType::Quadrilateral2D8 :
+            return "Quadrilateral2D8";
+        case ElementType::Quadrilateral2D9 :
+            return "Quadrilateral2D9";
+        case ElementType::Quadrilateral3D4 :
+            return "Quadrilateral3D4";
+        case ElementType::Quadrilateral3D8 :
+            return "Quadrilateral3D8";
+        case ElementType::Quadrilateral3D9 :
+            return "Quadrilateral3D9";
+        case ElementType::Tetrahedra3D10 :
+            return "Tetrahedra3D10";
+        case ElementType::Tetrahedra3D4 :
+            return "Tetrahedra3D4";
+        case ElementType::Triangle2D3 :
+            return "Triangle3D3";
+        case ElementType::Triangle2D6 :
+            return "Triangle2D6";
+        case ElementType::Triangle3D3 :
+            return "Triangle3D3";
+        case ElementType::Triangle3D6 :
+            return "Triangle3D6";
+        case ElementType::Line2D2 :
+            return "Line2D2";
+        case ElementType::Line2D3 :
+            return "Line2D3";
+        case ElementType::Line3D2 :
+            return "Line3D2";
+        case ElementType::Line3D3 :
+            return "Line3D3";
+        case ElementType::Point2D :
+            return "Point2D";
+        case ElementType::Point3D :
+            return "Point3D";
+    };
+
+    CO_SIM_IO_ERROR << "Unknown Element type!" << std::endl;
+}
+
 void WaitUntilPathExists(const fs::path& rPath)
 {
     while(!fs::exists(rPath)) {std::this_thread::sleep_for(std::chrono::milliseconds(5));} // wait 0.005s before next check
