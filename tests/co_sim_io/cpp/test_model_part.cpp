@@ -223,6 +223,8 @@ TEST_CASE("model_part_basics")
 
     CHECK_EQ(model_part.Name(), "for_test");
     CHECK_EQ(model_part.NumberOfNodes(), 0);
+    CHECK_EQ(model_part.NumberOfLocalNodes(), 0);
+    CHECK_EQ(model_part.NumberOfGhostNodes(), 0);
     CHECK_EQ(model_part.NumberOfElements(), 0);
 }
 
@@ -240,6 +242,8 @@ TEST_CASE("model_part_create_new_node")
     const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
     const auto& new_node = model_part.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2]);
     CHECK_EQ(model_part.NumberOfNodes(), 1);
+    CHECK_EQ(model_part.NumberOfLocalNodes(), 1);
+    CHECK_EQ(model_part.NumberOfGhostNodes(), 0);
 
     CHECK_EQ(new_node.Id(), node_id);
     for (std::size_t i=0; i<3; ++i) {
@@ -256,10 +260,14 @@ TEST_CASE("model_part_create_new_nodes")
     const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
     const auto& new_node = model_part.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2]);
     CHECK_EQ(model_part.NumberOfNodes(), 1);
+    CHECK_EQ(model_part.NumberOfLocalNodes(), 1);
+    CHECK_EQ(model_part.NumberOfGhostNodes(), 0);
 
     model_part.CreateNewNode(node_id+1, node_coords[0], node_coords[1], node_coords[2]);
     model_part.CreateNewNode(node_id+2, node_coords[0], node_coords[1], node_coords[2]);
     CHECK_EQ(model_part.NumberOfNodes(), 3);
+    CHECK_EQ(model_part.NumberOfLocalNodes(), 3);
+    CHECK_EQ(model_part.NumberOfGhostNodes(), 0);
 
     CHECK_EQ(new_node.Id(), node_id);
     for (std::size_t i=0; i<3; ++i) {
@@ -342,6 +350,34 @@ TEST_CASE("model_part_range_based_loop_nodes")
     }
 }
 
+TEST_CASE("model_part_ghost_nodes")
+{
+    ModelPart model_part("for_test");
+
+    for (std::size_t i=0; i<5; ++i) {
+        model_part.CreateNewNode(i+1, 0,0,0);
+    }
+
+    CHECK_EQ(model_part.NumberOfNodes(), 5);
+    CHECK_EQ(model_part.NumberOfLocalNodes(), 5);
+    CHECK_EQ(model_part.NumberOfGhostNodes(), 0);
+
+    SUBCASE("already_existing_regular_node")
+    {
+        CHECK_THROWS_WITH(model_part.CreateNewGhostNode(2, 0,0,0, 1), "Error: The Node with Id 2 exists already!\n");
+    }
+
+    SUBCASE("create_ghost_nodes")
+    {
+        for (std::size_t i=5; i<8; ++i) {
+            model_part.CreateNewGhostNode(i+1, 0,0,0, 1);
+        }
+        CHECK_EQ(model_part.NumberOfNodes(), 8);
+        CHECK_EQ(model_part.NumberOfLocalNodes(), 5);
+        CHECK_EQ(model_part.NumberOfGhostNodes(), 3);
+    }
+}
+
 TEST_CASE("model_part_create_new_element")
 {
     ModelPart model_part("for_test");
@@ -367,6 +403,26 @@ TEST_CASE("model_part_create_new_element")
             CHECK_EQ((*node_it)->Coordinates()[i], doctest::Approx(node_coords[i]));
         }
     }
+}
+
+TEST_CASE("model_part_create_new_element_with_ghost_node")
+{
+    ModelPart model_part("for_test");
+
+    const int node_id = 691;
+    const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
+    model_part.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2]);
+    model_part.CreateNewGhostNode(node_id+1, node_coords[0], node_coords[1], node_coords[2], 15);
+    REQUIRE_EQ(model_part.NumberOfNodes(), 2);
+
+    const int elem_id = 47;
+    const CoSimIO::ElementType type = CoSimIO::ElementType::Line2D2;
+
+    const auto& new_elem = model_part.CreateNewElement(elem_id, type, {node_id, node_id+1});
+
+    CHECK_EQ(new_elem.Id(), elem_id);
+    CHECK_EQ(new_elem.Type(), type);
+    REQUIRE_EQ(new_elem.NumberOfNodes(), 2);
 }
 
 TEST_CASE("model_part_create_new_elements")
@@ -492,6 +548,8 @@ TEST_CASE("model_part_clear")
     model_part.Clear();
 
     REQUIRE_EQ(model_part.NumberOfNodes(), 0);
+    REQUIRE_EQ(model_part.NumberOfLocalNodes(), 0);
+    REQUIRE_EQ(model_part.NumberOfGhostNodes(), 0);
     REQUIRE_EQ(model_part.NumberOfElements(), 0);
 }
 
@@ -531,11 +589,12 @@ TEST_CASE("model_part_serialization")
     ModelPart model_part_save("for_test");
     ModelPart model_part_load("xxx");
 
-    const int node_ids[] = {2, 159, 61};
+    const int node_ids[] = {2, 159, 61, 1996};
     const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
     model_part_save.CreateNewNode(node_ids[0], node_coords[0], node_coords[1], node_coords[2]);
     model_part_save.CreateNewNode(node_ids[1], node_coords[1], node_coords[2], node_coords[0]);
     model_part_save.CreateNewNode(node_ids[2], node_coords[2], node_coords[0], node_coords[1]);
+    model_part_save.CreateNewGhostNode(node_ids[3], node_coords[2], node_coords[0], node_coords[1], 15);
 
     model_part_save.CreateNewElement(15, CoSimIO::ElementType::Point2D, {node_ids[0]});
     model_part_save.CreateNewElement(73, CoSimIO::ElementType::Line2D2, {node_ids[1], node_ids[2]});
