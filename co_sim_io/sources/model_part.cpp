@@ -288,6 +288,9 @@ void ModelPart::save(CoSimIO::Internals::Serializer& rSerializer) const
     rSerializer.save("mName", mName);
     rSerializer.save("mNodes", mNodes);
     rSerializer.save("mElements", mElements);
+    rSerializer.save("mpLocalModelPart", mpLocalModelPart);
+    rSerializer.save("mpGhostModelPart", mpGhostModelPart);
+    rSerializer.save("mPartitionModelParts", mPartitionModelParts);
 }
 
 void ModelPart::load(CoSimIO::Internals::Serializer& rSerializer)
@@ -295,6 +298,9 @@ void ModelPart::load(CoSimIO::Internals::Serializer& rSerializer)
     rSerializer.load("mName", mName);
     rSerializer.load("mNodes", mNodes);
     rSerializer.load("mElements", mElements);
+    rSerializer.load("mpLocalModelPart", mpLocalModelPart);
+    rSerializer.load("mpGhostModelPart", mpGhostModelPart);
+    rSerializer.load("mPartitionModelParts", mPartitionModelParts);
 }
 
 } //namespace CoSimIO

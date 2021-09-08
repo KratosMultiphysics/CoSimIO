@@ -301,6 +301,8 @@ private:
 
     const ModelPart& GetPartitionModelPart(const int PartitionIndex) const;
 
+    ModelPart() = default; // needed for Serializer
+
     friend class CoSimIO::Internals::Serializer; // needs "CoSimIO::Internals::" because it is in different namespace
 
     void save(CoSimIO::Internals::Serializer& rSerializer) const;
