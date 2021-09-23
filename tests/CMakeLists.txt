@@ -145,7 +145,7 @@ if(CO_SIM_IO_BUILD_C)
             string(REGEX REPLACE "[.]c" "_c_mpi_test" TEST_NAME ${TEST_FILENAME})
             message(STATUS  "adding ${TEST_NAME} ")
             add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
-            target_link_libraries(${TEST_NAME} co_sim_io_c ${MPI_LIBRARIES})
+            target_link_libraries(${TEST_NAME} co_sim_io_c ${MPI_LIBRARIES}) # TODO in future link against co_sim_io_c_mpi instead
             add_test(NAME ${TEST_NAME} COMMAND mpiexec -np 4 ${TEST_NAME})
             install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_c_mpi")
         endfunction()
