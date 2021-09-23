@@ -285,25 +285,25 @@ bool ModelPart::HasElement(const IdType I_Id) const
 
 ModelPart& ModelPart::GetLocalModelPart()
 {
-    CO_SIM_IO_ERROR_IF_NOT(mpLocalModelPart) << "Uninitialized ModelPart, access is not allowed!" << std::endl;
+    CO_SIM_IO_ERROR_IF_NOT(mpLocalModelPart) << "Internal ModelPart, access is not allowed!" << std::endl;
     return *mpLocalModelPart;
 }
 
 const ModelPart& ModelPart::GetLocalModelPart() const
 {
-    CO_SIM_IO_ERROR_IF_NOT(mpLocalModelPart) << "Uninitialized ModelPart, access is not allowed!" << std::endl;
+    CO_SIM_IO_ERROR_IF_NOT(mpLocalModelPart) << "Internal ModelPart, access is not allowed!" << std::endl;
     return *mpLocalModelPart;
 }
 
 ModelPart& ModelPart::GetGhostModelPart()
 {
-    CO_SIM_IO_ERROR_IF_NOT(mpGhostModelPart) << "Uninitialized ModelPart, access is not allowed!" << std::endl;
+    CO_SIM_IO_ERROR_IF_NOT(mpGhostModelPart) << "Internal ModelPart, access is not allowed!" << std::endl;
     return *mpGhostModelPart;
 }
 
 const ModelPart& ModelPart::GetGhostModelPart() const
 {
-    CO_SIM_IO_ERROR_IF_NOT(mpGhostModelPart) << "Uninitialized ModelPart, access is not allowed!" << std::endl;
+    CO_SIM_IO_ERROR_IF_NOT(mpGhostModelPart) << "Internal ModelPart, access is not allowed!" << std::endl;
     return *mpGhostModelPart;
 }
 
