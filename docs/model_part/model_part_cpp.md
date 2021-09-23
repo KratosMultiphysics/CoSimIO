@@ -64,18 +64,32 @@ std::size_t number_of_nodes = model_part.NumberOfNodes();
 std::size_t number_of_elements = model_part.NumberOfElements();
 ```
 
-The nodes and elements can be iterated with:
+The nodes and elements can be iterated with range-based loops or iterators:
 ```c++
-// iterate nodes
+// iterate nodes (with range based loop)
+for (auto& node : model_part.Nodes()) {
+    // do sth with node, e.g. print the id:
+    std::cout << node.Id() << std::endl;
+
+}
+// iterate nodes (with iterators)
 for (auto node_it=model_part.NodesBegin(); node_it!=model_part.NodesEnd(); ++node_it) {
     CoSimIO::Node& node = **node_it;
-    // do sth with node
+    // do sth with node, e.g. print the id:
+    std::cout << node.Id() << std::endl;
 }
 
-// iterate elements
+// iterate elements (with range based loop)
+for (auto& elem : model_part.Elements()) {
+    // do sth with element, e.g. print the id:
+    std::cout << element.Id() << std::endl;
+}
+
+// iterate elements (with iterators)
 for (auto elem_it=model_part.ElementsBegin(); elem_it!=model_part.ElementsEnd(); ++elem_it) {
     CoSimIO::Element& element = **elem_it;
-    // do sth with element
+    // do sth with element, e.g. print the id:
+    std::cout << element.Id() << std::endl;
 }
 ```
 
@@ -122,10 +136,16 @@ CoSimIO::ElementType element_type = element.Type(); // e.g. CoSimIO::ElementType
 // number of nodes of the element:
 std::size_t num_nodes_element = element.NumberOfNodes();
 
-// iterate the nodes of the element:
+// iterate the nodes of the element (with range based loop):
+for (auto& node : element.Nodes()) {
+    // do sth with node, e.g. print the id:
+    std::cout << node.Id() << std::endl;
+}
+// iterate the nodes of the element (with iterators):
 for (auto node_it=element.NodesBegin(); node_it!=element.NodesEnd(); ++node_it) {
     CoSimIO::Node& node = **node_it;
-    // do sth with node
+    // do sth with node, e.g. print the id:
+    std::cout << node.Id() << std::endl;
 }
 ```
 
