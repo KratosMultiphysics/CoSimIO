@@ -100,11 +100,33 @@ void Element::load(CoSimIO::Internals::Serializer& rSerializer)
 }
 
 
-ModelPart::ModelPart(const std::string& I_Name) : mName(I_Name)
+ModelPart::ModelPart(const std::string& I_Name) : ModelPart(I_Name, true) {}
+
+ModelPart::ModelPart(const std::string& I_Name, const bool InitInternalModelParts) : mName(I_Name)
 {
     CO_SIM_IO_ERROR_IF(I_Name.empty()) << "Please don't use empty names (\"\") when creating a ModelPart" << std::endl;
     CO_SIM_IO_ERROR_IF_NOT(I_Name.find(".") == std::string::npos) << "Please don't use names containing (\".\") when creating a ModelPart (used in \"" << I_Name << "\")" << std::endl;
+
+    if (InitInternalModelParts) {
+        InitializeInternalModelParts();
+    }
 }
+
+std::size_t ModelPart::NumberOfNodes() const
+{
+    return mNodes.size();
+}
+
+std::size_t ModelPart::NumberOfLocalNodes() const
+{
+    return GetLocalModelPart().NumberOfNodes();
+}
+
+std::size_t ModelPart::NumberOfGhostNodes() const
+{
+    return GetGhostModelPart().NumberOfNodes();
+}
+
 
 Node& ModelPart::CreateNewNode(
     const IdType I_Id,
@@ -114,8 +136,30 @@ Node& ModelPart::CreateNewNode(
 {
     CO_SIM_IO_ERROR_IF(HasNode(I_Id)) << "The Node with Id " << I_Id << " exists already!" << std::endl;
 
-    mNodes.push_back(CoSimIO::make_intrusive<Node>(I_Id, I_X, I_Y, I_Z));
-    return *(mNodes.back());
+    CoSimIO::intrusive_ptr<Node> new_node(CoSimIO::make_intrusive<Node>(I_Id, I_X, I_Y, I_Z));
+
+    mNodes.push_back(new_node);
+    GetLocalModelPart().mNodes.push_back(new_node);
+
+    return *new_node;
+}
+
+Node& ModelPart::CreateNewGhostNode(
+    const IdType I_Id,
+    const double I_X,
+    const double I_Y,
+    const double I_Z,
+    const int PartitionIndex)
+{
+    CO_SIM_IO_ERROR_IF(HasNode(I_Id)) << "The Node with Id " << I_Id << " exists already!" << std::endl;
+
+    CoSimIO::intrusive_ptr<Node> new_node(CoSimIO::make_intrusive<Node>(I_Id, I_X, I_Y, I_Z));
+
+    mNodes.push_back(new_node);
+    GetGhostModelPart().mNodes.push_back(new_node);
+    GetPartitionModelPart(PartitionIndex).mNodes.push_back(new_node);
+
+    return *new_node;
 }
 
 Element& ModelPart::CreateNewElement(
@@ -130,8 +174,13 @@ Element& ModelPart::CreateNewElement(
     for (const IdType node_id : I_Connectivities) {
         nodes.push_back(pGetNode(node_id));
     }
-    mElements.push_back(CoSimIO::make_intrusive<Element>(I_Id, I_Type, nodes));
-    return *(mElements.back());
+
+    CoSimIO::intrusive_ptr<Element> new_element(CoSimIO::make_intrusive<Element>(I_Id, I_Type, nodes));
+
+    mElements.push_back(new_element);
+    GetLocalModelPart().mElements.push_back(new_element);
+
+    return *new_element;
 }
 
 Node& ModelPart::GetNode(const IdType I_Id)
@@ -185,6 +234,10 @@ void ModelPart::Print(std::ostream& rOStream) const
 
 void ModelPart::Clear()
 {
+    InitializeInternalModelParts();
+
+    mPartitionModelParts.clear();
+
     mElements.clear();
     mElements.shrink_to_fit();
 
@@ -230,11 +283,72 @@ bool ModelPart::HasElement(const IdType I_Id) const
     return FindElement(I_Id) != mElements.end();
 }
 
+ModelPart& ModelPart::GetLocalModelPart()
+{
+    CO_SIM_IO_ERROR_IF_NOT(mpLocalModelPart) << "Internal ModelPart, access is not allowed!" << std::endl;
+    return *mpLocalModelPart;
+}
+
+const ModelPart& ModelPart::GetLocalModelPart() const
+{
+    CO_SIM_IO_ERROR_IF_NOT(mpLocalModelPart) << "Internal ModelPart, access is not allowed!" << std::endl;
+    return *mpLocalModelPart;
+}
+
+ModelPart& ModelPart::GetGhostModelPart()
+{
+    CO_SIM_IO_ERROR_IF_NOT(mpGhostModelPart) << "Internal ModelPart, access is not allowed!" << std::endl;
+    return *mpGhostModelPart;
+}
+
+const ModelPart& ModelPart::GetGhostModelPart() const
+{
+    CO_SIM_IO_ERROR_IF_NOT(mpGhostModelPart) << "Internal ModelPart, access is not allowed!" << std::endl;
+    return *mpGhostModelPart;
+}
+
+ModelPart& ModelPart::GetPartitionModelPart(const int PartitionIndex)
+{
+    ModelPart* p_partition_model_part;
+    auto mp_iter = mPartitionModelParts.find(PartitionIndex);
+    if (mp_iter != mPartitionModelParts.end()) { // a ModelPart for this partition exists already
+        p_partition_model_part = mp_iter->second.get();
+    } else {
+        auto partition_mp = CoSimIO::make_unique<ModelPart>(std::to_string(PartitionIndex));
+        p_partition_model_part = partition_mp.get();
+        mPartitionModelParts[PartitionIndex] = std::move(partition_mp);
+    }
+
+    return *p_partition_model_part;
+}
+
+const ModelPart& ModelPart::GetPartitionModelPart(const int PartitionIndex) const
+{
+    ModelPart* p_partition_model_part;
+    auto mp_iter = mPartitionModelParts.find(PartitionIndex);
+    if (mp_iter != mPartitionModelParts.end()) { // a ModelPart for this partition exists already
+        p_partition_model_part = mp_iter->second.get();
+    } else {
+        CO_SIM_IO_ERROR << "No ModelPart exists for partition index " << PartitionIndex << " and cannot be created in a const function!" << std::endl;
+    }
+
+    return *p_partition_model_part;
+}
+
+void ModelPart::InitializeInternalModelParts()
+{
+    mpLocalModelPart = std::unique_ptr<ModelPart>(new ModelPart("local", false));
+    mpGhostModelPart = std::unique_ptr<ModelPart>(new ModelPart("ghost", false));
+}
+
 void ModelPart::save(CoSimIO::Internals::Serializer& rSerializer) const
 {
     rSerializer.save("mName", mName);
     rSerializer.save("mNodes", mNodes);
     rSerializer.save("mElements", mElements);
+    rSerializer.save("mpLocalModelPart", mpLocalModelPart);
+    rSerializer.save("mpGhostModelPart", mpGhostModelPart);
+    rSerializer.save("mPartitionModelParts", mPartitionModelParts);
 }
 
 void ModelPart::load(CoSimIO::Internals::Serializer& rSerializer)
@@ -242,6 +356,9 @@ void ModelPart::load(CoSimIO::Internals::Serializer& rSerializer)
     rSerializer.load("mName", mName);
     rSerializer.load("mNodes", mNodes);
     rSerializer.load("mElements", mElements);
+    rSerializer.load("mpLocalModelPart", mpLocalModelPart);
+    rSerializer.load("mpGhostModelPart", mpGhostModelPart);
+    rSerializer.load("mPartitionModelParts", mPartitionModelParts);
 }
 
 } //namespace CoSimIO

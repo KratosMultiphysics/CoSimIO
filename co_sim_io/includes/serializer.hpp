@@ -524,7 +524,7 @@ public:
     }
 
     template<class TFirstType, class TSecondType>
-    void save(std::string const & rTag, std::pair<TFirstType, TSecondType> rObject)
+    void save(std::string const & rTag, const std::pair<TFirstType, TSecondType>& rObject)
     {
         save_trace_point(rTag);
         save("First", rObject.first);
@@ -711,7 +711,7 @@ private:
         for (SizeType i = 0 ; i < size ; i++) {
             typename TMapType::value_type temp;
             load("E", temp);
-            rObject.insert(temp);
+            rObject.insert(std::move(temp));
         }
     }
 

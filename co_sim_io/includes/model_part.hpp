@@ -23,6 +23,7 @@ see https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/mod
 // System includes
 #include <vector>
 #include <string>
+#include <unordered_map>
 #include <atomic>
 #include <ostream>
 
@@ -220,6 +221,8 @@ public:
     using NodesContainerType = std::vector<NodePointerType>;
     using ElementsContainerType = std::vector<ElementPointerType>;
 
+    using PartitionModelPartsContainerType = std::unordered_map<int, std::unique_ptr<ModelPart>>;
+
     explicit ModelPart(const std::string& I_Name);
 
     // delete copy and assignment CTor
@@ -227,7 +230,11 @@ public:
     ModelPart& operator=(ModelPart const&) = delete;
 
     const std::string& Name() const { return mName; }
-    std::size_t NumberOfNodes() const { return mNodes.size(); }
+
+    std::size_t NumberOfNodes() const;
+    std::size_t NumberOfLocalNodes() const;
+    std::size_t NumberOfGhostNodes() const;
+
     std::size_t NumberOfElements() const { return mElements.size(); }
 
     Node& CreateNewNode(
@@ -236,13 +243,27 @@ public:
         const double I_Y,
         const double I_Z);
 
+    Node& CreateNewGhostNode(
+        const IdType I_Id,
+        const double I_X,
+        const double I_Y,
+        const double I_Z,
+        const int PartitionIndex);
+
     Element& CreateNewElement(
         const IdType I_Id,
         const ElementType I_Type,
         const ConnectivitiesType& I_Connectivities);
 
     const Internals::PointerVector<NodePointerType> Nodes() const {return Internals::PointerVector<NodePointerType>(mNodes);}
+    const Internals::PointerVector<NodePointerType> LocalNodes() const {return Internals::PointerVector<NodePointerType>(GetLocalModelPart().Nodes());}
+    const Internals::PointerVector<NodePointerType> GhostNodes() const {return Internals::PointerVector<NodePointerType>(GetGhostModelPart().Nodes());}
+
     const Internals::PointerVector<ElementPointerType> Elements() const {return Internals::PointerVector<ElementPointerType>(mElements);}
+
+    const ModelPart& GetLocalModelPart() const;
+    const ModelPart& GetGhostModelPart() const;
+    const PartitionModelPartsContainerType& GetPartitionModelParts() const {return mPartitionModelParts;}
 
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
     ElementsContainerType::const_iterator ElementsBegin() const { return mElements.begin(); }
@@ -266,10 +287,24 @@ public:
 
     void Clear();
 
+protected:
+    friend class std::unique_ptr<ModelPart>;
+    ModelPart(const std::string& I_Name, const bool InitInternalModelParts);
+
 private:
     std::string mName;
-    NodesContainerType mNodes;
-    ElementsContainerType mElements;
+    NodesContainerType mNodes; // contains all nodes, local and ghost
+    ElementsContainerType mElements; // contains all elements, local and ghost
+
+    std::unique_ptr<ModelPart> mpLocalModelPart;
+    std::unique_ptr<ModelPart> mpGhostModelPart;
+
+    // this contains the the map of ModelPart with Ghost Nodes
+    // for communication / synchronization the same is needed for the local nodes, i.e.
+    // the ModelPart needs to know where its local nodes exist as ghost nodes
+    // in Kratos this is computed with the ParallelFillCommunicator
+    // Here is can be added in the future if required
+    PartitionModelPartsContainerType mPartitionModelParts;
 
     NodesContainerType::const_iterator FindNode(const IdType I_Id) const;
     NodesContainerType::iterator FindNode(const IdType I_Id);
@@ -280,6 +315,17 @@ private:
     bool HasNode(const IdType I_Id) const;
 
     bool HasElement(const IdType I_Id) const;
+
+    ModelPart& GetLocalModelPart();
+
+    ModelPart& GetGhostModelPart();
+
+    ModelPart& GetPartitionModelPart(const int PartitionIndex);
+    const ModelPart& GetPartitionModelPart(const int PartitionIndex) const;
+
+    void InitializeInternalModelParts();
+
+    ModelPart() = default; // needed for Serializer
 
     friend class CoSimIO::Internals::Serializer; // needs "CoSimIO::Internals::" because it is in different namespace
 
