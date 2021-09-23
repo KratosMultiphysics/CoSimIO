@@ -132,7 +132,7 @@ if (CO_SIM_IO_ENABLE_MPI)
     file(GLOB_RECURSE co_sim_io_mpi_source_files ${CMAKE_SOURCE_DIR}/co_sim_io/mpi/sources/*.cpp)
     add_library (co_sim_io_mpi SHARED ${co_sim_io_mpi_source_files})
 
-    target_link_libraries(co_sim_io_mpi co_sim_io)
+    target_link_libraries(co_sim_io_mpi co_sim_io ${MPI_LIBRARIES})
 
     install(TARGETS co_sim_io_mpi DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 endif()
