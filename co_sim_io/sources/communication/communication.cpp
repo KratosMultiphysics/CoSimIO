@@ -335,8 +335,8 @@ Info Communication::GetMyInfo() const
     my_info.Set<std::string>("communication_format", GetCommunicationName());
     my_info.Set<std::string>("operating_system", GetOsName());
 
-    my_info.Set<bool>("is_distributed", mpDataComm->IsDistributed());
-    my_info.Set<int>("num_processes", mpDataComm->Size());
+    my_info.Set<bool>("is_distributed", GetDataCommunicator().IsDistributed());
+    my_info.Set<int>("num_processes",   GetDataCommunicator().Size());
 
     my_info.Set<Info>("communication_settings", GetCommunicationSettings());
 
@@ -388,6 +388,8 @@ void Communication::HandShake(const Info& I_Info)
         CO_SIM_IO_ERROR_IF(mPrimaryWasExplicitlySpecified != mPartnerInfo.Get<bool>("primary_was_explicitly_specified")) << std::boolalpha << "Mismatch in how the primary connection was specified!\nPrimary connection was explicitly specified for me: " << mPrimaryWasExplicitlySpecified << "\nPrimary connection was explicitly specified for partner: " << mPartnerInfo.Get<bool>("primary_was_explicitly_specified") << std::noboolalpha << std::endl;
 
         CO_SIM_IO_ERROR_IF(GetCommunicationName() != mPartnerInfo.Get<std::string>("communication_format")) << "Mismatch in communication_format!\nMy communication_format: " << GetCommunicationName() << "\nPartner communication_format: " << mPartnerInfo.Get<std::string>("communication_format") << std::endl;
+
+        CO_SIM_IO_ERROR_IF(GetDataCommunicator().Size() != mPartnerInfo.Get<int>("num_processes")) << "Mismatch in num_processes!\nMy num_processes: " << GetDataCommunicator().Size() << "\nPartner num_processes: " << mPartnerInfo.Get<int>("num_processes") << std::endl;
 
         // more things can be done in derived class if necessary
         DerivedHandShake();
