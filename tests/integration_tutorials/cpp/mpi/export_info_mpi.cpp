@@ -45,7 +45,9 @@ int main(int argc, char** argv)
     export_info.Set<std::string>("connection_name", connection_name);
     export_info.Set<std::string>("identifier", "cpp_mpi_info_exchange");
 
+    std::string mpi_info = "extra_string_RANK:" + std::to_string(rank) + "_SIZE:" + std::to_string(size);
     export_info.Set<std::string>("id", "convergence_information");
+    export_info.Set<std::string>("mpi_info", mpi_info);
     export_info.Set<bool>("is_converged", true);
     export_info.Set<double>("tol", 0.008);
     export_info.Set<int>("echo_level", 2);

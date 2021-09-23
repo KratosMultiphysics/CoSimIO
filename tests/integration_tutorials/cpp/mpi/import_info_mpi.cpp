@@ -46,7 +46,9 @@ int main(int argc, char** argv)
     exp_info.Set<std::string>("identifier", "cpp_mpi_info_exchange");
     auto imported_info = CoSimIO::ImportInfo(exp_info);
 
+    std::string mpi_info = "extra_string_RANK:" + std::to_string(rank) + "_SIZE:" + std::to_string(size);
     COSIMIO_CHECK_EQUAL(imported_info.Get<std::string>("id"), "convergence_information");
+    COSIMIO_CHECK_EQUAL(imported_info.Get<std::string>("mpi_info"), mpi_info);
     COSIMIO_CHECK_EQUAL(imported_info.Get<bool>("is_converged"), true);
     COSIMIO_CHECK_EQUAL(imported_info.Get<double>("tol"), 0.008);
     COSIMIO_CHECK_EQUAL(imported_info.Get<int>("echo_level"), 2);
