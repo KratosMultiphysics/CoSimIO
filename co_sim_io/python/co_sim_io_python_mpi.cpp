@@ -25,6 +25,9 @@ PYBIND11_MODULE(CoSimIOMPI, m)
 {
     namespace py = pybind11;
 
+    // code that is added here is called when the module is loaded
+    // maybe do import_mpi4py here
+
     m.def("ConnectMPI", [](const CoSimIO::Info& I_Info)
         { return CoSimIO::ConnectMPI(I_Info, MPI_COMM_WORLD); });
 
