@@ -17,7 +17,7 @@
    see "co_sim_io_mpi.hpp"
 */
 
-
+#include "mpi.h"
 #include "co_sim_io_c.h"
 
 #ifdef __cplusplus
@@ -25,7 +25,8 @@ extern "C" { /* Define extern C if C++ compiler is used */
 #endif
 
 CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_ConnectMPI(
-    const CoSimIO_Info I_Settings);
+    const CoSimIO_Info I_Settings,
+    MPI_Comm ThisMPIComm);
 
 #ifdef __cplusplus
 }
