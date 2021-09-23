@@ -379,6 +379,7 @@ TEST_CASE("model_part_ghost_nodes")
         CHECK_EQ(model_part.NumberOfGhostNodes(), 3);
 
         CHECK_EQ(model_part.GetPartitionModelParts().count(partition_index), 1);
+        CHECK_EQ(model_part.GetPartitionModelParts().size(), 1);
     }
 }
 
