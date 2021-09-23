@@ -76,14 +76,7 @@ Info FileCommunication::ImportInfoImpl(const Info& I_Info)
     const std::string identifier = I_Info.Get<std::string>("identifier");
     Utilities::CheckEntry(identifier, "identifier");
 
-    fs::path file_name;
-    // when running in MPI it is required to specify the ranks
-    if (GetMyInfo().Get<bool>("is_distributed") || GetPartnerInfo().Get<bool>("is_distributed")) {
-        const int source_rank = I_Info.Get<int>("source_rank");
-        file_name = GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, source_rank, "dat");
-    } else {
-        file_name = GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, "dat");
-    }
+    const fs::path file_name(GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import Info in file " << file_name << " ..." << std::endl;
 
@@ -108,14 +101,7 @@ Info FileCommunication::ExportInfoImpl(const Info& I_Info)
     const std::string identifier = I_Info.Get<std::string>("identifier");
     Utilities::CheckEntry(identifier, "identifier");
 
-    fs::path file_name;
-    // when running in MPI it is required to specify the ranks
-    if (GetMyInfo().Get<bool>("is_distributed") || GetPartnerInfo().Get<bool>("is_distributed")) {
-        const int destination_rank = I_Info.Get<int>("destination_rank");
-        file_name = GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, destination_rank, "dat");
-    } else {
-        file_name = GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier, "dat");
-    }
+    const fs::path file_name(GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export Info in file " << file_name << " ..." << std::endl;
 
@@ -141,31 +127,21 @@ Info FileCommunication::ImportDataImpl(
     const std::string identifier = I_Info.Get<std::string>("identifier");
     Utilities::CheckEntry(identifier, "identifier");
 
-    const auto partner_ranks = Utilities::ComputePartnerRanksAsImporter(
-        GetDataCommunicator().Rank(),
-        GetDataCommunicator().Size(),
-        GetPartnerInfo().Get<int>("num_processes")
-    );
+    const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
-    CO_SIM_IO_ERROR_IF(partner_ranks.size() > 1) << "Communicating with more than one rank is not yet implemented!" << std::endl;
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import array \"" << identifier << "\" in file " << file_name << " ..." << std::endl;
 
-    for (std::size_t partner_rank : partner_ranks) {
-        const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(partner_rank), "dat"));
+    WaitForPath(file_name);
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import array \"" << identifier << "\" in file " << file_name << " ..." << std::endl;
+    const auto start_time(std::chrono::steady_clock::now());
 
-        WaitForPath(file_name);
+    SerializeFromFile(file_name, "data", rData, Serializer::TraceType::SERIALIZER_NO_TRACE);
 
-        const auto start_time(std::chrono::steady_clock::now());
+    RemovePath(file_name);
 
-        SerializeFromFile(file_name, "data", rData, Serializer::TraceType::SERIALIZER_NO_TRACE);
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing array with size: " << rData.size() << std::endl;
 
-        RemovePath(file_name);
-
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing array with size: " << rData.size() << std::endl;
-
-        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Array \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
-    }
+    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Array \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
 
     return Info(); // TODO use
 
@@ -181,34 +157,24 @@ Info FileCommunication::ExportDataImpl(
     const std::string identifier = I_Info.Get<std::string>("identifier");
     Utilities::CheckEntry(identifier, "identifier");
 
-    const auto partner_ranks = Utilities::ComputePartnerRanksAsExporter(
-        GetDataCommunicator().Rank(),
-        GetDataCommunicator().Size(),
-        GetPartnerInfo().Get<int>("num_processes")
-    );
+    const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
-    CO_SIM_IO_ERROR_IF(partner_ranks.size() > 1) << "Communicating with more than one rank is not yet implemented!" << std::endl;
+    std::cout << file_name << std::endl;
 
-    for (std::size_t partner_rank : partner_ranks) {
-        const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(partner_rank), "dat"));
+    WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
-        std::cout << file_name << std::endl;
+    const std::size_t size = rData.size();
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export array \"" << identifier << "\" with size: " << size << " in file " << file_name << " ..." << std::endl;
 
-        WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
+    const auto start_time(std::chrono::steady_clock::now());
 
-        const std::size_t size = rData.size();
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export array \"" << identifier << "\" with size: " << size << " in file " << file_name << " ..." << std::endl;
+    SerializeToFile(GetTempFileName(file_name), "data", rData, Serializer::TraceType::SERIALIZER_NO_TRACE);
 
-        const auto start_time(std::chrono::steady_clock::now());
+    MakeFileVisible(file_name);
 
-        SerializeToFile(GetTempFileName(file_name), "data", rData, Serializer::TraceType::SERIALIZER_NO_TRACE);
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting array" << std::endl;
 
-        MakeFileVisible(file_name);
-
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting array" << std::endl;
-
-        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Array \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
-    }
+    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Array \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
 
     return Info(); // TODO use
 
@@ -224,31 +190,21 @@ Info FileCommunication::ImportMeshImpl(
     const std::string identifier = I_Info.Get<std::string>("identifier");
     Utilities::CheckEntry(identifier, "identifier");
 
-    const auto partner_ranks = Utilities::ComputePartnerRanksAsImporter(
-        GetDataCommunicator().Rank(),
-        GetDataCommunicator().Size(),
-        GetPartnerInfo().Get<int>("num_processes")
-    );
+    const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "vtk"));
 
-    CO_SIM_IO_ERROR_IF(partner_ranks.size() > 1) << "Communicating with more than one rank is not yet implemented!" << std::endl;
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import mesh \"" << identifier << "\" in file " << file_name << " ..." << std::endl;
 
-    for (std::size_t partner_rank : partner_ranks) {
-        const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(partner_rank), "vtk"));
+    WaitForPath(file_name);
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import mesh \"" << identifier << "\" in file " << file_name << " ..." << std::endl;
+    const auto start_time(std::chrono::steady_clock::now());
 
-        WaitForPath(file_name);
+    SerializeFromFile(file_name, "model_part", O_ModelPart, Serializer::TraceType::SERIALIZER_NO_TRACE);
 
-        const auto start_time(std::chrono::steady_clock::now());
+    RemovePath(file_name);
 
-        SerializeFromFile(file_name, "model_part", O_ModelPart, Serializer::TraceType::SERIALIZER_NO_TRACE);
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing mesh" << std::endl;
 
-        RemovePath(file_name);
-
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing mesh" << std::endl;
-
-        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Mesh \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
-    }
+    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Mesh \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
 
     return Info(); // TODO use
 
@@ -264,31 +220,21 @@ Info FileCommunication::ExportMeshImpl(
     const std::string identifier = I_Info.Get<std::string>("identifier");
     Utilities::CheckEntry(identifier, "identifier");
 
-    const auto partner_ranks = Utilities::ComputePartnerRanksAsExporter(
-        GetDataCommunicator().Rank(),
-        GetDataCommunicator().Size(),
-        GetPartnerInfo().Get<int>("num_processes")
-    );
+    const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "vtk"));
 
-    CO_SIM_IO_ERROR_IF(partner_ranks.size() > 1) << "Communicating with more than one rank is not yet implemented!" << std::endl;
+    WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
-    for (std::size_t partner_rank : partner_ranks) {
-        const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(partner_rank), "vtk"));
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export mesh \"" << identifier << "\" with " << I_ModelPart.NumberOfNodes() << " Nodes | " << I_ModelPart.NumberOfElements() << " Elements in file " << file_name << " ..." << std::endl;
 
-        WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
+    const auto start_time(std::chrono::steady_clock::now());
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export mesh \"" << identifier << "\" with " << I_ModelPart.NumberOfNodes() << " Nodes | " << I_ModelPart.NumberOfElements() << " Elements in file " << file_name << " ..." << std::endl;
+    SerializeToFile(GetTempFileName(file_name), "model_part", I_ModelPart, Serializer::TraceType::SERIALIZER_NO_TRACE);
 
-        const auto start_time(std::chrono::steady_clock::now());
+    MakeFileVisible(file_name);
 
-        SerializeToFile(GetTempFileName(file_name), "model_part", I_ModelPart, Serializer::TraceType::SERIALIZER_NO_TRACE);
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting mesh" << std::endl;
 
-        MakeFileVisible(file_name);
-
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting mesh" << std::endl;
-
-        CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Mesh \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
-    }
+    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Mesh \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
 
     return Info(); // TODO use
 

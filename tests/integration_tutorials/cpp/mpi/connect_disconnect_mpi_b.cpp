@@ -25,7 +25,7 @@
 
 int main(int argc, char** argv)
 {
-    MPI_Init(&argc, &argv);
+    MPI_Init(&argc, &argv); // needs to be done before calling CoSimIO::ConnectMPI
 
     CoSimIO::Info settings;
     settings.Set("my_name", "cpp_connect_disconnect_b");

@@ -7,7 +7,7 @@
 //
 //  License:         BSD License, see license.txt
 //
-//  Main authors:    Philipp Bucher
+//  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
 // External includes
@@ -25,7 +25,8 @@
 
 int main(int argc, char** argv)
 {
-    MPI_Init(&argc, &argv);
+    MPI_Init(&argc, &argv); // needs to be done before calling CoSimIO::ConnectMPI
+
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     int size;
@@ -44,10 +45,10 @@ int main(int argc, char** argv)
     CoSimIO::Info export_info;
     export_info.Set<std::string>("connection_name", connection_name);
     export_info.Set<std::string>("identifier", "cpp_mpi_info_exchange");
-    const int destination_rank = (rank+1) % size;
-    export_info.Set<int>("destination_rank", destination_rank);
 
+    std::string mpi_info = "extra_string_RANK:" + std::to_string(rank) + "_SIZE:" + std::to_string(size);
     export_info.Set<std::string>("id", "convergence_information");
+    export_info.Set<std::string>("mpi_info", mpi_info);
     export_info.Set<bool>("is_converged", true);
     export_info.Set<double>("tol", 0.008);
     export_info.Set<int>("echo_level", 2);

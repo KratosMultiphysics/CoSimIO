@@ -7,7 +7,7 @@
 //
 //  License:         BSD License, see license.txt
 //
-//  Main authors:    Philipp Bucher
+//  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
 // External includes
@@ -25,7 +25,8 @@
 
 int main(int argc, char** argv)
 {
-    MPI_Init(&argc, &argv);
+    MPI_Init(&argc, &argv); // needs to be done before calling CoSimIO::ConnectMPI
+
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     int size;
@@ -44,11 +45,11 @@ int main(int argc, char** argv)
     CoSimIO::Info exp_info;
     exp_info.Set<std::string>("connection_name", connection_name);
     exp_info.Set<std::string>("identifier", "cpp_mpi_info_exchange");
-    const int source_rank = (rank+1) % size;
-    exp_info.Set<int>("source_rank", source_rank);
     auto imported_info = CoSimIO::ImportInfo(exp_info);
 
+    std::string mpi_info = "extra_string_RANK:" + std::to_string(rank) + "_SIZE:" + std::to_string(size);
     COSIMIO_CHECK_EQUAL(imported_info.Get<std::string>("id"), "convergence_information");
+    COSIMIO_CHECK_EQUAL(imported_info.Get<std::string>("mpi_info"), mpi_info);
     COSIMIO_CHECK_EQUAL(imported_info.Get<bool>("is_converged"), true);
     COSIMIO_CHECK_EQUAL(imported_info.Get<double>("tol"), 0.008);
     COSIMIO_CHECK_EQUAL(imported_info.Get<int>("echo_level"), 2);
