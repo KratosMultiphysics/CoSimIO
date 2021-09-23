@@ -44,8 +44,6 @@ int main(int argc, char** argv)
     CoSimIO::Info exp_info;
     exp_info.Set<std::string>("connection_name", connection_name);
     exp_info.Set<std::string>("identifier", "cpp_mpi_info_exchange");
-    const int source_rank = (rank+1) % size;
-    exp_info.Set<int>("source_rank", source_rank);
     auto imported_info = CoSimIO::ImportInfo(exp_info);
 
     COSIMIO_CHECK_EQUAL(imported_info.Get<std::string>("id"), "convergence_information");

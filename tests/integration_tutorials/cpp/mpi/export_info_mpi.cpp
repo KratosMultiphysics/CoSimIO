@@ -44,8 +44,6 @@ int main(int argc, char** argv)
     CoSimIO::Info export_info;
     export_info.Set<std::string>("connection_name", connection_name);
     export_info.Set<std::string>("identifier", "cpp_mpi_info_exchange");
-    const int destination_rank = (rank+1) % size;
-    export_info.Set<int>("destination_rank", destination_rank);
 
     export_info.Set<std::string>("id", "convergence_information");
     export_info.Set<bool>("is_converged", true);
