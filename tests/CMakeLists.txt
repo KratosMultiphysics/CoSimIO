@@ -64,7 +64,18 @@ add_test(NAME import_export_data_cpp_test COMMAND sh run.sh $<TARGET_FILE:export
 add_test(NAME import_export_mesh_cpp_test COMMAND sh run.sh $<TARGET_FILE:export_mesh_cpp_test>  $<TARGET_FILE:import_mesh_cpp_test>)
 add_test(NAME run_runner_cpp_test COMMAND sh run.sh $<TARGET_FILE:run_cpp_test>  $<TARGET_FILE:runner_cpp_test>)
 
+function(add_mpi_test test_name exe_1 exe_2)
+    foreach(num_processes RANGE 2 4)
+        set(full_test_name ${test_name}_mpi_test_${num_processes})
+        message(STATUS  "adding MPI test ${full_test_name}")
+        add_test(NAME ${full_test_name} COMMAND sh run_mpi.sh ${exe_1} ${exe_2} ${num_processes})
+    endforeach(num_processes)
+endfunction()
+
 if (CO_SIM_IO_ENABLE_MPI)
+    # helper script to run two executables with MPI
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run_mpi.sh mpiexec\ -np\ $3\ $1\ &\ mpiexec\ -np\ $3\ $2\ &\nwait\ %1\ &&\ wait\ %2)
+
     function(add_cpp_mpi_executable TEST_SOURCE_FILE)
         get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
         string(REGEX REPLACE ".cpp" "_cpp_test" TEST_NAME ${TEST_FILENAME})
@@ -77,24 +88,13 @@ if (CO_SIM_IO_ENABLE_MPI)
     file(GLOB cpp_mpi_test_files "integration_tutorials/cpp/mpi/*.cpp")
 
     foreach(cpp_mpi_test_file ${cpp_mpi_test_files})
-    add_cpp_mpi_executable(${cpp_mpi_test_file})
+        add_cpp_mpi_executable(${cpp_mpi_test_file})
     endforeach(cpp_mpi_test_file)
 
-    # helper script to run both executables with MPI
-    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run_mpi.sh mpiexec\ -np\ $3\ $1\ &\ mpiexec\ -np\ $4\ $2\ &\nwait\ %1\ &&\ wait\ %2)
-    # helper script to run one executable with MPI
-    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run_serial_mpi.sh $1\ &\ mpiexec\ -np\ $3\ $2\ &\nwait\ %1\ &&\ wait\ %2)
-
-    add_test(NAME connect_disconnect_cpp_mpi_test_2_2 COMMAND sh run_mpi.sh $<TARGET_FILE:connect_disconnect_mpi_a_cpp_test> $<TARGET_FILE:connect_disconnect_mpi_b_cpp_test> 2 2)
-    add_test(NAME connect_disconnect_cpp_mpi_test_2_3 COMMAND sh run_mpi.sh $<TARGET_FILE:connect_disconnect_mpi_a_cpp_test> $<TARGET_FILE:connect_disconnect_mpi_b_cpp_test> 2 3)
-    add_test(NAME connect_disconnect_cpp_mpi_test_2_4 COMMAND sh run_mpi.sh $<TARGET_FILE:connect_disconnect_mpi_a_cpp_test> $<TARGET_FILE:connect_disconnect_mpi_b_cpp_test> 2 4)
-    add_test(NAME connect_disconnect_cpp_serial_mpi_test COMMAND sh run_serial_mpi.sh $<TARGET_FILE:connect_disconnect_a_cpp_test> $<TARGET_FILE:connect_disconnect_mpi_b_cpp_test> 4)
-
-    add_test(NAME import_export_info_cpp_mpi_test COMMAND sh run_mpi.sh $<TARGET_FILE:export_info_mpi_cpp_test> $<TARGET_FILE:import_info_mpi_cpp_test> 4 4)
-
-    add_test(NAME import_export_data_cpp_mpi_test COMMAND sh run_mpi.sh $<TARGET_FILE:export_data_mpi_cpp_test> $<TARGET_FILE:import_data_mpi_cpp_test> 4 4)
-
-    add_test(NAME import_export_mesh_cpp_mpi_test COMMAND sh run_mpi.sh $<TARGET_FILE:export_mesh_mpi_cpp_test> $<TARGET_FILE:import_mesh_mpi_cpp_test> 4 4)
+    add_mpi_test(connect_disconnect_cpp $<TARGET_FILE:connect_disconnect_mpi_a_cpp_test> $<TARGET_FILE:connect_disconnect_mpi_b_cpp_test>)
+    add_mpi_test(import_export_info_cpp $<TARGET_FILE:export_info_mpi_cpp_test> $<TARGET_FILE:import_info_mpi_cpp_test>)
+    add_mpi_test(import_export_data_cpp $<TARGET_FILE:export_data_mpi_cpp_test> $<TARGET_FILE:import_data_mpi_cpp_test>)
+    add_mpi_test(import_export_mesh_cpp $<TARGET_FILE:export_mesh_mpi_cpp_test> $<TARGET_FILE:import_mesh_mpi_cpp_test>)
 endif()
 
 ### C tests ###
