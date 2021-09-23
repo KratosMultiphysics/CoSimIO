@@ -255,6 +255,11 @@ public:
         const ElementType I_Type,
         const ConnectivitiesType& I_Connectivities);
 
+    Element& CreateNewElement(
+        const IdType I_Id,
+        const ElementType I_Type,
+        const Element::NodesContainerType& I_Nodes);
+
     const Internals::PointerVector<NodePointerType> Nodes() const {return Internals::PointerVector<NodePointerType>(mNodes);}
     const Internals::PointerVector<NodePointerType> LocalNodes() const {return Internals::PointerVector<NodePointerType>(GetLocalModelPart().Nodes());}
     const Internals::PointerVector<NodePointerType> GhostNodes() const {return Internals::PointerVector<NodePointerType>(GetGhostModelPart().Nodes());}

@@ -62,7 +62,20 @@ void AddCoSimIOModelPartToPython(pybind11::module& m)
         .def("NumberOfNodes",    &CoSimIO::ModelPart::NumberOfNodes)
         .def("NumberOfElements", &CoSimIO::ModelPart::NumberOfElements)
         .def("CreateNewNode",    &CoSimIO::ModelPart::CreateNewNode, py::return_value_policy::reference_internal)
-        .def("CreateNewElement", &CoSimIO::ModelPart::CreateNewElement, py::return_value_policy::reference_internal)
+        .def("CreateNewElement", [](
+            CoSimIO::ModelPart& I_ModelPart,
+            const CoSimIO::IdType I_Id,
+            const CoSimIO::ElementType I_Type,
+            const CoSimIO::ConnectivitiesType& I_Connectivities) -> CoSimIO::Element& {
+                return I_ModelPart.CreateNewElement(I_Id, I_Type, I_Connectivities);
+            }, py::return_value_policy::reference_internal)
+        .def("CreateNewElement", [](
+            CoSimIO::ModelPart& I_ModelPart,
+            const CoSimIO::IdType I_Id,
+            const CoSimIO::ElementType I_Type,
+            const CoSimIO::Element::NodesContainerType& I_Nodes) -> CoSimIO::Element& {
+                return I_ModelPart.CreateNewElement(I_Id, I_Type, I_Nodes);
+            }, py::return_value_policy::reference_internal)
         .def("GetNode",          [](CoSimIO::ModelPart& I_ModelPart, const CoSimIO::IdType I_Id){
             return I_ModelPart.pGetNode(I_Id);}, py::return_value_policy::reference_internal)
         .def("GetElement",       [](CoSimIO::ModelPart& I_ModelPart, const CoSimIO::IdType I_Id){

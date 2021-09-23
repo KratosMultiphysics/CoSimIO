@@ -167,15 +167,23 @@ Element& ModelPart::CreateNewElement(
     const ElementType I_Type,
     const ConnectivitiesType& I_Connectivities)
 {
-    CO_SIM_IO_ERROR_IF(HasElement(I_Id)) << "The Element with Id " << I_Id << " exists already!" << std::endl;
-
     Element::NodesContainerType nodes;
     nodes.reserve(I_Connectivities.size());
     for (const IdType node_id : I_Connectivities) {
         nodes.push_back(pGetNode(node_id));
     }
 
-    CoSimIO::intrusive_ptr<Element> new_element(CoSimIO::make_intrusive<Element>(I_Id, I_Type, nodes));
+    return this->CreateNewElement(I_Id, I_Type, nodes);
+}
+
+Element& ModelPart::CreateNewElement(
+    const IdType I_Id,
+    const ElementType I_Type,
+    const Element::NodesContainerType& I_Nodes)
+{
+    CO_SIM_IO_ERROR_IF(HasElement(I_Id)) << "The Element with Id " << I_Id << " exists already!" << std::endl;
+
+    CoSimIO::intrusive_ptr<Element> new_element(CoSimIO::make_intrusive<Element>(I_Id, I_Type, I_Nodes));
 
     mElements.push_back(new_element);
     GetLocalModelPart().mElements.push_back(new_element);

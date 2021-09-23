@@ -435,9 +435,9 @@ TEST_CASE("model_part_create_new_elements")
 
     const int node_ids[] = {2, 159, 61};
     const std::array<double, 3> node_coords = {1.0, -2.7, 9.44};
-    model_part.CreateNewNode(node_ids[0], node_coords[0], node_coords[1], node_coords[2]);
-    model_part.CreateNewNode(node_ids[1], node_coords[1], node_coords[2], node_coords[0]);
-    model_part.CreateNewNode(node_ids[2], node_coords[2], node_coords[0], node_coords[1]);
+    const auto& r_node_1 = model_part.CreateNewNode(node_ids[0], node_coords[0], node_coords[1], node_coords[2]);
+    const auto& r_node_2 = model_part.CreateNewNode(node_ids[1], node_coords[1], node_coords[2], node_coords[0]);
+    const auto& r_node_3 = model_part.CreateNewNode(node_ids[2], node_coords[2], node_coords[0], node_coords[1]);
 
     CHECK_EQ(model_part.NumberOfNodes(), 3);
 
@@ -449,9 +449,19 @@ TEST_CASE("model_part_create_new_elements")
         CoSimIO::ElementType::Line2D2
     };
 
-    model_part.CreateNewElement(elem_ids[0], elem_types[0], {node_ids[0]});
-    model_part.CreateNewElement(elem_ids[1], elem_types[1], {node_ids[1]});
-    model_part.CreateNewElement(elem_ids[2], elem_types[2], {node_ids[1], node_ids[2]});
+    SUBCASE("from_ids")
+    {
+        model_part.CreateNewElement(elem_ids[0], elem_types[0], {node_ids[0]});
+        model_part.CreateNewElement(elem_ids[1], elem_types[1], {node_ids[1]});
+        model_part.CreateNewElement(elem_ids[2], elem_types[2], {node_ids[1], node_ids[2]});
+    }
+
+    SUBCASE("from_nodes")
+    {
+        model_part.CreateNewElement(elem_ids[0], elem_types[0], {r_node_1});
+        model_part.CreateNewElement(elem_ids[1], elem_types[1], {r_node_2});
+        model_part.CreateNewElement(elem_ids[2], elem_types[2], {r_node_2, r_node_3});
+    }
 
     REQUIRE_EQ(model_part.NumberOfElements(), 3);
 
