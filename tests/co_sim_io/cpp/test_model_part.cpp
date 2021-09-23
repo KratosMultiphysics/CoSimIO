@@ -359,6 +359,7 @@ TEST_CASE("model_part_ghost_nodes")
     }
 
     const int partition_index = 63;
+    const int partition_index_2 = 18;
 
     CHECK_EQ(model_part.NumberOfNodes(), 5);
     CHECK_EQ(model_part.NumberOfLocalNodes(), 5);
@@ -380,6 +381,15 @@ TEST_CASE("model_part_ghost_nodes")
 
         CHECK_EQ(model_part.GetPartitionModelParts().count(partition_index), 1);
         CHECK_EQ(model_part.GetPartitionModelParts().size(), 1);
+
+        model_part.CreateNewGhostNode(118, 0,0,0, partition_index_2);
+
+        CHECK_EQ(model_part.NumberOfNodes(), 9);
+        CHECK_EQ(model_part.NumberOfLocalNodes(), 5);
+        CHECK_EQ(model_part.NumberOfGhostNodes(), 4);
+        CHECK_EQ(model_part.GetPartitionModelParts().count(partition_index), 1);
+        CHECK_EQ(model_part.GetPartitionModelParts().count(partition_index_2), 1);
+        CHECK_EQ(model_part.GetPartitionModelParts().size(), 2);
     }
 }
 
