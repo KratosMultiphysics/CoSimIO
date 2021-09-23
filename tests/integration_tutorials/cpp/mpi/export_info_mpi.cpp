@@ -7,7 +7,7 @@
 //
 //  License:         BSD License, see license.txt
 //
-//  Main authors:    Philipp Bucher
+//  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
 // External includes
@@ -25,7 +25,8 @@
 
 int main(int argc, char** argv)
 {
-    MPI_Init(&argc, &argv);
+    MPI_Init(&argc, &argv); // needs to be done before calling CoSimIO::ConnectMPI
+
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     int size;
