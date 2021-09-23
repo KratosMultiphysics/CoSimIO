@@ -8,6 +8,7 @@
 <!-- code_chunk_output -->
 
 - [Interface of CoSimIO::ModelPart](#interface-of-cosimiomodelpart)
+  - [Interface for distributed ModelParts (MPI)](#interface-for-distributed-modelparts-mpi)
 - [Interface of CoSimIO::Node](#interface-of-cosimionode)
 - [Interface of CoSimIO::Element](#interface-of-cosimioelement)
 - [Further information (C++ interface)](#further-information-c-interface)
@@ -108,6 +109,47 @@ Removing all nodes and elements can be done with the following:
 ```c++
 // removing all nodes and elements
 model_part.Clear();
+```
+
+### Interface for distributed ModelParts (MPI)
+The following interface is provided for `ModelPart`s that are distributed over several processes in MPI-parallel computations.
+
+Ghost nodes that are local in other partitions can be created like this:
+```c++
+CoSimIO::Node& node = model_part.CreateNewGhostNode(
+    1,    // Id
+    0.0,  // X-Coordinate
+    1.5,  // Y-Coordinate
+    -4.22 // Z-Coordinate
+    5,    // Partition index where the node is local
+);
+```
+These ghost nodes can also be used for the creation of elements.
+Note that this node has to be created as local node in its local partition, otherwise deadlocks can occur!
+
+Use the following functions to get the number of local and ghost nodes:
+```c++
+std::size_t number_of_local_nodes = model_part.NumberOfLocalNodes();
+
+std::size_t number_of_ghost_nodes = model_part.NumberOfGhostNodes();
+
+std::size_t number_of_all_nodes   = model_part.NumberOfNodes(); // local + ghost nodes
+```
+Note that `model_part.Nodes()` contains all the nodes, i.e. local and ghost nodes.
+
+Iterating through local and ghost nodes is also possible:
+```c++
+// iterate local nodes
+for (auto& node : model_part.LocalNodes()) {
+    // do sth with node, e.g. print the id:
+    std::cout << node.Id() << std::endl;
+}
+
+// iterate ghost nodes
+for (auto& node : model_part.GhostNodes()) {
+    // do sth with node, e.g. print the id:
+    std::cout << node.Id() << std::endl;
+}
 ```
 
 ## Interface of CoSimIO::Node
