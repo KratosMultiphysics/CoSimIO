@@ -37,10 +37,12 @@ int CoSimIO_Info_GetInt(const CoSimIO_Info I_Info, const char* I_Key);
 double CoSimIO_Info_GetDouble(const CoSimIO_Info I_Info, const char* I_Key);
 int CoSimIO_Info_GetBool(const CoSimIO_Info I_Info, const char* I_Key);
 const char* CoSimIO_Info_GetString(const CoSimIO_Info I_Info, const char* I_Key);
+CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_Info_GetInfo(const CoSimIO_Info I_Info, const char* I_Key);
 
 void CoSimIO_Info_SetInt(CoSimIO_Info I_Info, const char* I_Key, const int I_Value);
 void CoSimIO_Info_SetDouble(CoSimIO_Info I_Info, const char* I_Key, const double I_Value);
 void CoSimIO_Info_SetBool(CoSimIO_Info I_Info, const char* I_Key, const int I_Value);
 void CoSimIO_Info_SetString(CoSimIO_Info I_Info, const char* I_Key, const char* I_Value);
+void CoSimIO_Info_SetInfo(CoSimIO_Info I_Info, const char* I_Key, CoSimIO_Info I_Value);
 
 #endif /* CO_SIM_IO_C_INFO_INCLUDED */
