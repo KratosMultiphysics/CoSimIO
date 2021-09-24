@@ -116,7 +116,7 @@ The following interface is provided for `ModelPart`s that are distributed over s
 
 Ghost nodes that are local in other partitions can be created like this:
 ```c++
-CoSimIO::Node& node = model_part.CreateNewGhostNode(
+CoSimIO::Node& ghost_node = model_part.CreateNewGhostNode(
     1,    // Id
     0.0,  // X-Coordinate
     1.5,  // Y-Coordinate

@@ -58,17 +58,26 @@ void AddCoSimIOModelPartToPython(pybind11::module& m)
 
     py::class_<CoSimIO::ModelPart>(m,"ModelPart")
         .def(py::init<const std::string&>())
-        .def("Name",             &CoSimIO::ModelPart::Name)
-        .def("NumberOfNodes",    &CoSimIO::ModelPart::NumberOfNodes)
-        .def("NumberOfElements", &CoSimIO::ModelPart::NumberOfElements)
-        .def("CreateNewNode",    &CoSimIO::ModelPart::CreateNewNode, py::return_value_policy::reference_internal)
-        .def("CreateNewElement", &CoSimIO::ModelPart::CreateNewElement, py::return_value_policy::reference_internal)
-        .def("GetNode",          [](CoSimIO::ModelPart& I_ModelPart, const CoSimIO::IdType I_Id){
+        .def("Name",                  &CoSimIO::ModelPart::Name)
+        .def("NumberOfNodes",         &CoSimIO::ModelPart::NumberOfNodes)
+        .def("NumberOfLocalNodes",    &CoSimIO::ModelPart::NumberOfLocalNodes)
+        .def("NumberOfGhostNodes",    &CoSimIO::ModelPart::NumberOfGhostNodes)
+        .def("NumberOfElements",      &CoSimIO::ModelPart::NumberOfElements)
+        .def("CreateNewNode",         &CoSimIO::ModelPart::CreateNewNode, py::return_value_policy::reference_internal)
+        .def("CreateNewGhostNode",    &CoSimIO::ModelPart::CreateNewGhostNode, py::return_value_policy::reference_internal)
+        .def("CreateNewElement",      &CoSimIO::ModelPart::CreateNewElement, py::return_value_policy::reference_internal)
+        .def("GetNode",               [](CoSimIO::ModelPart& I_ModelPart, const CoSimIO::IdType I_Id){
             return I_ModelPart.pGetNode(I_Id);}, py::return_value_policy::reference_internal)
-        .def("GetElement",       [](CoSimIO::ModelPart& I_ModelPart, const CoSimIO::IdType I_Id){
+        .def("GetElement",            [](CoSimIO::ModelPart& I_ModelPart, const CoSimIO::IdType I_Id){
             return I_ModelPart.pGetElement(I_Id);}, py::return_value_policy::reference_internal)
         .def_property_readonly("Nodes", [](CoSimIO::ModelPart& I_ModelPart) {
             return py::make_iterator(I_ModelPart.NodesBegin(), I_ModelPart.NodesEnd());
+            }, py::keep_alive<0, 1>()) /* Keep vector alive while iterator is used */
+        .def_property_readonly("LocalNodes", [](CoSimIO::ModelPart& I_ModelPart) {
+            return py::make_iterator(I_ModelPart.LocalNodes().begin(), I_ModelPart.LocalNodes().end());
+            }, py::keep_alive<0, 1>()) /* Keep vector alive while iterator is used */
+        .def_property_readonly("GhostNodes", [](CoSimIO::ModelPart& I_ModelPart) {
+            return py::make_iterator(I_ModelPart.GhostNodes().begin(), I_ModelPart.GhostNodes().end());
             }, py::keep_alive<0, 1>()) /* Keep vector alive while iterator is used */
         .def_property_readonly("Elements", [](CoSimIO::ModelPart& I_ModelPart) {
             return py::make_iterator(I_ModelPart.ElementsBegin(), I_ModelPart.ElementsEnd());
