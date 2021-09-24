@@ -15,7 +15,7 @@
 - [Removing specific keys](#removing-specific-keys)
 - [Removing all keys](#removing-all-keys)
 - [Printing the Info](#printing-the-info)
-- [Further information (C++ interface)](#further-information-c-interface)
+- [Further information](#further-information)
 
 <!-- /code_chunk_output -->
 ---
@@ -25,8 +25,11 @@ The `CoSimIO::Info` object plays a very important role in the _CoSimIO_. It is a
 - `double`
 - `bool`
 - `std::string`
+- `CoSimIO::Info`
 
-Most functions in the public interface of _CoSimIO_ have an instance of `CoSimIO::Info`  as input and as return value to communicate with the including code.
+Most functions in the public interface of _CoSimIO_ have an instance of `CoSimIO::Info` as input and as return value to communicate with the including code.
+
+Aside from using the `CoSimIO::Info` as configuration object, it can also be used to exchange metadata between codes by using the `ImportInfo` and `ExportInfo` functions (see the [API documentation](../api_docs/README.md)).
 
 This file describes the native (C++) interface of `CoSimIO::Info`.
 

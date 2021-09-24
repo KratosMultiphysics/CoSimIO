@@ -7,7 +7,7 @@
 
 <!-- code_chunk_output -->
 
-- [Public interface of _CoSimIO_](#public-interface-of-_cosimio_)
+- [Public interface of CoSimIO](#public-interface-of-cosimio)
   - [Hello](#hello)
   - [Connect](#connect)
   - [Disconnect](#disconnect)
@@ -24,7 +24,7 @@
 
 This page contains the API documentation of the _CoSimIO_. The public interface is documented in detail, the internal documentation with doxygen is currently work in progress.
 
-## Public interface of _CoSimIO_
+## Public interface of CoSimIO
 
 ### Hello
 The `Hello` function can be called without establishing a connection beforehand. It is intended for debugging / setting up the integration of _CoSimIO_. It takes no input and returns an object of `CoSimIO::Info` (see [here](../info/info_cpp.md)), which contains the version info of the _CoSimIO_. It also prints a short hello message.
