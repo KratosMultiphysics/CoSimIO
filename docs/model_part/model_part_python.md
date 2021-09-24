@@ -8,6 +8,7 @@
 <!-- code_chunk_output -->
 
 - [Interface of CoSimIO.ModelPart](#interface-of-cosimiomodelpart)
+  - [Interface for distributed ModelParts (MPI)](#interface-for-distributed-modelparts-mpi)
 - [Interface of CoSimIO.Node](#interface-of-cosimionode)
 - [Interface of CoSimIO.Element](#interface-of-cosimioelement)
 - [Further information (Python interface)](#further-information-python-interface)
@@ -64,11 +65,13 @@ The nodes and elements can be iterated with:
 ```python
 # iterate nodes
 for node in model_part.Nodes:
-    # do sth with node
+    # do sth with node, e.g. print the id:
+    print(node.Id())
 
 # iterate elements
 for element in model_part.Elements:
-    # do sth with element
+    # do sth with element, e.g. print the id:
+    print(element.Id())
 ```
 
 Nodes and elements can also be accessed by Id:
@@ -86,6 +89,45 @@ Removing all nodes and elements can be done with the following:
 ```python
 # removing all nodes and elements
 model_part.Clear()
+```
+
+### Interface for distributed ModelParts (MPI)
+The following interface is provided for `ModelPart`s that are distributed over several processes in MPI-parallel computations.
+
+Ghost nodes that are local in other partitions can be created like this:
+```python
+ghost_node = model_part.CreateNewGhostNode(
+    1,    # Id
+    0.0,  # X-Coordinate
+    1.5,  # Y-Coordinate
+    -4.22 # Z-Coordinate
+    5,    # Partition index where the node is local
+);
+```
+These ghost nodes can also be used for the creation of elements.
+Note that this node has to be created as local node in its local partition, otherwise deadlocks can occur!
+
+Use the following functions to get the number of local and ghost nodes:
+```python
+number_of_local_nodes = model_part.NumberOfLocalNodes();
+
+number_of_ghost_nodes = model_part.NumberOfGhostNodes();
+
+number_of_all_nodes   = model_part.NumberOfNodes(); # local + ghost nodes
+```
+Note that `model_part.Nodes()` contains all the nodes, i.e. local and ghost nodes.
+
+Iterating through local and ghost nodes is also possible:
+```python
+# iterate local nodes
+for node in model_part.LocalNodes:
+    # do sth with node, e.g. print the id:
+    print(node.Id())
+
+# iterate ghost nodes
+for node in model_part.GhostNodes:
+    # do sth with node, e.g. print the id:
+    print(node.Id())
 ```
 
 ## Interface of CoSimIO.Node
