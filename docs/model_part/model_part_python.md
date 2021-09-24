@@ -100,8 +100,8 @@ ghost_node = model_part.CreateNewGhostNode(
     1,    # Id
     0.0,  # X-Coordinate
     1.5,  # Y-Coordinate
-    -4.22 # Z-Coordinate
-    5,    # Partition index where the node is local
+    -4.2, # Z-Coordinate
+    5     # Partition index where the node is local
 );
 ```
 These ghost nodes can also be used for the creation of elements.
@@ -120,14 +120,14 @@ Note that `model_part.Nodes()` contains all the nodes, i.e. local and ghost node
 Iterating through local and ghost nodes is also possible:
 ```python
 # iterate local nodes
-for node in model_part.LocalNodes:
+for local_node in model_part.LocalNodes:
     # do sth with node, e.g. print the id:
-    print(node.Id())
+    print(local_node.Id())
 
 # iterate ghost nodes
-for node in model_part.GhostNodes:
+for ghost_node in model_part.GhostNodes:
     # do sth with node, e.g. print the id:
-    print(node.Id())
+    print(ghost_node.Id())
 ```
 
 ## Interface of CoSimIO.Node

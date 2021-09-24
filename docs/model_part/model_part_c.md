@@ -8,9 +8,10 @@
 <!-- code_chunk_output -->
 
 - [Interface of CoSimIO_ModelPart](#interface-of-cosimio_modelpart)
+  - [Interface for distributed ModelParts (MPI)](#interface-for-distributed-modelparts-mpi)
 - [Interface of CoSimIO_Node](#interface-of-cosimio_node)
 - [Interface of CoSimIO_Element](#interface-of-cosimio_element)
-- [Further information (C interface)](#further-information-c-interface)
+- [Further information](#further-information)
 
 <!-- /code_chunk_output -->
 ---
@@ -96,6 +97,47 @@ Removing all nodes and elements can be done with the following:
 ```c
 // removing all nodes and elements
 CoSimIO_ModelPart_Clear(model_part);
+```
+
+### Interface for distributed ModelParts (MPI)
+The following interface is provided for `ModelPart`s that are distributed over several processes in MPI-parallel computations.
+
+Ghost nodes that are local in another partition can be created like this:
+```c
+CoSimIO_Node ghost_node = CoSimIO_ModelPart_CreateNewGhostNode(
+    model_part,
+    1,    // Id
+    0.0,  // X-Coordinate
+    1.5,  // Y-Coordinate
+    -4.2, // Z-Coordinate
+    5     // Partition index where the node is local
+);
+```
+These ghost nodes can also be used for the creation of elements.
+Note that this node has to be created as local node in its local partition, otherwise deadlocks can occur!
+
+Use the following functions to get the number of local and ghost nodes:
+```c
+int number_of_local_nodes = CoSimIO_ModelPart_NumberOfLocalNodes(model_part);
+
+int number_of_ghost_nodes = CoSimIO_ModelPart_NumberOfGhostNodes(model_part);
+
+int number_of_all_nodes   = CoSimIO_ModelPart_NumberOfNodes(model_part); // local + ghost nodes
+```
+
+Iterating through local and ghost nodes is also possible:
+```c
+// iterate local nodes
+for (int i=0; i<CoSimIO_ModelPart_NumberOfLocalNodes(model_part); ++i) {
+    CoSimIO_Node local_node = CoSimIO_ModelPart_GetLocalNodeByIndex(model_part, i);
+    // do sth with node
+}
+
+// iterate ghost nodes
+for (int i=0; i<CoSimIO_ModelPart_NumberOfGhostNodes(model_part); ++i) {
+    CoSimIO_Node ghost_node = CoSimIO_ModelPart_GetGhostNodeByIndex(model_part, i);
+    // do sth with node
+}
 ```
 
 ## Interface of CoSimIO_Node
