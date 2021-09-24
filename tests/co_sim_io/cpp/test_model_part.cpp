@@ -578,6 +578,24 @@ TEST_CASE("model_part_clear")
     CHECK_EQ(r_const_ref.GetLocalModelPart().NumberOfElements(), 0);
     CHECK_EQ(r_const_ref.GetGhostModelPart().NumberOfElements(), 0);
     CHECK_EQ(model_part.GetPartitionModelParts().size(), 0);
+
+    model_part.CreateNewNode(node_ids[0], node_coords[0], node_coords[1], node_coords[2]);
+    model_part.CreateNewNode(node_ids[1], node_coords[1], node_coords[2], node_coords[0]);
+    model_part.CreateNewNode(node_ids[2], node_coords[2], node_coords[0], node_coords[1]);
+    model_part.CreateNewGhostNode(node_ids[3], node_coords[2], node_coords[0], node_coords[1], 125);
+    model_part.CreateNewGhostNode(node_ids[4], node_coords[2], node_coords[0], node_coords[1], 987);
+
+    model_part.CreateNewElement(15, CoSimIO::ElementType::Point2D, {node_ids[0]});
+    model_part.CreateNewElement(73, CoSimIO::ElementType::Line2D2, {node_ids[1], node_ids[2]});
+    model_part.CreateNewElement(47, CoSimIO::ElementType::Triangle3D3, {node_ids[1], node_ids[2], node_ids[0]});
+    model_part.CreateNewElement(18, CoSimIO::ElementType::Point3D, {node_ids[1]});
+
+    CHECK_EQ(model_part.NumberOfNodes(), 5);
+    CHECK_EQ(model_part.NumberOfElements(), 4);
+    CHECK_EQ(r_const_ref.GetLocalModelPart().NumberOfNodes(), 3);
+    CHECK_EQ(r_const_ref.GetGhostModelPart().NumberOfNodes(), 2);
+    CHECK_EQ(r_const_ref.GetLocalModelPart().NumberOfElements(), 4);
+    CHECK_EQ(r_const_ref.GetGhostModelPart().NumberOfElements(), 0);
 }
 
 TEST_CASE("model_part_ostream")
