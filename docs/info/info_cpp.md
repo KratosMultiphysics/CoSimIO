@@ -15,6 +15,7 @@
 - [Removing specific keys](#removing-specific-keys)
 - [Removing all keys](#removing-all-keys)
 - [Printing the Info](#printing-the-info)
+- [Using Info in Info](#using-info-in-info)
 - [Further information](#further-information)
 
 <!-- /code_chunk_output -->
@@ -165,6 +166,18 @@ CoSimIO-Info; containing 2 entries
   name: identifier | value: fluid | type: string
 */
 ~~~
+
+## Using Info in Info
+Aside from the basic types (`int`, `double`, `bool`, `std::string`) it is also possible to store an `Info` in an `Info` object. The interface is the same as for the other datatypes:
+~~~c++
+Info info_1;
+Info info_2;
+
+info_1.Set<Info>("info", info_2); // this makes a copy of info_2
+~~~
+
+This makes it possible to build more complex and hierarchical structures of information. Note that the `Info` is stored as a copy.
+
 
 ## Further information
 For more information check the [implementation](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/include/info.hpp) and the [tests](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/co_sim_io/include/test_info.cpp).
