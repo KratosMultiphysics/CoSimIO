@@ -74,10 +74,10 @@ void AddCoSimIOModelPartToPython(pybind11::module& m)
             return py::make_iterator(I_ModelPart.NodesBegin(), I_ModelPart.NodesEnd());
             }, py::keep_alive<0, 1>()) /* Keep vector alive while iterator is used */
         .def_property_readonly("LocalNodes", [](CoSimIO::ModelPart& I_ModelPart) {
-            return py::make_iterator(I_ModelPart.LocalNodes().begin(), I_ModelPart.LocalNodes().end());
+            return py::make_iterator(I_ModelPart.LocalNodesBegin(), I_ModelPart.LocalNodesEnd());
             }, py::keep_alive<0, 1>()) /* Keep vector alive while iterator is used */
         .def_property_readonly("GhostNodes", [](CoSimIO::ModelPart& I_ModelPart) {
-            return py::make_iterator(I_ModelPart.GhostNodes().begin(), I_ModelPart.GhostNodes().end());
+            return py::make_iterator(I_ModelPart.GhostNodesBegin(), I_ModelPart.GhostNodesEnd());
             }, py::keep_alive<0, 1>()) /* Keep vector alive while iterator is used */
         .def_property_readonly("Elements", [](CoSimIO::ModelPart& I_ModelPart) {
             return py::make_iterator(I_ModelPart.ElementsBegin(), I_ModelPart.ElementsEnd());

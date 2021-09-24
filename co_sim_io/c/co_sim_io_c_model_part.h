@@ -79,8 +79,12 @@ int CoSimIO_FreeModelPart(CoSimIO_ModelPart I_ModelPart);
 
 const char* CoSimIO_ModelPart_Name(CoSimIO_ModelPart I_ModelPart);
 int CoSimIO_ModelPart_NumberOfNodes(CoSimIO_ModelPart I_ModelPart);
+int CoSimIO_ModelPart_NumberOfLocalNodes(CoSimIO_ModelPart I_ModelPart);
+int CoSimIO_ModelPart_NumberOfGhostNodes(CoSimIO_ModelPart I_ModelPart);
 int CoSimIO_ModelPart_NumberOfElements(CoSimIO_ModelPart I_ModelPart);
 CoSimIO_Node CoSimIO_ModelPart_GetNodeByIndex(CoSimIO_ModelPart I_ModelPart, const int I_Index);
+CoSimIO_Node CoSimIO_ModelPart_GetLocalNodeByIndex(CoSimIO_ModelPart I_ModelPart, const int I_Index);
+CoSimIO_Node CoSimIO_ModelPart_GetGhostNodeByIndex(CoSimIO_ModelPart I_ModelPart, const int I_Index);
 CoSimIO_Node CoSimIO_ModelPart_GetNodeById(CoSimIO_ModelPart I_ModelPart, const int I_Id);
 CoSimIO_Element CoSimIO_ModelPart_GetElementByIndex(CoSimIO_ModelPart I_ModelPart, const int I_Index);
 CoSimIO_Element CoSimIO_ModelPart_GetElementById(CoSimIO_ModelPart I_ModelPart, const int I_Id);
@@ -92,6 +96,14 @@ CoSimIO_Node CoSimIO_ModelPart_CreateNewNode(
     const double I_X,
     const double I_Y,
     const double I_Z);
+
+CoSimIO_Node CoSimIO_ModelPart_CreateNewGhostNode(
+    CoSimIO_ModelPart I_ModelPart,
+    const int I_Id,
+    const double I_X,
+    const double I_Y,
+    const double I_Z,
+    const int PartitionIndex);
 
 CoSimIO_Element CoSimIO_ModelPart_CreateNewElement(
     CoSimIO_ModelPart I_ModelPart,

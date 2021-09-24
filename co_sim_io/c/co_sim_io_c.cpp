@@ -234,6 +234,16 @@ int CoSimIO_ModelPart_NumberOfNodes(CoSimIO_ModelPart I_ModelPart)
     return static_cast<int>(static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->NumberOfNodes());
 }
 
+int CoSimIO_ModelPart_NumberOfLocalNodes(CoSimIO_ModelPart I_ModelPart)
+{
+    return static_cast<int>(static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->NumberOfLocalNodes());
+}
+
+int CoSimIO_ModelPart_NumberOfGhostNodes(CoSimIO_ModelPart I_ModelPart)
+{
+    return static_cast<int>(static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->NumberOfGhostNodes());
+}
+
 int CoSimIO_ModelPart_NumberOfElements(CoSimIO_ModelPart I_ModelPart)
 {
     return static_cast<int>(static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->NumberOfElements());
@@ -248,6 +258,20 @@ CoSimIO_Node CoSimIO_ModelPart_CreateNewNode(
     const double I_Z)
 {
     CoSimIO::Node& cpp_node = static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->CreateNewNode(I_Id, I_X, I_Y, I_Z);
+    CoSimIO_Node node;
+    node.PtrCppNode = &cpp_node;
+    return node;
+}
+
+CoSimIO_Node CoSimIO_ModelPart_CreateNewGhostNode(
+    CoSimIO_ModelPart I_ModelPart,
+    const int I_Id,
+    const double I_X,
+    const double I_Y,
+    const double I_Z,
+    const int PartitionIndex)
+{
+    CoSimIO::Node& cpp_node = static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->CreateNewGhostNode(I_Id, I_X, I_Y, I_Z, PartitionIndex);
     CoSimIO_Node node;
     node.PtrCppNode = &cpp_node;
     return node;
@@ -301,6 +325,20 @@ double CoSimIO_Node_Coordinate(CoSimIO_Node I_Node, const int I_Index)
 CoSimIO_Node CoSimIO_ModelPart_GetNodeByIndex(CoSimIO_ModelPart I_ModelPart, const int I_Index)
 {
     CoSimIO::Node& cpp_node = **(static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->NodesBegin()+I_Index);
+    CoSimIO_Node node;
+    node.PtrCppNode = &cpp_node;
+    return node;
+}
+CoSimIO_Node CoSimIO_ModelPart_GetLocalNodeByIndex(CoSimIO_ModelPart I_ModelPart, const int I_Index)
+{
+    CoSimIO::Node& cpp_node = **(static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->LocalNodesBegin()+I_Index);
+    CoSimIO_Node node;
+    node.PtrCppNode = &cpp_node;
+    return node;
+}
+CoSimIO_Node CoSimIO_ModelPart_GetGhostNodeByIndex(CoSimIO_ModelPart I_ModelPart, const int I_Index)
+{
+    CoSimIO::Node& cpp_node = **(static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->GhostNodesBegin()+I_Index);
     CoSimIO_Node node;
     node.PtrCppNode = &cpp_node;
     return node;
