@@ -11,7 +11,7 @@
   - [Interface for distributed ModelParts (MPI)](#interface-for-distributed-modelparts-mpi)
 - [Interface of CoSimIO::Node](#interface-of-cosimionode)
 - [Interface of CoSimIO::Element](#interface-of-cosimioelement)
-- [Further information (C++ interface)](#further-information-c-interface)
+- [Further information](#further-information)
 
 <!-- /code_chunk_output -->
 ---
@@ -114,7 +114,7 @@ model_part.Clear();
 ### Interface for distributed ModelParts (MPI)
 The following interface is provided for `ModelPart`s that are distributed over several processes in MPI-parallel computations.
 
-Ghost nodes that are local in other partitions can be created like this:
+Ghost nodes that are local in another partition can be created like this:
 ```c++
 CoSimIO::Node& ghost_node = model_part.CreateNewGhostNode(
     1,    // Id
