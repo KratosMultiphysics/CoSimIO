@@ -266,9 +266,15 @@ public:
     const PartitionModelPartsContainerType& GetPartitionModelParts() const {return mPartitionModelParts;}
 
     NodesContainerType::const_iterator NodesBegin() const { return mNodes.begin(); }
+    NodesContainerType::const_iterator LocalNodesBegin() const { return GetLocalModelPart().mNodes.begin(); }
+    NodesContainerType::const_iterator GhostNodesBegin() const { return GetGhostModelPart().mNodes.begin(); }
+
     ElementsContainerType::const_iterator ElementsBegin() const { return mElements.begin(); }
 
     NodesContainerType::const_iterator NodesEnd() const { return mNodes.end(); }
+    NodesContainerType::const_iterator LocalNodesEnd() const { return GetLocalModelPart().mNodes.end(); }
+    NodesContainerType::const_iterator GhostNodesEnd() const { return GetGhostModelPart().mNodes.end(); }
+
     ElementsContainerType::const_iterator ElementsEnd() const { return mElements.end(); }
 
     Node& GetNode(const IdType I_Id);
