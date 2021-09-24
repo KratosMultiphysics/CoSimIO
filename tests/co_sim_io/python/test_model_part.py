@@ -192,11 +192,17 @@ class CoSimIO_ModelPart(unittest.TestCase):
             self.assertEqual(model_part.NumberOfLocalNodes(), 5)
             self.assertEqual(model_part.NumberOfGhostNodes(), 3)
 
-            model_part.CreateNewGhostNode(118, 0,0,0, partition_index_2)
+            model_part.CreateNewGhostNode(9, 0,0,0, partition_index_2)
 
             self.assertEqual(model_part.NumberOfNodes(), 9)
             self.assertEqual(model_part.NumberOfLocalNodes(), 5)
             self.assertEqual(model_part.NumberOfGhostNodes(), 4)
+
+        for idx, node in enumerate(model_part.LocalNodes):
+            self.assertEqual(node.Id(), idx+1)
+
+        for idx, node in enumerate(model_part.GhostNodes):
+            self.assertEqual(node.Id(), idx+6)
 
     def test_model_part_create_new_element(self):
         model_part = CoSimIO.ModelPart("for_test")
