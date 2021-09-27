@@ -60,7 +60,7 @@ Please note that the only change here is the import statement which loads the _C
 Then you may run your executable with python script of Kratos from your working directory:
 
 ```shell
-path/to/bin/tests_cpp/connect_disconnect_cpp_test & python3 path/to/connect_disconnect.py
+path/to/connect_disconnect_cpp & python3 path/to/connect_disconnect.py
 ```
 
 ## Data Exchange with Kratos
