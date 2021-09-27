@@ -7,6 +7,7 @@
 
 <!-- code_chunk_output -->
 
+- [Memory management of CoSimIO_ModelPart](#memory-management-of-cosimio_modelpart)
 - [Interface of CoSimIO_ModelPart](#interface-of-cosimio_modelpart)
   - [Interface for distributed ModelParts (MPI)](#interface-for-distributed-modelparts-mpi)
 - [Interface of CoSimIO_Node](#interface-of-cosimio_node)
@@ -17,6 +18,21 @@
 ---
 
 This page describes the C interface of `CoSimIO::ModelPart`. See [here](model_part_cpp.md) for more information and the native (C++) interface.
+
+## Memory management of CoSimIO_ModelPart
+The `CoSimIO_ModelPart` object is allocated with `CoSimIO_CreateModelPart` and freed with `CoSimIO_FreeModelPart`. This is crucial as otherwise memory is leaked!
+```c
+// create CoSimIO_ModelPart
+CoSimIO_ModelPart model_part = CoSimIO_CreateModelPart();
+
+// use model_part
+// ...
+
+// don't forget to free it after using it
+CoSimIO_FreeModelPart(model_part);
+```
+
+Note: The memory of `CoSimIO_Node` and `CoSimIO_Element` is managed by `CoSimIO_ModelPart`, hence no manual management is necessary.
 
 ## Interface of CoSimIO_ModelPart
 Create and free a `ModelPart` like this:

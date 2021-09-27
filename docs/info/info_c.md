@@ -10,7 +10,6 @@
 - [Setting values](#setting-values)
 - [Accessing the Info](#accessing-the-info)
 - [Checking if the Info has a certain key](#checking-if-the-info-has-a-certain-key)
-- [Getting values with a default](#getting-values-with-a-default)
 - [Checking the size](#checking-the-size)
 - [Removing specific keys](#removing-specific-keys)
 - [Removing all keys](#removing-all-keys)
@@ -84,7 +83,7 @@ bool has_echo_level = info.Has("echo_level"); // returns true
 bool has_tolerance  = info.Has("tolerance");  // returns false
 ```
 
-## Getting values with a default
+<!-- ## Getting values with a default
 Following the [get method of the Python `dict`](https://docs.python.org/3/library/stdtypes.html#dict.get), the `Get` method can also be used with a default value. If the requested key exists in the `Info`, then the corresponding value is returned. If not, the default is returned.
 
 ```c
@@ -94,7 +93,7 @@ info.Set<int>("echo_level", 1);
 
 int echo_level = info.Get("echo_level", 2); // returns 1 as "echo_level" exists
 int verbosity  = info.Get("verbosity", 2);  // returns 2 as "verbosity" doesn't exist
-```
+``` -->
 
 ## Checking the size
 `Size` can be used get the number of key-value pairs in the `Info`.
