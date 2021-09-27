@@ -11,7 +11,7 @@
   - [Interface for distributed ModelParts (MPI)](#interface-for-distributed-modelparts-mpi)
 - [Interface of CoSimIO::Node](#interface-of-cosimionode)
 - [Interface of CoSimIO::Element](#interface-of-cosimioelement)
-- [Further information (C++ interface)](#further-information-c-interface)
+- [Further information](#further-information)
 
 <!-- /code_chunk_output -->
 ---
@@ -114,14 +114,14 @@ model_part.Clear();
 ### Interface for distributed ModelParts (MPI)
 The following interface is provided for `ModelPart`s that are distributed over several processes in MPI-parallel computations.
 
-Ghost nodes that are local in other partitions can be created like this:
+Ghost nodes that are local in another partition can be created like this:
 ```c++
-CoSimIO::Node& node = model_part.CreateNewGhostNode(
+CoSimIO::Node& ghost_node = model_part.CreateNewGhostNode(
     1,    // Id
     0.0,  // X-Coordinate
     1.5,  // Y-Coordinate
-    -4.22 // Z-Coordinate
-    5,    // Partition index where the node is local
+    -4.2, // Z-Coordinate
+    5     // Partition index where the node is local
 );
 ```
 These ghost nodes can also be used for the creation of elements.
@@ -140,13 +140,13 @@ Note that `model_part.Nodes()` contains all the nodes, i.e. local and ghost node
 Iterating through local and ghost nodes is also possible:
 ```c++
 // iterate local nodes
-for (auto& node : model_part.LocalNodes()) {
+for (auto& local_node : model_part.LocalNodes()) {
     // do sth with node, e.g. print the id:
     std::cout << node.Id() << std::endl;
 }
 
 // iterate ghost nodes
-for (auto& node : model_part.GhostNodes()) {
+for (auto& ghost_node : model_part.GhostNodes()) {
     // do sth with node, e.g. print the id:
     std::cout << node.Id() << std::endl;
 }
@@ -191,5 +191,5 @@ for (auto node_it=element.NodesBegin(); node_it!=element.NodesEnd(); ++node_it) 
 }
 ```
 
-## Further information (C++ interface)
+## Further information
 For more information check the [implementation](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/includes/model_part.hpp) and the [tests](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/co_sim_io/cpp/test_model_part.cpp).
