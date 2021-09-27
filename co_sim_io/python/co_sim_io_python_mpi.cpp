@@ -18,38 +18,28 @@
 
 // CoSimIO includes
 #include "co_sim_io_mpi.hpp"
-#include <mpi4py/mpi4py.h>
+#include "mpi_comm_holder.hpp"
+
+#ifdef CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE
+#include "mpi4py_interface.hpp"
+#endif
 
 
 PYBIND11_MODULE(CoSimIOMPI, m)
 {
     namespace py = pybind11;
 
-    // code that is added here is called when the module is loaded
-    // maybe do import_mpi4py here
-
     m.def("ConnectMPI", [](const CoSimIO::Info& I_Info)
         { return CoSimIO::ConnectMPI(I_Info, MPI_COMM_WORLD); });
 
-    m.def("ConnectMPI", [](const CoSimIO::Info& I_Info, py::object py_comm)
+    m.def("ConnectMPI", [](const CoSimIO::Info& I_Info, const CoSimIO::MPICommHolder& holder)
         {
-            PyObject *py_src = py_comm.ptr();
-
-            // import the mpi4py API
-            // must be done before any calls to mpi4py
-            // seems to be safe to call it multiple times
-            import_mpi4py();
-
-            MPI_Comm* p_comm;
-
-            // Check that we have been passed an mpi4py communicator
-            if (PyObject_TypeCheck(py_src, &PyMPIComm_Type)) {
-                // Convert to regular MPI communicator
-                p_comm = PyMPIComm_Get(py_src);
-            } else {
-                CO_SIM_IO_ERROR << "Not an MPI_Comm passed!" << std::endl;
-            }
-
-            return CoSimIO::ConnectMPI(I_Info, MPI_COMM_WORLD);
+            return CoSimIO::ConnectMPI(I_Info, holder.GetMPIComm());
         });
+
+    py::class_<CoSimIO::MPICommHolder, std::shared_ptr<CoSimIO::MPICommHolder>>(m,"MPICommHolder");
+
+#ifdef CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE
+    CoSimIO::AddMPI4PyInterface(m);
+#endif
 }
