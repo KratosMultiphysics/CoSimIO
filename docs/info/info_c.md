@@ -35,7 +35,7 @@ CoSimIO_Info info = CoSimIO_CreateInfo();
 CoSimIO_FreeInfo(info);
 ```
 ## Setting values
-The `Set` method can be used to set values in the `Info`. Note that the type of the value should be specified as template argument. The first argument is the key (given as `std::string`), the second is the value.
+The `Set...` methods can be used to set values in the `Info`. The first argument is the key (given as `char*`), the second is the value.
 
 ```c
 CoSimIO_Info info = CoSimIO_CreateInfo();
@@ -69,7 +69,7 @@ CoSimIO_FreeInfo(info);
 ```
 
 ## Accessing the Info
-After setting some values in the `CoSimIO_Info`, they can be accessed with the `Get...` functions:
+After setting some values in the `Info`, they can be accessed with the `Get...` functions:
 
 ```c
 CoSimIO_Info info = CoSimIO_CreateInfo();
@@ -93,7 +93,7 @@ CoSimIO_FreeInfo(info);
 ```
 
 ## Checking if the Info has a certain key
-The `Has` method can be used to check if the `CoSimIO_Info` contains a specific key.
+The `Has` method can be used to check if the `Info` contains a specific key.
 
 ```c
 CoSimIO_Info info = CoSimIO_CreateInfo();
@@ -138,7 +138,7 @@ CoSimIO_FreeInfo(info);
 ```
 
 ## Removing specific keys
-The method `CoSimIO_Info_Erase` can be used to remove keys from the `CoSimIO_Info`. Note that it does not throw even if the key doesn't exist.
+The method `CoSimIO_Info_Erase` can be used to remove keys from the `Info`. Note that it does not throw even if the key doesn't exist.
 
 ```c
 CoSimIO_Info info = CoSimIO_CreateInfo();
@@ -152,7 +152,7 @@ CoSimIO_FreeInfo(info);
 ```
 
 ## Removing all keys
-The method `CoSimIO_Info_Clear` can be used to remove all keys from the `CoSimIO_Info`.
+The method `CoSimIO_Info_Clear` can be used to remove all keys from the `Info`.
 
 ```c
 CoSimIO_Info info = CoSimIO_CreateInfo();
