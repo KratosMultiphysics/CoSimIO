@@ -114,7 +114,7 @@ int main()
 }
 ```
 
-This file can be found in [integration_tutorials/python/data_exchange.py](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/python/data_exchange.py)
+This file can be found in [integration_tutorials/c/data_exchange.c](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests/integration_tutorials/c/data_exchange.c)
 
 Then you may run your executable with python script of Kratos from your working directory:
 
