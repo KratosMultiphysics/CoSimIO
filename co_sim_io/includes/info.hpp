@@ -111,7 +111,7 @@ public:
     {
         ValidateType<TDataType>();
 
-        CO_SIM_IO_ERROR_IF_NOT(Has(I_Key)) << "Trying to get \"" << I_Key << "\" which does not exist!" << std::endl;
+        CO_SIM_IO_ERROR_IF_NOT(Has(I_Key)) << "Trying to get \"" << I_Key << "\" which does not exist! Currently available:\n" << *this << std::endl;
         return GetExistingKey<TDataType>(I_Key);
     }
 
