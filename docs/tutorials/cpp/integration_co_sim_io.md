@@ -22,12 +22,12 @@ This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool u
 
 ## What you need
 - Downloading the _CosimIO_ from the repository:
-
-```bash
-git clone https://github.com/KratosMultiphysics/CoSimIO.git
-```
+  ```bash
+  git clone https://github.com/KratosMultiphysics/CoSimIO.git
+  ```
 
 - A C++11 compatible compiler. This includes most of the major CPP compilers in Windows, Linux, and Mac. You may find a detailed list of C++11 compatible compilers [here](https://en.cppreference.com/w/cpp/compiler_support#cpp11)
+
 - [CMake](https://cmake.org/)
 
 ## Building the CoSimIO

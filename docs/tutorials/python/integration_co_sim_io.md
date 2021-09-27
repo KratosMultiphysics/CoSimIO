@@ -23,13 +23,14 @@ This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool u
 ## What you need
 
 - Downloading the _CosimIO_ from the repository:
-
-```bash
-git clone https://github.com/KratosMultiphysics/CoSimIO.git
-```
+  ```bash
+  git clone https://github.com/KratosMultiphysics/CoSimIO.git
+  ```
 
 - A C++11 compatible compiler. This includes most of the major CPP compilers in Windows, Linux, and Mac. You may find a detailed list of C++11 compatible compilers [here](https://en.cppreference.com/w/cpp/compiler_support#cpp11)
+
 - [CMake](https://cmake.org/)
+
 - A developer version of [Python](https://www.python.org/). It is recommended to use Python >= v3.5
 
 ## Building the CoSimIO
@@ -126,7 +127,12 @@ settings.SetInt("echo_level", 1)
 settings.SetString("solver_version", "1.25")
 
 info = CoSimIO.Connect(settings)
-std::connection_name = info.GetString("connection_name") # getting name of connection for future calls
+
+# The connect_info contains now:
+# - The name of the connection ("connection_name") to be used for further calls to CoSimIO
+# - The status of the connection ("connection_status")
+
+connection_name = info.GetString("connection_name") # getting name of connection for future calls
 if info.GetInt("connection_status") == CoSimIO.ConnectionStatus.Connected:
     print("Connected!")
 

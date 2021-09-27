@@ -123,7 +123,7 @@ This file can be found in [integration_tutorials/python/mesh_exchange.py](https:
 Then you may run your executable with python script of Kratos from your working directory:
 
 ```shell
-ython3 path/to/mesh_exchange.py & python3 path/to/import_export_mesh.py
+python3 path/to/mesh_exchange.py & python3 path/to/import_export_mesh.py
 ```
 
 ## Next steps
