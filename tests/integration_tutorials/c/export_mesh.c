@@ -83,7 +83,7 @@ int main()
         );
     }
 
-    /* Creatint the export_settings */
+    /* Creating the export_settings */
     export_settings=CoSimIO_CreateInfo();
     CoSimIO_Info_SetString(export_settings, "identifier", "fluid_mesh");
     CoSimIO_Info_SetString(export_settings, "connection_name", connection_name);
@@ -106,6 +106,7 @@ int main()
     CoSimIO_FreeInfo(disconnect_settings);
     CoSimIO_FreeInfo(connect_info); /* Don't forget to free the connect_info */
     CoSimIO_FreeInfo(disconnect_info);
+    CoSimIO_FreeModelPart(model_part);
 
     return 0;
 }
