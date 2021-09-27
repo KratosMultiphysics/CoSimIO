@@ -14,7 +14,7 @@
 #include "mpi.h"
 
 /* Project includes */
-#include "c/co_sim_io_c.h"
+#include "c/co_sim_io_c_mpi.h"
 
 #include "../checks.h"
 
