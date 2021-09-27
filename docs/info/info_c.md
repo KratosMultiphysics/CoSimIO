@@ -7,13 +7,13 @@
 
 <!-- code_chunk_output -->
 
+- [Memory management](#memory-management)
 - [Setting values](#setting-values)
 - [Accessing the Info](#accessing-the-info)
 - [Checking if the Info has a certain key](#checking-if-the-info-has-a-certain-key)
 - [Checking the size](#checking-the-size)
 - [Removing specific keys](#removing-specific-keys)
 - [Removing all keys](#removing-all-keys)
-- [Printing the Info](#printing-the-info)
 - [Using Info in Info](#using-info-in-info)
 - [Further information](#further-information)
 
@@ -22,65 +22,88 @@
 
 This page describes the C interface of `CoSimIO::Info`. See [here](info_cpp.md) for more information and the native (C++) interface.
 
+## Memory management
+The `CoSimIO_Info` object is allocated with `CoSimIO_CreateInfo` and freed with `CoSimIO_FreeInfo`. This is crucial as otherwise memory is leaked!
+```c
+// create CoSimIO_Info
+CoSimIO_Info info = CoSimIO_CreateInfo();
 
+// use info
+// ...
+
+// don't forget to free it after using it
+CoSimIO_FreeInfo(info);
+```
 ## Setting values
 The `Set` method can be used to set values in the `Info`. Note that the type of the value should be specified as template argument. The first argument is the key (given as `std::string`), the second is the value.
 
 ```c
-Info info;
+CoSimIO_Info info = CoSimIO_CreateInfo();
 
-info.Set<int>("echo_level", 1);
+CoSimIO_Info_SetInt(info, "echo_level", 1);
+
+CoSimIO_FreeInfo(info);
 ```
 
 One `Info` object can hold several types:
 ```c
-Info info;
+CoSimIO_Info info = CoSimIO_CreateInfo();
 
-info.Set<int>("echo_level", 1);
-info.Set<double>("tolerance", 0.01);
-info.Set<bool>("is_converged" ,true);
-info.Set<std::string>("identifier", "fluid");
+CoSimIO_Info_SetInt(info, "echo_level", 1);
+CoSimIO_Info_SetDouble(info, "tolerance", 0.01);
+CoSimIO_Info_SetBool(info, "is_converged", 1);
+CoSimIO_Info_SetString(info, "identifier", "fluid");
+
+CoSimIO_FreeInfo(info);
 ```
 
 Overwritting an existing key with the same or a different data type is possible:
 ```c
-Info info;
+CoSimIO_Info info = CoSimIO_CreateInfo();
 
-info.Set<int>("echo_level", 1);
-info.Set<int>("echo_level", 2);      // this is allowed
-info.Set<double>("echo_level", 1.5); // this is allowed
+CoSimIO_Info_SetInt(info, "echo_level", 1);
+CoSimIO_Info_SetInt(info, "echo_level", 2);      // this is allowed
+CoSimIO_Info_SetDouble(info, "echo_level", 1.5); // this is allowed
+
+CoSimIO_FreeInfo(info);
 ```
 
 ## Accessing the Info
-After setting some values in the `CoSimIO::Info`, they can be accessed with the `Get` function (again with specifying the template of the value type):
+After setting some values in the `CoSimIO_Info`, they can be accessed with the `Get...` functions:
 
 ```c
-Info info;
+CoSimIO_Info info = CoSimIO_CreateInfo();
 
-info.Set<int>("echo_level", 1);
+CoSimIO_Info_SetInt(info, "echo_level", 1);
 
-int echo_level = info.Get<int>("echo_level");
+int echo_level = CoSimIO_Info_GetInt(info, "echo_level");
+
+CoSimIO_FreeInfo(info);
 ```
 
-If the wrong template is used an error is thrown at runtime:
+If the wrong function is used an error is thrown at runtime:
 ```c
-Info info;
+CoSimIO_Info info = CoSimIO_CreateInfo();
 
-info.Set<int>("echo_level", 1);
+CoSimIO_Info_SetInt(info, "echo_level", 1);
 
-double echo_level = info.Get<double>("echo_level"); // Error, type mismatch, also tells which type was expected
+double echo_level = CoSimIO_Info_GetDouble(info, "echo_level"); // Error, type mismatch, also tells which type was expected
+
+CoSimIO_FreeInfo(info);
 ```
 
 ## Checking if the Info has a certain key
-The `Has` method can be used to check if the `CoSimIO::Info` contains a specific key. Note that this function is not a template.
+The `Has` method can be used to check if the `CoSimIO_Info` contains a specific key.
 
 ```c
-Info info;
+CoSimIO_Info info = CoSimIO_CreateInfo();
 
-info.Set<int>("echo_level", 1);
+CoSimIO_Info_SetInt(info, "echo_level", 1);
 
-bool has_echo_level = info.Has("echo_level"); // returns true
-bool has_tolerance  = info.Has("tolerance");  // returns false
+int has_echo_level = CoSimIO_Info_Has(info, "echo_level"); // returns 1
+int has_tolerance  = CoSimIO_Info_Has(info, "tolerance");  // returns 0
+
+CoSimIO_FreeInfo(info);
 ```
 
 <!-- ## Getting values with a default
@@ -96,46 +119,52 @@ int verbosity  = info.Get("verbosity", 2);  // returns 2 as "verbosity" doesn't 
 ``` -->
 
 ## Checking the size
-`Size` can be used get the number of key-value pairs in the `Info`.
+`CoSimIO_Info_Size` can be used get the number of key-value pairs in the `Info`.
 
 ```c
-Info info;
+CoSimIO_Info info = CoSimIO_CreateInfo();
 
-info.Set<int>("echo_level", 1);
+CoSimIO_Info_SetInt(info, "echo_level", 1);
 
-info.Size(); // returns 1
+CoSimIO_Info_Size(info); // returns 1
 
-info.Set<double>("tolerance", 0.01);
-info.Set<bool>("is_converged" ,true);
-info.Set<std::string>("identifier", "fluid");
+CoSimIO_Info_SetDouble(info, "tolerance", 0.01);
+CoSimIO_Info_SetBool(info, "is_converged", 1);
+CoSimIO_Info_SetString(info, "identifier", "fluid");
 
-info.Size(); // returns 4
+CoSimIO_Info_Size(info); // returns 4
+
+CoSimIO_FreeInfo(info);
 ```
 
 ## Removing specific keys
-The method `Erase` can be used to remove keys from the `Info`. Note that it does not throw even if the key doesn't exist.
+The method `CoSimIO_Info_Erase` can be used to remove keys from the `CoSimIO_Info`. Note that it does not throw even if the key doesn't exist.
 
 ```c
-Info info;
+CoSimIO_Info info = CoSimIO_CreateInfo();
 
-info.Set<int>("echo_level", 1);
+CoSimIO_Info_SetInt(info, "echo_level", 1);
 
-info.Erase("echo_level");
-info.Erase("tolerance"); // does not throw!
+CoSimIO_Info_Erase(info, "echo_level");
+CoSimIO_Info_Erase(info, "tolerance"); // does not throw!
+
+CoSimIO_FreeInfo(info);
 ```
 
 ## Removing all keys
-The method `Clear` can be used to remove all keys from the `Info`.
+The method `CoSimIO_Info_Clear` can be used to remove all keys from the `CoSimIO_Info`.
 
 ```c
-Info info;
+CoSimIO_Info info = CoSimIO_CreateInfo();
 
-info.Set<int>("echo_level", 1);
+CoSimIO_Info_SetInt(info, "echo_level", 1);
 
-info.Clear(); // removes everything form info
+CoSimIO_Info_Clear(info);  // removes everything form info
+
+CoSimIO_FreeInfo(info);
 ```
 
-## Printing the Info
+<!-- ## Printing the Info
 The `CoSimIO::Info` can be printed to a stream:
 
 ```c
@@ -151,15 +180,22 @@ CoSimIO-Info; containing 2 entries
   name: echo_level | value: 1 | type: int
   name: identifier | value: fluid | type: string
 */
-```
+``` -->
 
 ## Using Info in Info
 Aside from the basic types (`int`, `double`, `bool`, `std::string`) it is also possible to store an `Info` in an `Info` object. The interface is the same as for the other datatypes:
 ```c
-Info info_1;
-Info info_2;
+CoSimIO_Info info_1 = CoSimIO_CreateInfo();
+CoSimIO_Info info_2 = CoSimIO_CreateInfo();
 
-info_1.Set<Info>("info", info_2); // this makes a copy of info_2
+CoSimIO_Info_SetInfo(info_1, "sub_info", info_2); // this makes a copy of info_2
+
+CoSimIO_Info retrieved_info = CoSimIO_Info_GetInfo(info, "sub_info"); // this is copied hence needs to be freed
+
+CoSimIO_FreeInfo(info_1);
+CoSimIO_FreeInfo(info_2);
+CoSimIO_FreeInfo(retrieved_info);
+
 ```
 
 This makes it possible to build more complex and hierarchical structures of information. Note that the `Info` is stored as a copy.

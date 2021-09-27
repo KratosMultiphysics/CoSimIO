@@ -120,7 +120,7 @@ info.Set<int>("echo_level", 1);
 info.Size(); // returns 1
 
 info.Set<double>("tolerance", 0.01);
-info.Set<bool>("is_converged" ,true);
+info.Set<bool>("is_converged", true);
 info.Set<std::string>("identifier", "fluid");
 
 info.Size(); // returns 4
