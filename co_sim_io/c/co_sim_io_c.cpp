@@ -193,6 +193,11 @@ const char* CoSimIO_Info_GetString(const CoSimIO_Info I_Info, const char* I_Key)
     return static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Get<std::string>(I_Key).c_str();
 }
 
+CoSimIO_Info CoSimIO_Info_GetInfo(const CoSimIO_Info I_Info, const char* I_Key)
+{
+    return ConvertInfo(static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Get<CoSimIO::Info>(I_Key));
+}
+
 
 void CoSimIO_Info_SetInt(CoSimIO_Info I_Info, const char* I_Key, const int I_Value)
 {
@@ -212,6 +217,11 @@ void CoSimIO_Info_SetBool(CoSimIO_Info I_Info, const char* I_Key, const int I_Va
 void CoSimIO_Info_SetString(CoSimIO_Info I_Info, const char* I_Key, const char* I_Value)
 {
     static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Set<std::string>(I_Key, I_Value);
+}
+
+void CoSimIO_Info_SetInfo(CoSimIO_Info I_Info, const char* I_Key, CoSimIO_Info I_Value)
+{
+    static_cast<CoSimIO::Info*>(I_Info.PtrCppInfo)->Set<CoSimIO::Info>(I_Key, ConvertInfo(I_Value));
 }
 
 
