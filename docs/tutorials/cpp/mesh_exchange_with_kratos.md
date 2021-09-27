@@ -16,15 +16,23 @@
 This tutorial shows how to exchange meshes with Kratos. It is required to do [this tutorial](basic_data_exchange_with_kratos.md) first.
 
 ## Mesh Exchange with Kratos
-Here we try to send the Mesh (in the form of `CoSimIO::ModelPart`) to Kratos and get it back from it. Then we can check if both meshes are the same. Again the python file for Kratos side is very similar to the one described in the [python tutorial](../python/integration_co_sim_io.md):
+Here we try to send the mesh (in the form of `CoSimIO::ModelPart`) to Kratos and get it back from it. Then we can check if both meshes are the same. Again the python file for Kratos side is very similar to the one described in the [python tutorial](../python/integration_co_sim_io.md). Importing the Kratos library is the first step:
 
 ```py
 import KratosMultiphysics as KM
 from KratosMultiphysics.CoSimulationApplication import CoSimIO
+```
 
+Next is the creation of the `Kratos::Model` (which is a container of `Kratos::ModelPart`) and `Kratos::ModelPart`. The `ModelPart` will be used to import the mesh through _CoSimIO_
+
+```py
 model = KM.Model()
 model_part = model.CreateModelPart("mp_test")
+```
 
+Connecting is required before importing the mesh:
+
+```py
 connection_settings = CoSimIO.Info()
 connection_settings.SetString("my_name", "Kratos")
 connection_settings.SetString("connect_to", "my_code")
@@ -33,7 +41,11 @@ info = CoSimIO.Connect(connection_settings)
 connection_name = info.GetString("connection_name")
 if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Connected:
     raise Exception("Connecting failed")
+```
 
+Now everything is prepared to import the mesh, using the previously created `Kratos::ModelPart`. After importing it is exported back.
+
+```py
 import_info = CoSimIO.Info()
 import_info.SetString("connection_name", connection_name)
 import_info.SetString("identifier", "mesh_exchange_1")
@@ -45,7 +57,11 @@ export_info = CoSimIO.Info()
 export_info.SetString("connection_name", connection_name)
 export_info.SetString("identifier", "mesh_exchange_2")
 CoSimIO.ExportMesh(export_info, model_part)
+```
 
+Now as before the disconnection is done:
+
+```py
 disconnect_settings = CoSimIO.Info()
 disconnect_settings.SetString("connection_name", connection_name)
 
@@ -55,7 +71,7 @@ if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
 
 ```
 
-You may find this python file in [here](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/import_export_mesh.py)
+The python file with the full script can be found [here](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/import_export_mesh.py)
 
 On the other side we use first export mesh and then import it back, following what was done in [this tutorial](integration_co_sim_io.md#mesh-exchange):
 

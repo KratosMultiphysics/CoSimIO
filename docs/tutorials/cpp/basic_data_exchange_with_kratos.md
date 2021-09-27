@@ -19,14 +19,19 @@ This tutorial shows how to establish a connection to Kratos and to do basics dat
 Furthermore it is required to compile Kratos which is described [here](../../kratos_build.md).
 
 ## Connecting to Kratos
-Instead of connecting two instances of the same code as shown in the [previous tutorial](../cpp/integration_co_sim_io.md#connecting-and-disconnecting), here one instance is connected to Kratos.
+Instead of connecting two instances of the same code as shown in the [previous tutorial](integration_co_sim_io.md#connecting-and-disconnecting), here one instance is connected to Kratos.
 For this we use the same code from the previous tutorial.
 
-For connecting to Kratos it is very important to have in mind that Kratos also uses _CoSimIO_, so its python interface reflects the API of the _CoSimIO_. So we may create a python script for connecting and disconnecting in a similar way described in the [python tutorial](../python/integration_co_sim_io.md):
+For connecting to Kratos it is very important to have in mind that Kratos also uses _CoSimIO_, so its python interface reflects the API of the _CoSimIO_. So we may create a python script for connecting and disconnecting in a similar way described in the [python tutorial](../python/integration_co_sim_io.md). The first step is to import the Kratos library:
 
 ```py
+# importing the CoSimIO of Kratos
 from KratosMultiphysics.CoSimulationApplication import CoSimIO
+```
 
+A connection can be established after importing the Kratos library:
+
+```py
 connection_settings = CoSimIO.Info()
 connection_settings.SetString("my_name", "Kratos")
 connection_settings.SetString("connect_to", "my_code")
@@ -35,7 +40,11 @@ info = CoSimIO.Connect(connection_settings)
 connection_name = info.GetString("connection_name")
 if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Connected:
     raise Exception("Connecting failed")
+```
 
+The last step is to disconnect:
+
+```py
 disconnect_settings = CoSimIO.Info()
 disconnect_settings.SetString("connection_name", connection_name)
 
@@ -46,7 +55,7 @@ if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
 
 Make sure to check that `my_name` and `connect_to` are set correctly, otherwise the connection can not be established. This was explained in more detail in a [previous tutorial](integration_co_sim_io.md#connecting-and-disconnecting).
 
-Please note that the only change here is the import statement which loads the _CoSimIO_ module which comes inside the KratosMultiphysics. You may find this python file in [here](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/connect_disconnect.py)
+Please note that the only change here is the import statement which loads the _CoSimIO_ module which comes inside the KratosMultiphysics. The python file with the full script can be found [here](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/connect_disconnect.py)
 
 Then you may run your executable with python script of Kratos from your working directory:
 
@@ -55,9 +64,9 @@ path/to/bin/tests_cpp/connect_disconnect_cpp_test & python3 path/to/connect_disc
 ```
 
 ## Data Exchange with Kratos
-Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one described in the [python tutorial](../python/integration_co_sim_io.md):
+Here we try to send some data to Kratos and get it back from it. Then we can check if both data are the same. Again the python file for Kratos side is very similar to the one described in the [python tutorial](../python/integration_co_sim_io.md). First the Kratos library is imported and a connection is established:
 
-```python
+```py
 from KratosMultiphysics.CoSimulationApplication import CoSimIO
 
 connection_settings = CoSimIO.Info()
@@ -68,7 +77,11 @@ info = CoSimIO.Connect(connection_settings)
 connection_name = info.GetString("connection_name")
 if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Connected:
     raise Exception("Connecting failed")
+```
 
+After the connection is established, the data can be imported, manipulated or printed if necessary and then exported back:
+
+```py
 # first the data from "my_code" is received ...
 import_info = CoSimIO.Info()
 import_info.SetString("connection_name", connection_name)
@@ -83,7 +96,11 @@ export_info = CoSimIO.Info()
 export_info.SetString("connection_name", connection_name)
 export_info.SetString("identifier", "data_exchange_2")
 CoSimIO.ExportData(export_info, imported_values)
+```
 
+As before the last step is to disconnect:
+
+```py
 disconnect_settings = CoSimIO.Info()
 disconnect_settings.SetString("connection_name", connection_name)
 
@@ -92,7 +109,7 @@ if info.GetInt("connection_status") != CoSimIO.ConnectionStatus.Disconnected:
     raise Exception("Disconnecting failed")
 ```
 
-You may find this python file in [here](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/import_export_data.py)
+The python file with the full script can be found [here](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/tests/co_sim_io_py_exposure_aux_files/import_export_data.py)
 
 On the other side we use first export data and then import it back, following what was done in [this tutorial](integration_co_sim_io.md#data-exchange):
 
