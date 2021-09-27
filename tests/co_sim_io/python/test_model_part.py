@@ -100,6 +100,8 @@ class CoSimIO_ModelPart(unittest.TestCase):
 
         self.assertEqual(model_part.Name(), "for_test")
         self.assertEqual(model_part.NumberOfNodes(), 0)
+        self.assertEqual(model_part.NumberOfLocalNodes(), 0)
+        self.assertEqual(model_part.NumberOfGhostNodes(), 0)
         self.assertEqual(model_part.NumberOfElements(), 0)
 
     def test_model_part_create_new_node(self):
@@ -109,6 +111,8 @@ class CoSimIO_ModelPart(unittest.TestCase):
         node_coords = [1.0, -2.7, 9.44]
         new_node = model_part.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2])
         self.assertEqual(model_part.NumberOfNodes(), 1)
+        self.assertEqual(model_part.NumberOfLocalNodes(), 1)
+        self.assertEqual(model_part.NumberOfGhostNodes(), 0)
 
         self.assertEqual(new_node.Id(), node_id)
         for i in range(3):
@@ -125,6 +129,8 @@ class CoSimIO_ModelPart(unittest.TestCase):
         model_part.CreateNewNode(node_id+1, node_coords[0], node_coords[1], node_coords[2])
         model_part.CreateNewNode(node_id+2, node_coords[0], node_coords[1], node_coords[2])
         self.assertEqual(model_part.NumberOfNodes(), 3)
+        self.assertEqual(model_part.NumberOfLocalNodes(), 3)
+        self.assertEqual(model_part.NumberOfGhostNodes(), 0)
 
         self.assertEqual(new_node.Id(), node_id)
         for i in range(3):
@@ -161,12 +167,49 @@ class CoSimIO_ModelPart(unittest.TestCase):
             with self.assertRaisesRegex(Exception, 'Error: Node with Id 692 does not exist!'):
                 model_part.GetNode(node_id+1)
 
+    def test_model_part_ghost_nodes(self):
+        model_part = CoSimIO.ModelPart("for_test")
+
+        for i in range(5):
+            model_part.CreateNewNode(i+1, 0,0,0)
+
+        partition_index = 63
+        partition_index_2 = 18
+
+        self.assertEqual(model_part.NumberOfNodes(), 5)
+        self.assertEqual(model_part.NumberOfLocalNodes(), 5)
+        self.assertEqual(model_part.NumberOfGhostNodes(), 0)
+
+        with self.subTest("already_existing_regular_node"):
+            with self.assertRaisesRegex(Exception, 'Error: The Node with Id 2 exists already!'):
+                model_part.CreateNewGhostNode(2, 0,0,0, partition_index)
+
+        with self.subTest("create_ghost_nodes"):
+            for i in range(5,8):
+                model_part.CreateNewGhostNode(i+1, 0,0,0, partition_index)
+
+            self.assertEqual(model_part.NumberOfNodes(), 8)
+            self.assertEqual(model_part.NumberOfLocalNodes(), 5)
+            self.assertEqual(model_part.NumberOfGhostNodes(), 3)
+
+            model_part.CreateNewGhostNode(9, 0,0,0, partition_index_2)
+
+            self.assertEqual(model_part.NumberOfNodes(), 9)
+            self.assertEqual(model_part.NumberOfLocalNodes(), 5)
+            self.assertEqual(model_part.NumberOfGhostNodes(), 4)
+
+        for idx, node in enumerate(model_part.LocalNodes):
+            self.assertEqual(node.Id(), idx+1)
+
+        for idx, node in enumerate(model_part.GhostNodes):
+            self.assertEqual(node.Id(), idx+6)
+
     def test_model_part_create_new_element(self):
         model_part = CoSimIO.ModelPart("for_test")
 
         node_id = 691
         node_coords = [1.0, -2.7, 9.44]
-        new_node = model_part.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2])
+        model_part.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2])
         self.assertEqual(model_part.NumberOfNodes(), 1)
 
         elem_id = 47
@@ -180,6 +223,29 @@ class CoSimIO_ModelPart(unittest.TestCase):
 
         for node in new_elem.Nodes:
             self.assertEqual(node.Id(), node_id)
+            for i in range(3):
+                self.assertAlmostEqual(node.Coordinates()[i], node_coords[i], msg=str(i))
+
+    def model_part_create_new_element_with_ghost_node(self):
+        model_part = CoSimIO.ModelPart("for_test")
+
+        node_id = 691
+        node_coords = [1.0, -2.7, 9.44]
+        model_part.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2])
+        model_part.CreateNewGhostNode(node_id+1, node_coords[0], node_coords[1], node_coords[2], 15);
+        self.assertEqual(model_part.NumberOfNodes(), 2)
+
+        elem_id = 47
+        elem_type = CoSimIO.ElementType.Line2D2
+
+        new_elem = model_part.CreateNewElement(elem_id, elem_type, [node_id, node_id+1])
+
+        self.assertEqual(new_elem.Id(), elem_id)
+        self.assertEqual(new_elem.Type(), elem_type)
+        self.assertEqual(new_elem.NumberOfNodes(), 2)
+
+        for n_id, node in enumerate(new_elem.Nodes):
+            self.assertEqual(node.Id(), node_id+n_id)
             for i in range(3):
                 self.assertAlmostEqual(node.Coordinates()[i], node_coords[i], msg=str(i))
 
