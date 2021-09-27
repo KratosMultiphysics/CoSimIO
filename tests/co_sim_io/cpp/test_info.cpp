@@ -190,7 +190,7 @@ TEST_CASE("info_non_existing_key")
 
     CHECK_UNARY_FALSE(info.Has("identifier"));
 
-    CHECK_THROWS_WITH(info.Get<int>("identifier"), "Error: Trying to get \"identifier\" which does not exist!\n");
+    CHECK_THROWS_WITH(info.Get<int>("identifier"), "Error: Trying to get \"identifier\" which does not exist!\nCurrently available:\nCoSimIO-Info; containing 0 entries\n\n");
 }
 
 TEST_CASE("info_wrong_type")
