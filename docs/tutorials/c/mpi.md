@@ -29,7 +29,7 @@ One can use [build_c.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/mast
 $ bash scripts/build_c.sh
 ```
 
-The shared library `co_sim_io_c_mpi` will be installed in the `bin/` folder (note that `co_sim_io_c_mpi` already links against `co_sim_io_c` and `co_sim_io_mpi` (which in turn links against `co_sim_io` and MPI)). After building and linking it to your project, you may use the interface defined in `co_sim_io_c_mpi.h`:
+The shared library `co_sim_io_c_mpi` will be installed in the `bin/` folder (note that `co_sim_io_c_mpi` already links against `co_sim_io_c` and `co_sim_io_mpi` (which in turn links against `co_sim_io` and MPI)). After building and linking it to your project, you may use the interface defined in `co_sim_io_c_mpi.h` (which already includes `co_sim_io_c.h`):
 
 ```c++
 // CoSimulation includes
