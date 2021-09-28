@@ -29,7 +29,7 @@ One can use [build_cpp.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/ma
 $ bash scripts/build_cpp.sh
 ```
 
-The shared library `co_sim_io_mpi` will be installed in the `bin/` folder (note that `co_sim_io_mpi` already links against `co_sim_io` and MPI). After building and linking it to your project, you may use the interface defined in `co_sim_io_mpi.hpp`:
+The shared library `co_sim_io_mpi` will be installed in the `bin/` folder (note that `co_sim_io_mpi` already links against `co_sim_io` and MPI). After building and linking it to your project, you may use the interface defined in `co_sim_io_mpi.hpp` (which already includes `co_sim_io.hpp`):
 
 ```c++
 // CoSimulation includes
