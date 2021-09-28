@@ -11,6 +11,8 @@
   - [Hello](#hello)
   - [Connect](#connect)
   - [Disconnect](#disconnect)
+  - [ImportInfo](#importinfo)
+  - [ExportInfo](#exportinfo)
   - [ImportData](#importdata)
   - [ExportData](#exportdata)
   - [ImportMesh](#importmesh)
@@ -141,6 +143,88 @@ info = CoSimIO.Disconnect(
 * * *
 
 
+### ImportInfo
+This function is used to import (receive) an object of `CoSimIO::Info` from the connection partner. The connection partner has to call `ExportInfo`. It can be used to exchange metadata between the partners.
+
+#### Requirements
+Can only be called with an active connection (i.e. after calling `Connect` and before calling `Disconnect`).
+
+#### Input
+- Instance of `CoSimIO::Info` which contains the following:
+
+    | name | type | required | default| description |
+    |-------------------|--------|---|---|---|
+    | connection_name  | string | x | - | output of calling `Connect` |
+    | identifier       | string | x | - | identifier of the data |
+
+#### Returns
+Instance of `CoSimIO::Info` which contains whatever information was specified by the connection partner.
+
+#### Syntax C++
+~~~c++
+CoSimIO::Info info = CoSimIO::ImportInfo(
+    const CoSimIO::Info& I_Info);
+~~~
+
+#### Syntax C
+~~~c
+CoSimIO_Info info = CoSimIO_ImportInfo(
+    const CoSimIO_Info I_Info);
+~~~
+
+
+#### Syntax Python
+~~~py
+info = CoSimIO.ImportInfo(
+    CoSimIO.Info I_Info)
+~~~
+
+* * *
+
+
+### ExportInfo
+This function is used to export (send) data to the connection partner. The connection partner has to call `ImportInfo`. It can be used to exchange metadata between the partners.
+
+#### Requirements
+Can only be called with an active connection (i.e. after calling `Connect` and before calling `Disconnect`).
+
+#### Input
+- Instance of `CoSimIO::Info` which contains the following:
+
+    | name | type | required | default| description |
+    |-------------------|--------|---|---|---|
+    | connection_name  | string | x | - | output of calling `Connect` |
+    | identifier       | string | x | - | identifier of the data |
+    and other information, as necessary
+
+#### Returns
+Instance of `CoSimIO::Info` which contains the following:
+
+| name | type | description |
+|---|---|---|
+
+#### Syntax C++
+~~~c++
+CoSimIO::Info info = CoSimIO::ExportInfo(
+    const CoSimIO::Info& I_Info);
+~~~
+
+#### Syntax C
+~~~c
+CoSimIO_Info info = CoSimIO_ExportInfo(
+    const CoSimIO_Info I_Info);
+~~~
+
+
+#### Syntax Python
+~~~py
+info = CoSimIO.ExportInfo(
+    CoSimIO.Info I_Info)
+~~~
+
+* * *
+
+
 ### ImportData
 This function is used to import (receive) data from the connection partner. The connection partner has to call `ExportData`.
 
@@ -160,6 +244,7 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
 Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
+|---|---|---|
 
 #### Syntax C++
 ~~~c++
@@ -206,6 +291,7 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
 Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
+|---|---|---|
 
 #### Syntax C++
 ~~~c++
@@ -252,6 +338,7 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
 Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
+|---|---|---|
 
 #### Syntax C++
 ~~~c++
@@ -301,6 +388,7 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
 Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
+|---|---|---|
 
 #### Syntax C++
 ~~~c++
@@ -348,6 +436,7 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
 Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
+|---|---|---|
 
 #### Syntax C++
 ~~~c++
@@ -402,6 +491,7 @@ The following functions can be registered:
 Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
+|---|---|---|
 
 #### Syntax C++
 ~~~c++
