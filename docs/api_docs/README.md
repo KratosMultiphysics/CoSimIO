@@ -10,6 +10,7 @@
 - [Public interface of CoSimIO](#public-interface-of-cosimio)
   - [Hello](#hello)
   - [Connect](#connect)
+  - [ConnectMPI](#connectmpi)
   - [Disconnect](#disconnect)
   - [ImportInfo](#importinfo)
   - [ExportInfo](#exportinfo)
@@ -96,6 +97,51 @@ CoSimIO_Info info = CoSimIO_Connect(
 ~~~py
 info = CoSimIO.Connect(
     CoSimIO.Info I_Settings)
+~~~
+
+* * *
+
+
+### ConnectMPI
+This function is used to establish a connection between two partners in mpi-parallel simulations. It is the first function that must be called, other calls (except `Hello`) require an active connection. Note that it should be used instead of `Connect`, not additionally.
+
+#### Requirements
+Cannot be called when the same connection was established already.
+
+#### Input
+As this function establishes a connection, it also creates the _Communication_ object. Hence it uses the same input as the _Communication_. See [here](../communication.md) for the input.
+- Instance of `CoSimIO::Info` which contains the following:
+
+    | name | type | required | default| description |
+    |-------------------|--------|---|---|---|
+    | Settings required by the _Communication_ |
+- `MPI_Comm` MPI-communicator (which for maximum performance only contains the ranks that have part of the interface).
+
+#### Returns
+Instance of `CoSimIO::Info` which contains the following:
+
+| name | type | description |
+|---|---|---|
+| connection_name | string | name of connection, necessary for further calls to _CoSimIO_ |
+| connection_status | int | status of the connection, can be used to check if connecting was successful |
+
+#### Syntax C++
+~~~c++
+CoSimIO::Info info = CoSimIO::ConnectMPI(
+    const CoSimIO::Info& I_Settings,
+    MPI_Comm ThisMPIComm);
+~~~
+
+#### Syntax C
+~~~c
+CoSimIO_Info info = CoSimIO_ConnectMPI(
+    const CoSimIO_Info I_Settings,
+    MPI_Comm ThisMPIComm);
+~~~
+
+
+#### Syntax Python
+~~~py
 ~~~
 
 * * *
