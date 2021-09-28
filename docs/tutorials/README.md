@@ -29,6 +29,8 @@ The first three tutorials show the basics:
 2. Basic data exchange with Kratos [link](cpp/basic_data_exchange_with_kratos.md)
 3. Mesh exchange with Kratos [link](cpp/mesh_exchange_with_kratos.md)
 
+Optional: Using the CoSimIO with MPI [link](cpp/mpi.md)
+
 After the basics are done, one can do:
 
 - Mapping with Kratos (without CoSimulation) [link](cpp/mapping.md)
