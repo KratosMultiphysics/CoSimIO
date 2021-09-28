@@ -37,7 +37,7 @@ The C++ version of the CoSimIO is implemented in [co_sim_io.hpp](https://github.
 $ bash scripts/build_cpp.sh
 ```
 
-The shared library will be installed in the `bin/` folder. After building and linking it to your project, you may use the interface defined in `co_sim_io.hpp`:
+The shared library `co_sim_io` will be installed in the `bin/` folder. After building and linking it to your project, you may use the interface defined in `co_sim_io.hpp`:
 
 ```c++
 // CoSimulation includes
@@ -55,6 +55,11 @@ Example:
 export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/path/to/CoSimIO/co_sim_io
 ```
 
+With CMake this can be achieved with the following:
+```
+include_directories(path/to/co_sim_io)
+target_link_libraries(my_executable co_sim_io)
+```
 
 ## Hello CosimIO
 After integrating the _CoSimIO_ in your code now it's time to say hello
