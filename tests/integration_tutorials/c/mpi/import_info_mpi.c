@@ -40,11 +40,13 @@
         return 1;                                                    \
     }
 
-int main()
+int main(int argc, char** argv)
 {
     /* declaring variables */
     CoSimIO_Info connection_settings, connect_info, export_info, imported_info, disconnect_settings, disconnect_info;
     const char* connection_name;
+
+    MPI_Init(&argc, &argv); /* needs to be done before calling CoSimIO_ConnectMPI */
 
     /* Creating the connection settings */
     connection_settings=CoSimIO_CreateInfo();
@@ -54,7 +56,7 @@ int main()
     CoSimIO_Info_SetString(connection_settings, "version", "1.25");
 
     /* Connecting using the connection settings */
-    connect_info = CoSimIO_Connect(connection_settings);
+    connect_info = CoSimIO_ConnectMPI(connection_settings, MPI_COMM_WORLD);
     COSIMIO_CHECK_INT_EQUAL(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
     connection_name = CoSimIO_Info_GetString(connect_info, "connection_name");
 
@@ -87,6 +89,8 @@ int main()
     CoSimIO_FreeInfo(disconnect_settings);
     CoSimIO_FreeInfo(connect_info); /* Don't forget to free the connect_info */
     CoSimIO_FreeInfo(disconnect_info);
+
+    MPI_Finalize();
 
     return 0;
 }

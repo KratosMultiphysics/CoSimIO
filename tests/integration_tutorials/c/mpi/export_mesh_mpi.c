@@ -22,11 +22,11 @@
         return 1;                                                \
     }
 
-int main()
+int main(int argc, char** argv)
 {
     /* declaring variables */
     int i,j;
-    CoSimIO_Info connect_info, export_settings, export_info, disconnect_settings, disconnect_info;
+    CoSimIO_Info connection_settings, connect_info, export_settings, export_info, disconnect_settings, disconnect_info;
     const char* connection_name;
     CoSimIO_ModelPart model_part;
     int number_of_nodes=6;
@@ -50,15 +50,17 @@ int main()
     const int num_nodes_per_element = 3;
     int connectivity[3];
 
+    MPI_Init(&argc, &argv); /* needs to be done before calling CoSimIO_ConnectMPI */
+
     /* Creating the connection settings */
-    CoSimIO_Info connection_settings=CoSimIO_CreateInfo();
+    connection_settings=CoSimIO_CreateInfo();
     CoSimIO_Info_SetString(connection_settings, "my_name", "c_export_mesh");
     CoSimIO_Info_SetString(connection_settings, "connect_to", "c_import_mesh");
     CoSimIO_Info_SetInt(connection_settings, "echo_level", 1);
     CoSimIO_Info_SetString(connection_settings, "version", "1.25");
 
     /* Connecting using the connection settings */
-    connect_info = CoSimIO_Connect(connection_settings);
+    connect_info = CoSimIO_ConnectMPI(connection_settings, MPI_COMM_WORLD);
     COSIMIO_CHECK_EQUAL(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
     connection_name = CoSimIO_Info_GetString(connect_info, "connection_name");
 
@@ -110,6 +112,8 @@ int main()
     CoSimIO_FreeInfo(connect_info); /* Don't forget to free the connect_info */
     CoSimIO_FreeInfo(disconnect_info);
     CoSimIO_FreeModelPart(model_part);
+
+    MPI_Finalize();
 
     return 0;
 }
