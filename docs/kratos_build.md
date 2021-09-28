@@ -25,4 +25,3 @@ For mpi-distributed coupled simulations it is necessary to compile Kratos with M
 See also [here](https://github.com/KratosMultiphysics/Kratos/blob/master/INSTALL.md#parallelism)
 
 For more information about the Kratos build requirements, options please check the [Kratos install guide](https://github.com/KratosMultiphysics/Kratos/blob/master/INSTALL.md).
-
