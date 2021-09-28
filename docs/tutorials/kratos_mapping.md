@@ -112,7 +112,7 @@ mapper_settings = KM.Parameters("""{
 }""")
 
 # creating the mapper using the mapper factory
-mapper = KratosMapping.MapperFactory.CreateMapper(
+mapper = KM.MapperFactory.CreateMapper(
     model_part_origin,
     model_part_destination,
     mapper_settings)

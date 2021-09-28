@@ -41,7 +41,7 @@ One may use the [build_python.sh](https://github.com/KratosMultiphysics/CoSimIO/
 ```
 sh scripts/build_python.sh
 ```
-This will compile the binaries in the build folder and installs them into the bin subfolder of _CoSimIO_. Check [here](../../build_options.md) for the available build options.
+This will compile the binaries install them into the `bin/` subfolder of _CoSimIO_. Check [here](../../build_options.md) for the available build options.
 
 Remember to add the binaries in the bin folder to your `PYTHONPATH`. For Linux this should look like the following:
 ```bash
