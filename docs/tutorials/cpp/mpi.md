@@ -53,7 +53,7 @@ Before going into the details of the interface, it is important to clarify that 
 ## Connecting
 Please check the [serial instructions](integration_co_sim_io.md#connecting-and-disconnecting) first.
 
-The first step to establish a connection to Kratos CoSimulation is to use the `ConnectMPI` method. Besides the settings, it takes an `MPI_Comm` communicator. This communicator should only have the ranks that contain the interface. It is also possible for it to contain all the ranks (e.g. `MPI_COMM_WORLD`) when some ranks are empty i.e. have no part of the coupling interface, but this is less efficient.
+For using the _CoSimIO_ in an mpi-parallel context, it is required to establish a connection with `ConnectMPI` instead of `Connect`. This is the first step to establish a connection to Kratos CoSimulation. Besides the settings, it takes an `MPI_Comm` communicator. This communicator should only have the ranks that contain the interface. It is also possible for it to contain all the ranks (e.g. `MPI_COMM_WORLD`) when some ranks are empty i.e. have no part of the coupling interface, but this is less efficient.
 ```c++
 // The connect must be called before any CosimIO method
 // mpi_comm_interface should only contain the ranks that have a part of the coupling interface
