@@ -7,7 +7,7 @@
 
   License:         BSD License, see license.txt
 
-  Main authors:    Pooyan Dadvand
+  Main authors:    Philipp Bucher (https://github.com/philbucher)
 */
 
 /* System includes */
@@ -15,8 +15,12 @@
 #include <math.h>
 #include <string.h>
 
+/* External includes */
+#include "mpi.h"
+
 /* CoSimulation includes */
-#include "c/co_sim_io_c.h"
+#include "c/co_sim_io_c_mpi.h"
+
 
 #define COSIMIO_CHECK_INT_EQUAL(a, b)                                \
     if (a != b) {                                                    \
