@@ -88,7 +88,6 @@ jobs:
         cmake --build "build" --target install -- -j2
 
     - name: Running tests
-      continue-on-error: true
       env:
         OMPI_MCA_rmaps_base_oversubscribe: 1 # Allow oversubscription for MPI (needed for OpenMPI >= 3.0)
       run: |
@@ -103,6 +102,7 @@ jobs:
         ctest -T memcheck --output-on-failure
 
     - uses: actions/upload-artifact@v2
+      if: failure()
       with:
         name: "CTest Log Ubuntu C++ & C (${{ matrix.compiler }}-${{ matrix.mpi }})"
         path: ${{ github.workspace }}/build/Testing/
