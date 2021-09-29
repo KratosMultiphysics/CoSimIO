@@ -38,6 +38,7 @@
 }
 {
    Memcheck:Cond
+   ...
    fun:hwloc*
 }
 {
