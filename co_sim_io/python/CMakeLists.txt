@@ -26,7 +26,7 @@ if (CO_SIM_IO_ENABLE_MPI)
     install(TARGETS PyCoSimIOMPI DESTINATION ${CMAKE_SOURCE_DIR}/bin)
     file(WRITE ${CoSimIOMPIInitFile} "from PyCoSimIOMPI import *\n")
 
-    OPTION ( CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE "Building the interface to mpi4py MPI communicators" ON )
+    OPTION ( CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE "Building the interface to mpi4py MPI communicators" OFF )
     if (CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE)
         message("Building the interface to mpi4py MPI communicators")
         pybind11_add_module(PyCoSimIOMPI_mpi4pyInterface mpi4py_interface.cpp)
