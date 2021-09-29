@@ -12,7 +12,7 @@
 
 import CoSimIO
 from CoSimIO.mpi import ConnectMPI
-from mpi4py import MPI # this initializes MPI (calls MPI_Init)
+from mpi4py import MPI # this initializes and finalizes MPI (calls MPI_Init and MPI_Finalize)
 from CoSimIO.mpi.mpi4pyInterface import mpi4pyCommHolder
 
 def cosimio_check_equal(a, b):

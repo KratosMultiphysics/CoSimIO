@@ -12,8 +12,7 @@
 
 import CoSimIO
 from CoSimIO.mpi import ConnectMPI
-from mpi4py import MPI # this initializes MPI (calls MPI_Init)
-from CoSimIO.mpi.mpi4pyInterface import mpi4pyCommHolder
+from mpi4py import MPI # this initializes and finalizes MPI (calls MPI_Init and MPI_Finalize)
 
 def cosimio_check_equal(a, b):
     assert a == b
@@ -25,7 +24,7 @@ settings.SetString("connect_to", "py_connect_disconnect_b")
 settings.SetInt("echo_level", 1)
 settings.SetString("version", "1.25")
 
-info = ConnectMPI(settings, mpi4pyCommHolder(MPI.COMM_WORLD))
+info = ConnectMPI(settings) # uses MPI_COMM_WORLD if no communicator is passed
 cosimio_check_equal(info.GetInt("connection_status"), CoSimIO.ConnectionStatus.Connected)
 connection_name = info.GetString("connection_name")
 
