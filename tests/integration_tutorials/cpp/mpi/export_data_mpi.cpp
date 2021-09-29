@@ -35,6 +35,7 @@ int main(int argc, char** argv)
     CoSimIO::Info settings;
     settings.Set("my_name", "cpp_export_solver");
     settings.Set("connect_to", "cpp_import_solver");
+    settings.Set("communication_format", "pipe");
     settings.Set("echo_level", 1);
     settings.Set("version", "1.25");
 
