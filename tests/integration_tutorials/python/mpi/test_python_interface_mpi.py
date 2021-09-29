@@ -15,6 +15,13 @@
 # python imports
 import unittest, os, sys
 import subprocess
+try:
+    import mpi4py
+    import CoSimIO.mpi.mpi4pyInterface
+    has_mpi4py = True
+except:
+    has_mpi4py = False
+
 
 class PythonMPIInterfaceTests(unittest.TestCase):
     CWD = os.path.dirname(os.path.realpath(__file__))
@@ -23,6 +30,9 @@ class PythonMPIInterfaceTests(unittest.TestCase):
         raise Exception("Python command could not be determined!")
 
     def setUp(self):
+        if not has_mpi4py:
+            self.skipTest("This test requires mpi4py")
+
         # removing leftover files
         for file_name in os.listdir(PythonMPIInterfaceTests.CWD):
             if "CoSimIO_" in file_name:
