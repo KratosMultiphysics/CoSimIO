@@ -8,7 +8,7 @@ pybind11_add_module(PyCoSimIO co_sim_io_python.cpp)
 target_link_libraries( PyCoSimIO PRIVATE co_sim_io )
 
 install(TARGETS PyCoSimIO DESTINATION ${CMAKE_SOURCE_DIR}/bin)
-file(WRITE "${CMAKE_SOURCE_DIR}/bin/CoSimIO/__init__.py" "from PyCoSimIO import *\n")
+file(WRITE "${CMAKE_SOURCE_DIR}/bin/CoSimIO/__init__.py" "from PyCoSimIO import *\nfrom PyCoSimIO import __version__\n")
 
 set(CoSimIOMPIInitFile "${CMAKE_SOURCE_DIR}/bin/CoSimIO/mpi/__init__.py")
 set(mpi4pyInterfaceInitFile "${CMAKE_SOURCE_DIR}/bin/CoSimIO/mpi/mpi4pyInterface/__init__.py")
