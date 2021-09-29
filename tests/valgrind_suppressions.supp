@@ -37,6 +37,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libhwloc*
 }
 {
+   <insert_a_suppression_name_here>
    Memcheck:Cond
    ...
    fun:hwloc*
