@@ -10,9 +10,6 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_MPI4PY_COMM_TO_PYTHON_INCLUDED
-#define CO_SIM_IO_MPI4PY_COMM_TO_PYTHON_INCLUDED
-
 // System includes
 #include <stdexcept>
 
@@ -24,14 +21,12 @@
 #include "mpi_comm_holder.hpp"
 
 
-namespace CoSimIO {
-
 namespace py = pybind11;
 
-class mpi4pyCommHolder : public MPICommHolder
+class mpi4pyCommHolder : public CoSimIO::MPICommHolder
 {
 public:
-    mpi4pyCommHolder(py::object PyComm) : MPICommHolder(GetMPICommFromPybindObject(PyComm)) {}
+    mpi4pyCommHolder(py::object PyComm) : CoSimIO::MPICommHolder(GetMPICommFromPybindObject(PyComm)) {}
 
 private:
     MPI_Comm GetMPICommFromPybindObject(py::object PyComm)
@@ -53,14 +48,11 @@ private:
     }
 };
 
-
-void AddMPI4PyInterface(pybind11::module& m)
+PYBIND11_MODULE(PyCoSimIOMPI_mpi4pyInterface, m)
 {
-    py::class_<mpi4pyCommHolder, std::shared_ptr<mpi4pyCommHolder>, MPICommHolder>(m,"mpi4pyCommHolder")
+    namespace py = pybind11;
+
+    py::class_<mpi4pyCommHolder, std::shared_ptr<mpi4pyCommHolder>, CoSimIO::MPICommHolder>(m,"mpi4pyCommHolder")
         .def(py::init<py::object>())
         ;
 }
-
-} // namespace CoSimIO
-
-#endif // CO_SIM_IO_MPI4PY_COMM_TO_PYTHON_INCLUDED

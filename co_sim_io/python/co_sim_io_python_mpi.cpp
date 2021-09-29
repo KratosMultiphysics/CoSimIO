@@ -20,12 +20,7 @@
 #include "co_sim_io_mpi.hpp"
 #include "mpi_comm_holder.hpp"
 
-#ifdef CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE
-#include "mpi4py_interface.hpp"
-#endif
-
-
-PYBIND11_MODULE(CoSimIOMPI, m)
+PYBIND11_MODULE(PyCoSimIOMPI, m)
 {
     namespace py = pybind11;
 
@@ -38,8 +33,4 @@ PYBIND11_MODULE(CoSimIOMPI, m)
         });
 
     py::class_<CoSimIO::MPICommHolder, std::shared_ptr<CoSimIO::MPICommHolder>>(m,"MPICommHolder");
-
-#ifdef CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE
-    CoSimIO::AddMPI4PyInterface(m);
-#endif
 }
