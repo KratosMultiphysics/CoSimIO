@@ -319,18 +319,7 @@
    <insert_a_suppression_name_here>
    Memcheck:Leak
    match-leak-kinds: reachable
-   fun:_Znwm
-   fun:_ZN5Intel6OpenCL5Utils10ConfigFile8ReadFileERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERS2_
-   fun:_ZN5Intel6OpenCL5Utils10ConfigFileC1ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_S8_S8_
-   fun:_ZN5Intel6OpenCL9Framework14FrameworkProxy10InitializeEv
-   fun:_ZN5Intel6OpenCL9Framework14FrameworkProxy8InstanceEv
-   fun:clGetPlatformIDs
-   obj:*
-   obj:*
-   obj:*
-   fun:__pthread_once_slow
-   obj:*
-   obj:*
+   fun:*OpenCL*
 }
 {
    <insert_a_suppression_name_here>
