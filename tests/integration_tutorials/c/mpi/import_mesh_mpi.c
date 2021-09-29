@@ -10,8 +10,11 @@
   Main authors:    Philipp Bucher (https://github.com/philbucher)
 */
 
+/* External includes */
+#include "mpi.h"
+
 /* CoSimulation includes */
-#include "c/co_sim_io_c.h"
+#include "c/co_sim_io_c_mpi.h"
 
 #define COSIMIO_CHECK_EQUAL_INT(a, b)                            \
     if (a != b) {                                                \
@@ -25,7 +28,7 @@
         return 1;                                                \
     }
 
-int main()
+int main(int argc, char** argv)
 {
     /* declaring variables */
     int i, j;
@@ -53,6 +56,8 @@ int main()
 
     int expected_number_of_elements = 4;
 
+    MPI_Init(&argc, &argv); /* needs to be done before calling CoSimIO_ConnectMPI */
+
     /* Creating the connection settings */
     connection_settings=CoSimIO_CreateInfo();
     CoSimIO_Info_SetString(connection_settings, "my_name", "c_import_mesh");
@@ -61,7 +66,7 @@ int main()
     CoSimIO_Info_SetString(connection_settings, "version", "1.25");
 
     /* Connecting using the connection settings */
-    connect_info = CoSimIO_Connect(connection_settings);
+    connect_info = CoSimIO_ConnectMPI(connection_settings, MPI_COMM_WORLD);
     COSIMIO_CHECK_EQUAL_INT(CoSimIO_Info_GetInt(connect_info, "connection_status"), CoSimIO_Connected);
     connection_name = CoSimIO_Info_GetString(connect_info, "connection_name");
 
@@ -116,6 +121,8 @@ int main()
     CoSimIO_FreeInfo(connect_info); /* Don't forget to free the connect_info */
     CoSimIO_FreeInfo(disconnect_info);
     CoSimIO_FreeModelPart(model_part);
+
+    MPI_Finalize();
 
     return 0;
 }

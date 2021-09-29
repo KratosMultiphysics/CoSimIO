@@ -22,12 +22,12 @@ This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool u
 
 ## What you need
 - Downloading the _CosimIO_ from the repository:
-
-```bash
-git clone https://github.com/KratosMultiphysics/CoSimIO.git
-```
+  ```bash
+  git clone https://github.com/KratosMultiphysics/CoSimIO.git
+  ```
 
 - A C++11 compatible compiler. This includes most of the major CPP compilers in Windows, Linux, and Mac. You may find a detailed list of C++11 compatible compilers [here](https://en.cppreference.com/w/cpp/compiler_support#cpp11)
+
 - [CMake](https://cmake.org/)
 
 ## Building the CoSimIO
@@ -37,7 +37,7 @@ The C++ version of the CoSimIO is implemented in [co_sim_io.hpp](https://github.
 $ bash scripts/build_cpp.sh
 ```
 
-The shared library will be installed in the `bin/` folder. After building and linking it to your project, you may use the interface defined in `co_sim_io.hpp`:
+The shared library `co_sim_io` will be installed in the `bin/` folder. After building and linking it to your project, you may use the interface defined in `co_sim_io.hpp`:
 
 ```c++
 // CoSimulation includes
@@ -55,6 +55,11 @@ Example:
 export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/path/to/CoSimIO/co_sim_io
 ```
 
+With CMake this can be achieved with the following:
+```
+include_directories(path/to/co_sim_io)
+target_link_libraries(my_executable co_sim_io)
+```
 
 ## Hello CosimIO
 After integrating the _CoSimIO_ in your code now it's time to say hello
@@ -69,7 +74,7 @@ Please note that this method like other methods in _CoSimIO_ returns a `CoSimIO:
 std::cout << info << std::endl;
 ```
 
-Info class also provides get method for retriving a certain value knowing its type:
+The `Info` class also provides the `Get` method for retrieving certain values knowing their type:
 
 ```c++
 int major_version = info.Get<int>("major_version");
@@ -83,7 +88,7 @@ This example can be found in [integration_tutorials/cpp/hello.cpp](https://githu
 ## Connecting and Disconnecting
 The first step to establish a connection to Kratos CoSimulation is to use the `Connect` method:
 ```c++
-// The connect must be called before any CosimIO method called
+// The connect must be called before any CosimIO method
 auto info = CoSimIO::Connect(settings);
 ```
 
@@ -91,7 +96,7 @@ First of all, you may notice that `Connect` method takes a `CoSimIO::Info` as it
 
 ```c++
 CoSimIO::Info settings;
-settings.Set("my_name", "cpp_connect_disconnect_a"); // my name
+settings.Set("my_name", "cpp_connect_disconnect_a");    // my name
 settings.Set("connect_to", "cpp_connect_disconnect_b"); // to whom I want to connect to
 settings.Set("echo_level", 1);
 settings.Set("version", "1.25");
@@ -106,7 +111,7 @@ This method returns a `Info` object containing information about the connection 
 ```c++
 std::string connection_name = info.Get<std::string>("connection_name");
 ```
-Similar things work for `Disconnect` Method.
+Similar things work for the `Disconnect` method.
 Now putting together everything:
 
 ```c++
@@ -116,7 +121,7 @@ Now putting together everything:
 int main()
 {
     CoSimIO::Info settings;
-    settings.Set("my_name", "cpp_connect_disconnect_a"); // my name
+    settings.Set("my_name", "cpp_connect_disconnect_a");    // my name
     settings.Set("connect_to", "cpp_connect_disconnect_b"); // to whom I want to connect to
     settings.Set("echo_level", 1);
     settings.Set("version", "1.25");

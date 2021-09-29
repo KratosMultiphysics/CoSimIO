@@ -51,7 +51,7 @@ int main()
     info.Set("connection_name", connection_name);
     info = CoSimIO::ExportMesh(info, model_part);
 
-    // receive the same data from Kratos
+    // receive the same mesh from Kratos
     CoSimIO::ModelPart model_part_received("my_mesh_2");
     info.Clear();
     info.Set("identifier", "mesh_exchange_1");

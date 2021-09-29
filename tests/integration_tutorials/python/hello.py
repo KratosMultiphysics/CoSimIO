@@ -12,8 +12,8 @@
 
 import CoSimIO
 
-def cosimio_check_equal(a, b):
-    assert a is b
+def cosimio_check_greater_equal(a, b):
+    assert a >= b
 
 info = CoSimIO.Hello()
 
@@ -22,7 +22,7 @@ major_version = info.GetInt("major_version")
 minor_version = info.GetInt("minor_version")
 patch_version = info.GetString("patch_version")
 
-cosimio_check_equal(major_version,2)
-cosimio_check_equal(minor_version,0)
+cosimio_check_greater_equal(major_version,2)
+cosimio_check_greater_equal(minor_version,0)
 
 print("CoSimIO version", str(major_version)+"."+str(minor_version)+"."+patch_version)

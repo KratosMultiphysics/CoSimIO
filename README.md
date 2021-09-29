@@ -43,8 +43,7 @@ The C interface is defined in [co_sim_io_c.h](co_sim_io/c/co_sim_io_c.h). In add
 The Python interface is defined in [_CoSimIO_ python module](co_sim_io/python/co_sim_io_python.cpp). The [pybind library](https://github.com/pybind/pybind11) is used for the Python exposure of the C++ interface.
 
 ## Parallelism
-Currently the _CoSimIO_ runs purely sequential. In the future capabilities for distributed MPI simulations are planned to be implemented.
-Shared memory parallelism is currently not planned but might be added at a later stage.
+The _CoSimIO_ supports pure sequential and mpi-parallel executions. Shared memory parallelism is currently not planned but might be added at a later stage.
 
 ## Memory Management
 Coupling requires frequent exchange of data. Therefore the _CoSimIO_ uses the memory provided by the including solvers/software-tools directly, without copying it to an auxiliar data structure.
