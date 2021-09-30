@@ -41,9 +41,17 @@ One may use the [build_python.sh](https://github.com/KratosMultiphysics/CoSimIO/
 ```
 sh scripts/build_python.sh
 ```
-This will compile the binaries install them into the `bin/` subfolder of _CoSimIO_. Check [here](../../build_options.md) for the available build options.
+This will compile the binaries and install them into the `bin/` subfolder of _CoSimIO_, together with the CoSimIO Python module. Check [here](../../build_options.md) for the available build options.
 
-Remember to add the binaries in the bin folder to your `PYTHONPATH`. For Linux this should look like the following:
+The created folder structure should look like this:
+```
+| - bin
+  | - PyCoSimIO.cpython-35m-x86_64-linux-gnu.so # (Linux version)
+    - CoSimIO
+    | - __init__.py
+```
+
+Remember to add the `/bin` folder to your `PYTHONPATH`. For Linux this should look like the following:
 ```bash
 export PYTHONPATH=$PYTHONPATH:/path/to/CoSimIO/bin
 ```
@@ -58,7 +66,7 @@ see also the corresponding [pybind documentation](https://pybind11.readthedocs.i
 
 If Python cannot find the _CoSimIO_ then check if the version of Python used for the compilation is the same as the version of Python used. E.g. when compiling _CoSimIO_ with Python 3.6 it is not possible to import it when using Python 3.8. Here Python issues a `ModuleNotFoundError`.
 This can easily be checked with the file extension of the compiled _CoSimIO_ module.
-Example: When using Python 3.5 the name of the compiled module will be sth like `CoSimIO.cp35-win_amd64.pyd` (Windows), `CoSimIO.cpython-35m-x86_64-linux-gnu.so` (Linux) or `CoSimIO.cpython-35m-darwin.so` (MacOS).
+Example: When using Python 3.5 the name of the compiled module will be sth like `PyCoSimIO.cp35-win_amd64.pyd` (Windows), `PyCoSimIO.cpython-35m-x86_64-linux-gnu.so` (Linux) or `PyCoSimIO.cpython-35m-darwin.so` (MacOS).
 
 
 ## Hello CosimIO

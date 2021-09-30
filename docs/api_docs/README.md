@@ -54,7 +54,6 @@ CoSimIO::Info info = CoSimIO::Hello();
 CoSimIO_Info = CoSimIO_Hello();
 ~~~
 
-
 #### Syntax Python
 ~~~py
 info = CoSimIO.Hello()
@@ -91,7 +90,6 @@ CoSimIO::Info info = CoSimIO::Connect(
 CoSimIO_Info info = CoSimIO_Connect(
     const CoSimIO_Info I_Settings);
 ~~~
-
 
 #### Syntax Python
 ~~~py
@@ -139,9 +137,19 @@ CoSimIO_Info info = CoSimIO_ConnectMPI(
     MPI_Comm ThisMPIComm);
 ~~~
 
-
 #### Syntax Python
 ~~~py
+# convenience function that internally uses MPI_COMM_WORLD
+from CoSimIO.mpi import ConnectMPI
+info = ConnectMPI(
+    CoSimIO.Info I_Settings)
+
+# passing custom MPI_Comm using mpi4py
+from mpi4py import MPI
+from CoSimIO.mpi.mpi4pyInterface import mpi4pyCommHolder
+info = CoSimIO.mpi.ConnectMPI(
+    CoSimIO.Info I_Settings,
+    mpi4pyCommHolder(MPI.COMM_WORLD))
 ~~~
 
 * * *
@@ -178,7 +186,6 @@ CoSimIO::Info info = CoSimIO::Disconnect(
 CoSimIO_Info info = CoSimIO_Disconnect(
     const CoSimIO_Info I_Info);
 ~~~
-
 
 #### Syntax Python
 ~~~py
@@ -217,7 +224,6 @@ CoSimIO::Info info = CoSimIO::ImportInfo(
 CoSimIO_Info info = CoSimIO_ImportInfo(
     const CoSimIO_Info I_Info);
 ~~~
-
 
 #### Syntax Python
 ~~~py
@@ -260,7 +266,6 @@ CoSimIO::Info info = CoSimIO::ExportInfo(
 CoSimIO_Info info = CoSimIO_ExportInfo(
     const CoSimIO_Info I_Info);
 ~~~
-
 
 #### Syntax Python
 ~~~py
@@ -306,7 +311,6 @@ CoSimIO_Info info = CoSimIO_ImportData(
     int* O_Size,
     double** O_Data);
 ~~~
-
 
 #### Syntax Python
 ~~~py
@@ -354,7 +358,6 @@ CoSimIO_Info info = CoSimIO_ExportData(
     const double* I_Data);
 ~~~
 
-
 #### Syntax Python
 ~~~py
 info = CoSimIO.ExportData(
@@ -399,7 +402,6 @@ CoSimIO_Info info = CoSimIO_ImportMesh(
     const CoSimIO_Info I_Info,
     CoSimIO_ModelPart O_ModelPart);
 ~~~
-
 
 #### Syntax Python
 ~~~py
@@ -450,7 +452,6 @@ CoSimIO_Info info = CoSimIO_ExportMesh(
     const CoSimIO_ModelPart I_ModelPart);
 ~~~
 
-
 #### Syntax Python
 ~~~py
 info = CoSimIO.ExportMesh(
@@ -495,7 +496,6 @@ CoSimIO::Info info = CoSimIO::Run(
 CoSimIO_Info info = CoSimIO_Run(
     const CoSimIO_Info I_Info);
 ~~~
-
 
 #### Syntax Python
 ~~~py
@@ -552,7 +552,6 @@ CoSimIO_Info info = CoSimIO_Register(
     const CoSimIO_Info I_Info,
     CoSimIO_Info (*I_FunctionPointer)(const CoSimIO_Info I_Info));
 ~~~
-
 
 #### Syntax Python
 ~~~py

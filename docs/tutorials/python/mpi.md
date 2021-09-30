@@ -24,27 +24,26 @@ The _CoSimIO_ has to be built with MPI support in order to perform mpi-parallel 
 Set the CMake option `CO_SIM_IO_BUILD_MPI` to `ON` in order to compile the CoSimIO with MPI support.
 
 One can use [build_python.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_python.sh) for compiling it. Check [here](../../build_options.md) for the available build options.
+Additionally the interface for [mpi4py](https://pypi.org/project/mpi4py/) can be enabled with the CMake flag `CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE`. This allows to pass mpi4py communicators as explained [below](#connecting).
 
 ```bash
 $ bash scripts/build_python.sh
 ```
 
-The shared library `co_sim_io_mpi` will be installed in the `bin/` folder (note that `co_sim_io_mpi` already links against `co_sim_io` and MPI). After building and linking it to your project, you may use the interface defined in `co_sim_io_mpi.hpp`:
+This will compile the binaries and install them into the bin/ subfolder of CoSimIO, together with the CoSimIO Python module.
 
-```c++
-// CoSimulation includes
-#include "co_sim_io_mpi.hpp"
-
-int main()
-{
-    return 0;
-}
+The created folder structure should look like this:
 ```
-
-With CMake this can be achieved with the following:
-```
-include_directories(path/to/co_sim_io)
-target_link_libraries(my_executable co_sim_io_mpi)
+| - bin
+  | - PyCoSimIO.cpython-35m-x86_64-linux-gnu.so # (Linux version)
+  | - PyCoSimIOMPI.cpython-35m-x86_64-linux-gnu.so # (Linux version)
+  | - PyCoSimIOMPI_mpi4pyInterface.cpython-35m-x86_64-linux-gnu.so # (Linux version) # if enabled with "CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE"
+    - CoSimIO
+    | - __init__.py
+    | - mpi
+      | - __init__.py
+      | - mpi4pyInterface # if enabled with "CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE"
+        | - __init__.py
 ```
 
 ## Number of processes
@@ -53,11 +52,21 @@ Before going into the details of the interface, it is important to clarify that 
 ## Connecting
 Please check the [serial instructions](integration_co_sim_io.md#connecting-and-disconnecting) first.
 
-For using the _CoSimIO_ in an mpi-parallel context, it is required to establish a connection with `ConnectMPI` instead of `Connect`. This is the first step to establish a connection to Kratos CoSimulation. Besides the settings, it takes an `MPI_Comm` communicator. This communicator should only have the ranks that contain the interface. It is also possible for it to contain all the ranks (e.g. `MPI_COMM_WORLD`) when some ranks are empty i.e. have no part of the coupling interface, but this is less efficient.
-```c++
-// The connect must be called before any CosimIO method
-// mpi_comm_interface should only contain the ranks that have a part of the coupling interface
-auto info = CoSimIO::ConnectMPI(settings, mpi_comm_interface);
+For using the _CoSimIO_ in an mpi-parallel context, it is required to establish a connection with `ConnectMPI` instead of `Connect`. This is the first step to establish a connection to Kratos CoSimulation. As MPI does not have a native Python interface, one version of this function takes only the settings as input and internally uses `MPI_COMM_WORLD`.
+```py
+# The connect must be called before any CosimIO method
+from CoSimIO.mpi import ConnectMPI
+info = ConnectMPI(settings) # internally uses MPI_COMM_WORLD
+```
+
+If the inteface to mpi4py is enabled, then it is also possible to pass an mpi4py communicator to `ConnectMPI`:
+```py
+# The connect must be called before any CosimIO method
+from CoSimIO.mpi import ConnectMPI
+from CoSimIO.mpi.mpi4pyInterface import mpi4pyCommHolder
+from mpi4py import MPI
+
+info = ConnectMPI(settings, mpi4pyCommHolder(MPI.COMM_WORLD))
 ```
 
 Note that it is required to initialize MPI before calling `ConnectMPI`, e.g. with `MPI_Init`.

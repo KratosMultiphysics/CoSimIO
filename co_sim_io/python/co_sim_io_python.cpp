@@ -38,7 +38,7 @@ PYBIND11_DECLARE_HOLDER_TYPE(T, CoSimIO::intrusive_ptr<T>)
 #include "version_to_python.hpp"
 
 
-PYBIND11_MODULE(CoSimIO, m)
+PYBIND11_MODULE(PyCoSimIO, m)
 {
     namespace py = pybind11;
 
