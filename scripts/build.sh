@@ -11,7 +11,7 @@
 cmake -H"." -B"build" \
     -DCO_SIM_IO_BUILD_C=ON \
     -DCO_SIM_IO_BUILD_PYTHON=ON \
-    -DCO_SIM_IO_ENABLE_MPI=ON \
+    -DCO_SIM_IO_BUILD_MPI=ON \
     -DCMAKE_BUILD_TYPE=DEBUG \
     -DCO_SIM_IO_STRICT_COMPILER=ON
 cmake --build "build" --target install -- -j$(nproc)

@@ -21,7 +21,7 @@ This document describes the Python MPI interface of the CoSimIO for performing M
 Please check the [serial instructions](integration_co_sim_io.md#building-the-cosimio) first.
 
 The _CoSimIO_ has to be built with MPI support in order to perform mpi-parallel distributed coupled simulations. For this an MPI implementation (e.g OpenMPI or IntelMPI) is necessary.
-Set the CMake option `CO_SIM_IO_ENABLE_MPI` to `ON` in order to compile the CoSimIO with MPI support.
+Set the CMake option `CO_SIM_IO_BUILD_MPI` to `ON` in order to compile the CoSimIO with MPI support.
 
 One can use [build_python.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_python.sh) for compiling it. Check [here](../../build_options.md) for the available build options.
 
