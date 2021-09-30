@@ -51,6 +51,15 @@ if (CO_SIM_IO_ENABLE_MPI)
     include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 endif()
 
+# Set installation directory
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    # Setting the cache path prevents it to change in case someone 'make' after modifying this file and not reconfiguring
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}" CACHE PATH "Default Install path" FORCE)
+    message("-- Standard install dir ${CMAKE_INSTALL_PREFIX}")
+else(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    message("-- User defined install dir ${CMAKE_INSTALL_PREFIX}")
+endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+
 if(MSVC)
     # /Zc:__cplusplus: required such that "__cplusplus" is set to the correct value
     # see https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
@@ -107,7 +116,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(CMAKE_MACOSX_RPATH 0)
 endif()
 
-# clean the bin directory
+# clean the bin directory (only done if "CMAKE_INSTALL_PREFIX" is not specified)
 file(REMOVE_RECURSE bin)
 
 # Adding CoSimIO library
@@ -121,7 +130,7 @@ include(GenerateExportHeader)
 generate_export_header( co_sim_io EXPORT_MACRO_NAME CO_SIM_IO_API EXPORT_FILE_NAME
                         ${CMAKE_CURRENT_SOURCE_DIR}/co_sim_io/includes/co_sim_io_api.hpp )
 
-install(TARGETS co_sim_io DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+install(TARGETS co_sim_io DESTINATION bin)
 
 if (CO_SIM_IO_ENABLE_MPI)
     # Adding CoSimIO library
@@ -130,7 +139,7 @@ if (CO_SIM_IO_ENABLE_MPI)
 
     target_link_libraries(co_sim_io_mpi co_sim_io ${MPI_LIBRARIES})
 
-    install(TARGETS co_sim_io_mpi DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+    install(TARGETS co_sim_io_mpi DESTINATION bin)
 endif()
 
 target_include_directories(co_sim_io PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/co_sim_io)
