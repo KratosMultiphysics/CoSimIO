@@ -10,11 +10,13 @@ The CoSimIO uses [CMake](https://cmake.org/) as build system. The following opti
 | CO_SIM_IO_BUILD_C | OFF | Build the C-interface |
 | CO_SIM_IO_BUILD_PYTHON | OFF | Build the Python-interface |
 | CO_SIM_IO_STRICT_COMPILER | OFF | Enable more warnings in the compiler, useful for development. |
+| CMAKE_INSTALL_PREFIX | source directory of CoSimIO | Used to specify the install directory. |
 
 ---
 
 The configuration that is used is also printed when compiling, e.g.
-~~~
+
+~~~sh
 Building the CoSimIO with the following configuration:
     CMAKE_BUILD_TYPE:          DEBUG
     CO_SIM_IO_ENABLE_MPI:      ON
