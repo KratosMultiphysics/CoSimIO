@@ -7,4 +7,4 @@ pybind11_add_module(CoSimIO co_sim_io_python.cpp)
 
 target_link_libraries( CoSimIO PRIVATE co_sim_io )
 
-install(TARGETS CoSimIO DESTINATION bin)
+install(TARGETS CoSimIO DESTINATION ${CO_SIM_IO_INSTALL_DIRECTORY})
