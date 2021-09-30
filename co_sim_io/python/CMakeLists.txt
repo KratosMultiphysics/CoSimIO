@@ -8,17 +8,17 @@ pybind11_add_module(PyCoSimIO co_sim_io_python.cpp)
 target_link_libraries( PyCoSimIO PRIVATE co_sim_io )
 
 install(TARGETS PyCoSimIO DESTINATION bin)
-file(WRITE "bin/CoSimIO/__init__.py" "from PyCoSimIO import *\nfrom PyCoSimIO import __version__\n")
+file(WRITE "${CMAKE_INSTALL_PREFIX}/bin/CoSimIO/__init__.py" "from PyCoSimIO import *\nfrom PyCoSimIO import __version__\n")
 
-set(CoSimIOMPIInitFile "bin/CoSimIO/mpi/__init__.py")
-set(mpi4pyInterfaceInitFile "bin/CoSimIO/mpi/mpi4pyInterface/__init__.py")
+set(CoSimIOMPIInitFile "${CMAKE_INSTALL_PREFIX}/bin/CoSimIO/mpi/__init__.py")
+set(mpi4pyInterfaceInitFile "${CMAKE_INSTALL_PREFIX}/bin/CoSimIO/mpi/mpi4pyInterface/__init__.py")
 
 # dummy init files that give proper errors in case something related to MPI was not compiled
 # These files will be overwritten if the corresponding option is enabled, hence here we can write then unconditionally
-file(WRITE ${CoSimIOMPIInitFile} "raise Exception('CoSimIO was compiled without MPI support! (use \"CO_SIM_IO_ENABLE_MPI\" to enable it)')\n")
+file(WRITE ${CoSimIOMPIInitFile} "raise Exception('CoSimIO was compiled without MPI support! (use \"CO_SIM_IO_BUILD_MPI\" to enable it)')\n")
 file(WRITE ${mpi4pyInterfaceInitFile} "raise Exception('The mpi4py interface was not compiled! (use \"CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE\" to enable it)')\n")
 
-if (CO_SIM_IO_ENABLE_MPI)
+if (CO_SIM_IO_BUILD_MPI)
     pybind11_add_module(PyCoSimIOMPI co_sim_io_python_mpi.cpp)
 
     target_link_libraries( PyCoSimIOMPI PRIVATE co_sim_io co_sim_io_mpi )
