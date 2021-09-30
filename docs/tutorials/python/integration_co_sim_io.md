@@ -49,8 +49,6 @@ The created folder structure should look like this:
   | - PyCoSimIO.cpython-35m-x86_64-linux-gnu.so # (Linux version)
     - CoSimIO
     | - __init__.py
-
-
 ```
 
 Remember to add the `/bin` folder to your `PYTHONPATH`. For Linux this should look like the following:
