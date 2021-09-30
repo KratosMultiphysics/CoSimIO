@@ -14,7 +14,7 @@ target_link_libraries( co_sim_io_c co_sim_io )
 
 install(TARGETS co_sim_io_c DESTINATION bin)
 
-if (CO_SIM_IO_ENABLE_MPI)
+if (CO_SIM_IO_BUILD_MPI)
     add_library (co_sim_io_c_mpi SHARED co_sim_io_c_mpi.cpp)
 
     target_link_libraries(co_sim_io_c_mpi co_sim_io_c co_sim_io_mpi)

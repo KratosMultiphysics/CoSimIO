@@ -15,7 +15,7 @@ set_target_properties(co_sim_io_tests PROPERTIES
 
 doctest_discover_tests(co_sim_io_tests TEST_PREFIX "cpp_" WORKING_DIRECTORY $<TARGET_FILE_DIR:co_sim_io>)
 
-if (CO_SIM_IO_ENABLE_MPI)
+if (CO_SIM_IO_BUILD_MPI)
     file( GLOB CO_SIM_IO_MPI_TEST_FILES co_sim_io/cpp/mpi/*.cpp )
     add_executable ( co_sim_io_mpi_tests ${CO_SIM_IO_MPI_TEST_FILES} )
     target_link_libraries( co_sim_io_mpi_tests co_sim_io_mpi)
@@ -72,7 +72,7 @@ function(add_mpi_test test_name exe_1 exe_2)
     endforeach(num_processes)
 endfunction()
 
-if (CO_SIM_IO_ENABLE_MPI)
+if (CO_SIM_IO_BUILD_MPI)
     # helper script to run two executables with MPI
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run_mpi.sh mpiexec\ -np\ $3\ $1\ &\ mpiexec\ -np\ $3\ $2\ &\nwait\ %1\ &&\ wait\ %2)
 
@@ -139,7 +139,7 @@ if(CO_SIM_IO_BUILD_C)
     add_test(NAME import_export_data_c_test COMMAND bash run.sh $<TARGET_FILE:export_data_c_test> $<TARGET_FILE:import_data_c_test>)
     add_test(NAME import_export_mesh_c_test COMMAND bash run.sh $<TARGET_FILE:export_mesh_c_test> $<TARGET_FILE:import_mesh_c_test>)
 
-    if (CO_SIM_IO_ENABLE_MPI)
+    if (CO_SIM_IO_BUILD_MPI)
         function(add_c_mpi_test_executable TEST_SOURCE_FILE)
             get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
             string(REGEX REPLACE "[.]c" "_c_test" TEST_NAME ${TEST_FILENAME})
