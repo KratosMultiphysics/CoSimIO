@@ -37,6 +37,7 @@ The created folder structure should look like this:
 | - bin
   | - PyCoSimIO.cpython-35m-x86_64-linux-gnu.so # (Linux version)
   | - PyCoSimIOMPI.cpython-35m-x86_64-linux-gnu.so # (Linux version)
+  | - PyCoSimIOMPI_mpi4pyInterface.cpython-35m-x86_64-linux-gnu.so # (Linux version) # if enabled with "CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE"
     - CoSimIO
     | - __init__.py
     | - mpi
