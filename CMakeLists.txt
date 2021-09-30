@@ -26,14 +26,18 @@ OPTION ( CO_SIM_IO_BUILD_FORTRAN      "Building the CoSimIO for Fortran"        
 OPTION ( CO_SIM_IO_STRICT_COMPILER    "Compiler has more warnings"                OFF )
 OPTION ( CO_SIM_IO_BUILD_TESTING      "Build tests"                               ${BUILD_TESTING} )
 
-if (NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release)
+if(NOT DEFINED CO_SIM_IO_BUILD_TYPE)
+    if(CMAKE_BUILD_TYPE)
+        set(CO_SIM_IO_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+    else()
+        set(CO_SIM_IO_BUILD_TYPE Release)
+    endif()
 endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DCO_SIM_IO_DEBUG")
 
 message("Building the CoSimIO with the following configuration:")
-message("    CMAKE_BUILD_TYPE:          " ${CMAKE_BUILD_TYPE})
+message("    CO_SIM_IO_BUILD_TYPE:      " ${CO_SIM_IO_BUILD_TYPE})
 message("    CO_SIM_IO_ENABLE_MPI:      " ${CO_SIM_IO_ENABLE_MPI})
 message("    CO_SIM_IO_BUILD_TESTING:   " ${CO_SIM_IO_BUILD_TESTING})
 message("    CO_SIM_IO_BUILD_C:         " ${CO_SIM_IO_BUILD_C})

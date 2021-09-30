@@ -4,8 +4,8 @@ The CoSimIO uses [CMake](https://cmake.org/) as build system. The following opti
 
 | name | default| description |
 |---|---|---|
-| CMAKE_BUILD_TYPE | Release | Build type with which the _CoSimIO_ is built. Use `Release` for production and `Debug` to enable more runtime checks (at the cost of being slower).  |
-| CMAKE_INSTALL_PREFIX | source directory of CoSimIO | Used to specify the install directory. |
+| CO_SIM_IO_BUILD_TYPE | `CMAKE_BUILD_TYPE` (in case it is defined), otherwise `Release` | Build type with which the _CoSimIO_ is built. Use `Release` for production and `Debug` to enable more runtime checks (at the cost of being slower).  |
+| CMAKE_INSTALL_PREFIX | source directory of CoSimIO | Used to specify the install directory. Binaries will be installed in `${CMAKE_INSTALL_PREFIX}/bin` |
 | CO_SIM_IO_BUILD_TESTING | ON (same as `BUILD_TESTING`) | Build the tests. Useful for developing and initial installation to check if everything works as expected. |
 | CO_SIM_IO_ENABLE_MPI | OFF | Enable MPI support for distributed environments. Requires an installation of [MPI](https://www.mpi-forum.org/). |
 | CO_SIM_IO_BUILD_C | OFF | Build the C-interface |
