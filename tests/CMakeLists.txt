@@ -6,7 +6,7 @@ find_package (Threads REQUIRED)
 file( GLOB CO_SIM_IO_TEST_FILES co_sim_io/cpp/*.cpp)
 add_executable ( co_sim_io_tests ${CO_SIM_IO_TEST_FILES})
 target_link_libraries(co_sim_io_tests co_sim_io ${CMAKE_THREAD_LIBS_INIT})
-install( TARGETS co_sim_io_tests DESTINATION ${CMAKE_SOURCE_DIR}/bin )
+install( TARGETS co_sim_io_tests DESTINATION bin )
 set_target_properties(co_sim_io_tests PROPERTIES
     CXX_STANDARD 11
     CXX_STANDARD_REQUIRED YES
@@ -15,11 +15,11 @@ set_target_properties(co_sim_io_tests PROPERTIES
 
 doctest_discover_tests(co_sim_io_tests TEST_PREFIX "cpp_" WORKING_DIRECTORY $<TARGET_FILE_DIR:co_sim_io>)
 
-if (CO_SIM_IO_ENABLE_MPI)
+if (CO_SIM_IO_BUILD_MPI)
     file( GLOB CO_SIM_IO_MPI_TEST_FILES co_sim_io/cpp/mpi/*.cpp )
     add_executable ( co_sim_io_mpi_tests ${CO_SIM_IO_MPI_TEST_FILES} )
     target_link_libraries( co_sim_io_mpi_tests co_sim_io_mpi)
-    install( TARGETS co_sim_io_mpi_tests DESTINATION ${CMAKE_SOURCE_DIR}/bin )
+    install( TARGETS co_sim_io_mpi_tests DESTINATION bin )
     set_target_properties(co_sim_io_mpi_tests PROPERTIES
         CXX_STANDARD 11
         CXX_STANDARD_REQUIRED YES
@@ -37,7 +37,7 @@ function(add_cpp_executable TEST_SOURCE_FILE)
     message(STATUS  "adding ${TEST_NAME} ")
     add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
     target_link_libraries(${TEST_NAME} co_sim_io)
-    install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_cpp")
+    install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_cpp")
 endfunction()
 
 file(GLOB cpp_test_files "integration_tutorials/cpp/*.cpp")
@@ -72,7 +72,7 @@ function(add_mpi_test test_name exe_1 exe_2)
     endforeach(num_processes)
 endfunction()
 
-if (CO_SIM_IO_ENABLE_MPI)
+if (CO_SIM_IO_BUILD_MPI)
     # helper script to run two executables with MPI
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run_mpi.sh mpiexec\ -np\ $3\ $1\ &\ mpiexec\ -np\ $3\ $2\ &\nwait\ %1\ &&\ wait\ %2)
 
@@ -82,7 +82,7 @@ if (CO_SIM_IO_ENABLE_MPI)
         message(STATUS  "adding ${TEST_NAME} ")
         add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
         target_link_libraries(${TEST_NAME} co_sim_io_mpi)
-        install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_cpp_mpi")
+        install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_cpp_mpi")
     endfunction()
 
     file(GLOB cpp_mpi_test_files "integration_tutorials/cpp/mpi/*.cpp")
@@ -106,7 +106,7 @@ if(CO_SIM_IO_BUILD_C)
         add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
         target_link_libraries(${TEST_NAME} co_sim_io_c)
         add_test(${TEST_NAME} ${TEST_NAME})
-        install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_c")
+        install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_c")
     endfunction()
 
     function(add_c_executable TEST_SOURCE_FILE)
@@ -115,7 +115,7 @@ if(CO_SIM_IO_BUILD_C)
         message(STATUS  "adding ${TEST_NAME} ")
         add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
         target_link_libraries(${TEST_NAME} co_sim_io_c)
-        install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_c")
+        install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_c")
     endfunction()
 
     file(GLOB c_test_files
@@ -139,13 +139,13 @@ if(CO_SIM_IO_BUILD_C)
     add_test(NAME import_export_data_c_test COMMAND bash run.sh $<TARGET_FILE:export_data_c_test> $<TARGET_FILE:import_data_c_test>)
     add_test(NAME import_export_mesh_c_test COMMAND bash run.sh $<TARGET_FILE:export_mesh_c_test> $<TARGET_FILE:import_mesh_c_test>)
 
-    if (CO_SIM_IO_ENABLE_MPI)
+    if (CO_SIM_IO_BUILD_MPI)
         function(add_c_mpi_test_executable TEST_SOURCE_FILE)
             get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
             string(REGEX REPLACE "[.]c" "_c_test" TEST_NAME ${TEST_FILENAME})
             add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
             target_link_libraries(${TEST_NAME} co_sim_io_c_mpi)
-            install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_c_mpi")
+            install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_c_mpi")
         endfunction()
 
         function(add_c_mpi_test TEST_SOURCE_FILE)
@@ -155,7 +155,7 @@ if(CO_SIM_IO_BUILD_C)
             add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
             target_link_libraries(${TEST_NAME} co_sim_io_c_mpi)
             add_test(NAME ${TEST_NAME} COMMAND mpiexec -np 4 ${TEST_NAME})
-            install(TARGETS ${TEST_NAME} DESTINATION "${CMAKE_SOURCE_DIR}/bin/tests_c_mpi")
+            install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_c_mpi")
         endfunction()
 
         file(GLOB c_mpi_test_files "co_sim_io/c/mpi/*.c")
@@ -182,11 +182,11 @@ endif()
 if(CO_SIM_IO_BUILD_FORTRAN)
     enable_language( Fortran )
     include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io/fortran )
-    link_directories( ${CMAKE_SOURCE_DIR}/bin )
+    link_directories( bin )
 
     # file( GLOB_RECURSE FORTRAN_TEST_FILES *.f90)
     # add_executable ( test_runner_fortran test_runners/test_runner.f90 ${FORTRAN_TEST_FILES})
     # target_link_libraries(test_runner_fortran co_sim_io_c)
 
-    # install( TARGETS test_runner_fortran DESTINATION ${CMAKE_SOURCE_DIR}/bin )
+    # install( TARGETS test_runner_fortran DESTINATION bin )
 endif()
