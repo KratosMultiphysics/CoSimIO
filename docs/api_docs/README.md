@@ -247,6 +247,7 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
     |-------------------|--------|---|---|---|
     | connection_name  | string | x | - | output of calling `Connect` |
     | identifier       | string | x | - | identifier of the data |
+
     and other information, as necessary
 
 #### Returns
