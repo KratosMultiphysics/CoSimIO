@@ -1,6 +1,6 @@
 # Changelog
 
-All important and notable changes in the _CoSimIO_ will be documented in this file.
+All important and notable changes in the _CoSimIO_ are documented in this file.
 
 ## 2.0.0
 - Changes in Connecting:
@@ -27,3 +27,14 @@ All important and notable changes in the _CoSimIO_ will be documented in this fi
     - Enforcing C89 standard
 
 - Many improvements and cleanups under the hood
+
+## 2.0.1
+- Bugfix in remote-controlled CoSimulation (now settings can be passed to the registered functions)
+- For this the `Info` object can now hold `Info` objects itself, hence making it possible to build hierarchical structures.
+
+## 3.0.0
+- Extensive documentation was added: https://kratosmultiphysics.github.io/CoSimIO/
+- Now the C++ version of CoSimIO is not header-only any more. Check [here](https://kratosmultiphysics.github.io/CoSimIO/build_options.html) for the available build options.
+- The CoSimIO supports MPI-parellism now
+- Communication via pipes was added (currently only supported in Linux). See [here](https://kratosmultiphysics.github.io/CoSimIO/communication.html#pipe-based-communication) for the details
+- The `ModelPart` interface was extended to support ghost nodes. See [here](https://kratosmultiphysics.github.io/CoSimIO/model_part/model_part_cpp.html#interface-for-distributed-modelparts-mpi) for details
