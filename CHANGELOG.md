@@ -11,15 +11,15 @@ All important and notable changes in the _CoSimIO_ will be documented in this fi
     - Simplified version of [`Kratos::ModelPart`](https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/model_part.h)
     - Simplifies and unifies the usage of `Import-/ExportMesh`
     - See the tutorials on how to use it:
-        - [C++](docs/model_part/model_part_cpp.md)
-        - [C](docs/model_part/model_part_c.md)
-        - [Python](docs/model_part/model_part_python.md)
+        - [C++](https://kratosmultiphysics.github.io/CoSimIO/model_part/model_part_cpp.html)
+        - [C](https://kratosmultiphysics.github.io/CoSimIO/model_part/model_part_c.html)
+        - [Python](https://kratosmultiphysics.github.io/CoSimIO/model_part/model_part_python.html)
 - FileCommunication:
     - By default now done in folder. This way leftovers from previous simulations can be easily deleted (done automatically).
     - working directory can be specified
     - stability of initial connection was significantly improved.
 - Python interface: Data is no longer copied when going from Python to C++ and vice versa.
-    - `Import-/ExportData` now uses `CoSimIO::DoubleVector` (small wrapper around `std::wrapper`)
+    - `Import-/ExportData` now uses `CoSimIO::DoubleVector` (small wrapper around [`std::vector`](https://en.cppreference.com/w/cpp/container/vector))
     - `Import-/ExportMesh` now uses `CoSimIO::ModelPart`
 - Continuous Integration:
     - Adding Python 3.9 (now has Python v3.5 - v3.9)
