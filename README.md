@@ -19,6 +19,8 @@ Documentation and tutorials can be found [here](https://kratosmultiphysics.githu
 
 The tests are contained in [tests](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests)
 
+The [changelog](https://github.com/KratosMultiphysics/CoSimIO/blob/master/CHANGELOG.md) contains information about relevant changes in the different versions.
+
 ## Dependencies
 - The _CoSimIO_ is implemented as a standalone tool in C++. The only dependency is C++11. This includes most of the major C++ compilers in Windows, Linux, and Mac. A detailed list of C++11 compatible compilers [here](https://en.cppreference.com/w/cpp/compiler_support#cpp11).
 - Dependency on Kratos: There is **NO** dependency on Kratos. The _CoSimIO_ can be used completely without including or linking against Kratos.
