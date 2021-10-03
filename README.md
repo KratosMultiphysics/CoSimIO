@@ -37,7 +37,7 @@ This section provides a brief overview on how to use the _CoSimIO_. For more det
 The C++ interface is defined in [co_sim_io.hpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp). In addition to including this header it is required to compile _CoSimIO_ into a shared library and link against it.
 
 ### **C**
-The C interface is defined in [co_sim_io_c.h](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/c/co_sim_io_c.h). In addition to including this header it is required to compile [co_sim_io_c.c](co_sim_io/c/co_sim_io_c.c) into a shared library and link against it.
+The C interface is defined in [co_sim_io_c.h](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/c/co_sim_io_c.h). In addition to including this header it is required to compile _CoSimIO_ into a shared library and link against it.
 
 ### **Python**
 The Python interface is defined in [_CoSimIO_ python module](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/python/co_sim_io_python.cpp). The [pybind library](https://github.com/pybind/pybind11) is used for the Python exposure of the C++ interface.
