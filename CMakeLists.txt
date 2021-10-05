@@ -60,13 +60,15 @@ endif()
 get_directory_property(hasParent PARENT_DIRECTORY)
 
 # Set installation directory
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    # Setting the cache path prevents it to change in case someone 'make' after modifying this file and not reconfiguring
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}" CACHE PATH "Default Install path" FORCE)
-    message("-- Standard install dir ${CMAKE_INSTALL_PREFIX}")
-else(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    message("-- User defined install dir ${CMAKE_INSTALL_PREFIX}")
-endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+if (NOT hasParent)
+    if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        # Setting the cache path prevents it to change in case someone 'make' after modifying this file and not reconfiguring
+        set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}" CACHE PATH "Default Install path" FORCE)
+        message("-- Standard install dir ${CMAKE_INSTALL_PREFIX}")
+    else(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        message("-- User defined install dir ${CMAKE_INSTALL_PREFIX}")
+    endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+endif()
 
 if(MSVC)
     # /Zc:__cplusplus: required such that "__cplusplus" is set to the correct value
