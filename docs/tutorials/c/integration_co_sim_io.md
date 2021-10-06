@@ -31,7 +31,7 @@ This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool u
 - [CMake](https://cmake.org/)
 
 ## Building the CoSimIO
-The C++ version of the CoSimIO is implemented in [co_sim_io_c.h](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/c/co_sim_io_c.h). It can be used after compiling CoSimIO into a shared library and linking against it. Check [here](../../build_options.md) for the available build options.
+The C version of the CoSimIO is implemented in [co_sim_io_c.h](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/c/co_sim_io_c.h). It can be used after compiling CoSimIO into a shared library and linking against it. Check [here](../../build_options.md) for the available build options.
 
 Several options for using/integrating the _CoSimIO_ exist:
 - Using CMake:
