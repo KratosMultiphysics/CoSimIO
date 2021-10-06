@@ -31,13 +31,48 @@ This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool u
 - [CMake](https://cmake.org/)
 
 ## Building the CoSimIO
-The C++ version of the CoSimIO is implemented in [co_sim_io.hpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp). It can be used after compiling CoSimIO into a shared library and linking against it. One can use [build_cpp.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_cpp.sh) for compiling it. Check [here](../../build_options.md) for the available build options.
+The C++ version of the CoSimIO is implemented in [co_sim_io.hpp](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/co_sim_io.hpp). It can be used after compiling CoSimIO into a shared library and linking against it. Check [here](../../build_options.md) for the available build options.
+
+Several options for using/integrating the _CoSimIO_ exist:
+- Using CMake:
+    - Integrating _CoSimIO_ as a subproject into the host with CMake:
+        Here the _CoSimIO_ is directly integrated into the host code and added with `add_subdirectory(CoSimIO)`. CMake then takes care of compiling and installing the _CoSimIO_.
+        Kratos uses this way to integrate the CoSimIO, check the [`CMakeLists.txt` of the CoSimulationApplication for details](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/CMakeLists.txt)
+    - Compiling _CoSimIO_ outside the host project:
+        One can use [build_cpp.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_cpp.sh) for compiling it.
+
+        ```bash
+        $ bash scripts/build_cpp.sh
+        ```
+
+    After compiling, the headers need to be included (e.g. with `include_directories`) and the `co_sim_io` shared library needs to be linked (e.g with `target_link_libraries`).
+    ```
+    include_directories(path/to/CoSimIO/co_sim_io)
+    target_link_libraries(my_executable co_sim_io)
+    ```
+
+- Compiling _CoSimIO_ outside the host and manually integrating it:
+    One can use [build_cpp.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_cpp.sh) for compiling it.
+
+    ```bash
+    $ bash scripts/build_cpp.sh
+    ```
+
+    Is important that the compiler can find the header files of the _CoSimIO_. For this, one can add the folder `co_sim_io` to the include path.
+    Example:
+    ```bash
+    export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/path/to/CoSimIO/co_sim_io
+    ```
+
+    Furthermore it is required to link against the `co_sim_io` shared library.
+
+The shared library `co_sim_io` will be installed in the `bin/` folder. After building _CoSimIO_, is necessary to add the path where the shared library `co_sim_io` was installed to (`bin/`) to the library path of the system such that the it can be linked against. Depending on the operating system this can be e.g. `PATH` or `LD_LIBRARY_PATH`. This also needs to be available at runtime, otherwise errors when strating the execution will occur. In linux this can be achieved with the following:
 
 ```bash
-$ bash scripts/build_cpp.sh
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH$:$HOME/path/to/CoSimIO/bin"
 ```
 
-The shared library `co_sim_io` will be installed in the `bin/` folder. After building and linking it to your project, you may use the interface defined in `co_sim_io.hpp`:
+After building and linking it to your project, you may use the interface defined in `co_sim_io.hpp`:
 
 ```c++
 // CoSimulation includes
@@ -47,18 +82,6 @@ int main()
 {
     return 0;
 }
-```
-
-Please don't forget to add the folder `co_sim_io` to your include path so that the compiler can find the includes
-Example:
-```bash
-export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/path/to/CoSimIO/co_sim_io
-```
-
-With CMake this can be achieved with the following:
-```
-include_directories(path/to/co_sim_io)
-target_link_libraries(my_executable co_sim_io)
 ```
 
 ## Hello CosimIO
