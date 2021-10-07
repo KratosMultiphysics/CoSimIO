@@ -35,6 +35,17 @@ All important and notable changes in the _CoSimIO_ are documented in this file.
 ## 3.0.0
 - Extensive documentation was added: https://kratosmultiphysics.github.io/CoSimIO/
 - Now the C++ version of CoSimIO is not header-only any more. Check [here](https://kratosmultiphysics.github.io/CoSimIO/build_options.html) for the available build options.
-- The CoSimIO supports MPI-parellism now
-- Communication via pipes was added (currently only supported in Linux). See [here](https://kratosmultiphysics.github.io/CoSimIO/communication.html#pipe-based-communication) for the details
-- The `ModelPart` interface was extended to support ghost nodes. See [here](https://kratosmultiphysics.github.io/CoSimIO/model_part/model_part_cpp.html#interface-for-distributed-modelparts-mpi) for details
+- Support for MPI-parellism is now available (for all supported languages, i.e. C++, C and Python), along with extensive documentation and testing
+- Pyramid topologies are available now. See [here](https://github.com/KratosMultiphysics/CoSimIO/pull/271) for details.
+- Communication:
+    - Communication via pipes was added (currently only supported in Linux). See [here](https://kratosmultiphysics.github.io/CoSimIO/communication.html#pipe-based-communication) for the details.
+    - Communication now uses serialization for exchanging data.
+    - FileCommuncation now longer adds an index to each file name
+    - FileCommuncation: Instead of using `rename` for file synchronization, it is now possible to use auxiliary files. See [here](https://github.com/KratosMultiphysics/CoSimIO/pull/254) for the details.
+- Improvements and extensions to `CoSimIO::ModelPart`:
+    - The `ModelPart` interface was extended to support ghost nodes. See [here](https://kratosmultiphysics.github.io/CoSimIO/model_part/model_part_cpp.html#interface-for-distributed-modelparts-mpi) for details
+    - ModelPart uses `intrusive_ptr` for storing nodes and elements to save memory
+- C-Interface: Some functions like `CoSimIO_CreateInfo` or `CoSimIO_CreateModelPart` internally allocate memory and return a pointer to the allocated object. Discarding the return value leads to memory leaks. Compiler warnings were added to warn the user. Check [here](https://github.com/KratosMultiphysics/CoSimIO/pull/181) for more details.
+- All CMake macros of _CoSimIO_ now start with `CO_SIM_IO_`. This affects especially `BUILD_C` and `BUILD_PYTHON` which are changed to `CO_SIM_IO_BUILD_C` and `CO_SIM_IO_BUILD_PYTHON`.
+- Several minor improvements to the CI (continuous integration)
+- Internal errors now give much better error messages including detailed stacktraces
