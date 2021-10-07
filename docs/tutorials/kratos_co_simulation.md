@@ -2,7 +2,44 @@
 
 [Main Page of Documentation](https://kratosmultiphysics.github.io/CoSimIO/)
 
+**Table of Contents**
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [Usage of identifier in CoSimIO function calls](#usage-of-identifier-in-cosimio-function-calls)
+- [Ways of using CoSimIO for coupled simulations](#ways-of-using-cosimio-for-coupled-simulations)
+
+<!-- /code_chunk_output -->
+---
+
 This tutorial gives an introduction for performing coupled simulations by using the CoSimulationApplication of Kratos. It is strongly recommended to read the [README of the CoSimulationApplication](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/README.md) first.
+
+## Usage of identifier in CoSimIO function calls
+
+Most functions in the _CoSimIO_ have an `CoSimIO::Info` object as input. In many cases this object has the following two parameters: `connection_name` and `identifier`. While the `connection_name` is always the same, obtained from calling `Connect` (see e.g. the [API-docs of `Connect`](../api_docs/README.md#connect)), the `identifier` is changing, depending on the usage:
+
+- **ImportData / ExportData**:
+    Here the `identifier` is the same as the data-name in the ProjectParameters of the CoSimulationApplication. In the following example the names `disp`, `load` and `velocity` are used, those will then be set as `identifier` when calling `ImportData` or `ExportData`. See [here](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/CoSimulationApplication#the-json-configuration-file) for more info on the configuration file and [here](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/python_scripts/solver_wrappers/kratos_co_sim_io.py) for the integration of the _CoSimIO_ into Kratos and how the `identifier` is handled there.
+    ~~~js
+    // ...
+    "solvers" : {
+        "my_solver" : {
+            // ...
+            "data" : {
+                "disp" : { /* ... */ },
+                "load" : { /* ... */ },
+                "velocity" : { /* ... */ }
+            }
+        }
+    }
+    ~~~
+
+- **ImportMesh / ExportMesh**:
+    Similar to the *Data functions, here the `identifier` is the name of the `ModelPart` in Kratos. The `ModelPart` in Kratos holds all the data related to the coupling. Furthermore its mesh is used to construct mappers. Each solver can have several `ModelPart`s. For the solvers in Kratos, they are typically constructed when reading the input files. For external solvers, they can either be created manually or automatically by using `CreateModelPartsFromCouplingDataSettings`. Then they can be imported / exported with the _CoSimIO_. Please check the [ExternalSolverWrapper](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/python_scripts/solver_wrappers/external/external_solver_wrapper.py) for a comprehensive example of how this can be implemented for an external solver.
+
+
+## Ways of using CoSimIO for coupled simulations
 
 The _CoSimIO_ can be used in two different ways for conducting coupled simulations.
 
