@@ -13,6 +13,8 @@
 #ifndef CO_SIM_IO_C_MODEL_PART_INCLUDED
 #define CO_SIM_IO_C_MODEL_PART_INCLUDED
 
+#include "define_c.h"
+
 typedef struct CoSimIO_Node
 {
     void* PtrCppNode;
@@ -73,7 +75,7 @@ int CoSimIO_Element_NumberOfNodes(CoSimIO_Element I_Element);
 CoSimIO_Node CoSimIO_Element_GetNodeByIndex(CoSimIO_Element I_Element, const int I_Index);
 
 /* ModelPart functions */
-CoSimIO_ModelPart CoSimIO_CreateModelPart(const char* I_Name);
+CO_SIM_IO_NODISCARD CoSimIO_ModelPart CoSimIO_CreateModelPart(const char* I_Name);
 
 int CoSimIO_FreeModelPart(CoSimIO_ModelPart I_ModelPart);
 

@@ -113,6 +113,7 @@ As this function establishes a connection, it also creates the _Communication_ o
     | name | type | required | default| description |
     |-------------------|--------|---|---|---|
     | Settings required by the _Communication_ |
+
 - `MPI_Comm` MPI-communicator (which for maximum performance only contains the ranks that have part of the interface).
 
 #### Returns
@@ -206,7 +207,7 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
 - Instance of `CoSimIO::Info` which contains the following:
 
     | name | type | required | default| description |
-    |-------------------|--------|---|---|---|
+    |---|---|---|---|---|
     | connection_name  | string | x | - | output of calling `Connect` |
     | identifier       | string | x | - | identifier of the data |
 
@@ -244,9 +245,11 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
 - Instance of `CoSimIO::Info` which contains the following:
 
     | name | type | required | default| description |
-    |-------------------|--------|---|---|---|
+    |---|---|---|---|---|
     | connection_name  | string | x | - | output of calling `Connect` |
     | identifier       | string | x | - | identifier of the data |
+
+
     and other information, as necessary
 
 #### Returns
@@ -254,6 +257,7 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 |---|---|---|
+|currently_nothing|
 
 #### Syntax C++
 ~~~c++
@@ -289,6 +293,7 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
     |-------------------|--------|---|---|---|
     | connection_name  | string | x | - | output of calling `Connect` |
     | identifier       | string | x | - | identifier of the data |
+
 - Vector of data to be exchanged (type depends on language)
 
 #### Returns
@@ -296,6 +301,7 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 |---|---|---|
+|currently_nothing|
 
 #### Syntax C++
 ~~~c++
@@ -342,6 +348,7 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 |---|---|---|
+|currently_nothing|
 
 #### Syntax C++
 ~~~c++
@@ -388,6 +395,7 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 |---|---|---|
+|currently_nothing|
 
 #### Syntax C++
 ~~~c++
@@ -437,6 +445,7 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 |---|---|---|
+|currently_nothing|
 
 #### Syntax C++
 ~~~c++
@@ -484,6 +493,7 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 |---|---|---|
+|currently_nothing|
 
 #### Syntax C++
 ~~~c++
@@ -538,6 +548,7 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 |---|---|---|
+|currently_nothing|
 
 #### Syntax C++
 ~~~c++

@@ -18,7 +18,7 @@ The configuration that is used is also printed when compiling, e.g.
 
 ~~~sh
 Building the CoSimIO with the following configuration:
-    CMAKE_BUILD_TYPE:          DEBUG
+    CO_SIM_IO_BUILD_TYPE:      Release
     CO_SIM_IO_BUILD_MPI:       ON
     CO_SIM_IO_BUILD_TESTING:   ON
     CO_SIM_IO_BUILD_C:         ON

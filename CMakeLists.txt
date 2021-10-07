@@ -7,7 +7,7 @@ else()
         # project command manages version
         cmake_policy(SET CMP0048 NEW)
     endif(POLICY CMP0048)
-    project(CoSimIO LANGUAGES CXX C VERSION 2.0.1)
+    project(CoSimIO LANGUAGES CXX C VERSION 3.0.0)
 endif()
 
 # this has to be specified BEFORE including CTest!
@@ -56,17 +56,18 @@ if (CO_SIM_IO_BUILD_MPI)
     include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 endif()
 
-# Set installation directory
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    # Setting the cache path prevents it to change in case someone 'make' after modifying this file and not reconfiguring
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}" CACHE PATH "Default Install path" FORCE)
-    message("-- Standard install dir ${CMAKE_INSTALL_PREFIX}")
-else(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    message("-- User defined install dir ${CMAKE_INSTALL_PREFIX}")
-endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+# detect whether CoSimIO is integrated into another project
+get_directory_property(hasParent PARENT_DIRECTORY)
 
-if(NOT DEFINED CO_SIM_IO_INSTALL_DIRECTORY)
-    set(CO_SIM_IO_INSTALL_DIRECTORY bin)
+# Set installation directory
+if (NOT hasParent)
+    if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        # Setting the cache path prevents it to change in case someone 'make' after modifying this file and not reconfiguring
+        set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}" CACHE PATH "Default Install path" FORCE)
+        message("-- Standard install dir ${CMAKE_INSTALL_PREFIX}")
+    else(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        message("-- User defined install dir ${CMAKE_INSTALL_PREFIX}")
+    endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif()
 
 if(MSVC)
@@ -125,8 +126,10 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(CMAKE_MACOSX_RPATH 0)
 endif()
 
-# clean the bin directory (only done if "CMAKE_INSTALL_PREFIX" is not specified)
-file(REMOVE_RECURSE bin)
+# clean the bin directory
+if (NOT hasParent)
+    file(REMOVE_RECURSE bin)
+endif()
 
 # Adding CoSimIO library
 file(GLOB_RECURSE co_sim_io_source_files
@@ -139,7 +142,7 @@ include(GenerateExportHeader)
 generate_export_header( co_sim_io EXPORT_MACRO_NAME CO_SIM_IO_API EXPORT_FILE_NAME
                         ${CMAKE_CURRENT_SOURCE_DIR}/co_sim_io/includes/co_sim_io_api.hpp )
 
-install(TARGETS co_sim_io DESTINATION ${CO_SIM_IO_INSTALL_DIRECTORY})
+install(TARGETS co_sim_io DESTINATION bin)
 
 if (CO_SIM_IO_BUILD_MPI)
     # Adding CoSimIO library
@@ -148,7 +151,7 @@ if (CO_SIM_IO_BUILD_MPI)
 
     target_link_libraries(co_sim_io_mpi co_sim_io ${MPI_LIBRARIES})
 
-    install(TARGETS co_sim_io_mpi DESTINATION ${CO_SIM_IO_INSTALL_DIRECTORY})
+    install(TARGETS co_sim_io_mpi DESTINATION bin)
 endif()
 
 target_include_directories(co_sim_io PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/co_sim_io)

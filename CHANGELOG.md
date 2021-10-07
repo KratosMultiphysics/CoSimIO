@@ -1,6 +1,6 @@
 # Changelog
 
-All important and notable changes in the _CoSimIO_ will be documented in this file.
+All important and notable changes in the _CoSimIO_ are documented in this file.
 
 ## 2.0.0
 - Changes in Connecting:
@@ -11,15 +11,15 @@ All important and notable changes in the _CoSimIO_ will be documented in this fi
     - Simplified version of [`Kratos::ModelPart`](https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/model_part.h)
     - Simplifies and unifies the usage of `Import-/ExportMesh`
     - See the tutorials on how to use it:
-        - [C++](docs/model_part/model_part_cpp.md)
-        - [C](docs/model_part/model_part_c.md)
-        - [Python](docs/model_part/model_part_python.md)
+        - [C++](https://kratosmultiphysics.github.io/CoSimIO/model_part/model_part_cpp.html)
+        - [C](https://kratosmultiphysics.github.io/CoSimIO/model_part/model_part_c.html)
+        - [Python](https://kratosmultiphysics.github.io/CoSimIO/model_part/model_part_python.html)
 - FileCommunication:
     - By default now done in folder. This way leftovers from previous simulations can be easily deleted (done automatically).
     - working directory can be specified
     - stability of initial connection was significantly improved.
 - Python interface: Data is no longer copied when going from Python to C++ and vice versa.
-    - `Import-/ExportData` now uses `CoSimIO::DoubleVector` (small wrapper around `std::wrapper`)
+    - `Import-/ExportData` now uses `CoSimIO::DoubleVector` (small wrapper around [`std::vector`](https://en.cppreference.com/w/cpp/container/vector))
     - `Import-/ExportMesh` now uses `CoSimIO::ModelPart`
 - Continuous Integration:
     - Adding Python 3.9 (now has Python v3.5 - v3.9)
@@ -27,3 +27,25 @@ All important and notable changes in the _CoSimIO_ will be documented in this fi
     - Enforcing C89 standard
 
 - Many improvements and cleanups under the hood
+
+## 2.0.1
+- Bugfix in remote-controlled CoSimulation (now settings can be passed to the registered functions)
+- For this the `Info` object can now hold `Info` objects itself, hence making it possible to build hierarchical structures.
+
+## 3.0.0
+- Extensive documentation was added: https://kratosmultiphysics.github.io/CoSimIO/
+- Now the C++ version of CoSimIO is not header-only any more. Check [here](https://kratosmultiphysics.github.io/CoSimIO/build_options.html) for the available build options.
+- Support for MPI-parellism is now available (for all supported languages, i.e. C++, C and Python), along with extensive documentation and testing
+- Pyramid topologies are available now. See [here](https://github.com/KratosMultiphysics/CoSimIO/pull/271) for details.
+- Communication:
+    - Communication via pipes was added (currently only supported in Linux). See [here](https://kratosmultiphysics.github.io/CoSimIO/communication.html#pipe-based-communication) for the details.
+    - Communication now uses serialization for exchanging data.
+    - FileCommuncation now longer adds an index to each file name
+    - FileCommuncation: Instead of using `rename` for file synchronization, it is now possible to use auxiliary files. See [here](https://github.com/KratosMultiphysics/CoSimIO/pull/254) for the details.
+- Improvements and extensions to `CoSimIO::ModelPart`:
+    - The `ModelPart` interface was extended to support ghost nodes. See [here](https://kratosmultiphysics.github.io/CoSimIO/model_part/model_part_cpp.html#interface-for-distributed-modelparts-mpi) for details
+    - ModelPart uses `intrusive_ptr` for storing nodes and elements to save memory
+- C-Interface: Some functions like `CoSimIO_CreateInfo` or `CoSimIO_CreateModelPart` internally allocate memory and return a pointer to the allocated object. Discarding the return value leads to memory leaks. Compiler warnings were added to warn the user. Check [here](https://github.com/KratosMultiphysics/CoSimIO/pull/181) for more details.
+- All CMake macros of _CoSimIO_ now start with `CO_SIM_IO_`. This affects especially `BUILD_C` and `BUILD_PYTHON` which are changed to `CO_SIM_IO_BUILD_C` and `CO_SIM_IO_BUILD_PYTHON`.
+- Several minor improvements to the CI (continuous integration)
+- Internal errors now give much better error messages including detailed stacktraces
