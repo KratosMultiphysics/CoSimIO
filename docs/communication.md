@@ -70,7 +70,8 @@ The implementation of the _FileCommunication_ can be found [here](https://github
 Set `communication_format` to `file`.
 
 | name | type | required | default| description |
-|-------------------|--------|---|---|---|
+|---|---|---|---|---|
+|currently_nothing|
 
 ## Pipe-based communication
 A pipe is a data channel to perform interprocess communication between two processes. No data is written to the filesystem, it is directly exchanged through the memory. This makes it more efficient than the file-based communication.
@@ -84,7 +85,8 @@ The implementation of the _PipeCommunication_ can be found [here](https://github
 Set `communication_format` to `pipe`.
 
 | name | type | required | default| description |
-|-------------------|--------|---|---|---|
+|---|---|---|---|---|
+|currently_nothing|
 
 ## Socket-based communication
 
