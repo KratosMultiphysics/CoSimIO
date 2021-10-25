@@ -28,6 +28,8 @@ public:
         const Info& I_Settings,
         std::shared_ptr<DataCommunicator> I_DataComm);
 
+    ~SocketsCommunication() override;
+
     Info ConnectDetail(const Info& I_Info) override;
 
     Info DisconnectDetail(const Info& I_Info) override;

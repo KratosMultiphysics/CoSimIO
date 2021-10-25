@@ -56,6 +56,8 @@ if (CO_SIM_IO_BUILD_MPI)
     include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 endif()
 
+find_package (Threads REQUIRED)
+
 # detect whether CoSimIO is integrated into another project
 get_directory_property(hasParent PARENT_DIRECTORY)
 
@@ -136,6 +138,7 @@ file(GLOB_RECURSE co_sim_io_source_files
     ${CMAKE_CURRENT_SOURCE_DIR}/co_sim_io/sources/*.cpp
 )
 add_library (co_sim_io SHARED ${co_sim_io_source_files})
+target_link_libraries(co_sim_io ${CMAKE_THREAD_LIBS_INIT})
 
 # To automatically configure a library export header into build tree
 include(GenerateExportHeader)
