@@ -29,14 +29,7 @@ public:
         const Info& I_Settings,
         std::shared_ptr<DataCommunicator> I_DataComm);
 
-    ~PipeCommunication() override
-    {
-        if (GetIsConnected()) {
-            CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not performed, attempting automatic disconnection!" << std::endl;
-            Info tmp;
-            Disconnect(tmp);
-        }
-    }
+    ~PipeCommunication() override;
 
 private:
 class BidirectionalPipe

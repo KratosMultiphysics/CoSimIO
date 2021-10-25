@@ -39,6 +39,15 @@ PipeCommunication::PipeCommunication(
 {
 }
 
+PipeCommunication::~PipeCommunication()
+{
+    if (GetIsConnected()) {
+        CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not performed, attempting automatic disconnection!" << std::endl;
+        Info tmp;
+        Disconnect(tmp);
+    }
+}
+
 Info PipeCommunication::ConnectDetail(const Info& I_Info)
 {
     mpPipe = std::make_shared<BidirectionalPipe>(
