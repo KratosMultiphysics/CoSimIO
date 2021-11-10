@@ -12,7 +12,7 @@ on:
 concurrency:
   group: ${{ github.head_ref }}
   cancel-in-progress: true
-  
+
 jobs:
   Ubuntu-Cpp-C:
     runs-on: ubuntu-latest
