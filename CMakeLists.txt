@@ -184,4 +184,3 @@ if (CO_SIM_IO_BUILD_TESTING)
       "${CMAKE_CURRENT_SOURCE_DIR}/tests/compiled_config.json"
     )
 endif()
-
