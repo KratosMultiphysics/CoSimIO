@@ -21,6 +21,23 @@
 
 namespace CoSimIO {
 
+namespace {
+
+template<class TContainerType>
+bool PointerVectorChecker(const TContainerType& rContainer)
+{
+    const auto it_begin = rContainer.begin();
+
+    for (std::size_t i=0; i<rContainer.size(); ++i) {
+        const auto it = it_begin + i;
+        if (i+1 != static_cast<std::size_t>((*it).Id())) return false;
+    }
+
+    return true;
+}
+
+}
+
 TEST_SUITE("ModelPart") {
 
 TEST_CASE("node")
@@ -650,6 +667,30 @@ TEST_CASE("model_part_serialization")
     serializer.load("model_part", model_part_load);
 
     CheckModelPartsAreEqual(model_part_save, model_part_load);
+}
+
+
+TEST_CASE("model_part_pointer_vector")
+{
+    ModelPart model_part("for_test");
+
+    model_part.CreateNewNode(1, 0,0,0);
+    model_part.CreateNewNode(2, 0,0,0);
+    model_part.CreateNewNode(3, 0,0,0);
+    model_part.CreateNewNode(4, 0,0,0);
+
+    model_part.CreateNewElement(1, CoSimIO::ElementType::Point2D, {1});
+    model_part.CreateNewElement(2, CoSimIO::ElementType::Point2D, {2});
+    model_part.CreateNewElement(3, CoSimIO::ElementType::Point2D, {3});
+
+    CHECK_EQ(model_part.NumberOfNodes(), 4);
+    CHECK_EQ(model_part.NumberOfElements(), 3);
+
+    CHECK_EQ(model_part.Nodes().size(), 4);
+    CHECK_EQ(model_part.Elements().size(), 3);
+
+    CHECK(PointerVectorChecker(model_part.Nodes()));
+    CHECK(PointerVectorChecker(model_part.Elements()));
 }
 
 } // TEST_SUITE("ModelPart")

@@ -150,7 +150,8 @@ void PipeCommunication::BidirectionalPipe::Write(const std::string& rData)
 {
     #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
     SendSize(rData.size());
-    write(mPipeHandleWrite, rData.c_str(), rData.size());
+    const ssize_t bytes_written = write(mPipeHandleWrite, rData.c_str(), rData.size());
+    CO_SIM_IO_ERROR_IF(bytes_written < 0) << "Error in writing to Pipe!" << std::endl;
     #endif
 }
 
@@ -159,7 +160,8 @@ void PipeCommunication::BidirectionalPipe::Read(std::string& rData)
     #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
     std::size_t received_size = ReceiveSize();
     rData.resize(received_size);
-    read(mPipeHandleRead, &(rData.front()), received_size); // using front as other methods that access the underlying char are const
+    const ssize_t bytes_read = read(mPipeHandleRead, &(rData.front()), received_size); // using front as other methods that access the underlying char are const
+    CO_SIM_IO_ERROR_IF(bytes_read < 0) << "Error in reading from Pipe!" << std::endl;
     #endif
 }
 
@@ -174,7 +176,8 @@ void PipeCommunication::BidirectionalPipe::Close()
 void PipeCommunication::BidirectionalPipe::SendSize(const std::uint64_t Size)
 {
     #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
-    write(mPipeHandleWrite, &Size, sizeof(Size));
+    const ssize_t bytes_written = write(mPipeHandleWrite, &Size, sizeof(Size));
+    CO_SIM_IO_ERROR_IF(bytes_written < 0) << "Error in writing to Pipe!" << std::endl;
     #endif
 }
 
@@ -182,7 +185,8 @@ std::uint64_t PipeCommunication::BidirectionalPipe::ReceiveSize()
 {
     #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
     std::uint64_t imp_size_u;
-    read(mPipeHandleRead, &imp_size_u, sizeof(imp_size_u));
+    const ssize_t bytes_read = read(mPipeHandleRead, &imp_size_u, sizeof(imp_size_u));
+    CO_SIM_IO_ERROR_IF(bytes_read < 0) << "Error in reading from Pipe!" << std::endl;
     return imp_size_u;
     #else
     return 0;
