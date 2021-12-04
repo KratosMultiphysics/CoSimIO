@@ -102,7 +102,9 @@ Info SocketsCommunication::ConnectDetail(const Info& I_Info)
             std::cerr << "SERVER DEBUG 1" << std::endl;
 
             std::cerr << "SERVER DEBUG 2" << std::endl;
+            SynchronizeAll();
             acceptor.accept(*mpAsioSocket);
+
 
             std::cerr << "SERVER DEBUG 3" << std::endl;
             std::string message = "make_daytime_string()\n";
@@ -115,8 +117,7 @@ Info SocketsCommunication::ConnectDetail(const Info& I_Info)
     } else { // this is the client
         std::cerr << "CLIENT DEBUG 0" << std::endl;
         try {
-            std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-
+            SynchronizeAll();
             tcp::resolver resolver(mAsioContext);
             std::cerr << "CLIENT DEBUG 1" << std::endl;
             // tcp::resolver::results_type endpoints = resolver.resolve("127.0.0.1", "60000");
