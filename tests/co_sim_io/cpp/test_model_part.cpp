@@ -26,11 +26,9 @@ namespace {
 template<class TContainerType>
 bool PointerVectorChecker(const TContainerType& rContainer)
 {
-    std::size_t counter = 0;
-
     const auto it_begin = rContainer.begin();
 
-    for (int i=0; i< rContainer.size(); ++i) {
+    for (std::size_t i=0; i< rContainer.size(); ++i) {
         const auto it = it_begin + i;
         if (i+1 != (*it).Id()) return false;
     }
