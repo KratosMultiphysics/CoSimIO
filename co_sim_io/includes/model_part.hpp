@@ -58,6 +58,7 @@ public:
         // pointer operator->() { return m_ptr; }
         const_iterator_adaptor& operator++() { m_ptr++; return *this; }
         const_iterator_adaptor operator++(int) { const_iterator_adaptor tmp = *this; ++(*this); return tmp; }
+        const_iterator_adaptor operator+(difference_type n) const { const_iterator_type tmp = m_ptr; tmp+=n; return tmp; }
         friend bool operator== (const const_iterator_adaptor& a, const const_iterator_adaptor& b) { return a.m_ptr == b.m_ptr; };
         friend bool operator!= (const const_iterator_adaptor& a, const const_iterator_adaptor& b) { return a.m_ptr != b.m_ptr; };
 
@@ -69,6 +70,7 @@ public:
 
     const_iterator_adaptor begin() const {return const_iterator_adaptor(mPointerVector.begin());}
     const_iterator_adaptor end()   const {return const_iterator_adaptor(mPointerVector.end());}
+    std::size_t size()             const {return mPointerVector.size();}
 
 private:
     const ContainerType& mPointerVector;
