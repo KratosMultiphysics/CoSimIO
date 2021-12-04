@@ -13,14 +13,6 @@
 // System includes
 #include <stdexcept>
 
-// External includes
-#define ASIO_NO_DEPRECATED // disabling deprecated features/interfaces
-#define ASIO_STANDALONE // independent of boost
-#ifndef _WIN32_WINNT
-    #define _WIN32_WINNT 0x0601 // see "https://github.com/chriskohlhoff/asio/issues/596"
-#endif
-#include "asio.hpp"
-
 // Project includes
 #include "includes/communication/sockets_communication.hpp"
 
@@ -48,49 +40,40 @@ SocketsCommunication::SocketsCommunication(
     std::shared_ptr<DataCommunicator> I_DataComm)
     : Communication(I_Settings, I_DataComm)
 {
-    std::error_code ec;
+    // std::error_code ec;
 
-    asio::io_context context;
+    // asio::mAsioContext context;
 
-    asio::ip::tcp::endpoint endpoint(asio::ip::make_address("93.184.216.34", ec), 80);
-    asio::ip::tcp::endpoint endpoint_2(asio::ip::make_address("51.38.81.49", ec), 80);
-    asio::ip::tcp::endpoint local_endpoint(asio::ip::make_address("127.0.0.1", ec), 80);
+    // asio::ip::tcp::endpoint endpoint(asio::ip::make_address("93.184.216.34", ec), 80);
+    // asio::ip::tcp::endpoint endpoint_2(asio::ip::make_address("51.38.81.49", ec), 80);
+    // asio::ip::tcp::endpoint local_endpoint(asio::ip::make_address("127.0.0.1", ec), 80);
 
-    asio::ip::tcp::socket socket(context);
+    // asio::ip::tcp::socket socket(context);
 
-    socket.connect(endpoint_2, ec);
+    // socket.connect(endpoint_2, ec);
 
-    if (!ec) {
-        std::cout << "ASIO connected" << std::endl;
-    } else {
-        std::cout << "ASIO connection ffdaile with error code:\n" << ec.message() << std::endl;
-    }
+    // if (!ec) {
+    //     std::cout << "ASIO connected" << std::endl;
+    // } else {
+    //     std::cout << "ASIO connection ffdaile with error code:\n" << ec.message() << std::endl;
+    // }
 
-    if (socket.is_open()) {
-        std::string str_request =
-            "GET /index.html HTTP/1.1\r\n"
-            "Host: example.com\r\n"
-            "Connection: close\r\n\r\n";
+    // if (socket.is_open()) {
+    //     GrabSomeData(socket);
 
-        socket.write_some(asio::buffer(str_request.data(), str_request.size()), ec);
+    //     std::string str_request =
+    //         "GET /index.html HTTP/1.1\r\n"
+    //         "Host: example.com\r\n"
+    //         "Connection: close\r\n\r\n";
 
-        socket.wait(socket.wait_read);
-
-        std::size_t bytes = socket.available();
-
-        std::cout << "Bytes available: " << bytes << std::endl;
-
-        if (bytes > 0) {
-            std::vector<char> v_buffer(bytes);
-            socket.read_some(asio::buffer(v_buffer.data(), v_buffer.size()), ec);
-
-            for (auto c : v_buffer) {
-                std::cout << c;
-            }
-        }
+    //     socket.write_some(asio::buffer(str_request.data(), str_request.size()), ec);
 
 
-    }
+    //     using namespace std::chrono;
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
+
+    // }
 
 
 }
@@ -106,11 +89,71 @@ SocketsCommunication::~SocketsCommunication()
 
 Info SocketsCommunication::ConnectDetail(const Info& I_Info)
 {
+    using namespace asio::ip;
+
+    mpAsioSocket = std::make_shared<asio::ip::tcp::socket>(mAsioContext);
+    asio::ip::tcp::endpoint local_endpoint(asio::ip::make_address("127.0.0.1"), 60000);
+
+    if (GetIsPrimaryConnection()) { // this is the server
+        std::cerr << "SERVER DEBUG 0" << std::endl;
+        try {
+            tcp::acceptor acceptor(mAsioContext, local_endpoint);
+
+            std::cerr << "SERVER DEBUG 1" << std::endl;
+
+            std::cerr << "SERVER DEBUG 2" << std::endl;
+            acceptor.accept(*mpAsioSocket);
+
+            std::cerr << "SERVER DEBUG 3" << std::endl;
+            std::string message = "make_daytime_string()\n";
+
+            asio::error_code ignored_error;
+            asio::write(*mpAsioSocket, asio::buffer(message), ignored_error);
+        } catch (std::exception& e) {
+            std::cerr << "Serveer error:" << e.what() << std::endl;
+        }
+    } else { // this is the client
+        std::cerr << "CLIENT DEBUG 0" << std::endl;
+        try {
+            std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
+            tcp::resolver resolver(mAsioContext);
+            std::cerr << "CLIENT DEBUG 1" << std::endl;
+            // tcp::resolver::results_type endpoints = resolver.resolve("127.0.0.1", "60000");
+            // std::cerr << "CLIENT DEBUG 2" << std::endl;
+
+            mpAsioSocket->connect(local_endpoint);
+
+            // asio::connect(*mpAsioSocket, local_endpoint);
+            std::cerr << "CLIENT DEBUG 2" << std::endl;
+
+            asio::error_code error;
+
+            std::cerr << "CLIENT DEBUG 3" << std::endl;
+            size_t len = mpAsioSocket->read_some(asio::buffer(StBuffer), error);
+            std::cerr << "CLIENT DEBUG 4" << std::endl;
+
+            std::cerr << "CLIENT DEBUG 5" << std::endl;
+            std::cout.write(StBuffer.data(), len);
+            std::cerr << "CLIENT DEBUG 6" << std::endl;
+        } catch (std::exception& e) {
+            std::cerr <<"Client error: " <<e.what() << std::endl;
+        }
+    }
+
+    mContextThread = std::thread([this]() { mAsioContext.run(); });
+
     return Info();
 }
 
 Info SocketsCommunication::DisconnectDetail(const Info& I_Info)
 {
+    // Request the context to close
+    mAsioContext.stop();
+
+    // Tidy up the context thread
+    if (mContextThread.joinable()) mContextThread.join();
+
     return Info();
 }
 

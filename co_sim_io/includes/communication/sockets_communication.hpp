@@ -14,9 +14,18 @@
 #define CO_SIM_IO_SOCKETS_COMMUNICATION_INCLUDED
 
 // System includes
+#include <chrono>
 
 // Project includes
 #include "communication.hpp"
+
+// External includes
+#define ASIO_NO_DEPRECATED // disabling deprecated features/interfaces
+#define ASIO_STANDALONE // independent of boost
+#ifndef _WIN32_WINNT
+    #define _WIN32_WINNT 0x0601 // see "https://github.com/chriskohlhoff/asio/issues/596"
+#endif
+#include "asio.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -36,6 +45,10 @@ public:
 
 private:
     std::string GetCommunicationName() const override {return "sockets";}
+
+    asio::io_context mAsioContext;
+    std::shared_ptr<asio::ip::tcp::socket> mpAsioSocket;
+    std::thread mContextThread;
 };
 
 } // namespace Internals
