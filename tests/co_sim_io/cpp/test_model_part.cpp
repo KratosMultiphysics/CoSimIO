@@ -28,9 +28,9 @@ bool PointerVectorChecker(const TContainerType& rContainer)
 {
     const auto it_begin = rContainer.begin();
 
-    for (std::size_t i=0; i< rContainer.size(); ++i) {
+    for (std::size_t i=0; i<rContainer.size(); ++i) {
         const auto it = it_begin + i;
-        if (i+1 != (*it).Id()) return false;
+        if (i+1 != static_cast<std::size_t>((*it).Id())) return false;
     }
 
     return true;
