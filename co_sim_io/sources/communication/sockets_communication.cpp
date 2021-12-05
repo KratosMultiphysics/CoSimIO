@@ -11,6 +11,7 @@
 //
 
 // System includes
+#include <algorithm>
 #include <stdexcept>
 
 // Project includes
@@ -18,6 +19,24 @@
 
 namespace CoSimIO {
 namespace Internals {
+
+namespace {
+
+std::vector<std::string> SplitStringByDelimiter(
+const std::string& rString,
+const char Delimiter)
+{
+    std::istringstream ss(rString);
+    std::string token;
+
+    std::vector<std::string> splitted_string;
+    while(std::getline(ss, token, Delimiter)) {
+        splitted_string.push_back(token);
+    }
+
+    return splitted_string;
+}
+}
 
 std::vector<char> StBuffer(20*1024);
 
@@ -93,8 +112,25 @@ void SocketsCommunication::PrepareConnection(const Info& I_Info)
 Info SocketsCommunication::GetCommunicationSettings() const
 {
     Info info;
-    std::string port_numbers = std::to_string(mPortNumber);
-    info.Set("port_numbers", port_numbers);
+
+    if (GetIsPrimaryConnection()) {
+        // collect all port numbers on rank 0
+        // to exchange them during the handshake
+        // (which happens only on rank 0)
+
+        const auto& r_data_comm = GetDataCommunicator();
+        std::vector<int> port_numbers(r_data_comm.Size());
+        port_numbers[r_data_comm.Rank()] = mPortNumber;
+
+        r_data_comm.Gather(port_numbers, 0);
+
+        if (r_data_comm.Rank() == 0) {
+            std::stringstream port_numbers_stream;
+            std::copy(port_numbers.begin(), port_numbers.end(), std::ostream_iterator<int>(port_numbers_stream, "-"));
+            info.Set("port_numbers", port_numbers_stream.str());
+        }
+    }
+
     return info;
 }
 
@@ -103,9 +139,13 @@ void SocketsCommunication::GetPortNumber()
     CO_SIM_IO_ERROR_IF(GetIsPrimaryConnection()) << "This function can only be used as secondary connection!" << std::endl;
 
     const auto partner_info = GetPartnerInfo();
-    const std::string ports = partner_info.Get<Info>("communication_settings").Get<std::string>("port_numbers");
+    const std::string ports_string = partner_info.Get<Info>("communication_settings").Get<std::string>("port_numbers");
 
-    mPortNumber = std::stoul(ports);
+    std::vector<std::string> ports = SplitStringByDelimiter(ports_string, '-');
+
+    CO_SIM_IO_ERROR_IF(static_cast<int>(ports.size()) != GetDataCommunicator().Size()) << "Wrong number of ports!" << std::endl;
+
+    mPortNumber = std::stoul(ports[GetDataCommunicator().Rank()]);
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using port number " << mPortNumber << std::endl;
 }
