@@ -92,6 +92,8 @@ Info SocketsCommunication::DisconnectDetail(const Info& I_Info)
     // Tidy up the context thread
     if (mContextThread.joinable()) mContextThread.join();
 
+    mpAsioSocket->close();
+
     return Info();
 }
 
