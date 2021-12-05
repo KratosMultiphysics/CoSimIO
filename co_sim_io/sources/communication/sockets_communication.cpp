@@ -92,12 +92,14 @@ Info SocketsCommunication::ConnectDetail(const Info& I_Info)
     using namespace asio::ip;
 
     mpAsioSocket = std::make_shared<asio::ip::tcp::socket>(mAsioContext);
-    asio::ip::tcp::endpoint local_endpoint(asio::ip::make_address("127.0.0.1"), 60000);
+    asio::ip::tcp::endpoint local_endpoint(asio::ip::make_address("127.0.0.1"), 0);
 
     if (GetIsPrimaryConnection()) { // this is the server
         std::cerr << "SERVER DEBUG 0" << std::endl;
         try {
             tcp::acceptor acceptor(mAsioContext, local_endpoint);
+
+            std::cerr << "Port that is actually used: " << acceptor.local_endpoint().port() << std::endl;
 
             std::cerr << "SERVER DEBUG 1" << std::endl;
 
