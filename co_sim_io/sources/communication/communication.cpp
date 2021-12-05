@@ -72,6 +72,8 @@ Info Communication::Connect(const Info& I_Info)
 
     BaseConnectDetail(I_Info);
 
+    PrepareConnection(I_Info);
+
     HandShake(I_Info);
 
     Info connect_detail_info = ConnectDetail(I_Info);
