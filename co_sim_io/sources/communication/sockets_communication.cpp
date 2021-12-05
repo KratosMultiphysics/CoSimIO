@@ -197,7 +197,7 @@ void SocketsCommunication::GetPortNumber()
 void SocketsCommunication::Write(const std::string& rData)
 {
     SendSize(rData.size());
-    asio::write(*mpAsioSocket, asio::buffer(&rData, rData.size()));
+    asio::write(*mpAsioSocket, asio::buffer(rData.data(), rData.size()));
 }
 
 void SocketsCommunication::Read(std::string& rData)
