@@ -569,4 +569,9 @@ TEST_CASE("PipeCommunication" * doctest::timeout(25.0))
 #endif
 }
 
+TEST_CASE("SocketCommunication" * doctest::timeout(25.0))
+{
+    RunAllCommunication<CoSimIO::Internals::SocketsCommunication>();
+}
+
 } // TEST_SUITE("Communication")
