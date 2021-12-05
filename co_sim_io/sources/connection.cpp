@@ -16,9 +16,7 @@
 // Project includes
 #include "includes/define.hpp"
 #include "includes/connection.hpp"
-#include "includes/communication/file_communication.hpp"
-#include "includes/communication/pipe_communication.hpp"
-#include "includes/communication/sockets_communication.hpp"
+#include "includes/communication/factory.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -93,15 +91,7 @@ void Connection::Initialize(const Info& I_Settings)
 
     CO_SIM_IO_INFO_IF("CoSimIO", mpDatacomm->Rank()==0) << "CoSimIO from \"" << I_Settings.Get<std::string>("my_name") << "\" to \"" << I_Settings.Get<std::string>("connect_to") << "\" uses communication format: " << comm_format << std::endl;
 
-    if (comm_format == "file") {
-        mpComm = CoSimIO::make_unique<FileCommunication>(I_Settings, mpDatacomm);
-    } else if (comm_format == "pipe") {
-        mpComm = CoSimIO::make_unique<PipeCommunication>(I_Settings, mpDatacomm);
-    } else if (comm_format == "sockets") {
-        mpComm = CoSimIO::make_unique<SocketsCommunication>(I_Settings, mpDatacomm);
-    } else {
-        CO_SIM_IO_ERROR << "Unsupported communication format: " << comm_format << std::endl;
-    }
+    mpComm = CreateCommunication(I_Settings, mpDatacomm);
 }
 
 void Connection::CheckIfNameIsValid(const std::string& rName) const
