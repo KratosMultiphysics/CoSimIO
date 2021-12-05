@@ -46,8 +46,16 @@ public:
 private:
     std::string GetCommunicationName() const override {return "sockets";}
 
+    void PrepareConnection(const Info& I_Info) override;
+
+    Info GetCommunicationSettings() const override;
+
+    void GetPortNumber();
+
     asio::io_context mAsioContext;
     std::shared_ptr<asio::ip::tcp::socket> mpAsioSocket;
+    std::shared_ptr<asio::ip::tcp::acceptor> mpAsioAcceptor;
+    unsigned short mPortNumber=0;
     std::thread mContextThread;
 };
 

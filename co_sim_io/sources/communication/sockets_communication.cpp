@@ -89,59 +89,23 @@ SocketsCommunication::~SocketsCommunication()
 
 Info SocketsCommunication::ConnectDetail(const Info& I_Info)
 {
+    if (!GetIsPrimaryConnection()) {GetPortNumber();}
+
     using namespace asio::ip;
 
     mpAsioSocket = std::make_shared<asio::ip::tcp::socket>(mAsioContext);
-    asio::ip::tcp::endpoint local_endpoint(asio::ip::make_address("127.0.0.1"), 0);
-
     if (GetIsPrimaryConnection()) { // this is the server
-        std::cerr << "SERVER DEBUG 0" << std::endl;
-        try {
-            tcp::acceptor acceptor(mAsioContext, local_endpoint);
-
-            std::cerr << "Port that is actually used: " << acceptor.local_endpoint().port() << std::endl;
-
-            std::cerr << "SERVER DEBUG 1" << std::endl;
-
-            std::cerr << "SERVER DEBUG 2" << std::endl;
-            SynchronizeAll();
-            acceptor.accept(*mpAsioSocket);
-
-
-            std::cerr << "SERVER DEBUG 3" << std::endl;
-            std::string message = "make_daytime_string()\n";
-
-            asio::error_code ignored_error;
-            asio::write(*mpAsioSocket, asio::buffer(message), ignored_error);
-        } catch (std::exception& e) {
-            std::cerr << "Serveer error:" << e.what() << std::endl;
-        }
+        mpAsioAcceptor->accept(*mpAsioSocket);
+        asio::error_code ignored_error;
+        std::string message = "make_daytime_string()\n";
+        asio::write(*mpAsioSocket, asio::buffer(message), ignored_error);
     } else { // this is the client
-        std::cerr << "CLIENT DEBUG 0" << std::endl;
-        try {
-            SynchronizeAll();
-            tcp::resolver resolver(mAsioContext);
-            std::cerr << "CLIENT DEBUG 1" << std::endl;
-            // tcp::resolver::results_type endpoints = resolver.resolve("127.0.0.1", "60000");
-            // std::cerr << "CLIENT DEBUG 2" << std::endl;
+        tcp::endpoint my_endpoint(asio::ip::make_address("127.0.0.1"), mPortNumber);
 
-            mpAsioSocket->connect(local_endpoint);
-
-            // asio::connect(*mpAsioSocket, local_endpoint);
-            std::cerr << "CLIENT DEBUG 2" << std::endl;
-
-            asio::error_code error;
-
-            std::cerr << "CLIENT DEBUG 3" << std::endl;
-            size_t len = mpAsioSocket->read_some(asio::buffer(StBuffer), error);
-            std::cerr << "CLIENT DEBUG 4" << std::endl;
-
-            std::cerr << "CLIENT DEBUG 5" << std::endl;
-            std::cout.write(StBuffer.data(), len);
-            std::cerr << "CLIENT DEBUG 6" << std::endl;
-        } catch (std::exception& e) {
-            std::cerr <<"Client error: " <<e.what() << std::endl;
-        }
+        mpAsioSocket->connect(my_endpoint);
+        asio::error_code error;
+        size_t len = mpAsioSocket->read_some(asio::buffer(StBuffer), error);
+        std::cout.write(StBuffer.data(), len);
     }
 
     mContextThread = std::thread([this]() { mAsioContext.run(); });
@@ -158,6 +122,40 @@ Info SocketsCommunication::DisconnectDetail(const Info& I_Info)
     if (mContextThread.joinable()) mContextThread.join();
 
     return Info();
+}
+
+
+void SocketsCommunication::PrepareConnection(const Info& I_Info)
+{
+    // preparing the acceptors to get the ports used for connecting the sockets
+    if (GetIsPrimaryConnection()) {
+        using namespace asio::ip;
+        tcp::endpoint port_selection_endpoint(asio::ip::make_address("127.0.0.1"), 0);
+        mpAsioAcceptor = std::make_shared<tcp::acceptor>(mAsioContext, port_selection_endpoint);
+        mPortNumber = mpAsioAcceptor->local_endpoint().port();
+
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using port number " << mPortNumber << std::endl;
+    }
+}
+
+Info SocketsCommunication::GetCommunicationSettings() const
+{
+    Info info;
+    std::string port_numbers = std::to_string(mPortNumber);
+    info.Set("port_numbers", port_numbers);
+    return info;
+}
+
+void SocketsCommunication::GetPortNumber()
+{
+    CO_SIM_IO_ERROR_IF(GetIsPrimaryConnection()) << "This function can only be used as secondary connection!" << std::endl;
+
+    const auto partner_info = GetPartnerInfo();
+    const std::string ports = partner_info.Get<Info>("communication_settings").Get<std::string>("port_numbers");
+
+    mPortNumber = std::stoul(ports);
+
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using port number " << mPortNumber << std::endl;
 }
 
 } // namespace Internals
