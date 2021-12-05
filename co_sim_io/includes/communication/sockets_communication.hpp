@@ -43,7 +43,36 @@ public:
 
     Info DisconnectDetail(const Info& I_Info) override;
 
+    Info ImportInfoImpl(const Info& I_Info) override;
+
+    Info ExportInfoImpl(const Info& I_Info) override;
+
+    Info ImportDataImpl(
+        const Info& I_Info,
+        Internals::DataContainer<double>& rData) override;
+
+    Info ExportDataImpl(
+        const Info& I_Info,
+        const Internals::DataContainer<double>& rData) override;
+
+    Info ImportMeshImpl(
+        const Info& I_Info,
+        ModelPart& O_ModelPart) override;
+
+    Info ExportMeshImpl(
+        const Info& I_Info,
+        const ModelPart& I_ModelPart) override;
+
 private:
+
+    asio::io_context mAsioContext;
+    std::shared_ptr<asio::ip::tcp::socket> mpAsioSocket;
+    std::shared_ptr<asio::ip::tcp::acceptor> mpAsioAcceptor;
+    unsigned short mPortNumber=0;
+    std::vector<int> mAllPortNumbers;
+    std::thread mContextThread;
+
+
     std::string GetCommunicationName() const override {return "sockets";}
 
     void PrepareConnection(const Info& I_Info) override;
@@ -52,12 +81,31 @@ private:
 
     void GetPortNumber();
 
-    asio::io_context mAsioContext;
-    std::shared_ptr<asio::ip::tcp::socket> mpAsioSocket;
-    std::shared_ptr<asio::ip::tcp::acceptor> mpAsioAcceptor;
-    unsigned short mPortNumber=0;
-    std::vector<int> mAllPortNumbers;
-    std::thread mContextThread;
+    void Write(const std::string& rData);
+
+    void Read(std::string& rData);
+
+    template<class TObjectType>
+    void Send(const TObjectType& rObject)
+    {
+        StreamSerializer serializer;
+        serializer.save("object", rObject);
+
+        Write(serializer.GetStringRepresentation());
+    }
+
+    template<class TObjectType>
+    void Receive(TObjectType& rObject)
+    {
+        std::string buffer;
+        Read(buffer);
+        StreamSerializer serializer(buffer);
+        serializer.load("object", rObject);
+    }
+
+    void SendSize(const std::uint64_t Size);
+
+    std::uint64_t ReceiveSize();
 };
 
 } // namespace Internals

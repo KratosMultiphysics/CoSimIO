@@ -57,6 +57,51 @@ SocketsCommunication::~SocketsCommunication()
     }
 }
 
+Info SocketsCommunication::ImportInfoImpl(const Info& I_Info)
+{
+    Info imported_info;
+    Receive(imported_info);
+    return imported_info;
+}
+
+Info SocketsCommunication::ExportInfoImpl(const Info& I_Info)
+{
+    Send(I_Info);
+    return Info(); // TODO use
+}
+
+Info SocketsCommunication::ImportDataImpl(
+    const Info& I_Info,
+    Internals::DataContainer<double>& rData)
+{
+    Receive(rData);
+    return Info(); // TODO use
+}
+
+Info SocketsCommunication::ExportDataImpl(
+    const Info& I_Info,
+    const Internals::DataContainer<double>& rData)
+{
+    Send(rData);
+    return Info(); // TODO use
+}
+
+Info SocketsCommunication::ImportMeshImpl(
+    const Info& I_Info,
+    ModelPart& O_ModelPart)
+{
+    Receive(O_ModelPart);
+    return Info(); // TODO use
+}
+
+Info SocketsCommunication::ExportMeshImpl(
+    const Info& I_Info,
+    const ModelPart& I_ModelPart)
+{
+    Send(I_ModelPart);
+    return Info(); // TODO use
+}
+
 Info SocketsCommunication::ConnectDetail(const Info& I_Info)
 {
     if (!GetIsPrimaryConnection()) {GetPortNumber();}
@@ -147,6 +192,31 @@ void SocketsCommunication::GetPortNumber()
     mPortNumber = std::stoul(ports[GetDataCommunicator().Rank()]);
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using port number " << mPortNumber << std::endl;
+}
+
+void SocketsCommunication::Write(const std::string& rData)
+{
+    SendSize(rData.size());
+    asio::write(*mpAsioSocket, asio::buffer(&rData, rData.size()));
+}
+
+void SocketsCommunication::Read(std::string& rData)
+{
+    std::size_t received_size = ReceiveSize();
+    rData.resize(received_size);
+    asio::read(*mpAsioSocket, asio::buffer(&(rData.front()), received_size));
+}
+
+void SocketsCommunication::SendSize(const std::uint64_t Size)
+{
+    asio::write(*mpAsioSocket, asio::buffer(&Size, sizeof(Size)));
+}
+
+std::uint64_t SocketsCommunication::ReceiveSize()
+{
+    std::uint64_t imp_size_u;
+    asio::read(*mpAsioSocket, asio::buffer(&imp_size_u, sizeof(imp_size_u)));
+    return imp_size_u;
 }
 
 } // namespace Internals
