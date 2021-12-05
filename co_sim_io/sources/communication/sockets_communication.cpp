@@ -183,7 +183,7 @@ void SocketsCommunication::GetPortNumber()
 
     CO_SIM_IO_ERROR_IF(static_cast<int>(ports.size()) != GetDataCommunicator().Size()) << "Wrong number of ports!" << std::endl;
 
-    mPortNumber = std::stoul(ports[GetDataCommunicator().Rank()]);
+    mPortNumber = static_cast<unsigned short>(std::stoul(ports[GetDataCommunicator().Rank()]));
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using port number " << mPortNumber << std::endl;
 }
