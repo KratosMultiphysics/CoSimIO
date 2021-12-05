@@ -159,7 +159,7 @@ endif()
 
 target_include_directories(co_sim_io PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/co_sim_io)
 target_include_directories(co_sim_io SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external_libraries)
-target_include_directories(co_sim_io SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/asio/include)
+target_include_directories(co_sim_io SYSTEM PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/asio/include)
 
 if (CO_SIM_IO_BUILD_C)
     add_subdirectory(co_sim_io/c)
