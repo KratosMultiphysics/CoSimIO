@@ -21,61 +21,12 @@ namespace Internals {
 
 std::vector<char> StBuffer(20*1024);
 
-void GrabSomeData(asio::ip::tcp::socket& rSocket)
-{
-    rSocket.async_read_some(asio::buffer(StBuffer.data(), StBuffer.size()),
-        [&](std::error_code ec, std::size_t length){
-            if (!ec) {
-                std::cout << "\n\nRead " << length << " bytes\n\n";
-                for(std::size_t i=0;i<length;++i) {
-                    std::cout << StBuffer[i];
-                }
-                GrabSomeData(rSocket);
-            }
-        });
-}
 
 SocketsCommunication::SocketsCommunication(
     const Info& I_Settings,
     std::shared_ptr<DataCommunicator> I_DataComm)
     : Communication(I_Settings, I_DataComm)
 {
-    // std::error_code ec;
-
-    // asio::mAsioContext context;
-
-    // asio::ip::tcp::endpoint endpoint(asio::ip::make_address("93.184.216.34", ec), 80);
-    // asio::ip::tcp::endpoint endpoint_2(asio::ip::make_address("51.38.81.49", ec), 80);
-    // asio::ip::tcp::endpoint local_endpoint(asio::ip::make_address("127.0.0.1", ec), 80);
-
-    // asio::ip::tcp::socket socket(context);
-
-    // socket.connect(endpoint_2, ec);
-
-    // if (!ec) {
-    //     std::cout << "ASIO connected" << std::endl;
-    // } else {
-    //     std::cout << "ASIO connection ffdaile with error code:\n" << ec.message() << std::endl;
-    // }
-
-    // if (socket.is_open()) {
-    //     GrabSomeData(socket);
-
-    //     std::string str_request =
-    //         "GET /index.html HTTP/1.1\r\n"
-    //         "Host: example.com\r\n"
-    //         "Connection: close\r\n\r\n";
-
-    //     socket.write_some(asio::buffer(str_request.data(), str_request.size()), ec);
-
-
-    //     using namespace std::chrono;
-    //     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-
-
-    // }
-
-
 }
 
 SocketsCommunication::~SocketsCommunication()
@@ -96,6 +47,7 @@ Info SocketsCommunication::ConnectDetail(const Info& I_Info)
     mpAsioSocket = std::make_shared<asio::ip::tcp::socket>(mAsioContext);
     if (GetIsPrimaryConnection()) { // this is the server
         mpAsioAcceptor->accept(*mpAsioSocket);
+        mpAsioAcceptor->close();
         asio::error_code ignored_error;
         std::string message = "make_daytime_string()\n";
         asio::write(*mpAsioSocket, asio::buffer(message), ignored_error);
