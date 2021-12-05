@@ -14,7 +14,7 @@
 #define CO_SIM_IO_SOCKETS_COMMUNICATION_INCLUDED
 
 // System includes
-#include <chrono>
+#include <thread>
 
 // Project includes
 #include "communication.hpp"

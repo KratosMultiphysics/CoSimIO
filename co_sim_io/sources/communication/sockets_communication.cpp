@@ -12,7 +12,6 @@
 
 // System includes
 #include <algorithm>
-#include <stdexcept>
 
 // Project includes
 #include "includes/communication/sockets_communication.hpp"
