@@ -112,18 +112,12 @@ Info SocketsCommunication::ConnectDetail(const Info& I_Info)
     if (GetIsPrimaryConnection()) { // this is the server
         mpAsioAcceptor->accept(*mpAsioSocket);
         mpAsioAcceptor->close();
-        asio::error_code ignored_error;
-        std::string message = "make_daytime_string()\n";
-        asio::write(*mpAsioSocket, asio::buffer(message), ignored_error);
     } else { // this is the client
         tcp::endpoint my_endpoint(asio::ip::make_address("127.0.0.1"), mPortNumber);
-
         mpAsioSocket->connect(my_endpoint);
-        asio::error_code error;
-        size_t len = mpAsioSocket->read_some(asio::buffer(StBuffer), error);
-        std::cout.write(StBuffer.data(), len);
     }
 
+    // required such that asio keeps listening for incoming messages
     mContextThread = std::thread([this]() { mAsioContext.run(); });
 
     return Info();
