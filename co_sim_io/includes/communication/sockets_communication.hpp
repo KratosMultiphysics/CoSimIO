@@ -56,6 +56,7 @@ private:
     std::shared_ptr<asio::ip::tcp::socket> mpAsioSocket;
     std::shared_ptr<asio::ip::tcp::acceptor> mpAsioAcceptor;
     unsigned short mPortNumber=0;
+    std::vector<int> mAllPortNumbers;
     std::thread mContextThread;
 };
 

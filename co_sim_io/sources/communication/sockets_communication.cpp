@@ -106,6 +106,15 @@ void SocketsCommunication::PrepareConnection(const Info& I_Info)
         mPortNumber = mpAsioAcceptor->local_endpoint().port();
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using port number " << mPortNumber << std::endl;
+
+        // collect all port numbers on rank 0
+        // to exchange them during the handshake
+        // (which happens only on rank 0)
+        const auto& r_data_comm = GetDataCommunicator();
+        mAllPortNumbers.resize(r_data_comm.Size());
+        std::vector<int> my_ports(1);
+        my_ports[0] = mPortNumber;
+        r_data_comm.Gather(my_ports, mAllPortNumbers, 0);
     }
 }
 
@@ -113,22 +122,10 @@ Info SocketsCommunication::GetCommunicationSettings() const
 {
     Info info;
 
-    if (GetIsPrimaryConnection()) {
-        // collect all port numbers on rank 0
-        // to exchange them during the handshake
-        // (which happens only on rank 0)
-
-        const auto& r_data_comm = GetDataCommunicator();
-        std::vector<int> port_numbers(r_data_comm.Size());
-        port_numbers[r_data_comm.Rank()] = mPortNumber;
-
-        r_data_comm.Gather(port_numbers, 0);
-
-        if (r_data_comm.Rank() == 0) {
-            std::stringstream port_numbers_stream;
-            std::copy(port_numbers.begin(), port_numbers.end(), std::ostream_iterator<int>(port_numbers_stream, "-"));
-            info.Set("port_numbers", port_numbers_stream.str());
-        }
+    if (GetIsPrimaryConnection() && GetDataCommunicator().Rank() == 0) {
+        std::stringstream port_numbers_stream;
+        std::copy(mAllPortNumbers.begin(), mAllPortNumbers.end(), std::ostream_iterator<int>(port_numbers_stream, "-"));
+        info.Set("port_numbers", port_numbers_stream.str());
     }
 
     return info;
