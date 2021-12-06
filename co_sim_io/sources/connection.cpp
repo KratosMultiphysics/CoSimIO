@@ -87,11 +87,18 @@ Info Connection::Run(const Info& I_Info)
 
 void Connection::Initialize(const Info& I_Settings)
 {
-    const std::string comm_format = I_Settings.Get<std::string>("communication_format", "file"); // default is file-communication
+    Info comm_settings(I_Settings);
+    if (!comm_settings.Has("communication_format")) {
+        // set default communication format if not provided by user
+        // default is file-communication
+        comm_settings.Set<std::string>("communication_format", "file");
+    }
 
-    CO_SIM_IO_INFO_IF("CoSimIO", mpDatacomm->Rank()==0) << "CoSimIO from \"" << I_Settings.Get<std::string>("my_name") << "\" to \"" << I_Settings.Get<std::string>("connect_to") << "\" uses communication format: " << comm_format << std::endl;
+    const std::string comm_format = comm_settings.Get<std::string>("communication_format");
 
-    mpComm = CreateCommunication(I_Settings, mpDatacomm);
+    CO_SIM_IO_INFO_IF("CoSimIO", mpDatacomm->Rank()==0) << "CoSimIO from \"" << comm_settings.Get<std::string>("my_name") << "\" to \"" << comm_settings.Get<std::string>("connect_to") << "\" uses communication format: " << comm_format << std::endl;
+
+    mpComm = CreateCommunication(comm_settings, mpDatacomm);
 }
 
 void Connection::CheckIfNameIsValid(const std::string& rName) const
