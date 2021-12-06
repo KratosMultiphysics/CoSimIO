@@ -73,7 +73,7 @@ private:
     std::thread mContextThread;
 
 
-    std::string GetCommunicationName() const override {return "sockets";}
+    std::string GetCommunicationName() const override {return "socket";}
 
     void PrepareConnection(const Info& I_Info) override;
 

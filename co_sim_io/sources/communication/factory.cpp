@@ -32,7 +32,7 @@ std::unique_ptr<Communication> CreateCommunication(
         return CoSimIO::make_unique<FileCommunication>(I_Settings, pDataComm);
     } else if (comm_format == "pipe") {
         return CoSimIO::make_unique<PipeCommunication>(I_Settings, pDataComm);
-    } else if (comm_format == "sockets") {
+    } else if (comm_format == "socket") {
         return CoSimIO::make_unique<SocketCommunication>(I_Settings, pDataComm);
     } else {
         CO_SIM_IO_ERROR << "Unsupported communication format: " << comm_format << std::endl;
