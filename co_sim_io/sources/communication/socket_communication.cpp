@@ -35,10 +35,8 @@ const char Delimiter)
 
     return splitted_string;
 }
-}
 
-std::vector<char> StBuffer(20*1024);
-
+} // helpers namespace
 
 SocketCommunication::SocketCommunication(
     const Info& I_Settings,
