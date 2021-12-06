@@ -16,7 +16,7 @@
 #include "includes/communication/factory.hpp"
 #include "includes/communication/file_communication.hpp"
 #include "includes/communication/pipe_communication.hpp"
-#include "includes/communication/sockets_communication.hpp"
+#include "includes/communication/socket_communication.hpp"
 
 namespace CoSimIO {
 namespace Internals {

@@ -14,7 +14,7 @@
 #include <algorithm>
 
 // Project includes
-#include "includes/communication/sockets_communication.hpp"
+#include "includes/communication/socket_communication.hpp"
 
 namespace CoSimIO {
 namespace Internals {
