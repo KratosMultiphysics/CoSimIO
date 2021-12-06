@@ -16,9 +16,7 @@
 // Project includes
 #include "includes/define.hpp"
 #include "includes/connection.hpp"
-#include "includes/communication/file_communication.hpp"
-#include "includes/communication/pipe_communication.hpp"
-#include "includes/communication/sockets_communication.hpp"
+#include "includes/communication/factory.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -89,19 +87,18 @@ Info Connection::Run(const Info& I_Info)
 
 void Connection::Initialize(const Info& I_Settings)
 {
-    const std::string comm_format = I_Settings.Get<std::string>("communication_format", "file"); // default is file-communication
-
-    CO_SIM_IO_INFO_IF("CoSimIO", mpDatacomm->Rank()==0) << "CoSimIO from \"" << I_Settings.Get<std::string>("my_name") << "\" to \"" << I_Settings.Get<std::string>("connect_to") << "\" uses communication format: " << comm_format << std::endl;
-
-    if (comm_format == "file") {
-        mpComm = CoSimIO::make_unique<FileCommunication>(I_Settings, mpDatacomm);
-    } else if (comm_format == "pipe") {
-        mpComm = CoSimIO::make_unique<PipeCommunication>(I_Settings, mpDatacomm);
-    } else if (comm_format == "sockets") {
-        mpComm = CoSimIO::make_unique<SocketsCommunication>(I_Settings, mpDatacomm);
-    } else {
-        CO_SIM_IO_ERROR << "Unsupported communication format: " << comm_format << std::endl;
+    Info comm_settings(I_Settings);
+    if (!comm_settings.Has("communication_format")) {
+        // set default communication format if not provided by user
+        // default is file-communication
+        comm_settings.Set<std::string>("communication_format", "file");
     }
+
+    const std::string comm_format = comm_settings.Get<std::string>("communication_format");
+
+    CO_SIM_IO_INFO_IF("CoSimIO", mpDatacomm->Rank()==0) << "CoSimIO from \"" << comm_settings.Get<std::string>("my_name") << "\" to \"" << comm_settings.Get<std::string>("connect_to") << "\" uses communication format: " << comm_format << std::endl;
+
+    mpComm = CreateCommunication(comm_settings, mpDatacomm);
 }
 
 void Connection::CheckIfNameIsValid(const std::string& rName) const

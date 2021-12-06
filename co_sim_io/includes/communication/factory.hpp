@@ -10,8 +10,8 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_SOCKETS_COMMUNICATION_INCLUDED
-#define CO_SIM_IO_SOCKETS_COMMUNICATION_INCLUDED
+#ifndef CO_SIM_IO_COMMUNICATION_FACTORY_INCLUDED
+#define CO_SIM_IO_COMMUNICATION_FACTORY_INCLUDED
 
 // System includes
 
@@ -21,22 +21,11 @@
 namespace CoSimIO {
 namespace Internals {
 
-class CO_SIM_IO_API SocketsCommunication : public Communication
-{
-public:
-    SocketsCommunication(
-        const Info& I_Settings,
-        std::shared_ptr<DataCommunicator> I_DataComm);
-
-    Info ConnectDetail(const Info& I_Info) override;
-
-    Info DisconnectDetail(const Info& I_Info) override;
-
-private:
-    std::string GetCommunicationName() const override {return "sockets";}
-};
+std::unique_ptr<Communication> CO_SIM_IO_API CreateCommunication(
+    const Info& I_Settings,
+    const std::shared_ptr<DataCommunicator> pDataComm);
 
 } // namespace Internals
 } // namespace CoSimIO
 
-#endif // CO_SIM_IO_SOCKETS_COMMUNICATION_INCLUDED
+#endif // CO_SIM_IO_COMMUNICATION_FACTORY_INCLUDED

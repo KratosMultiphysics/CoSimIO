@@ -89,7 +89,16 @@ Set `communication_format` to `pipe`.
 |currently_nothing|
 
 ## Socket-based communication
+The data is communicated through network sockets by using the TCP communication protocol. No data is written to the filesystem, this makes it more efficient than the file-based communication.
 
-Work in progress
+The [ASIO](https://think-async.com/Asio/) library is used as a high level interface for the sockets.
 
-![](https://media.giphy.com/media/3o7btQ0NH6Kl8CxCfK/giphy.gif)
+The implementation of the _SocketCommunication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/includes/communication/socket_communication.hpp).
+
+**Specific Input:**
+
+Set `communication_format` to `socket`.
+
+| name | type | required | default| description |
+|---|---|---|---|---|
+|currently_nothing|

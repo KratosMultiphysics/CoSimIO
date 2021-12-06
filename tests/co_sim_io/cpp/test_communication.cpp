@@ -19,10 +19,7 @@
 // Project includes
 #include "co_sim_io_testing.hpp"
 #include "includes/communication/communication.hpp"
-
-#include "includes/communication/file_communication.hpp"
-#include "includes/communication/pipe_communication.hpp"
-#include "includes/communication/sockets_communication.hpp"
+#include "includes/communication/factory.hpp"
 
 namespace {
 
@@ -183,7 +180,6 @@ std::shared_ptr<CoSimIO::ModelPart> CreateVolumeModelPart()
     return p_model_part;
 }
 
-template<class TCommType>
 void ConnectDisconnect(CoSimIO::Info settings)
 {
     settings.Set<std::string>("my_name", "thread");
@@ -192,10 +188,7 @@ void ConnectDisconnect(CoSimIO::Info settings)
     settings.Set<int>("echo_level", 0);
 
     using Communication = CoSimIO::Internals::Communication;
-    std::unique_ptr<Communication> p_comm(
-        CoSimIO::make_unique<TCommType>(
-            settings,
-            std::make_shared<CoSimIO::Internals::DataCommunicator>()));
+    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
     // the secondary thread should wait a bit until the primary has created the folder!
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -211,7 +204,6 @@ void ConnectDisconnect(CoSimIO::Info settings)
     CHECK_UNARY_FALSE(ret_info_disconnect.Get<bool>("is_connected"));
 }
 
-template<class TCommType>
 void ExportInfoHelper(
     CoSimIO::Info settings,
     const std::size_t NumExports)
@@ -222,10 +214,7 @@ void ExportInfoHelper(
     settings.Set<int>("echo_level", 0);
 
     using Communication = CoSimIO::Internals::Communication;
-    std::unique_ptr<Communication> p_comm(
-        CoSimIO::make_unique<TCommType>(
-            settings,
-            std::make_shared<CoSimIO::Internals::DataCommunicator>()));
+    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
     // the secondary thread should wait a bit until the primary has created the folder!
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -252,7 +241,6 @@ void ExportInfoHelper(
     CHECK_UNARY_FALSE(ret_info_disconnect.Get<bool>("is_connected"));
 }
 
-template<class TCommType>
 void ExportDataHelper(
     CoSimIO::Info settings,
     const std::vector<std::vector<double>>& DataToExport)
@@ -263,10 +251,7 @@ void ExportDataHelper(
     settings.Set<int>("echo_level", 0);
 
     using Communication = CoSimIO::Internals::Communication;
-    std::unique_ptr<Communication> p_comm(
-        CoSimIO::make_unique<TCommType>(
-            settings,
-            std::make_shared<CoSimIO::Internals::DataCommunicator>()));
+    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
     // the secondary thread should wait a bit until the primary has created the folder!
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -290,7 +275,6 @@ void ExportDataHelper(
     CHECK_UNARY_FALSE(ret_info_disconnect.Get<bool>("is_connected"));
 }
 
-template<class TCommType>
 void ExportMeshHelper(
     CoSimIO::Info settings,
     const std::vector<std::shared_ptr<CoSimIO::ModelPart>>& ModelPartsToExport)
@@ -301,10 +285,7 @@ void ExportMeshHelper(
     settings.Set<int>("echo_level", 0);
 
     using Communication = CoSimIO::Internals::Communication;
-    std::unique_ptr<Communication> p_comm(
-        CoSimIO::make_unique<TCommType>(
-            settings,
-            std::make_shared<CoSimIO::Internals::DataCommunicator>()));
+    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
     // the secondary thread should wait a bit until the primary has created the folder!
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -330,8 +311,7 @@ void ExportMeshHelper(
 }
 
 // neither of the tests should take more than 5.0 seconds. If it does it means that it hangs!
-template<class TCommType>
-void RunAllCommunication(CoSimIO::Info settings=CoSimIO::Info())
+void RunAllCommunication(CoSimIO::Info settings)
 {
     settings.Set<std::string>("my_name", "main");
     settings.Set<std::string>("connect_to", "thread");
@@ -339,14 +319,12 @@ void RunAllCommunication(CoSimIO::Info settings=CoSimIO::Info())
     settings.Set<int>("echo_level", 0);
 
     using Communication = CoSimIO::Internals::Communication;
-    std::unique_ptr<Communication> p_comm(
-        CoSimIO::make_unique<TCommType>(
-            settings,
-            std::make_shared<CoSimIO::Internals::DataCommunicator>()));
+
+    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
     SUBCASE("connect_disconnect_once")
     {
-        std::thread ext_thread(ConnectDisconnect<TCommType>, settings);
+        std::thread ext_thread(ConnectDisconnect, settings);
 
         CoSimIO::Info connect_info;
         p_comm->Connect(connect_info);
@@ -363,12 +341,9 @@ void RunAllCommunication(CoSimIO::Info settings=CoSimIO::Info())
         for (std::size_t i=0; i<3; ++i) {
             // need to make a fresh obj of "Communication" each time we connect again
             // (because the same is done in the ext thread)
-            std::unique_ptr<Communication> p_internal_comm(
-                CoSimIO::make_unique<TCommType>(
-                    settings,
-                    std::make_shared<CoSimIO::Internals::DataCommunicator>()));
+            std::unique_ptr<Communication> p_internal_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
-            std::thread ext_thread(ConnectDisconnect<TCommType>, settings);
+            std::thread ext_thread(ConnectDisconnect, settings);
 
             CoSimIO::Info connect_info;
             p_internal_comm->Connect(connect_info);
@@ -382,7 +357,7 @@ void RunAllCommunication(CoSimIO::Info settings=CoSimIO::Info())
 
     SUBCASE("import_export_info_once")
     {
-        std::thread ext_thread(ExportInfoHelper<TCommType>, settings, 1);
+        std::thread ext_thread(ExportInfoHelper, settings, 1);
 
         CoSimIO::Info connect_info;
         p_comm->Connect(connect_info);
@@ -410,7 +385,7 @@ void RunAllCommunication(CoSimIO::Info settings=CoSimIO::Info())
     SUBCASE("import_export_info_multiple")
     {
         const std::size_t num_exports = 4;
-        std::thread ext_thread(ExportInfoHelper<TCommType>, settings, num_exports);
+        std::thread ext_thread(ExportInfoHelper, settings, num_exports);
 
         CoSimIO::Info connect_info;
         p_comm->Connect(connect_info);
@@ -442,7 +417,7 @@ void RunAllCommunication(CoSimIO::Info settings=CoSimIO::Info())
         const std::vector<std::vector<double>> exp_data {
             {1.0, -6.1, 55.789, 547}
         };
-        std::thread ext_thread(ExportDataHelper<TCommType>, settings, exp_data);
+        std::thread ext_thread(ExportDataHelper, settings, exp_data);
 
         CoSimIO::Info connect_info;
         p_comm->Connect(connect_info);
@@ -471,7 +446,7 @@ void RunAllCommunication(CoSimIO::Info settings=CoSimIO::Info())
             {1.4, -6.0001, 551.789, 5647, -1.0, 44.5, -876.123, -6.1, -63455.789, 91.567},
             {-11.56}
         };
-        std::thread ext_thread(ExportDataHelper<TCommType>, settings, exp_data);
+        std::thread ext_thread(ExportDataHelper, settings, exp_data);
 
         CoSimIO::Info connect_info;
         p_comm->Connect(connect_info);
@@ -498,7 +473,7 @@ void RunAllCommunication(CoSimIO::Info settings=CoSimIO::Info())
         const std::vector<std::shared_ptr<CoSimIO::ModelPart>> model_parts {
             CreateLinesAndPointElementsModelPart()
         };
-        std::thread ext_thread(ExportMeshHelper<TCommType>, settings, model_parts);
+        std::thread ext_thread(ExportMeshHelper, settings, model_parts);
 
         CoSimIO::Info connect_info;
         p_comm->Connect(connect_info);
@@ -526,7 +501,7 @@ void RunAllCommunication(CoSimIO::Info settings=CoSimIO::Info())
             CreateSurfaceModelPart(),
             CreateVolumeModelPart()
         };
-        std::thread ext_thread(ExportMeshHelper<TCommType>, settings, model_parts);
+        std::thread ext_thread(ExportMeshHelper, settings, model_parts);
 
         CoSimIO::Info connect_info;
         p_comm->Connect(connect_info);
@@ -552,21 +527,33 @@ TEST_SUITE("Communication") {
 
 TEST_CASE("FileCommunication_default_settings" * doctest::timeout(25.0))
 {
-    RunAllCommunication<CoSimIO::Internals::FileCommunication>();
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "file");
+    RunAllCommunication(settings);
 }
 
 TEST_CASE("FileCommunication_avail_file" * doctest::timeout(25.0))
 {
     CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "file");
     settings.Set<bool>("use_aux_file_for_file_availability", true);
-    RunAllCommunication<CoSimIO::Internals::FileCommunication>(settings);
+    RunAllCommunication(settings);
 }
 
 TEST_CASE("PipeCommunication" * doctest::timeout(25.0))
 {
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "pipe");
 #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS // pipe comm is currenlty not implemented in Win
-    RunAllCommunication<CoSimIO::Internals::PipeCommunication>();
+    RunAllCommunication(settings);
 #endif
+}
+
+TEST_CASE("SocketCommunication" * doctest::timeout(25.0))
+{
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "socket");
+    RunAllCommunication(settings);
 }
 
 } // TEST_SUITE("Communication")
