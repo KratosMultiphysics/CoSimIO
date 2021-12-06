@@ -552,7 +552,7 @@ TEST_CASE("PipeCommunication" * doctest::timeout(25.0))
 TEST_CASE("SocketCommunication" * doctest::timeout(25.0))
 {
     CoSimIO::Info settings;
-    settings.Set<std::string>("communication_format", "sockets");
+    settings.Set<std::string>("communication_format", "socket");
     RunAllCommunication(settings);
 }
 
