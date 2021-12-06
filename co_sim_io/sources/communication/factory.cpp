@@ -25,7 +25,8 @@ std::unique_ptr<Communication> CreateCommunication(
     const Info& I_Settings,
     const std::shared_ptr<DataCommunicator> pDataComm)
 {
-    const std::string comm_format = I_Settings.Get<std::string>("communication_format", "file"); // default is file-communication
+    // deliberately not providing a default
+    const std::string comm_format = I_Settings.Get<std::string>("communication_format");
 
     if (comm_format == "file") {
         return CoSimIO::make_unique<FileCommunication>(I_Settings, pDataComm);
