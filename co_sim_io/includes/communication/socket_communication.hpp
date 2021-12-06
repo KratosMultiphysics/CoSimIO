@@ -30,14 +30,14 @@
 namespace CoSimIO {
 namespace Internals {
 
-class CO_SIM_IO_API SocketsCommunication : public Communication
+class CO_SIM_IO_API SocketCommunication : public Communication
 {
 public:
-    SocketsCommunication(
+    SocketCommunication(
         const Info& I_Settings,
         std::shared_ptr<DataCommunicator> I_DataComm);
 
-    ~SocketsCommunication() override;
+    ~SocketCommunication() override;
 
     Info ConnectDetail(const Info& I_Info) override;
 

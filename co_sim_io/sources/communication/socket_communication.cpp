@@ -40,14 +40,14 @@ const char Delimiter)
 std::vector<char> StBuffer(20*1024);
 
 
-SocketsCommunication::SocketsCommunication(
+SocketCommunication::SocketCommunication(
     const Info& I_Settings,
     std::shared_ptr<DataCommunicator> I_DataComm)
     : Communication(I_Settings, I_DataComm)
 {
 }
 
-SocketsCommunication::~SocketsCommunication()
+SocketCommunication::~SocketCommunication()
 {
     if (GetIsConnected()) {
         CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not performed, attempting automatic disconnection!" << std::endl;
@@ -56,20 +56,20 @@ SocketsCommunication::~SocketsCommunication()
     }
 }
 
-Info SocketsCommunication::ImportInfoImpl(const Info& I_Info)
+Info SocketCommunication::ImportInfoImpl(const Info& I_Info)
 {
     Info imported_info;
     Receive(imported_info);
     return imported_info;
 }
 
-Info SocketsCommunication::ExportInfoImpl(const Info& I_Info)
+Info SocketCommunication::ExportInfoImpl(const Info& I_Info)
 {
     Send(I_Info);
     return Info(); // TODO use
 }
 
-Info SocketsCommunication::ImportDataImpl(
+Info SocketCommunication::ImportDataImpl(
     const Info& I_Info,
     Internals::DataContainer<double>& rData)
 {
@@ -77,7 +77,7 @@ Info SocketsCommunication::ImportDataImpl(
     return Info(); // TODO use
 }
 
-Info SocketsCommunication::ExportDataImpl(
+Info SocketCommunication::ExportDataImpl(
     const Info& I_Info,
     const Internals::DataContainer<double>& rData)
 {
@@ -85,7 +85,7 @@ Info SocketsCommunication::ExportDataImpl(
     return Info(); // TODO use
 }
 
-Info SocketsCommunication::ImportMeshImpl(
+Info SocketCommunication::ImportMeshImpl(
     const Info& I_Info,
     ModelPart& O_ModelPart)
 {
@@ -93,7 +93,7 @@ Info SocketsCommunication::ImportMeshImpl(
     return Info(); // TODO use
 }
 
-Info SocketsCommunication::ExportMeshImpl(
+Info SocketCommunication::ExportMeshImpl(
     const Info& I_Info,
     const ModelPart& I_ModelPart)
 {
@@ -101,7 +101,7 @@ Info SocketsCommunication::ExportMeshImpl(
     return Info(); // TODO use
 }
 
-Info SocketsCommunication::ConnectDetail(const Info& I_Info)
+Info SocketCommunication::ConnectDetail(const Info& I_Info)
 {
     if (!GetIsPrimaryConnection()) {GetPortNumber();}
 
@@ -122,7 +122,7 @@ Info SocketsCommunication::ConnectDetail(const Info& I_Info)
     return Info();
 }
 
-Info SocketsCommunication::DisconnectDetail(const Info& I_Info)
+Info SocketCommunication::DisconnectDetail(const Info& I_Info)
 {
     // Request the context to close
     mAsioContext.stop();
@@ -136,7 +136,7 @@ Info SocketsCommunication::DisconnectDetail(const Info& I_Info)
 }
 
 
-void SocketsCommunication::PrepareConnection(const Info& I_Info)
+void SocketCommunication::PrepareConnection(const Info& I_Info)
 {
     // preparing the acceptors to get the ports used for connecting the sockets
     if (GetIsPrimaryConnection()) {
@@ -158,7 +158,7 @@ void SocketsCommunication::PrepareConnection(const Info& I_Info)
     }
 }
 
-Info SocketsCommunication::GetCommunicationSettings() const
+Info SocketCommunication::GetCommunicationSettings() const
 {
     Info info;
 
@@ -171,7 +171,7 @@ Info SocketsCommunication::GetCommunicationSettings() const
     return info;
 }
 
-void SocketsCommunication::GetPortNumber()
+void SocketCommunication::GetPortNumber()
 {
     CO_SIM_IO_ERROR_IF(GetIsPrimaryConnection()) << "This function can only be used as secondary connection!" << std::endl;
 
@@ -187,25 +187,25 @@ void SocketsCommunication::GetPortNumber()
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using port number " << mPortNumber << std::endl;
 }
 
-void SocketsCommunication::Write(const std::string& rData)
+void SocketCommunication::Write(const std::string& rData)
 {
     SendSize(rData.size());
     asio::write(*mpAsioSocket, asio::buffer(rData.data(), rData.size()));
 }
 
-void SocketsCommunication::Read(std::string& rData)
+void SocketCommunication::Read(std::string& rData)
 {
     std::size_t received_size = ReceiveSize();
     rData.resize(received_size);
     asio::read(*mpAsioSocket, asio::buffer(&(rData.front()), received_size));
 }
 
-void SocketsCommunication::SendSize(const std::uint64_t Size)
+void SocketCommunication::SendSize(const std::uint64_t Size)
 {
     asio::write(*mpAsioSocket, asio::buffer(&Size, sizeof(Size)));
 }
 
-std::uint64_t SocketsCommunication::ReceiveSize()
+std::uint64_t SocketCommunication::ReceiveSize()
 {
     std::uint64_t imp_size_u;
     asio::read(*mpAsioSocket, asio::buffer(&imp_size_u, sizeof(imp_size_u)));
