@@ -94,7 +94,11 @@ Info LocalSocketCommunication::ConnectDetail(const Info& I_Info)
         std::ofstream bind_file;
         bind_file.open(bind_file_name);
         bind_file.close();
+        #ifdef CO_SIM_IO_COMPILED_IN_WINDOWS
+        ::_unlink(bind_file_name.c_str()); // Remove previous binding.
+        #else
         ::unlink(bind_file_name.c_str()); // Remove previous binding.
+        #endif
     }
 
     SynchronizeAll();
