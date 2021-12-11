@@ -94,7 +94,7 @@ Info LocalSocketCommunication::ConnectDetail(const Info& I_Info)
         std::ofstream bind_file;
         bind_file.open(bind_file_name);
         bind_file.close();
-        const char* c_bind_file_name = bind_file_name.c_str();
+        const char* c_bind_file_name = bind_file_name.string().c_str();
         ::unlink(c_bind_file_name); // Remove previous binding.
     }
 
