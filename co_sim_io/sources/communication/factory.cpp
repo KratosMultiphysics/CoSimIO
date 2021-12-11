@@ -16,6 +16,7 @@
 #include "includes/communication/factory.hpp"
 #include "includes/communication/file_communication.hpp"
 #include "includes/communication/pipe_communication.hpp"
+#include "includes/communication/local_socket_communication.hpp"
 #include "includes/communication/socket_communication.hpp"
 
 namespace CoSimIO {
@@ -32,6 +33,8 @@ std::unique_ptr<Communication> CreateCommunication(
         return CoSimIO::make_unique<FileCommunication>(I_Settings, pDataComm);
     } else if (comm_format == "pipe") {
         return CoSimIO::make_unique<PipeCommunication>(I_Settings, pDataComm);
+    } else if (comm_format == "local_socket") {
+        return CoSimIO::make_unique<LocalSocketCommunication>(I_Settings, pDataComm);
     } else if (comm_format == "socket") {
         return CoSimIO::make_unique<SocketCommunication>(I_Settings, pDataComm);
     } else {
