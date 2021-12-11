@@ -66,20 +66,12 @@ public:
 private:
 
     asio::io_context mAsioContext;
-    std::shared_ptr<asio::ip::tcp::socket> mpAsioSocket;
-    std::shared_ptr<asio::ip::tcp::acceptor> mpAsioAcceptor;
-    unsigned short mPortNumber=0;
-    std::vector<int> mAllPortNumbers;
+    std::shared_ptr<asio::local::stream_protocol::socket> mpAsioSocket;
+    std::shared_ptr<asio::local::stream_protocol::acceptor> mpAsioAcceptor;
     std::thread mContextThread;
 
 
     std::string GetCommunicationName() const override {return "local_socket";}
-
-    void PrepareConnection(const Info& I_Info) override;
-
-    Info GetCommunicationSettings() const override;
-
-    void GetPortNumber();
 
     void Write(const std::string& rData);
 

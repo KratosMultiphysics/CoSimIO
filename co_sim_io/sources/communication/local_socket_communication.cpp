@@ -19,24 +19,6 @@
 namespace CoSimIO {
 namespace Internals {
 
-namespace {
-
-std::vector<std::string> SplitStringByDelimiter(
-const std::string& rString,
-const char Delimiter)
-{
-    std::istringstream ss(rString);
-    std::string token;
-
-    std::vector<std::string> splitted_string;
-    while(std::getline(ss, token, Delimiter)) {
-        splitted_string.push_back(token);
-    }
-
-    return splitted_string;
-}
-
-} // helpers namespace
 
 LocalSocketCommunication::LocalSocketCommunication(
     const Info& I_Settings,
@@ -101,17 +83,19 @@ Info LocalSocketCommunication::ExportMeshImpl(
 
 Info LocalSocketCommunication::ConnectDetail(const Info& I_Info)
 {
-    if (!GetIsPrimaryConnection()) {GetPortNumber();}
+    using asio::local::stream_protocol;
+    mpAsioSocket = std::make_shared<stream_protocol::socket>(mAsioContext);
 
-    using namespace asio::ip;
+    stream_protocol::endpoint this_endpoint(GetCommunicationDirectory());
 
-    mpAsioSocket = std::make_shared<asio::ip::tcp::socket>(mAsioContext);
     if (GetIsPrimaryConnection()) { // this is the server
+        mpAsioAcceptor = std::make_shared<stream_protocol::acceptor>(mAsioContext, this_endpoint);
         mpAsioAcceptor->accept(*mpAsioSocket);
+        SynchronizeAll();
         mpAsioAcceptor->close();
     } else { // this is the client
-        tcp::endpoint my_endpoint(asio::ip::make_address("127.0.0.1"), mPortNumber);
-        mpAsioSocket->connect(my_endpoint);
+        SynchronizeAll();
+        mpAsioSocket->connect(this_endpoint);
     }
 
     // required such that asio keeps listening for incoming messages
@@ -131,58 +115,6 @@ Info LocalSocketCommunication::DisconnectDetail(const Info& I_Info)
     mpAsioSocket->close();
 
     return Info();
-}
-
-
-void LocalSocketCommunication::PrepareConnection(const Info& I_Info)
-{
-    // preparing the acceptors to get the ports used for connecting the sockets
-    if (GetIsPrimaryConnection()) {
-        using namespace asio::ip;
-        tcp::endpoint port_selection_endpoint(asio::ip::make_address("127.0.0.1"), 0);
-        mpAsioAcceptor = std::make_shared<tcp::acceptor>(mAsioContext, port_selection_endpoint);
-        mPortNumber = mpAsioAcceptor->local_endpoint().port();
-
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using port number " << mPortNumber << std::endl;
-
-        // collect all port numbers on rank 0
-        // to exchange them during the handshake
-        // (which happens only on rank 0)
-        const auto& r_data_comm = GetDataCommunicator();
-        mAllPortNumbers.resize(r_data_comm.Size());
-        std::vector<int> my_ports(1);
-        my_ports[0] = mPortNumber;
-        r_data_comm.Gather(my_ports, mAllPortNumbers, 0);
-    }
-}
-
-Info LocalSocketCommunication::GetCommunicationSettings() const
-{
-    Info info;
-
-    if (GetIsPrimaryConnection() && GetDataCommunicator().Rank() == 0) {
-        std::stringstream port_numbers_stream;
-        std::copy(mAllPortNumbers.begin(), mAllPortNumbers.end(), std::ostream_iterator<int>(port_numbers_stream, "-"));
-        info.Set("port_numbers", port_numbers_stream.str());
-    }
-
-    return info;
-}
-
-void LocalSocketCommunication::GetPortNumber()
-{
-    CO_SIM_IO_ERROR_IF(GetIsPrimaryConnection()) << "This function can only be used as secondary connection!" << std::endl;
-
-    const auto partner_info = GetPartnerInfo();
-    const std::string ports_string = partner_info.Get<Info>("communication_settings").Get<std::string>("port_numbers");
-
-    std::vector<std::string> ports = SplitStringByDelimiter(ports_string, '-');
-
-    CO_SIM_IO_ERROR_IF(static_cast<int>(ports.size()) != GetDataCommunicator().Size()) << "Wrong number of ports!" << std::endl;
-
-    mPortNumber = static_cast<unsigned short>(std::stoul(ports[GetDataCommunicator().Rank()]));
-
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using port number " << mPortNumber << std::endl;
 }
 
 void LocalSocketCommunication::Write(const std::string& rData)
