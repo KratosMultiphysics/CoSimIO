@@ -88,19 +88,18 @@ Info LocalSocketCommunication::ConnectDetail(const Info& I_Info)
     using asio::local::stream_protocol;
     mpAsioSocket = std::make_shared<stream_protocol::socket>(mAsioContext);
 
-    const fs::path bind_file_name = GetCommunicationDirectory() / "socket_bind";
+    const std::string bind_file_name = fs::path(GetCommunicationDirectory() / "socket_bind").string();
 
     if (GetIsPrimaryConnection()) { // this is the server
         std::ofstream bind_file;
         bind_file.open(bind_file_name);
         bind_file.close();
-        const std::string tmp = bind_file_name.string();
-        ::unlink(tmp.c_str()); // Remove previous binding.
+        ::unlink(bind_file_name.c_str()); // Remove previous binding.
     }
 
     SynchronizeAll();
 
-    stream_protocol::endpoint this_endpoint(bind_file_name);
+    stream_protocol::endpoint this_endpoint(bind_file_name.c_str());
 
     if (GetIsPrimaryConnection()) { // this is the server
         mpAsioAcceptor = std::make_shared<stream_protocol::acceptor>(mAsioContext, this_endpoint);
