@@ -83,15 +83,28 @@ Info LocalSocketCommunication::ExportMeshImpl(
 
 Info LocalSocketCommunication::ConnectDetail(const Info& I_Info)
 {
+    CO_SIM_IO_TRY
+
     using asio::local::stream_protocol;
     mpAsioSocket = std::make_shared<stream_protocol::socket>(mAsioContext);
 
-    stream_protocol::endpoint this_endpoint(GetCommunicationDirectory());
+    const fs::path bind_file_name = GetCommunicationDirectory() / "socket_bind";
+
+    if (GetIsPrimaryConnection()) { // this is the server
+        std::ofstream bind_file;
+        bind_file.open(bind_file_name);
+        bind_file.close();
+        ::unlink(bind_file_name.c_str()); // Remove previous binding.
+    }
+
+    SynchronizeAll();
+
+    stream_protocol::endpoint this_endpoint(bind_file_name);
 
     if (GetIsPrimaryConnection()) { // this is the server
         mpAsioAcceptor = std::make_shared<stream_protocol::acceptor>(mAsioContext, this_endpoint);
-        mpAsioAcceptor->accept(*mpAsioSocket);
         SynchronizeAll();
+        mpAsioAcceptor->accept(*mpAsioSocket);
         mpAsioAcceptor->close();
     } else { // this is the client
         SynchronizeAll();
@@ -102,6 +115,8 @@ Info LocalSocketCommunication::ConnectDetail(const Info& I_Info)
     mContextThread = std::thread([this]() { mAsioContext.run(); });
 
     return Info();
+
+    CO_SIM_IO_CATCH
 }
 
 Info LocalSocketCommunication::DisconnectDetail(const Info& I_Info)
