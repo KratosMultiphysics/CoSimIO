@@ -77,7 +77,6 @@ public:
         while(written_size<data_size) {
             const std::size_t data_left_to_write = data_size - written_size;
             const std::size_t current_buffer_size = data_left_to_write > buffer_size ? buffer_size : data_left_to_write;
-            std::cerr <<"data_left_to_write: " << data_left_to_write << std::endl;
 
             const ssize_t bytes_written = write(mPipeHandleWrite, &rData[written_size], current_buffer_size*sizeof(TDataType));
             CO_SIM_IO_ERROR_IF(bytes_written < 0) << "Error in writing to Pipe!" << std::endl;
@@ -102,8 +101,8 @@ public:
             const std::size_t current_buffer_size = data_left_to_read > buffer_size ? buffer_size : data_left_to_read;
             std::cerr <<"data_left_to_read: " << data_left_to_read << std::endl;
 
-            const ssize_t bytes_written = write(mPipeHandleWrite, &rData[written_size], current_buffer_size*sizeof(TDataType));
-            CO_SIM_IO_ERROR_IF(bytes_written < 0) << "Error in writing to Pipe!" << std::endl;
+            const ssize_t bytes_written = write(mPipeHandleRead, &rData[read_size], current_buffer_size*sizeof(TDataType));
+            CO_SIM_IO_ERROR_IF(bytes_written < 0) << "Error in reading from Pipe!" << std::endl;
 
             read_size += current_buffer_size;
         }
