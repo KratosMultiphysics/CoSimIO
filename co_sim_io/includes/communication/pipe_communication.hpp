@@ -62,6 +62,27 @@ public:
         serializer.load("object", rObject);
     }
 
+    template<typename TDataType>
+    void Send(const Internals::DataContainer<TDataType>& rData)
+    {
+        #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
+        SendSize(rData.size());
+        const ssize_t bytes_written = write(mPipeHandleWrite, rData.data(), rData.size()*sizeof(TDataType));
+        CO_SIM_IO_ERROR_IF(bytes_written < 0) << "Error in writing to Pipe!" << std::endl;
+        #endif
+    }
+
+    template<typename TDataType>
+    void Receive(Internals::DataContainer<TDataType>& rData)
+    {
+        #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
+        std::size_t received_size = ReceiveSize();
+        rData.resize(received_size);
+        const ssize_t bytes_read = read(mPipeHandleRead, rData.data(), received_size*sizeof(TDataType));
+        CO_SIM_IO_ERROR_IF(bytes_read < 0) << "Error in reading from Pipe!" << std::endl;
+        #endif
+    }
+
     void Close();
 
 
