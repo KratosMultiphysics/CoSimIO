@@ -16,6 +16,7 @@
 #ifdef CO_SIM_IO_COMPILED_IN_WINDOWS
 
 #else
+    #define _GNU_SOURCE // for MacOS
     #include <fcntl.h>
     #include <sys/stat.h>
     #include <sys/types.h>
