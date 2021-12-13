@@ -158,8 +158,6 @@ void PipeCommunication::BidirectionalPipe::Write(const std::string& rData)
         const std::size_t data_left_to_write = data_size - written_size;
         const std::size_t current_buffer_size = data_left_to_write > buffer_size ? buffer_size : data_left_to_write;
 
-        std::cerr << "data_left_to_write: " << data_left_to_write << std::endl;
-
         const ssize_t bytes_written = write(mPipeHandleWrite, &rData[written_size], current_buffer_size);
         CO_SIM_IO_ERROR_IF(bytes_written < 0) << "Error in writing to Pipe!" << std::endl;
 
