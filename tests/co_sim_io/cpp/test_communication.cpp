@@ -15,6 +15,7 @@
 #include <chrono>
 #include <tuple>
 #include <array>
+#include <numeric>
 
 // Project includes
 #include "co_sim_io_testing.hpp"
@@ -468,6 +469,40 @@ void RunAllCommunication(CoSimIO::Info settings)
         ext_thread.join();
     }
 
+    SUBCASE("import_export_large_data")
+    {
+        // this test is especially for the pipe communication,
+        // as there we need to send the data in batches
+
+        std::vector<std::vector<double>> exp_data {{ }};
+
+        constexpr std::size_t size_MB = 5;
+        constexpr std::size_t size_B = size_MB*1024*1024;
+        constexpr std::size_t size_vec = size_B / sizeof(double);
+
+        exp_data[0].resize(size_vec);
+        std::iota(exp_data[0].begin(), exp_data[0].end(), 0); // fill vec with increasing numbers => 0,1,2,3,...
+
+        std::thread ext_thread(ExportDataHelper, settings, exp_data);
+
+        CoSimIO::Info connect_info;
+        p_comm->Connect(connect_info);
+
+        std::vector<double> data;
+        CoSimIO::Internals::DataContainerStdVector<double> data_container(data);
+
+        CoSimIO::Info import_info;
+        import_info.Set<std::string>("identifier", "data_exchange");
+        p_comm->ImportData(import_info, data_container);
+
+        CO_SIM_IO_CHECK_VECTOR_NEAR(data_container, exp_data[0]);
+
+        CoSimIO::Info disconnect_info;
+        p_comm->Disconnect(disconnect_info);
+
+        ext_thread.join();
+    }
+
     SUBCASE("import_export_mesh_once")
     {
         const std::vector<std::shared_ptr<CoSimIO::ModelPart>> model_parts {
@@ -514,6 +549,38 @@ void RunAllCommunication(CoSimIO::Info settings)
             p_comm->ImportMesh(import_info, imported_model_part);
             CheckModelPartsAreEqual(*model_parts[i], imported_model_part);
         }
+
+        CoSimIO::Info disconnect_info;
+        p_comm->Disconnect(disconnect_info);
+
+        ext_thread.join();
+    }
+
+    SUBCASE("import_export_large_mesh")
+    {
+        // this test is especially for the pipe communication,
+        // as there we need to send the data in batches
+
+        const std::vector<std::shared_ptr<CoSimIO::ModelPart>> model_parts {
+            std::make_shared<CoSimIO::ModelPart>("large")
+        };
+
+        for (std::size_t i=0; i<10000;++i) {
+            model_parts[0]->CreateNewNode(i+1, 0,0,0);
+        }
+
+        std::thread ext_thread(ExportMeshHelper, settings, model_parts);
+
+        CoSimIO::Info connect_info;
+        p_comm->Connect(connect_info);
+
+        CoSimIO::Info import_info;
+        import_info.Set<std::string>("identifier", "test_mesh_exchange");
+
+        CoSimIO::ModelPart imported_model_part(model_parts[0]->Name());
+        p_comm->ImportMesh(import_info, imported_model_part);
+
+        CheckModelPartsAreEqual(*model_parts[0], imported_model_part);
 
         CoSimIO::Info disconnect_info;
         p_comm->Disconnect(disconnect_info);
