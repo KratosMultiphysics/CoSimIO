@@ -476,7 +476,7 @@ void RunAllCommunication(CoSimIO::Info settings)
 
         std::vector<std::vector<double>> exp_data {{ }};
 
-        constexpr std::size_t size_MB = 2;
+        constexpr std::size_t size_MB = 5;
         constexpr std::size_t size_B = size_MB*1024*1024;
         constexpr std::size_t size_vec = size_B / sizeof(double);
 
@@ -565,7 +565,7 @@ void RunAllCommunication(CoSimIO::Info settings)
             std::make_shared<CoSimIO::ModelPart>("large")
         };
 
-        for (std::size_t i=0; i<2000;++i) {
+        for (std::size_t i=0; i<10000;++i) {
             model_parts[0]->CreateNewNode(i+1, 0,0,0);
         }
 
@@ -592,14 +592,14 @@ void RunAllCommunication(CoSimIO::Info settings)
 
 TEST_SUITE("Communication") {
 
-TEST_CASE("FileCommunication_default_settings" * doctest::timeout(25.0))
+TEST_CASE("FileCommunication_default_settings" * doctest::timeout(250))
 {
     CoSimIO::Info settings;
     settings.Set<std::string>("communication_format", "file");
     RunAllCommunication(settings);
 }
 
-TEST_CASE("FileCommunication_avail_file" * doctest::timeout(25.0))
+TEST_CASE("FileCommunication_avail_file" * doctest::timeout(250))
 {
     CoSimIO::Info settings;
     settings.Set<std::string>("communication_format", "file");
@@ -607,7 +607,7 @@ TEST_CASE("FileCommunication_avail_file" * doctest::timeout(25.0))
     RunAllCommunication(settings);
 }
 
-TEST_CASE("PipeCommunication" * doctest::timeout(25.0))
+TEST_CASE("PipeCommunication" * doctest::timeout(250))
 {
     CoSimIO::Info settings;
     settings.Set<std::string>("communication_format", "pipe");
@@ -616,6 +616,7 @@ TEST_CASE("PipeCommunication" * doctest::timeout(25.0))
 #endif
 }
 
+TEST_CASE("SocketCommunication" * doctest::timeout(250))
 TEST_CASE("LocalSocketCommunication" * doctest::timeout(25.0))
 {
     CoSimIO::Info settings;
