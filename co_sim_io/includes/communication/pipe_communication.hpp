@@ -40,26 +40,76 @@ public:
         const fs::path& rBasePipeName,
         const bool IsPrimary);
 
-    void Write(const std::string& rData);
-
-    void Read(std::string& rData);
-
     template<class TObjectType>
     void Send(const TObjectType& rObject)
     {
         StreamSerializer serializer;
         serializer.save("object", rObject);
 
-        Write(serializer.GetStringRepresentation());
+        Write(serializer.GetStringRepresentation(), 1);
     }
 
     template<class TObjectType>
     void Receive(TObjectType& rObject)
     {
         std::string buffer;
-        Read(buffer);
+        Read(buffer, 1);
         StreamSerializer serializer(buffer);
         serializer.load("object", rObject);
+    }
+
+    template<typename TDataType>
+    void Send(const Internals::DataContainer<TDataType>& rData)
+    {
+        Write(rData, sizeof(TDataType));
+    }
+
+    template<typename TDataType>
+    void Receive(Internals::DataContainer<TDataType>& rData)
+    {
+        Read(rData, sizeof(TDataType));
+    }
+
+    template<typename TDataType>
+    void Write(const TDataType& rData, const std::size_t SizeDataType)
+    {
+        #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
+        const std::size_t data_size = rData.size();
+        std::size_t written_size=0;
+        SendSize(data_size);
+        const std::size_t buffer_size = GetPipeBufferSize()/SizeDataType;
+
+        while(written_size<data_size) {
+            const std::size_t data_left_to_write = data_size - written_size;
+            const std::size_t current_buffer_size = data_left_to_write > buffer_size ? buffer_size : data_left_to_write;
+
+            const ssize_t bytes_written = write(mPipeHandleWrite, &rData[written_size], current_buffer_size*SizeDataType);
+            CO_SIM_IO_ERROR_IF(bytes_written < 0) << "Error in writing to Pipe!" << std::endl;
+
+            written_size += current_buffer_size;
+        }
+        #endif
+    }
+
+    template<typename TDataType>
+    void Read(TDataType& rData, const std::size_t SizeDataType)
+    {
+        #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
+        std::size_t received_size = ReceiveSize();
+        std::size_t read_size=0;
+        rData.resize(received_size);
+        const std::size_t buffer_size = GetPipeBufferSize()/SizeDataType;
+
+        while(read_size<received_size) {
+            const std::size_t data_left_to_read = received_size - read_size;
+            const std::size_t current_buffer_size = data_left_to_read > buffer_size ? buffer_size : data_left_to_read;
+
+            const ssize_t bytes_written = read(mPipeHandleRead, &rData[read_size], current_buffer_size*SizeDataType);
+            CO_SIM_IO_ERROR_IF(bytes_written < 0) << "Error in reading from Pipe!" << std::endl;
+
+            read_size += current_buffer_size;
+        }
+        #endif
     }
 
     void Close();
@@ -75,6 +125,8 @@ private:
     void SendSize(const std::uint64_t Size);
 
     std::uint64_t ReceiveSize();
+
+    std::size_t GetPipeBufferSize();
 };
 
     std::shared_ptr<BidirectionalPipe> mpPipe;

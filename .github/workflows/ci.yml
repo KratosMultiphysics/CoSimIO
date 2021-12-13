@@ -26,7 +26,7 @@ jobs:
             # CLANG is not properly supported by Intel, better use LLVMIntel in the future
             - compiler: CLANG
               mpi: IntelMPI
-    timeout-minutes: 15
+    timeout-minutes: 30
 
     steps:
     - uses: actions/checkout@v2
