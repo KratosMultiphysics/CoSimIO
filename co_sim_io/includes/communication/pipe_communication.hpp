@@ -71,9 +71,6 @@ public:
         SendSize(data_size);
         const std::size_t buffer_size = GetPipeBufferSize()/sizeof(TDataType);
 
-        std::cerr << "Size of Pipe buffer: "<< GetPipeBufferSize() << std::endl;
-        std::cerr << "buffer_size: "<< buffer_size << std::endl;
-
         while(written_size<data_size) {
             const std::size_t data_left_to_write = data_size - written_size;
             const std::size_t current_buffer_size = data_left_to_write > buffer_size ? buffer_size : data_left_to_write;
@@ -99,7 +96,6 @@ public:
         while(read_size<received_size) {
             const std::size_t data_left_to_read = received_size - read_size;
             const std::size_t current_buffer_size = data_left_to_read > buffer_size ? buffer_size : data_left_to_read;
-            std::cerr <<"data_left_to_read: " << data_left_to_read << std::endl;
 
             const ssize_t bytes_written = write(mPipeHandleRead, &rData[read_size], current_buffer_size*sizeof(TDataType));
             CO_SIM_IO_ERROR_IF(bytes_written < 0) << "Error in reading from Pipe!" << std::endl;
