@@ -16,7 +16,6 @@
 #ifdef CO_SIM_IO_COMPILED_IN_WINDOWS
 
 #else
-    #define _GNU_SOURCE // for MacOS
     #include <fcntl.h>
     #include <sys/stat.h>
     #include <sys/types.h>
@@ -179,7 +178,7 @@ std::uint64_t PipeCommunication::BidirectionalPipe::ReceiveSize()
 std::size_t PipeCommunication::BidirectionalPipe::GetPipeBufferSize()
 {
     #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
-    return fcntl(mPipeHandleWrite, F_GETPIPE_SZ)/2; // assuming that both pipes have the same size => ensured in CTor // not using the entire buffer size to increase stability of data exchange
+    return PIPE_SIZE/2; // assuming that both pipes have the same size => ensured in CTor // not using the entire buffer size to increase stability of data exchange
     #else
     return 0;
     #endif
