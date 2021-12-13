@@ -194,5 +194,14 @@ std::uint64_t PipeCommunication::BidirectionalPipe::ReceiveSize()
 
 }
 
+std::size_t PipeCommunication::BidirectionalPipe::GetPipeBufferSize()
+{
+    #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
+    return fcntl(mPipeHandleWrite, F_GETPIPE_SZ); // assuming that both pipes have the same size => ensured in CTor
+    #else
+    return 0;
+    #endif
+}
+
 } // namespace Internals
 } // namespace CoSimIO
