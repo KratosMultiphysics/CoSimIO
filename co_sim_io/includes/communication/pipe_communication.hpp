@@ -97,7 +97,7 @@ public:
             const std::size_t data_left_to_read = received_size - read_size;
             const std::size_t current_buffer_size = data_left_to_read > buffer_size ? buffer_size : data_left_to_read;
 
-            const ssize_t bytes_written = write(mPipeHandleRead, &rData[read_size], current_buffer_size*sizeof(TDataType));
+            const ssize_t bytes_written = read(mPipeHandleRead, &rData[read_size], current_buffer_size*sizeof(TDataType));
             CO_SIM_IO_ERROR_IF(bytes_written < 0) << "Error in reading from Pipe!" << std::endl;
 
             read_size += current_buffer_size;
