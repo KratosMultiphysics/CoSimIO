@@ -555,6 +555,38 @@ void RunAllCommunication(CoSimIO::Info settings)
 
         ext_thread.join();
     }
+
+    SUBCASE("import_export_large_mesh")
+    {
+        // this test is especially for the pipe communication,
+        // as there we need to send the data in batches
+
+        const std::vector<std::shared_ptr<CoSimIO::ModelPart>> model_parts {
+            std::make_shared<CoSimIO::ModelPart>("large")
+        };
+
+        for (std::size_t i=0; i<10000;++i) {
+            model_parts[0]->CreateNewNode(i+1, 0,0,0);
+        }
+
+        std::thread ext_thread(ExportMeshHelper, settings, model_parts);
+
+        CoSimIO::Info connect_info;
+        p_comm->Connect(connect_info);
+
+        CoSimIO::Info import_info;
+        import_info.Set<std::string>("identifier", "test_mesh_exchange");
+
+        CoSimIO::ModelPart imported_model_part(model_parts[0]->Name());
+        p_comm->ImportMesh(import_info, imported_model_part);
+
+        CheckModelPartsAreEqual(*model_parts[0], imported_model_part);
+
+        CoSimIO::Info disconnect_info;
+        p_comm->Disconnect(disconnect_info);
+
+        ext_thread.join();
+    }
 }
 
 
