@@ -216,3 +216,16 @@
    fun:__intel_sse2_strrchr
    fun:strrchr
 }
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:IPL_init_numa_nodes
+   fun:ipl_detect_machine_topology
+   fun:ipl_processor_info
+   fun:ipl_entrance
+   fun:i_set_core_and_thread_count
+   fun:mpiexec_get_parameters
+   fun:main
+}
