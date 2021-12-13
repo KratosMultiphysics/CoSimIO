@@ -592,14 +592,14 @@ void RunAllCommunication(CoSimIO::Info settings)
 
 TEST_SUITE("Communication") {
 
-TEST_CASE("FileCommunication_default_settings" * doctest::timeout(25.0))
+TEST_CASE("FileCommunication_default_settings" * doctest::timeout(250))
 {
     CoSimIO::Info settings;
     settings.Set<std::string>("communication_format", "file");
     RunAllCommunication(settings);
 }
 
-TEST_CASE("FileCommunication_avail_file" * doctest::timeout(25.0))
+TEST_CASE("FileCommunication_avail_file" * doctest::timeout(250))
 {
     CoSimIO::Info settings;
     settings.Set<std::string>("communication_format", "file");
@@ -607,7 +607,7 @@ TEST_CASE("FileCommunication_avail_file" * doctest::timeout(25.0))
     RunAllCommunication(settings);
 }
 
-TEST_CASE("PipeCommunication" * doctest::timeout(25.0))
+TEST_CASE("PipeCommunication" * doctest::timeout(250))
 {
     CoSimIO::Info settings;
     settings.Set<std::string>("communication_format", "pipe");
@@ -616,7 +616,7 @@ TEST_CASE("PipeCommunication" * doctest::timeout(25.0))
 #endif
 }
 
-TEST_CASE("SocketCommunication" * doctest::timeout(25.0))
+TEST_CASE("SocketCommunication" * doctest::timeout(250))
 {
     CoSimIO::Info settings;
     settings.Set<std::string>("communication_format", "socket");
