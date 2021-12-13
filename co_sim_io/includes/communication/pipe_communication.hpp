@@ -40,24 +40,20 @@ public:
         const fs::path& rBasePipeName,
         const bool IsPrimary);
 
-    void Write(const std::string& rData);
-
-    void Read(std::string& rData);
-
     template<class TObjectType>
     void Send(const TObjectType& rObject)
     {
         StreamSerializer serializer;
         serializer.save("object", rObject);
 
-        Write(serializer.GetStringRepresentation());
+        Write(serializer.GetStringRepresentation(), 1);
     }
 
     template<class TObjectType>
     void Receive(TObjectType& rObject)
     {
         std::string buffer;
-        Read(buffer);
+        Read(buffer, 1);
         StreamSerializer serializer(buffer);
         serializer.load("object", rObject);
     }

@@ -146,48 +146,6 @@ PipeCommunication::BidirectionalPipe::BidirectionalPipe(
     #endif
 }
 
-void PipeCommunication::BidirectionalPipe::Write(const std::string& rData)
-{
-    #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
-    const std::size_t data_size = rData.size();
-    std::size_t written_size=0;
-    SendSize(data_size);
-    const std::size_t buffer_size = GetPipeBufferSize();
-
-    while(written_size<data_size) {
-        const std::size_t data_left_to_write = data_size - written_size;
-        const std::size_t current_buffer_size = data_left_to_write > buffer_size ? buffer_size : data_left_to_write;
-
-        const ssize_t bytes_written = write(mPipeHandleWrite, &rData[written_size], current_buffer_size);
-        CO_SIM_IO_ERROR_IF(bytes_written < 0) << "Error in writing to Pipe!" << std::endl;
-
-        written_size += current_buffer_size;
-    }
-    #endif
-}
-
-void PipeCommunication::BidirectionalPipe::Read(std::string& rData)
-{
-    #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
-    std::size_t received_size = ReceiveSize();
-    std::size_t read_size=0;
-    rData.resize(received_size);
-    const std::size_t buffer_size = GetPipeBufferSize();
-
-    while(read_size<received_size) {
-        const std::size_t data_left_to_read = received_size - read_size;
-        const std::size_t current_buffer_size = data_left_to_read > buffer_size ? buffer_size : data_left_to_read;
-
-        std::cerr << "data_left_to_read: " << data_left_to_read << std::endl;
-
-        const ssize_t bytes_written = read(mPipeHandleRead, &rData[read_size], current_buffer_size);
-        CO_SIM_IO_ERROR_IF(bytes_written < 0) << "Error in reading from Pipe!" << std::endl;
-
-        read_size += current_buffer_size;
-    }
-    #endif
-}
-
 void PipeCommunication::BidirectionalPipe::Close()
 {
     #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
