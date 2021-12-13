@@ -476,7 +476,7 @@ void RunAllCommunication(CoSimIO::Info settings)
 
         std::vector<std::vector<double>> exp_data {{ }};
 
-        constexpr std::size_t size_MB = 5;
+        constexpr std::size_t size_MB = 2;
         constexpr std::size_t size_B = size_MB*1024*1024;
         constexpr std::size_t size_vec = size_B / sizeof(double);
 
@@ -565,7 +565,7 @@ void RunAllCommunication(CoSimIO::Info settings)
             std::make_shared<CoSimIO::ModelPart>("large")
         };
 
-        for (std::size_t i=0; i<10000;++i) {
+        for (std::size_t i=0; i<2000;++i) {
             model_parts[0]->CreateNewNode(i+1, 0,0,0);
         }
 
