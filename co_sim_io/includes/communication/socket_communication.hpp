@@ -77,6 +77,8 @@ private:
 
     void PrepareConnection(const Info& I_Info) override;
 
+    void DerivedHandShake() const override;
+
     Info GetCommunicationSettings() const override;
 
     void GetPortNumber();
@@ -106,6 +108,8 @@ private:
     void SendSize(const std::uint64_t Size);
 
     std::uint64_t ReceiveSize();
+
+    std::string GetIpAddress() const;
 };
 
 } // namespace Internals

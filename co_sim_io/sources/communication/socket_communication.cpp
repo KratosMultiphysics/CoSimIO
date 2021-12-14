@@ -110,7 +110,7 @@ Info SocketCommunication::ConnectDetail(const Info& I_Info)
         mpAsioAcceptor->accept(*mpAsioSocket);
         mpAsioAcceptor->close();
     } else { // this is the client
-        tcp::endpoint my_endpoint(asio::ip::make_address("127.0.0.1"), mPortNumber);
+        tcp::endpoint my_endpoint(asio::ip::make_address(GetIpAddress()), mPortNumber);
         mpAsioSocket->connect(my_endpoint);
     }
 
@@ -139,7 +139,7 @@ void SocketCommunication::PrepareConnection(const Info& I_Info)
     // preparing the acceptors to get the ports used for connecting the sockets
     if (GetIsPrimaryConnection()) {
         using namespace asio::ip;
-        tcp::endpoint port_selection_endpoint(asio::ip::make_address("127.0.0.1"), 0);
+        tcp::endpoint port_selection_endpoint(asio::ip::make_address(GetIpAddress()), 0); // using port 0 means that it will look for a free port
         mpAsioAcceptor = std::make_shared<tcp::acceptor>(mAsioContext, port_selection_endpoint);
         mPortNumber = mpAsioAcceptor->local_endpoint().port();
 
@@ -154,6 +154,10 @@ void SocketCommunication::PrepareConnection(const Info& I_Info)
         my_ports[0] = mPortNumber;
         r_data_comm.Gather(my_ports, mAllPortNumbers, 0);
     }
+}
+
+void SocketCommunication::DerivedHandShake() const
+{
 }
 
 Info SocketCommunication::GetCommunicationSettings() const
@@ -208,6 +212,11 @@ std::uint64_t SocketCommunication::ReceiveSize()
     std::uint64_t imp_size_u;
     asio::read(*mpAsioSocket, asio::buffer(&imp_size_u, sizeof(imp_size_u)));
     return imp_size_u;
+}
+
+std::string SocketCommunication::GetIpAddress() const
+{
+    return "127.0.0.1";
 }
 
 } // namespace Internals
