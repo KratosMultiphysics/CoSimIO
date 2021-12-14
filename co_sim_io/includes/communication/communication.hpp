@@ -186,7 +186,7 @@ private:
 
     void HandShake(const Info& I_Info);
 
-    virtual void DerivedHandShake() {};
+    virtual void DerivedHandShake() const {};
 };
 
 } // namespace Internals

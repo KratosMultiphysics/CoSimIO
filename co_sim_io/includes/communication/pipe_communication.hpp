@@ -157,7 +157,7 @@ private:
         const Info& I_Info,
         const ModelPart& I_ModelPart) override;
 
-    void DerivedHandShake() override;
+    void DerivedHandShake() const override;
 };
 
 } // namespace Internals

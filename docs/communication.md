@@ -8,8 +8,8 @@
 <!-- code_chunk_output -->
 
 - [File-based communication](#file-based-communication)
-- [Pipe-based communication](#pipe-based-communication)
 - [Socket-based communication](#socket-based-communication)
+- [Pipe-based communication](#pipe-based-communication)
 
 <!-- /code_chunk_output -->
 ---
@@ -73,7 +73,26 @@ Set `communication_format` to `file`.
 |---|---|---|---|---|
 |currently_nothing|
 
+## Socket-based communication
+The data is communicated through network sockets by using the TCP communication protocol (using IPv4). No data is written to the filesystem, this makes it more efficient than the file-based communication.
+**Important**: By default the loopback interface / localhost is used, which cannot communicate across compute nodes. Hence for using this form of communication on a cluster or other system with multiple compute nodes, it is required to specify which network should be used (e.g. infiniband), see below how to specify the input. Otherwise it will hang! On most linux systems the `ifconfig` command can be used to check the available networks. Otherwise contact your system administrator.
+
+The [ASIO](https://think-async.com/Asio/) library is used as a high level interface for the sockets.
+
+The implementation of the _SocketCommunication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/includes/communication/socket_communication.hpp).
+
+**Specific Input:**
+
+Set `communication_format` to `socket`.
+
+| name | type | required | default| description |
+|---|---|---|---|---|
+| ip_address | string | - | "127.0.0.1" | specify the ip address used to establish the connection |
+| network_name | string | - | - | the name of the network can be specified _alternatively_ to specifying the ip address. This is used to determine the ip address. Will print the available networks if a wrong name is specified. |
+
 ## Pipe-based communication
+**This form of communication is experimental**
+
 A pipe is a data channel to perform interprocess communication between two processes. No data is written to the filesystem, it is directly exchanged through the memory. This makes it more efficient than the file-based communication.
 
 This form of communication is currently only available under Unix, the Windows implementation is work in progress.
@@ -83,21 +102,6 @@ The implementation of the _PipeCommunication_ can be found [here](https://github
 **Specific Input:**
 
 Set `communication_format` to `pipe`.
-
-| name | type | required | default| description |
-|---|---|---|---|---|
-|currently_nothing|
-
-## Socket-based communication
-The data is communicated through network sockets by using the TCP communication protocol. No data is written to the filesystem, this makes it more efficient than the file-based communication.
-
-The [ASIO](https://think-async.com/Asio/) library is used as a high level interface for the sockets.
-
-The implementation of the _SocketCommunication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/includes/communication/socket_communication.hpp).
-
-**Specific Input:**
-
-Set `communication_format` to `socket`.
 
 | name | type | required | default| description |
 |---|---|---|---|---|
