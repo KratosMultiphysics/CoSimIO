@@ -52,6 +52,7 @@ std::unordered_map<std::string, std::string> GetIpv4Addresses()
     std::unordered_map<std::string, std::string> networks;
 
 #ifdef CO_SIM_IO_COMPILED_IN_LINUX
+    // adapted from: https://www.cyberithub.com/list-network-interfaces/
     struct ifaddrs *addresses;
     CO_SIM_IO_ERROR_IF(getifaddrs(&addresses) == -1) << "Available networks could not be determined" << std::endl;
 
