@@ -71,11 +71,13 @@ private:
     unsigned short mPortNumber=0;
     std::vector<int> mAllPortNumbers;
     std::thread mContextThread;
-
+    std::string mIpAddress;
 
     std::string GetCommunicationName() const override {return "socket";}
 
     void PrepareConnection(const Info& I_Info) override;
+
+    void DerivedHandShake() const override;
 
     Info GetCommunicationSettings() const override;
 
@@ -88,19 +90,50 @@ private:
     template<class TObjectType>
     void Send(const TObjectType& rObject)
     {
+        CO_SIM_IO_TRY
+
         StreamSerializer serializer;
         serializer.save("object", rObject);
 
         Write(serializer.GetStringRepresentation());
+
+        CO_SIM_IO_CATCH
     }
 
     template<class TObjectType>
     void Receive(TObjectType& rObject)
     {
+        CO_SIM_IO_TRY
+
         std::string buffer;
         Read(buffer);
         StreamSerializer serializer(buffer);
         serializer.load("object", rObject);
+
+        CO_SIM_IO_CATCH
+    }
+
+    template<typename TDataType>
+    void Send(const Internals::DataContainer<TDataType>& rData)
+    {
+        CO_SIM_IO_TRY
+
+        SendSize(rData.size());
+        asio::write(*mpAsioSocket, asio::buffer(rData.data(), rData.size()*sizeof(TDataType)));
+
+        CO_SIM_IO_CATCH
+    }
+
+    template<typename TDataType>
+    void Receive(Internals::DataContainer<TDataType>& rData)
+    {
+        CO_SIM_IO_TRY
+
+        std::size_t received_size = ReceiveSize();
+        rData.resize(received_size);
+        asio::read(*mpAsioSocket, asio::buffer(rData.data(), received_size*sizeof(TDataType)));
+
+        CO_SIM_IO_CATCH
     }
 
     template<typename TDataType>
