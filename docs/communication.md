@@ -9,6 +9,7 @@
 
 - [File-based communication](#file-based-communication)
 - [Socket-based communication](#socket-based-communication)
+- [Unix domain socket-based communication](#unix-domain-socket-based-communication)
 - [Pipe-based communication](#pipe-based-communication)
 
 <!-- /code_chunk_output -->
@@ -90,10 +91,27 @@ Set `communication_format` to `socket`.
 | ip_address | string | - | "127.0.0.1" | specify the ip address used to establish the connection |
 | network_name | string | - | - | the name of the network can be specified _alternatively_ to specifying the ip address. This is used to determine the ip address. Will print the available networks if a wrong name is specified. |
 
+## Unix domain socket-based communication
+**This form of communication is experimental**
+This type of communication uses unix domain sockets for the data exchange. It is similar to the tcp socket communication, but instead of passing the data through the network, it uses the kernel memory. This makes it faster, but at the same time it only works locally on one compute node.
+
+The [ASIO](https://think-async.com/Asio/) library is used as a high level interface for the sockets.
+
+This form of communication is currently only available under Unix, the Windows implementation is work in progress.
+
+The implementation of the _LocalSocketCommunication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/includes/communication/local_socket_communication.hpp).
+
+**Specific Input:**
+
+Set `communication_format` to `local_socket`.
+
+| name | type | required | default| description |
+|---|---|---|---|---|
+|currently_nothing|
+
 ## Pipe-based communication
 **This form of communication is experimental**
-
-A pipe is a data channel to perform interprocess communication between two processes. No data is written to the filesystem, it is directly exchanged through the memory. This makes it more efficient than the file-based communication.
+A pipe is a data channel to perform interprocess communication between two processes. No data is written to the filesystem, it is directly exchanged through the kernel memory. This makes it more efficient than the file-based communication, but at the same time it only works locally on one compute node.
 
 This form of communication is currently only available under Unix, the Windows implementation is work in progress.
 
