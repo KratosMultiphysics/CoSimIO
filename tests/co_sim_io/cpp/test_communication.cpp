@@ -616,6 +616,15 @@ TEST_CASE("PipeCommunication" * doctest::timeout(250))
 #endif
 }
 
+TEST_CASE("LocalSocketCommunication" * doctest::timeout(250))
+{
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "local_socket");
+#ifndef CO_SIM_IO_COMPILED_IN_WINDOWS // some debugging is needed to make it work in Win
+    RunAllCommunication(settings);
+#endif
+}
+
 TEST_CASE("SocketCommunication" * doctest::timeout(250))
 {
     CoSimIO::Info settings;
