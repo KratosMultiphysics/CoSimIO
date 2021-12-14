@@ -101,17 +101,17 @@ Info LocalSocketCommunication::ConnectDetail(const Info& I_Info)
         #endif
     }
 
-    SynchronizeAll();
+    SynchronizeAll("local_sock_1");
 
     stream_protocol::endpoint this_endpoint(bind_file_name.c_str());
 
     if (GetIsPrimaryConnection()) { // this is the server
         mpAsioAcceptor = std::make_shared<stream_protocol::acceptor>(mAsioContext, this_endpoint);
-        SynchronizeAll();
+        SynchronizeAll("local_sock_2");
         mpAsioAcceptor->accept(*mpAsioSocket);
         mpAsioAcceptor->close();
     } else { // this is the client
-        SynchronizeAll();
+        SynchronizeAll("local_sock_2");
         mpAsioSocket->connect(this_endpoint);
     }
 

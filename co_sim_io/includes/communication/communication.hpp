@@ -104,7 +104,7 @@ protected:
 
     void RemovePath(const fs::path& rPath) const;
 
-    void SynchronizeAll() const;
+    void SynchronizeAll(const std::string& rTag) const;
 
 private:
     std::shared_ptr<DataCommunicator> mpDataComm;
