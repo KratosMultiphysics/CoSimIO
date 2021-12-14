@@ -71,7 +71,7 @@ private:
     unsigned short mPortNumber=0;
     std::vector<int> mAllPortNumbers;
     std::thread mContextThread;
-
+    std::string mIpAddress;
 
     std::string GetCommunicationName() const override {return "socket";}
 
@@ -90,26 +90,32 @@ private:
     template<class TObjectType>
     void Send(const TObjectType& rObject)
     {
+        CO_SIM_IO_TRY
+
         StreamSerializer serializer;
         serializer.save("object", rObject);
 
         Write(serializer.GetStringRepresentation());
+
+        CO_SIM_IO_CATCH
     }
 
     template<class TObjectType>
     void Receive(TObjectType& rObject)
     {
+        CO_SIM_IO_TRY
+
         std::string buffer;
         Read(buffer);
         StreamSerializer serializer(buffer);
         serializer.load("object", rObject);
+
+        CO_SIM_IO_CATCH
     }
 
     void SendSize(const std::uint64_t Size);
 
     std::uint64_t ReceiveSize();
-
-    std::string GetIpAddress() const;
 };
 
 } // namespace Internals
