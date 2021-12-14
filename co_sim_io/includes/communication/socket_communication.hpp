@@ -113,6 +113,29 @@ private:
         CO_SIM_IO_CATCH
     }
 
+    template<typename TDataType>
+    void Send(const Internals::DataContainer<TDataType>& rData)
+    {
+        CO_SIM_IO_TRY
+
+        SendSize(rData.size());
+        asio::write(*mpAsioSocket, asio::buffer(rData.data(), rData.size()*sizeof(TDataType)));
+
+        CO_SIM_IO_CATCH
+    }
+
+    template<typename TDataType>
+    void Receive(Internals::DataContainer<TDataType>& rData)
+    {
+        CO_SIM_IO_TRY
+
+        std::size_t received_size = ReceiveSize();
+        rData.resize(received_size);
+        asio::read(*mpAsioSocket, asio::buffer(rData.data(), received_size*sizeof(TDataType)));
+
+        CO_SIM_IO_CATCH
+    }
+
     void SendSize(const std::uint64_t Size);
 
     std::uint64_t ReceiveSize();
