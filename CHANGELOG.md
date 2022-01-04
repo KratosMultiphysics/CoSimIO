@@ -49,3 +49,12 @@ All important and notable changes in the _CoSimIO_ are documented in this file.
 - All CMake macros of _CoSimIO_ now start with `CO_SIM_IO_`. This affects especially `BUILD_C` and `BUILD_PYTHON` which are changed to `CO_SIM_IO_BUILD_C` and `CO_SIM_IO_BUILD_PYTHON`.
 - Several minor improvements to the CI (continuous integration)
 - Internal errors now give much better error messages including detailed stacktraces
+
+## 3.1.0
+- Socket based communication was added (using network sockets with IPv4). Documentation is available [here](https://kratosmultiphysics.github.io/CoSimIO/communication.html#socket-based-communication)
+- Creating entities in the ModelPart is now significantly faster
+- Improved and extended documentation
+- Improved synchronization during initial handshake to avoid deadlocks
+- Experimental support for unix domain sockets was added
+- PipeCommunication now supports large data (data larger than pipe buffer)
+- other minor interal improvements and fixes
