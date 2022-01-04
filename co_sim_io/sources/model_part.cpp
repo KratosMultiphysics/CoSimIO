@@ -138,10 +138,45 @@ Node& ModelPart::CreateNewNode(
 
     CoSimIO::intrusive_ptr<Node> new_node(CoSimIO::make_intrusive<Node>(I_Id, I_X, I_Y, I_Z));
 
-    mNodes.push_back(new_node);
-    GetLocalModelPart().mNodes.push_back(new_node);
+    mNodes.push_back(new_node, I_Id);
+    GetLocalModelPart().mNodes.push_back(new_node, I_Id);
 
     return *new_node;
+}
+
+void ModelPart::CreateNewNodes(
+    const Internals::DataContainer<IdType>& I_Id,
+    const Internals::DataContainer<double>& I_X,
+    const Internals::DataContainer<double>& I_Y,
+    const Internals::DataContainer<double>& I_Z)
+{
+    const std::size_t num_new_nodes = I_Id.size();
+
+    CO_SIM_IO_ERROR_IF(num_new_nodes != I_X.size()) << "Wrong number of X-Coordinates!" << std::endl;
+    CO_SIM_IO_ERROR_IF(num_new_nodes != I_Y.size()) << "Wrong number of Y-Coordinates!" << std::endl;
+    CO_SIM_IO_ERROR_IF(num_new_nodes != I_Z.size()) << "Wrong number of Z-Coordinates!" << std::endl;
+
+    mNodes.reserve(mNodes.size()+num_new_nodes);
+    GetLocalModelPart().mNodes.reserve(GetLocalModelPart().mNodes.size()+num_new_nodes);
+
+    for (std::size_t i=0; i<num_new_nodes; ++i) {
+        CreateNewNode(I_Id[i], I_X[i], I_Y[i], I_Z[i]);
+    }
+}
+
+void ModelPart::CreateNewNodes(
+    const std::vector<IdType>& I_Id,
+    const std::vector<double>& I_X,
+    const std::vector<double>& I_Y,
+    const std::vector<double>& I_Z)
+{
+    using namespace CoSimIO::Internals;
+    std::unique_ptr<DataContainer<IdType>> p_ids = CoSimIO::make_unique<DataContainerStdVectorReadOnly<IdType>>(I_Id);
+    std::unique_ptr<DataContainer<double>> p_x   = CoSimIO::make_unique<DataContainerStdVectorReadOnly<double>>(I_X);
+    std::unique_ptr<DataContainer<double>> p_y   = CoSimIO::make_unique<DataContainerStdVectorReadOnly<double>>(I_Y);
+    std::unique_ptr<DataContainer<double>> p_z   = CoSimIO::make_unique<DataContainerStdVectorReadOnly<double>>(I_Z);
+
+    CreateNewNodes(*p_ids, *p_x, *p_y, *p_z);
 }
 
 Node& ModelPart::CreateNewGhostNode(
@@ -155,9 +190,9 @@ Node& ModelPart::CreateNewGhostNode(
 
     CoSimIO::intrusive_ptr<Node> new_node(CoSimIO::make_intrusive<Node>(I_Id, I_X, I_Y, I_Z));
 
-    mNodes.push_back(new_node);
-    GetGhostModelPart().mNodes.push_back(new_node);
-    GetPartitionModelPart(PartitionIndex).mNodes.push_back(new_node);
+    mNodes.push_back(new_node, I_Id);
+    GetGhostModelPart().mNodes.push_back(new_node, I_Id);
+    GetPartitionModelPart(PartitionIndex).mNodes.push_back(new_node, I_Id);
 
     return *new_node;
 }
@@ -177,8 +212,8 @@ Element& ModelPart::CreateNewElement(
 
     CoSimIO::intrusive_ptr<Element> new_element(CoSimIO::make_intrusive<Element>(I_Id, I_Type, nodes));
 
-    mElements.push_back(new_element);
-    GetLocalModelPart().mElements.push_back(new_element);
+    mElements.push_back(new_element, I_Id);
+    GetLocalModelPart().mElements.push_back(new_element, I_Id);
 
     return *new_element;
 }
@@ -247,40 +282,32 @@ void ModelPart::Clear()
 
 ModelPart::NodesContainerType::const_iterator ModelPart::FindNode(const IdType I_Id) const
 {
-    return std::find_if(
-        mNodes.begin(), mNodes.end(),
-        [I_Id](const NodePointerType& rp_node) { return rp_node->Id() == I_Id;});
+    return mNodes.find(I_Id);
 }
 
 ModelPart::NodesContainerType::iterator ModelPart::FindNode(const IdType I_Id)
 {
-    return std::find_if(
-        mNodes.begin(), mNodes.end(),
-        [I_Id](const NodePointerType& rp_node) { return rp_node->Id() == I_Id;});
+    return mNodes.find(I_Id);
 }
 
 ModelPart::ElementsContainerType::const_iterator ModelPart::FindElement(const IdType I_Id) const
 {
-    return std::find_if(
-        mElements.begin(), mElements.end(),
-        [I_Id](const ElementPointerType& rp_elem) { return rp_elem->Id() == I_Id;});
+    return mElements.find(I_Id);
 }
 
 ModelPart::ElementsContainerType::iterator ModelPart::FindElement(const IdType I_Id)
 {
-    return std::find_if(
-        mElements.begin(), mElements.end(),
-        [I_Id](const ElementPointerType& rp_elem) { return rp_elem->Id() == I_Id;});
+    return mElements.find(I_Id);
 }
 
 bool ModelPart::HasNode(const IdType I_Id) const
 {
-    return FindNode(I_Id) != mNodes.end();
+    return mNodes.contains(I_Id);
 }
 
 bool ModelPart::HasElement(const IdType I_Id) const
 {
-    return FindElement(I_Id) != mElements.end();
+    return mElements.contains(I_Id);
 }
 
 ModelPart& ModelPart::GetLocalModelPart()

@@ -29,6 +29,7 @@ see https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/mod
 
 // Project includes
 #include "define.hpp"
+#include "data_container.hpp"
 #include "serializer.hpp"
 
 namespace CoSimIO {
@@ -74,6 +75,101 @@ public:
 
 private:
     const ContainerType& mPointerVector;
+};
+
+
+template<class TDataType>
+class IndexedVector
+{
+public:
+
+    using ContainerType = std::vector<TDataType>;
+    using iterator = typename ContainerType::iterator;
+    using const_iterator = typename ContainerType::const_iterator;
+
+    IndexedVector() = default;
+
+    iterator begin() {return mData.begin();}
+    iterator end() {return mData.end();}
+
+    const_iterator begin() const {return mData.begin();}
+    const_iterator end() const {return mData.end();}
+
+    std::size_t size() const {return mData.size();}
+
+    void reserve(std::size_t NewCapacity)
+    {
+        mData.reserve(NewCapacity);
+        mAccessMap.reserve(NewCapacity);
+    }
+
+    // ContainerType& data() {return mData;}
+    const ContainerType& data() const {return mData;}
+
+    bool contains(CoSimIO::IdType Id) const {return mAccessMap.count(Id) > 0;}
+
+    iterator find(CoSimIO::IdType Id)
+    {
+        const auto it_index = mAccessMap.find(Id);
+        if (it_index == mAccessMap.end()) {
+            return mData.end();
+        } else {
+            return mData.begin()+it_index->second;
+        }
+    }
+
+    const_iterator find(CoSimIO::IdType Id) const
+    {
+        const auto it_index = mAccessMap.find(Id);
+        if (it_index == mAccessMap.end()) {
+            return mData.end();
+        } else {
+            return mData.begin()+it_index->second;
+        }
+    }
+
+    void ComputeAccessMap()
+    {
+        mAccessMap.clear();
+        mAccessMap.reserve(mData.size());
+        for (std::size_t i=0; i<mData.size(); ++i) {
+            mAccessMap[mData[i]->Id()] = i;
+        }
+    }
+
+    void clear()
+    {
+        mData.clear();
+        mAccessMap.clear();
+    }
+
+    void shrink_to_fit()
+    {
+        mData.shrink_to_fit();
+    }
+
+    void push_back(const TDataType& rData, CoSimIO::IdType Id)
+    {
+        mData.push_back(rData);
+        mAccessMap[Id] = mData.size()-1;
+    }
+
+private:
+    ContainerType mData;
+    std::unordered_map<CoSimIO::IdType, std::size_t> mAccessMap;
+
+    friend class Serializer;
+
+    void save(CoSimIO::Internals::Serializer& rSerializer) const
+    {
+        rSerializer.save("mData", mData);
+    }
+
+    void load(CoSimIO::Internals::Serializer& rSerializer)
+    {
+        rSerializer.load("mData", mData);
+        ComputeAccessMap();
+    }
 };
 
 } //namespace Internals
@@ -220,8 +316,8 @@ public:
 
     using NodePointerType = CoSimIO::intrusive_ptr<Node>;
     using ElementPointerType = CoSimIO::intrusive_ptr<Element>;
-    using NodesContainerType = std::vector<NodePointerType>;
-    using ElementsContainerType = std::vector<ElementPointerType>;
+    using NodesContainerType = Internals::IndexedVector<NodePointerType>;
+    using ElementsContainerType = Internals::IndexedVector<ElementPointerType>;
 
     using PartitionModelPartsContainerType = std::unordered_map<int, std::unique_ptr<ModelPart>>;
 
@@ -245,6 +341,18 @@ public:
         const double I_Y,
         const double I_Z);
 
+    void CreateNewNodes(
+        const Internals::DataContainer<IdType>& I_Id,
+        const Internals::DataContainer<double>& I_X,
+        const Internals::DataContainer<double>& I_Y,
+        const Internals::DataContainer<double>& I_Z);
+
+    void CreateNewNodes(
+        const std::vector<IdType>& I_Id,
+        const std::vector<double>& I_X,
+        const std::vector<double>& I_Y,
+        const std::vector<double>& I_Z);
+
     Node& CreateNewGhostNode(
         const IdType I_Id,
         const double I_X,
@@ -252,16 +360,28 @@ public:
         const double I_Z,
         const int PartitionIndex);
 
+    void CreateNewGhostNodes(
+        const Internals::DataContainer<IdType>& I_Id,
+        const Internals::DataContainer<double>& I_X,
+        const Internals::DataContainer<double>& I_Y,
+        const Internals::DataContainer<double>& I_Z,
+        const Internals::DataContainer<int>& PartitionIndex);
+
     Element& CreateNewElement(
         const IdType I_Id,
         const ElementType I_Type,
         const ConnectivitiesType& I_Connectivities);
 
-    const Internals::PointerVector<NodePointerType> Nodes() const {return Internals::PointerVector<NodePointerType>(mNodes);}
+    void CreateNewElements(
+        const Internals::DataContainer<IdType>& I_Id,
+        const Internals::DataContainer<ElementType>& I_Type,
+        const Internals::DataContainer<ConnectivitiesType&>& I_Connectivities);
+
+    const Internals::PointerVector<NodePointerType> Nodes() const {return Internals::PointerVector<NodePointerType>(mNodes.data());}
     const Internals::PointerVector<NodePointerType> LocalNodes() const {return Internals::PointerVector<NodePointerType>(GetLocalModelPart().Nodes());}
     const Internals::PointerVector<NodePointerType> GhostNodes() const {return Internals::PointerVector<NodePointerType>(GetGhostModelPart().Nodes());}
 
-    const Internals::PointerVector<ElementPointerType> Elements() const {return Internals::PointerVector<ElementPointerType>(mElements);}
+    const Internals::PointerVector<ElementPointerType> Elements() const {return Internals::PointerVector<ElementPointerType>(mElements.data());}
 
     const ModelPart& GetLocalModelPart() const;
     const ModelPart& GetGhostModelPart() const;
