@@ -103,7 +103,6 @@ public:
         mAccessMap.reserve(NewCapacity);
     }
 
-    // ContainerType& data() {return mData;}
     const ContainerType& data() const {return mData;}
 
     bool contains(CoSimIO::IdType Id) const {return mAccessMap.count(Id) > 0;}
@@ -128,15 +127,6 @@ public:
         }
     }
 
-    void ComputeAccessMap()
-    {
-        mAccessMap.clear();
-        mAccessMap.reserve(mData.size());
-        for (std::size_t i=0; i<mData.size(); ++i) {
-            mAccessMap[mData[i]->Id()] = i;
-        }
-    }
-
     void clear()
     {
         mData.clear();
@@ -157,6 +147,15 @@ public:
 private:
     ContainerType mData;
     std::unordered_map<CoSimIO::IdType, std::size_t> mAccessMap;
+
+    void ComputeAccessMap()
+    {
+        mAccessMap.clear();
+        mAccessMap.reserve(mData.size());
+        for (std::size_t i=0; i<mData.size(); ++i) {
+            mAccessMap[mData[i]->Id()] = i;
+        }
+    }
 
     friend class Serializer;
 
