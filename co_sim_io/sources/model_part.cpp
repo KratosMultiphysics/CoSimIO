@@ -197,6 +197,33 @@ Node& ModelPart::CreateNewGhostNode(
     return *new_node;
 }
 
+void ModelPart::CreateNewGhostNodes(
+    const Internals::DataContainer<IdType>& I_Id,
+    const Internals::DataContainer<double>& I_X,
+    const Internals::DataContainer<double>& I_Y,
+    const Internals::DataContainer<double>& I_Z,
+    const Internals::DataContainer<int>& PartitionIndex)
+{
+    CO_SIM_IO_ERROR << "Not implemented!" << std::endl;
+}
+
+void ModelPart::CreateNewGhostNodes(
+    const std::vector<IdType>& I_Id,
+    const std::vector<double>& I_X,
+    const std::vector<double>& I_Y,
+    const std::vector<double>& I_Z,
+    const std::vector<int>& PartitionIndex)
+{
+    using namespace CoSimIO::Internals;
+    std::unique_ptr<DataContainer<IdType>> p_ids   = CoSimIO::make_unique<DataContainerStdVectorReadOnly<IdType>>(I_Id);
+    std::unique_ptr<DataContainer<double>> p_x     = CoSimIO::make_unique<DataContainerStdVectorReadOnly<double>>(I_X);
+    std::unique_ptr<DataContainer<double>> p_y     = CoSimIO::make_unique<DataContainerStdVectorReadOnly<double>>(I_Y);
+    std::unique_ptr<DataContainer<double>> p_z     = CoSimIO::make_unique<DataContainerStdVectorReadOnly<double>>(I_Z);
+    std::unique_ptr<DataContainer<int>> p_part_idx = CoSimIO::make_unique<DataContainerStdVectorReadOnly<int>>(PartitionIndex);
+
+    CreateNewGhostNodes(*p_ids, *p_x, *p_y, *p_z, *p_part_idx);
+}
+
 Element& ModelPart::CreateNewElement(
     const IdType I_Id,
     const ElementType I_Type,
@@ -216,6 +243,27 @@ Element& ModelPart::CreateNewElement(
     GetLocalModelPart().mElements.push_back(new_element, I_Id);
 
     return *new_element;
+}
+
+void ModelPart::CreateNewElements(
+    const Internals::DataContainer<IdType>& I_Id,
+    const Internals::DataContainer<ElementType>& I_Type,
+    const Internals::DataContainer<IdType>& I_Connectivities)
+{
+    CO_SIM_IO_ERROR << "Not implemented!" << std::endl;
+}
+
+void ModelPart::CreateNewElements(
+    const std::vector<IdType>& I_Id,
+    const std::vector<ElementType>& I_Type,
+    const std::vector<IdType>& I_Connectivities)
+{
+    using namespace CoSimIO::Internals;
+    std::unique_ptr<DataContainer<IdType>> p_ids        = CoSimIO::make_unique<DataContainerStdVectorReadOnly<IdType>>(I_Id);
+    std::unique_ptr<DataContainer<ElementType>> p_types = CoSimIO::make_unique<DataContainerStdVectorReadOnly<ElementType>>(I_Type);
+    std::unique_ptr<DataContainer<IdType>> p_conns      = CoSimIO::make_unique<DataContainerStdVectorReadOnly<IdType>>(I_Connectivities);
+
+    CreateNewElements(*p_ids, *p_types, *p_conns);
 }
 
 Node& ModelPart::GetNode(const IdType I_Id)
