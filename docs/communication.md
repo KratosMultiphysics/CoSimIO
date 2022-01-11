@@ -91,6 +91,11 @@ Set `communication_format` to `socket`.
 | ip_address | string | - | "127.0.0.1" | specify the ip address used to establish the connection |
 | network_name | string | - | - | the name of the network can be specified _alternatively_ to specifying the ip address. This is used to determine the ip address. Will print the available networks if a wrong name is specified. |
 
+The following logic is used for selecting the ip-address
+1. If the user has specified `ip_address`, then this one is used directly
+2. If instead the `network_name` is specified, then this is used to determine the ip-address to be used
+3. If neither is specified, then the localhost ip-address is used (`127.0.0.1`)
+
 ## Unix domain socket-based communication
 **This form of communication is experimental**
 This type of communication uses unix domain sockets for the data exchange. It is similar to the tcp socket communication, but instead of passing the data through the network, it uses the kernel memory. This makes it faster, but at the same time it only works locally on one compute node.
