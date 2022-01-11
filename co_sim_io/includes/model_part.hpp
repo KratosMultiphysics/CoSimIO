@@ -334,6 +334,7 @@ public:
 
     std::size_t NumberOfElements() const { return mElements.size(); }
 
+    // node creation interface
     Node& CreateNewNode(
         const IdType I_Id,
         const double I_X,
@@ -352,6 +353,7 @@ public:
         const std::vector<double>& I_Y,
         const std::vector<double>& I_Z);
 
+    // ghost node creation interface
     Node& CreateNewGhostNode(
         const IdType I_Id,
         const double I_X,
@@ -366,6 +368,14 @@ public:
         const Internals::DataContainer<double>& I_Z,
         const Internals::DataContainer<int>& PartitionIndex);
 
+    void CreateNewGhostNodes(
+        const std::vector<IdType>& I_Id,
+        const std::vector<double>& I_X,
+        const std::vector<double>& I_Y,
+        const std::vector<double>& I_Z,
+        const std::vector<int>& PartitionIndex);
+
+    // element creation interface
     Element& CreateNewElement(
         const IdType I_Id,
         const ElementType I_Type,
@@ -374,7 +384,12 @@ public:
     void CreateNewElements(
         const Internals::DataContainer<IdType>& I_Id,
         const Internals::DataContainer<ElementType>& I_Type,
-        const Internals::DataContainer<ConnectivitiesType&>& I_Connectivities);
+        const Internals::DataContainer<IdType>& I_Connectivities);
+
+    void CreateNewElements(
+        const std::vector<IdType>& I_Id,
+        const std::vector<ElementType>& I_Type,
+        const std::vector<IdType>& I_Connectivities);
 
     const Internals::PointerVector<NodePointerType> Nodes() const {return Internals::PointerVector<NodePointerType>(mNodes.data());}
     const Internals::PointerVector<NodePointerType> LocalNodes() const {return Internals::PointerVector<NodePointerType>(GetLocalModelPart().Nodes());}
