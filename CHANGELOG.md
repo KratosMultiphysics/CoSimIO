@@ -56,5 +56,6 @@ All important and notable changes in the _CoSimIO_ are documented in this file.
 - Improved and extended documentation
 - Improved synchronization during initial handshake to avoid deadlocks
 - Experimental support for unix domain sockets was added
-- PipeCommunication now supports large data (data larger than pipe buffer)
+- PipeCommunication now supports large data (data larger than pipe buffer). Furthermore the buffer size can be configured with `buffer_size`, see the [documentation](https://kratosmultiphysics.github.io/CoSimIO/communication.html#pipe-based-communication).
+- Printing timing information for communication is now unified for all communication methods (can be enabled with `print_timing`)
 - other minor interal improvements and fixes
