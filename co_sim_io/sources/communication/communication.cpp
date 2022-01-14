@@ -161,6 +161,12 @@ void Communication::BaseDisconnectDetail(const Info& I_Info)
     CO_SIM_IO_CATCH
 }
 
+void Communication::CheckConnection(const Info& I_Info)
+{
+    CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "No active connection exists!" << std::endl;
+    CO_SIM_IO_ERROR_IF_NOT(I_Info.Has("identifier")) << "\"identifier\" must be specified!" << std::endl;
+}
+
 fs::path Communication::GetTempFileName(const fs::path& rPath) const
 {
     CO_SIM_IO_TRY
@@ -397,6 +403,16 @@ void Communication::HandShake(const Info& I_Info)
     mpDataComm->Broadcast(mPartnerInfo, 0);
 
     CO_SIM_IO_CATCH
+}
+
+void Communication::PrintElapsedTime(
+    const Info& I_Info,
+    const Info& O_Info,
+    const std::string& rLabel)
+{
+    const std::string identifier =I_Info.Get<std::string>("identifier");
+    const double dur = O_Info.Get<double>("elapsed_time");
+    CO_SIM_IO_INFO_IF("CoSimIO-Timing:", GetPrintTiming()&&GetDataCommunicator().Rank()==0) << rLabel << " \"" << identifier << "\" took " << dur << " [s]" << std::endl;
 }
 
 } // namespace Internals

@@ -15,6 +15,7 @@
 
 // System includes
 #include <utility>
+#include <tuple>
 
 // Project includes
 #include "includes/info.hpp"
@@ -44,37 +45,85 @@ public:
     template<class... Args>
     Info ExportInfo(Args&&... args)
     {
-        CheckConnection(); return ExportInfoImpl(std::forward<Args>(args)...);
+        const Info i_info = std::get<0>(std::forward_as_tuple(args...));
+
+        CheckConnection(i_info);
+
+        Info o_info = ExportInfoImpl(std::forward<Args>(args)...);
+
+        PrintElapsedTime(i_info, o_info, "Export info");
+
+        return o_info;
     }
 
     template<class... Args>
     Info ImportInfo(Args&&... args)
     {
-        CheckConnection(); return ImportInfoImpl(std::forward<Args>(args)...);
+        const Info i_info = std::get<0>(std::forward_as_tuple(args...));
+
+        CheckConnection(i_info);
+
+        Info o_info = ImportInfoImpl(std::forward<Args>(args)...);
+
+        PrintElapsedTime(i_info, o_info, "Import info");
+
+        return o_info;
     }
 
     template<class... Args>
     Info ImportData(Args&&... args)
     {
-        CheckConnection(); return ImportDataImpl(std::forward<Args>(args)...);
+        const Info i_info = std::get<0>(std::forward_as_tuple(args...));
+
+        CheckConnection(i_info);
+
+        Info o_info = ImportDataImpl(std::forward<Args>(args)...);
+
+        PrintElapsedTime(i_info, o_info, "Import data");
+
+        return o_info;
     }
 
     template<class... Args>
     Info ExportData(Args&&... args)
     {
-        CheckConnection(); return ExportDataImpl(std::forward<Args>(args)...);
+        const Info i_info = std::get<0>(std::forward_as_tuple(args...));
+
+        CheckConnection(i_info);
+
+        Info o_info = ExportDataImpl(std::forward<Args>(args)...);
+
+        PrintElapsedTime(i_info, o_info, "Export data");
+
+        return o_info;
     }
 
     template<class... Args>
     Info ImportMesh(Args&&... args)
     {
-        CheckConnection(); return ImportMeshImpl(std::forward<Args>(args)...);
+        const Info i_info = std::get<0>(std::forward_as_tuple(args...));
+
+        CheckConnection(i_info);
+
+        Info o_info = ImportMeshImpl(std::forward<Args>(args)...);
+
+        PrintElapsedTime(i_info, o_info, "Import mesh");
+
+        return o_info;
     }
 
     template<class... Args>
     Info ExportMesh(Args&&... args)
     {
-        CheckConnection(); return ExportMeshImpl(std::forward<Args>(args)...);
+        const Info i_info = std::get<0>(std::forward_as_tuple(args...));
+
+        CheckConnection(i_info);
+
+        Info o_info = ExportMeshImpl(std::forward<Args>(args)...);
+
+        PrintElapsedTime(i_info, o_info, "Export mesh");
+
+        return o_info;
     }
 
 protected:
@@ -126,11 +175,7 @@ private:
     bool mPrintTiming = false;
     bool mIsConnected = false;
 
-    void CheckConnection()
-    {
-        CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "No active connection exists!" << std::endl;;
-    }
-
+    void CheckConnection(const Info& I_Info);
     virtual std::string GetCommunicationName() const = 0;
     virtual Info GetCommunicationSettings() const {return Info();}
 
@@ -187,6 +232,11 @@ private:
     void HandShake(const Info& I_Info);
 
     virtual void DerivedHandShake() const {};
+
+    void PrintElapsedTime(
+        const Info& I_Info,
+        const Info& O_Info,
+        const std::string& rLabel);
 };
 
 } // namespace Internals
