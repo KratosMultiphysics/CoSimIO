@@ -66,47 +66,82 @@ Info PipeCommunication::DisconnectDetail(const Info& I_Info)
 
 Info PipeCommunication::ImportInfoImpl(const Info& I_Info)
 {
+    CO_SIM_IO_TRY
+
     Info imported_info;
-    mpPipe->Receive(imported_info);
+    const double elapsed_time = mpPipe->Receive(imported_info);
+    imported_info.Set<double>("elapsed_time", elapsed_time);
     return imported_info;
+
+    CO_SIM_IO_CATCH
 }
 
 Info PipeCommunication::ExportInfoImpl(const Info& I_Info)
 {
-    mpPipe->Send(I_Info);
-    return Info(); // TODO use
+    CO_SIM_IO_TRY
+
+    const double elapsed_time = mpPipe->Send(I_Info);
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
+
+    CO_SIM_IO_CATCH
 }
 
 Info PipeCommunication::ImportDataImpl(
     const Info& I_Info,
     Internals::DataContainer<double>& rData)
 {
-    mpPipe->Receive(rData);
-    return Info(); // TODO use
+    CO_SIM_IO_TRY
+
+    const double elapsed_time = mpPipe->Receive(rData);
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
+
+    CO_SIM_IO_CATCH
 }
 
 Info PipeCommunication::ExportDataImpl(
     const Info& I_Info,
     const Internals::DataContainer<double>& rData)
 {
-    mpPipe->Send(rData);
-    return Info(); // TODO use
+    CO_SIM_IO_TRY
+
+    const double elapsed_time = mpPipe->Send(rData);
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
+
+    CO_SIM_IO_CATCH
 }
 
 Info PipeCommunication::ImportMeshImpl(
     const Info& I_Info,
     ModelPart& O_ModelPart)
 {
-    mpPipe->Receive(O_ModelPart);
-    return Info(); // TODO use
+    CO_SIM_IO_TRY
+
+    const double elapsed_time = mpPipe->Receive(O_ModelPart);
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
+
+    CO_SIM_IO_CATCH
 }
 
 Info PipeCommunication::ExportMeshImpl(
     const Info& I_Info,
     const ModelPart& I_ModelPart)
 {
-    mpPipe->Send(I_ModelPart);
-    return Info(); // TODO use
+    CO_SIM_IO_TRY
+
+    const double elapsed_time = mpPipe->Send(I_ModelPart);
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
+
+    CO_SIM_IO_CATCH
 }
 
 void PipeCommunication::DerivedHandShake() const

@@ -41,42 +41,63 @@ public:
         const bool IsPrimary);
 
     template<class TObjectType>
-    void Send(const TObjectType& rObject)
+    double Send(const TObjectType& rObject)
     {
+        CO_SIM_IO_TRY
+
+        const auto start_time(std::chrono::steady_clock::now());
         StreamSerializer serializer;
         serializer.save("object", rObject);
+        const double elapsed_time_save = Utilities::ElapsedSeconds(start_time);
 
-        Write(serializer.GetStringRepresentation(), 1);
+        const double elapsed_time_write = Write(serializer.GetStringRepresentation(), 1);
+
+        return elapsed_time_save + elapsed_time_write;
+
+        CO_SIM_IO_CATCH
     }
 
     template<class TObjectType>
-    void Receive(TObjectType& rObject)
+    double Receive(TObjectType& rObject)
     {
+        CO_SIM_IO_TRY
+
         std::string buffer;
-        Read(buffer, 1);
+        const double elapsed_time_read = Read(buffer, 1);
+
+        const auto start_time(std::chrono::steady_clock::now());
         StreamSerializer serializer(buffer);
         serializer.load("object", rObject);
+        const double elapsed_time_load = Utilities::ElapsedSeconds(start_time);
+
+        return elapsed_time_read + elapsed_time_load;
+
+        CO_SIM_IO_CATCH
     }
 
     template<typename TDataType>
-    void Send(const Internals::DataContainer<TDataType>& rData)
+    double Send(const Internals::DataContainer<TDataType>& rData)
     {
-        Write(rData, sizeof(TDataType));
+        return Write(rData, sizeof(TDataType));
     }
 
     template<typename TDataType>
-    void Receive(Internals::DataContainer<TDataType>& rData)
+    double Receive(Internals::DataContainer<TDataType>& rData)
     {
-        Read(rData, sizeof(TDataType));
+        return Read(rData, sizeof(TDataType));
     }
 
     template<typename TDataType>
-    void Write(const TDataType& rData, const std::size_t SizeDataType)
+    double Write(const TDataType& rData, const std::size_t SizeDataType)
     {
+        CO_SIM_IO_TRY
+
         #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
         const std::size_t data_size = rData.size();
         std::size_t written_size=0;
-        SendSize(data_size);
+        SendSize(data_size); // serves also as synchronization for time measurement
+
+        const auto start_time(std::chrono::steady_clock::now());
         const std::size_t buffer_size = GetPipeBufferSize()/SizeDataType;
 
         while(written_size<data_size) {
@@ -88,15 +109,25 @@ public:
 
             written_size += current_buffer_size;
         }
+        return Utilities::ElapsedSeconds(start_time);
+        #else
+        return 0.0;
+
         #endif
+
+        CO_SIM_IO_CATCH
     }
 
     template<typename TDataType>
-    void Read(TDataType& rData, const std::size_t SizeDataType)
+    double Read(TDataType& rData, const std::size_t SizeDataType)
     {
+        CO_SIM_IO_TRY
+
         #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
-        std::size_t received_size = ReceiveSize();
+        std::size_t received_size = ReceiveSize(); // serves also as synchronization for time measurement
         std::size_t read_size=0;
+
+        const auto start_time(std::chrono::steady_clock::now());
         rData.resize(received_size);
         const std::size_t buffer_size = GetPipeBufferSize()/SizeDataType;
 
@@ -109,7 +140,13 @@ public:
 
             read_size += current_buffer_size;
         }
+        return Utilities::ElapsedSeconds(start_time);
+        #else
+        return 0.0;
+
         #endif
+
+        CO_SIM_IO_CATCH
     }
 
     void Close();
