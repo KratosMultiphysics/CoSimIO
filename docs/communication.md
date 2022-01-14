@@ -118,6 +118,8 @@ Set `communication_format` to `local_socket`.
 **This form of communication is experimental**
 A pipe is a data channel to perform interprocess communication between two processes. No data is written to the filesystem, it is directly exchanged through the kernel memory. This makes it more efficient than the file-based communication, but at the same time it only works locally on one compute node.
 
+The (default) buffer size is specific for each operating system, see e.g. [here](https://man7.org/linux/man-pages/man7/pipe.7.html) for information for Linux. If the data to be exchanged is larger than the buffer size, then it is exchanged in chuncks. Hence a larger buffer size results in less data exchanges.
+
 This form of communication is currently only available under Unix, the Windows implementation is work in progress.
 
 The implementation of the _PipeCommunication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/includes/communication/pipe_communication.hpp).
@@ -128,4 +130,4 @@ Set `communication_format` to `pipe`.
 
 | name | type | required | default| description |
 |---|---|---|---|---|
-|currently_nothing|
+| buffer_size | int | - | 8192 (8 KB) | buffer size of pipe, differs between OSs. |
