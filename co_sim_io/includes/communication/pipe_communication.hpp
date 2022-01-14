@@ -38,7 +38,8 @@ public:
     BidirectionalPipe(
         const fs::path& rPipeDir,
         const fs::path& rBasePipeName,
-        const bool IsPrimary);
+        const bool IsPrimary,
+        const std::size_t BufferSize);
 
     template<class TObjectType>
     double Send(const TObjectType& rObject)
@@ -98,7 +99,7 @@ public:
         SendSize(data_size); // serves also as synchronization for time measurement
 
         const auto start_time(std::chrono::steady_clock::now());
-        const std::size_t buffer_size = GetPipeBufferSize()/SizeDataType;
+        const std::size_t buffer_size = mBufferSize/SizeDataType;
 
         while(written_size<data_size) {
             const std::size_t data_left_to_write = data_size - written_size;
@@ -129,7 +130,7 @@ public:
 
         const auto start_time(std::chrono::steady_clock::now());
         rData.resize(received_size);
-        const std::size_t buffer_size = GetPipeBufferSize()/SizeDataType;
+        const std::size_t buffer_size = mBufferSize/SizeDataType;
 
         while(read_size<received_size) {
             const std::size_t data_left_to_read = received_size - read_size;
@@ -159,11 +160,11 @@ private:
     fs::path mPipeNameWrite;
     fs::path mPipeNameRead;
 
+    const std::size_t mBufferSize;
+
     void SendSize(const std::uint64_t Size);
 
     std::uint64_t ReceiveSize();
-
-    std::size_t GetPipeBufferSize();
 };
 
     std::shared_ptr<BidirectionalPipe> mpPipe;
@@ -195,6 +196,8 @@ private:
         const ModelPart& I_ModelPart) override;
 
     void DerivedHandShake() const override;
+
+    std::size_t GetPipeBufferSize(const Info& I_Info) const;
 };
 
 } // namespace Internals

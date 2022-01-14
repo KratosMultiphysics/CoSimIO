@@ -53,7 +53,8 @@ Info PipeCommunication::ConnectDetail(const Info& I_Info)
     mpPipe = std::make_shared<BidirectionalPipe>(
         GetCommunicationDirectory(),
         GetConnectionName() + "_r" + std::to_string(GetDataCommunicator().Rank()),
-        GetIsPrimaryConnection());
+        GetIsPrimaryConnection(),
+        GetPipeBufferSize(I_Info));
 
     return Info(); // TODO use
 }
@@ -153,7 +154,8 @@ void PipeCommunication::DerivedHandShake() const
 PipeCommunication::BidirectionalPipe::BidirectionalPipe(
     const fs::path& rPipeDir,
     const fs::path& rBasePipeName,
-    const bool IsPrimary)
+    const bool IsPrimary,
+    const std::size_t BufferSize) : mBufferSize(BufferSize)
 {
     mPipeNameWrite = mPipeNameRead = rPipeDir / rBasePipeName;
 
@@ -210,13 +212,9 @@ std::uint64_t PipeCommunication::BidirectionalPipe::ReceiveSize()
 
 }
 
-std::size_t PipeCommunication::BidirectionalPipe::GetPipeBufferSize()
+std::size_t PipeCommunication::GetPipeBufferSize(const Info& I_Info) const
 {
-    #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
-    return 8192;
-    #else
-    return 0;
-    #endif
+    return I_Info.Get<int>("buffer_size", 8192);
 }
 
 } // namespace Internals
