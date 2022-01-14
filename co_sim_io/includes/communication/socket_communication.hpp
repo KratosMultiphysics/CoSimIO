@@ -83,55 +83,69 @@ private:
 
     void GetPortNumber();
 
-    void Write(const std::string& rData);
+    double Write(const std::string& rData);
 
-    void Read(std::string& rData);
+    double Read(std::string& rData);
 
     template<class TObjectType>
-    void Send(const TObjectType& rObject)
+    double Send(const TObjectType& rObject)
     {
         CO_SIM_IO_TRY
 
+        const auto start_time(std::chrono::steady_clock::now());
         StreamSerializer serializer;
         serializer.save("object", rObject);
+        const double elapsed_time_save = Utilities::ElapsedSeconds(start_time);
 
-        Write(serializer.GetStringRepresentation());
+        const double elapsed_time_write = Write(serializer.GetStringRepresentation());
+        return elapsed_time_save + elapsed_time_write;
 
         CO_SIM_IO_CATCH
     }
 
     template<class TObjectType>
-    void Receive(TObjectType& rObject)
+    double Receive(TObjectType& rObject)
     {
         CO_SIM_IO_TRY
 
         std::string buffer;
-        Read(buffer);
+        const double elapsed_time_read = Read(buffer);
+
+        const auto start_time(std::chrono::steady_clock::now());
         StreamSerializer serializer(buffer);
         serializer.load("object", rObject);
+        const double elapsed_time_load = Utilities::ElapsedSeconds(start_time);
+
+        return elapsed_time_read+elapsed_time_load;
 
         CO_SIM_IO_CATCH
     }
 
     template<typename TDataType>
-    void Send(const Internals::DataContainer<TDataType>& rData)
+    double Send(const Internals::DataContainer<TDataType>& rData)
     {
         CO_SIM_IO_TRY
 
-        SendSize(rData.size());
+        SendSize(rData.size()); // serves also as synchronization for time measurement
+
+        const auto start_time(std::chrono::steady_clock::now());
         asio::write(*mpAsioSocket, asio::buffer(rData.data(), rData.size()*sizeof(TDataType)));
+        return Utilities::ElapsedSeconds(start_time);
 
         CO_SIM_IO_CATCH
     }
 
     template<typename TDataType>
-    void Receive(Internals::DataContainer<TDataType>& rData)
+    double Receive(Internals::DataContainer<TDataType>& rData)
     {
         CO_SIM_IO_TRY
 
-        std::size_t received_size = ReceiveSize();
+        std::size_t received_size = ReceiveSize(); // serves also as synchronization for time measurement
+
+        const auto start_time(std::chrono::steady_clock::now());
         rData.resize(received_size);
         asio::read(*mpAsioSocket, asio::buffer(rData.data(), received_size*sizeof(TDataType)));
+        return Utilities::ElapsedSeconds(start_time);
 
         CO_SIM_IO_CATCH
     }
