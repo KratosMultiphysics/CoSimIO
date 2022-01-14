@@ -23,6 +23,7 @@
 #include "includes/model_part.hpp"
 #include "includes/data_communicator.hpp"
 #include "includes/filesystem_inc.hpp"
+#include "includes/utilities.hpp"
 
 namespace CoSimIO {
 namespace Internals {

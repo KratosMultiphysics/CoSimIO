@@ -412,7 +412,7 @@ void Communication::PrintElapsedTime(
 {
     const std::string identifier =I_Info.Get<std::string>("identifier");
     const double dur = O_Info.Get<double>("elapsed_time");
-    CO_SIM_IO_INFO_IF("CoSimIO-Timing:", GetPrintTiming()&&GetDataCommunicator().Rank()==0) << rLabel << " \"" << identifier << "\" took " << dur << " [s]" << std::endl;
+    CO_SIM_IO_INFO_IF("CoSimIO-Timing", GetPrintTiming() && GetDataCommunicator().Rank()==0) << rLabel << " \"" << identifier << "\" took " << dur << " [s]" << std::endl;
 }
 
 } // namespace Internals
