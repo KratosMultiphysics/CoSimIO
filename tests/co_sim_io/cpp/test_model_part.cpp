@@ -12,6 +12,7 @@
 
 // System includes
 #include <sstream>
+#include <numeric>
 
 // Project includes
 #include "co_sim_io_testing.hpp"
@@ -691,6 +692,64 @@ TEST_CASE("model_part_pointer_vector")
 
     CHECK(PointerVectorChecker(model_part.Nodes()));
     CHECK(PointerVectorChecker(model_part.Elements()));
+}
+
+TEST_CASE("model_part_CreateNodes_std::vector")
+{
+    ModelPart model_part("for_test");
+
+    constexpr std::size_t num_nodes = 234;
+
+    std::vector<CoSimIO::IdType> ids(num_nodes);
+    std::vector<double> x(num_nodes);
+    std::vector<double> y(num_nodes);
+    std::vector<double> z(num_nodes);
+
+    std::iota(ids.begin(), ids.end(), 1);
+    std::iota(x.begin(), x.end(), 1);
+    std::iota(y.begin(), y.end(), 1);
+    std::iota(z.begin(), z.end(), 1);
+
+    model_part.CreateNewNodes(ids, x, y, z);
+
+    CHECK_EQ(model_part.NumberOfNodes(), num_nodes);
+
+    for (std::size_t i=0; i<num_nodes; ++i) {
+        const Node& r_node = **(model_part.NodesBegin()+i);
+        CHECK_EQ(r_node.Id(), ids[i]);
+        CHECK_EQ(r_node.X(), doctest::Approx(x[i]));
+        CHECK_EQ(r_node.Y(), doctest::Approx(y[i]));
+        CHECK_EQ(r_node.Z(), doctest::Approx(z[i]));
+    }
+}
+
+TEST_CASE("model_part_CreateNodes_std::array")
+{
+    ModelPart model_part("for_test");
+
+    constexpr std::size_t num_nodes = 234;
+
+    std::array<CoSimIO::IdType, num_nodes> ids;
+    std::array<double, num_nodes> x;
+    std::array<double, num_nodes> y;
+    std::array<double, num_nodes> z;
+
+    std::iota(ids.begin(), ids.end(), 1);
+    std::iota(x.begin(), x.end(), 1);
+    std::iota(y.begin(), y.end(), 1);
+    std::iota(z.begin(), z.end(), 1);
+
+    model_part.CreateNewNodes(ids, x, y, z);
+
+    CHECK_EQ(model_part.NumberOfNodes(), num_nodes);
+
+    for (std::size_t i=0; i<num_nodes; ++i) {
+        const Node& r_node = **(model_part.NodesBegin()+i);
+        CHECK_EQ(r_node.Id(), ids[i]);
+        CHECK_EQ(r_node.X(), doctest::Approx(x[i]));
+        CHECK_EQ(r_node.Y(), doctest::Approx(y[i]));
+        CHECK_EQ(r_node.Z(), doctest::Approx(z[i]));
+    }
 }
 
 } // TEST_SUITE("ModelPart")

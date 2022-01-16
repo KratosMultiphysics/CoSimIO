@@ -144,41 +144,6 @@ Node& ModelPart::CreateNewNode(
     return *new_node;
 }
 
-void ModelPart::CreateNewNodes(
-    const Internals::DataContainer<IdType>& I_Id,
-    const Internals::DataContainer<double>& I_X,
-    const Internals::DataContainer<double>& I_Y,
-    const Internals::DataContainer<double>& I_Z)
-{
-    const std::size_t num_new_nodes = I_Id.size();
-
-    CO_SIM_IO_ERROR_IF(num_new_nodes != I_X.size()) << "Wrong number of X-Coordinates!" << std::endl;
-    CO_SIM_IO_ERROR_IF(num_new_nodes != I_Y.size()) << "Wrong number of Y-Coordinates!" << std::endl;
-    CO_SIM_IO_ERROR_IF(num_new_nodes != I_Z.size()) << "Wrong number of Z-Coordinates!" << std::endl;
-
-    mNodes.reserve(mNodes.size()+num_new_nodes);
-    GetLocalModelPart().mNodes.reserve(GetLocalModelPart().mNodes.size()+num_new_nodes);
-
-    for (std::size_t i=0; i<num_new_nodes; ++i) {
-        CreateNewNode(I_Id[i], I_X[i], I_Y[i], I_Z[i]);
-    }
-}
-
-void ModelPart::CreateNewNodes(
-    const std::vector<IdType>& I_Id,
-    const std::vector<double>& I_X,
-    const std::vector<double>& I_Y,
-    const std::vector<double>& I_Z)
-{
-    using namespace CoSimIO::Internals;
-    std::unique_ptr<DataContainer<IdType>> p_ids = CoSimIO::make_unique<DataContainerStdVectorReadOnly<IdType>>(I_Id);
-    std::unique_ptr<DataContainer<double>> p_x   = CoSimIO::make_unique<DataContainerStdVectorReadOnly<double>>(I_X);
-    std::unique_ptr<DataContainer<double>> p_y   = CoSimIO::make_unique<DataContainerStdVectorReadOnly<double>>(I_Y);
-    std::unique_ptr<DataContainer<double>> p_z   = CoSimIO::make_unique<DataContainerStdVectorReadOnly<double>>(I_Z);
-
-    CreateNewNodes(*p_ids, *p_x, *p_y, *p_z);
-}
-
 Node& ModelPart::CreateNewGhostNode(
     const IdType I_Id,
     const double I_X,
@@ -195,33 +160,6 @@ Node& ModelPart::CreateNewGhostNode(
     GetPartitionModelPart(PartitionIndex).mNodes.push_back(new_node, I_Id);
 
     return *new_node;
-}
-
-void ModelPart::CreateNewGhostNodes(
-    const Internals::DataContainer<IdType>& I_Id,
-    const Internals::DataContainer<double>& I_X,
-    const Internals::DataContainer<double>& I_Y,
-    const Internals::DataContainer<double>& I_Z,
-    const Internals::DataContainer<int>& PartitionIndex)
-{
-    CO_SIM_IO_ERROR << "Not implemented!" << std::endl;
-}
-
-void ModelPart::CreateNewGhostNodes(
-    const std::vector<IdType>& I_Id,
-    const std::vector<double>& I_X,
-    const std::vector<double>& I_Y,
-    const std::vector<double>& I_Z,
-    const std::vector<int>& PartitionIndex)
-{
-    using namespace CoSimIO::Internals;
-    std::unique_ptr<DataContainer<IdType>> p_ids   = CoSimIO::make_unique<DataContainerStdVectorReadOnly<IdType>>(I_Id);
-    std::unique_ptr<DataContainer<double>> p_x     = CoSimIO::make_unique<DataContainerStdVectorReadOnly<double>>(I_X);
-    std::unique_ptr<DataContainer<double>> p_y     = CoSimIO::make_unique<DataContainerStdVectorReadOnly<double>>(I_Y);
-    std::unique_ptr<DataContainer<double>> p_z     = CoSimIO::make_unique<DataContainerStdVectorReadOnly<double>>(I_Z);
-    std::unique_ptr<DataContainer<int>> p_part_idx = CoSimIO::make_unique<DataContainerStdVectorReadOnly<int>>(PartitionIndex);
-
-    CreateNewGhostNodes(*p_ids, *p_x, *p_y, *p_z, *p_part_idx);
 }
 
 Element& ModelPart::CreateNewElement(
@@ -243,27 +181,6 @@ Element& ModelPart::CreateNewElement(
     GetLocalModelPart().mElements.push_back(new_element, I_Id);
 
     return *new_element;
-}
-
-void ModelPart::CreateNewElements(
-    const Internals::DataContainer<IdType>& I_Id,
-    const Internals::DataContainer<ElementType>& I_Type,
-    const Internals::DataContainer<IdType>& I_Connectivities)
-{
-    CO_SIM_IO_ERROR << "Not implemented!" << std::endl;
-}
-
-void ModelPart::CreateNewElements(
-    const std::vector<IdType>& I_Id,
-    const std::vector<ElementType>& I_Type,
-    const std::vector<IdType>& I_Connectivities)
-{
-    using namespace CoSimIO::Internals;
-    std::unique_ptr<DataContainer<IdType>> p_ids        = CoSimIO::make_unique<DataContainerStdVectorReadOnly<IdType>>(I_Id);
-    std::unique_ptr<DataContainer<ElementType>> p_types = CoSimIO::make_unique<DataContainerStdVectorReadOnly<ElementType>>(I_Type);
-    std::unique_ptr<DataContainer<IdType>> p_conns      = CoSimIO::make_unique<DataContainerStdVectorReadOnly<IdType>>(I_Connectivities);
-
-    CreateNewElements(*p_ids, *p_types, *p_conns);
 }
 
 Node& ModelPart::GetNode(const IdType I_Id)
