@@ -713,6 +713,9 @@ TEST_CASE("model_part_CreateNodes_std::vector")
     model_part.CreateNewNodes(ids, x, y, z);
 
     CHECK_EQ(model_part.NumberOfNodes(), num_nodes);
+    CHECK_EQ(model_part.NumberOfLocalNodes(), num_nodes);
+    CHECK_EQ(model_part.NumberOfGhostNodes(), 0);
+    CHECK_EQ(model_part.NumberOfElements(), 0);
 
     for (std::size_t i=0; i<num_nodes; ++i) {
         const Node& r_node = **(model_part.NodesBegin()+i);
@@ -742,6 +745,9 @@ TEST_CASE("model_part_CreateNodes_std::array")
     model_part.CreateNewNodes(ids, x, y, z);
 
     CHECK_EQ(model_part.NumberOfNodes(), num_nodes);
+    CHECK_EQ(model_part.NumberOfLocalNodes(), num_nodes);
+    CHECK_EQ(model_part.NumberOfGhostNodes(), 0);
+    CHECK_EQ(model_part.NumberOfElements(), 0);
 
     for (std::size_t i=0; i<num_nodes; ++i) {
         const Node& r_node = **(model_part.NodesBegin()+i);
