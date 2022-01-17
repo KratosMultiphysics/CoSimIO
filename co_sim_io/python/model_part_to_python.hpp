@@ -64,8 +64,14 @@ void AddCoSimIOModelPartToPython(pybind11::module& m)
         .def("NumberOfGhostNodes",    &CoSimIO::ModelPart::NumberOfGhostNodes)
         .def("NumberOfElements",      &CoSimIO::ModelPart::NumberOfElements)
         .def("CreateNewNode",         &CoSimIO::ModelPart::CreateNewNode, py::return_value_policy::reference_internal)
+        .def("CreateNewNodes",        &CoSimIO::ModelPart::CreateNewNodes<std::vector<CoSimIO::IdType>,
+                                                                          std::vector<double>>)
         .def("CreateNewGhostNode",    &CoSimIO::ModelPart::CreateNewGhostNode, py::return_value_policy::reference_internal)
+        .def("CreateNewGhostNodes",   &CoSimIO::ModelPart::CreateNewGhostNodes<std::vector<CoSimIO::IdType>,
+                                                                               std::vector<double>,
+                                                                               std::vector<int>>)
         .def("CreateNewElement",      &CoSimIO::ModelPart::CreateNewElement, py::return_value_policy::reference_internal)
+        // .def("CreateNewElements",     &CoSimIO::ModelPart::CreateNewElements<>)
         .def("GetNode",               [](CoSimIO::ModelPart& I_ModelPart, const CoSimIO::IdType I_Id){
             return I_ModelPart.pGetNode(I_Id);}, py::return_value_policy::reference_internal)
         .def("GetElement",            [](CoSimIO::ModelPart& I_ModelPart, const CoSimIO::IdType I_Id){

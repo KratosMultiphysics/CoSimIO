@@ -349,6 +349,56 @@ class CoSimIO_ModelPart(unittest.TestCase):
             exp_string = "CoSimIO-ModelPart \"for_test\"\n    Number of Nodes: 3\n    Number of Elements: 1\n"
             self.assertMultiLineEqual(str(model_part), exp_string)
 
+    def test_CreateNewNodes(self):
+        model_part = CoSimIO.ModelPart("for_test")
+
+        num_nodes = 256
+
+        with self.subTest("from_list"):
+            ids = [i+1 for i in range(num_nodes)]
+            x = [i*1 for i in range(num_nodes)]
+            y = [i*-96.87 for i in range(num_nodes)]
+            z = [i*3.85 for i in range(num_nodes)]
+
+            model_part.CreateNewNodes(ids, x, y, z)
+
+
+            self.assertEqual(model_part.NumberOfNodes(), num_nodes)
+            self.assertEqual(model_part.NumberOfLocalNodes(), num_nodes)
+            self.assertEqual(model_part.NumberOfGhostNodes(), 0)
+            self.assertEqual(model_part.NumberOfElements(), 0)
+
+            for i, node in enumerate(model_part.Nodes):
+                self.assertEqual(ids[i], node.Id())
+                self.assertAlmostEqual(x[i], node.X())
+                self.assertAlmostEqual(y[i], node.Y())
+                self.assertAlmostEqual(z[i], node.Z())
+
+    def test_CreateNewGhostNodes(self):
+        model_part = CoSimIO.ModelPart("for_test")
+
+        num_nodes = 256
+
+        with self.subTest("from_list"):
+            ids = [i+1 for i in range(num_nodes)]
+            x = [i*1 for i in range(num_nodes)]
+            y = [i*-96.87 for i in range(num_nodes)]
+            z = [i*3.85 for i in range(num_nodes)]
+            part = [i+1 for i in range(num_nodes)]
+
+            model_part.CreateNewGhostNodes(ids, x, y, z, part)
+
+            self.assertEqual(model_part.NumberOfNodes(), num_nodes)
+            self.assertEqual(model_part.NumberOfLocalNodes(), 0)
+            self.assertEqual(model_part.NumberOfGhostNodes(), num_nodes)
+            self.assertEqual(model_part.NumberOfElements(), 0)
+
+            for i, node in enumerate(model_part.Nodes):
+                self.assertEqual(ids[i], node.Id())
+                self.assertAlmostEqual(x[i], node.X())
+                self.assertAlmostEqual(y[i], node.Y())
+                self.assertAlmostEqual(z[i], node.Z())
+
 
 if __name__ == '__main__':
     unittest.main()
