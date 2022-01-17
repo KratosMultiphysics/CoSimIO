@@ -165,6 +165,7 @@ void Communication::CheckConnection(const Info& I_Info)
 {
     CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "No active connection exists!" << std::endl;
     CO_SIM_IO_ERROR_IF_NOT(I_Info.Has("identifier")) << "\"identifier\" must be specified!" << std::endl;
+    Utilities::CheckEntry(I_Info.Get<std::string>("identifier"), "identifier");
 }
 
 fs::path Communication::GetTempFileName(const fs::path& rPath) const
