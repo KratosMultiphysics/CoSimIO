@@ -180,7 +180,7 @@ Info FileCommunication::GenericSendWithFileSerializer(
     WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
     const auto start_time(std::chrono::steady_clock::now());
-    SerializeToFile(file_name, rObj, GetSerializerTraceType());
+    SerializeToFile(GetTempFileName(file_name), rObj, GetSerializerTraceType());
 
     MakeFileVisible(file_name);
 
