@@ -34,25 +34,25 @@ public:
 private:
     std::string GetCommunicationName() const override {return "file";}
 
-    // Info ImportInfoImpl(const Info& I_Info) override;
+    Info ImportInfoImpl(const Info& I_Info) override;
 
-    // Info ExportInfoImpl(const Info& I_Info) override;
+    Info ExportInfoImpl(const Info& I_Info) override;
 
-    // Info ImportDataImpl(
-    //     const Info& I_Info,
-    //     Internals::DataContainer<double>& rData) override;
+    Info ImportDataImpl(
+        const Info& I_Info,
+        Internals::DataContainer<double>& rData) override;
 
-    // Info ExportDataImpl(
-    //     const Info& I_Info,
-    //     const Internals::DataContainer<double>& rData) override;
+    Info ExportDataImpl(
+        const Info& I_Info,
+        const Internals::DataContainer<double>& rData) override;
 
-    // Info ImportMeshImpl(
-    //     const Info& I_Info,
-    //     ModelPart& O_ModelPart) override;
+    Info ImportMeshImpl(
+        const Info& I_Info,
+        ModelPart& O_ModelPart) override;
 
-    // Info ExportMeshImpl(
-    //     const Info& I_Info,
-    //     const ModelPart& I_ModelPart) override;
+    Info ExportMeshImpl(
+        const Info& I_Info,
+        const ModelPart& I_ModelPart) override;
 
     template<typename T>
     double GenericSend(
