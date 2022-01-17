@@ -476,6 +476,8 @@ inline void ModelPart::CreateNewNodes(
     const TCoordsContainerType& I_Y,
     const TCoordsContainerType& I_Z)
 {
+    CO_SIM_IO_TRY
+
     const std::size_t num_new_nodes = I_Id.size();
 
     CO_SIM_IO_ERROR_IF(num_new_nodes != I_X.size()) << "Wrong number of X-Coordinates!" << std::endl;
@@ -488,6 +490,8 @@ inline void ModelPart::CreateNewNodes(
     for (std::size_t i=0; i<num_new_nodes; ++i) {
         CreateNewNode(I_Id[i], I_X[i], I_Y[i], I_Z[i]);
     }
+
+    CO_SIM_IO_CATCH
 }
 
 template<class TIdContainerType,
@@ -500,6 +504,8 @@ inline void ModelPart::CreateNewGhostNodes(
     const TCoordsContainerType& I_Z,
     const TPartitionIndexContainerType& PartitionIndex)
 {
+    CO_SIM_IO_TRY
+
     const std::size_t num_new_nodes = I_Id.size();
 
     CO_SIM_IO_ERROR_IF(num_new_nodes != I_X.size()) << "Wrong number of X-Coordinates!" << std::endl;
@@ -517,6 +523,8 @@ inline void ModelPart::CreateNewGhostNodes(
     for (std::size_t i=0; i<num_new_nodes; ++i) {
         CreateNewGhostNode(I_Id[i], I_X[i], I_Y[i], I_Z[i], PartitionIndex[i]);
     }
+
+    CO_SIM_IO_CATCH
 }
 
 template<class TIdContainerType,
@@ -527,6 +535,8 @@ inline void ModelPart::CreateNewElements(
     const TTypeContainerType& I_Type,
     const TConnectivitiesContainerType& I_Connectivities)
 {
+    CO_SIM_IO_TRY
+
     const std::size_t num_new_elements = I_Id.size();
 
     CO_SIM_IO_ERROR_IF(num_new_elements != I_Type.size()) << "Wrong number of Types!" << std::endl;
@@ -553,6 +563,8 @@ inline void ModelPart::CreateNewElements(
 
         CreateNewElement(I_Id[i], I_Type[i], conn);
     }
+
+    CO_SIM_IO_CATCH
 }
 
 /// output stream function
