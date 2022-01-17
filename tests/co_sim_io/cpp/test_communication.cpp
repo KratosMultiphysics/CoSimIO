@@ -632,6 +632,16 @@ TEST_CASE("PipeCommunication" * doctest::timeout(250))
 #endif
 }
 
+TEST_CASE("PipeCommunication_serializer_data" * doctest::timeout(250))
+{
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "pipe");
+    settings.Set<bool>("use_serializer_for_data", true);
+#ifndef CO_SIM_IO_COMPILED_IN_WINDOWS // pipe comm is currenlty not implemented in Win
+    RunAllCommunication(settings);
+#endif
+}
+
 TEST_CASE("LocalSocketCommunication" * doctest::timeout(250))
 {
     CoSimIO::Info settings;
@@ -641,10 +651,46 @@ TEST_CASE("LocalSocketCommunication" * doctest::timeout(250))
 #endif
 }
 
+TEST_CASE("LocalSocketCommunication_serializer_data" * doctest::timeout(250))
+{
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "local_socket");
+    settings.Set<bool>("use_serializer_for_data", true);
+#ifndef CO_SIM_IO_COMPILED_IN_WINDOWS // some debugging is needed to make it work in Win
+    RunAllCommunication(settings);
+#endif
+}
+
 TEST_CASE("SocketCommunication" * doctest::timeout(250))
 {
     CoSimIO::Info settings;
     settings.Set<std::string>("communication_format", "socket");
+    RunAllCommunication(settings);
+}
+
+TEST_CASE("SocketCommunication_serializer_data" * doctest::timeout(250))
+{
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "socket");
+    settings.Set<bool>("use_serializer_for_data", true);
+    RunAllCommunication(settings);
+}
+
+TEST_CASE("SocketCommunication_serializer_data_trace_error" * doctest::timeout(250))
+{
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "socket");
+    settings.Set<bool>("use_serializer_for_data", true);
+    settings.Set<std::string>("serializer_trace_type", "trace_error");
+    RunAllCommunication(settings);
+}
+
+TEST_CASE("SocketCommunication_serializer_data_trace_all" * doctest::timeout(250))
+{
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "socket");
+    settings.Set<bool>("use_serializer_for_data", true);
+    settings.Set<std::string>("serializer_trace_type", "trace_all");
     RunAllCommunication(settings);
 }
 
