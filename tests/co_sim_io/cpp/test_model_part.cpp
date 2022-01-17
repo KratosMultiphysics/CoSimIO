@@ -13,6 +13,7 @@
 // System includes
 #include <sstream>
 #include <numeric>
+#include <algorithm>
 
 // Project includes
 #include "co_sim_io_testing.hpp"
@@ -715,24 +716,19 @@ template<class TIdContainerType,
          class TCoordsContainerType>
 void AuxCreateNodesTestFunction(
     const std::size_t NumNodes,
-    TIdContainerType& I_Id,
-    TCoordsContainerType& I_X,
-    TCoordsContainerType& I_Y,
-    TCoordsContainerType& I_Z)
+    const TIdContainerType& I_Id,
+    const TCoordsContainerType& I_X,
+    const TCoordsContainerType& I_Y,
+    const TCoordsContainerType& I_Z)
 {
     REQUIRE_EQ(I_Id.size(), NumNodes);
     REQUIRE_EQ(I_X.size(), NumNodes);
     REQUIRE_EQ(I_Y.size(), NumNodes);
     REQUIRE_EQ(I_Z.size(), NumNodes);
 
-    const auto& r_ids = I_Id;
-    const auto& r_x = I_X;
-    const auto& r_y = I_Y;
-    const auto& r_z = I_Z;
-
     ModelPart model_part("for_test");
 
-    model_part.CreateNewNodes(r_ids, r_x, r_y, r_z);
+    model_part.CreateNewNodes(I_Id, I_X, I_Y, I_Z);
 
     CHECK_EQ(model_part.NumberOfNodes(), NumNodes);
     CHECK_EQ(model_part.NumberOfLocalNodes(), NumNodes);
@@ -741,10 +737,10 @@ void AuxCreateNodesTestFunction(
 
     for (std::size_t i=0; i<NumNodes; ++i) {
         const Node& r_node = **(model_part.NodesBegin()+i);
-        CHECK_EQ(r_node.Id(), r_ids[i]);
-        CHECK_EQ(r_node.X(), doctest::Approx(r_x[i]));
-        CHECK_EQ(r_node.Y(), doctest::Approx(r_y[i]));
-        CHECK_EQ(r_node.Z(), doctest::Approx(r_z[i]));
+        CHECK_EQ(r_node.Id(), I_Id[i]);
+        CHECK_EQ(r_node.X(), doctest::Approx(I_X[i]));
+        CHECK_EQ(r_node.Y(), doctest::Approx(I_Y[i]));
+        CHECK_EQ(r_node.Z(), doctest::Approx(I_Z[i]));
     }
 }
 
@@ -793,6 +789,154 @@ TEST_CASE("model_part_CreateNodes_raw_array")
     const CoSimIO::Internals::DataContainerRawMemoryReadOnly<double> z(arr_z, num_nodes);
 
     AuxCreateNodesTestFunction(num_nodes, ids, x, y, z);
+}
+
+template<class TIdContainerType,
+         class TCoordsContainerType,
+         class TPartitionIndexContainerType>
+void AuxCreateGhostNodesTestInitializeFunction(
+    const std::size_t NumNodes,
+    TIdContainerType& I_Id,
+    TCoordsContainerType& I_X,
+    TCoordsContainerType& I_Y,
+    TCoordsContainerType& I_Z,
+    TPartitionIndexContainerType& PartitionIndex)
+{
+    for (std::size_t i=0; i<NumNodes; ++i) {
+        I_Id[i] = i+1;
+        I_X[i] = i*1.1;
+        I_Y[i] = i+1.235;
+        I_Z[i] = i-10.89;
+        PartitionIndex[i] = i;
+    }
+}
+
+template<class TIdContainerType,
+         class TCoordsContainerType,
+         class TPartitionIndexContainerType>
+void AuxCreateGhostNodesTestFunction(
+    const std::size_t NumNodes,
+    const TIdContainerType& I_Id,
+    const TCoordsContainerType& I_X,
+    const TCoordsContainerType& I_Y,
+    const TCoordsContainerType& I_Z,
+    const TPartitionIndexContainerType& PartitionIndex)
+{
+    REQUIRE_EQ(I_Id.size(), NumNodes);
+    REQUIRE_EQ(I_X.size(), NumNodes);
+    REQUIRE_EQ(I_Y.size(), NumNodes);
+    REQUIRE_EQ(I_Z.size(), NumNodes);
+    REQUIRE_EQ(PartitionIndex.size(), NumNodes);
+
+    ModelPart model_part("for_test");
+
+    model_part.CreateNewGhostNodes(I_Id, I_X, I_Y, I_Z, PartitionIndex);
+
+    CHECK_EQ(model_part.NumberOfNodes(), NumNodes);
+    CHECK_EQ(model_part.NumberOfLocalNodes(), 0);
+    CHECK_EQ(model_part.NumberOfGhostNodes(), NumNodes);
+    CHECK_EQ(model_part.NumberOfElements(), 0);
+
+    for (std::size_t i=0; i<NumNodes; ++i) {
+        const Node& r_node = **(model_part.GhostNodesBegin()+i);
+        CHECK_EQ(r_node.Id(), I_Id[i]);
+        CHECK_EQ(r_node.X(), doctest::Approx(I_X[i]));
+        CHECK_EQ(r_node.Y(), doctest::Approx(I_Y[i]));
+        CHECK_EQ(r_node.Z(), doctest::Approx(I_Z[i]));
+    }
+}
+
+TEST_CASE("model_part_CreateGhostNodes_std::vector")
+{
+    constexpr std::size_t num_nodes = 234;
+
+    std::vector<CoSimIO::IdType> ids(num_nodes);
+    std::vector<double> x(num_nodes);
+    std::vector<double> y(num_nodes);
+    std::vector<double> z(num_nodes);
+    std::vector<int> part_indices(num_nodes);
+
+    AuxCreateGhostNodesTestInitializeFunction(num_nodes, ids, x, y, z, part_indices);
+    AuxCreateGhostNodesTestFunction(num_nodes, ids, x, y, z, part_indices);
+}
+
+TEST_CASE("model_part_CreateGhostNodes_std::array")
+{
+    ModelPart model_part("for_test");
+
+    constexpr std::size_t num_nodes = 234;
+
+    std::array<CoSimIO::IdType, num_nodes> ids;
+    std::array<double, num_nodes> x;
+    std::array<double, num_nodes> y;
+    std::array<double, num_nodes> z;
+    std::array<int, num_nodes> part_indices;
+
+    AuxCreateGhostNodesTestInitializeFunction(num_nodes, ids, x, y, z, part_indices);
+    AuxCreateGhostNodesTestFunction(num_nodes, ids, x, y, z, part_indices);
+}
+
+TEST_CASE("model_part_CreateGhostNodes_raw_array")
+{
+    constexpr std::size_t num_nodes = 234;
+
+    CoSimIO::IdType arr_ids[num_nodes];
+    double arr_x[num_nodes];
+    double arr_y[num_nodes];
+    double arr_z[num_nodes];
+    int arr_part_indices[num_nodes];
+
+    AuxCreateGhostNodesTestInitializeFunction(num_nodes, arr_ids, arr_x, arr_y, arr_z, arr_part_indices);
+
+    const CoSimIO::Internals::DataContainerRawMemoryReadOnly<CoSimIO::IdType> ids(arr_ids, num_nodes);
+    const CoSimIO::Internals::DataContainerRawMemoryReadOnly<double> x(arr_x, num_nodes);
+    const CoSimIO::Internals::DataContainerRawMemoryReadOnly<double> y(arr_y, num_nodes);
+    const CoSimIO::Internals::DataContainerRawMemoryReadOnly<double> z(arr_z, num_nodes);
+    const CoSimIO::Internals::DataContainerRawMemoryReadOnly<int> part_indices(arr_part_indices, num_nodes);
+
+    AuxCreateGhostNodesTestFunction(num_nodes, ids, x, y, z, part_indices);
+}
+
+TEST_CASE("model_part_CreateElements_std::vector")
+{
+    constexpr std::size_t num_nodes = 234;
+
+    // first create Nodes
+    std::vector<CoSimIO::IdType> node_ids(num_nodes);
+    std::vector<double> x(num_nodes);
+    std::vector<double> y(num_nodes);
+    std::vector<double> z(num_nodes);
+    AuxCreateNodesTestInitializeFunction(num_nodes, node_ids, x, y, z);
+
+    ModelPart model_part("for_test");
+    model_part.CreateNewNodes(node_ids, x, y, z);
+
+    constexpr std::size_t num_elements = 123;
+    std::vector<CoSimIO::IdType> ids(num_elements);
+    std::vector<CoSimIO::ElementType> types(num_elements, CoSimIO::ElementType::Line2D2);
+    std::vector<CoSimIO::IdType> connectivities;
+    connectivities.reserve(num_elements*3);
+
+    std::iota(ids.begin(), ids.end(), 1);
+    std::fill_n(types.begin(), 20, CoSimIO::ElementType::Triangle3D3); // first 20 are triangles
+
+    for (std::size_t i=0; i<num_elements; ++i) {
+        for (int j=0; j<CoSimIO::Utilities::GetNumberOfNodesForElementType(types[i]); ++j) {
+            connectivities.push_back(i+j+1);
+        }
+    }
+
+    model_part.CreateNewElements(ids, types, connectivities);
+
+    std::size_t conn_counter=0;
+    for (std::size_t i=0; i<num_elements; ++i) {
+        const Element& r_element = **(model_part.ElementsBegin()+i);
+        CHECK_EQ(r_element.Id(), ids[i]);
+        CHECK_EQ(r_element.Type(), types[i]);
+        for (int j=0; j<CoSimIO::Utilities::GetNumberOfNodesForElementType(r_element.Type()); ++j) {
+            CHECK_EQ(connectivities[conn_counter++], (**(r_element.NodesBegin()+j)).Id());
+        }
+    }
 }
 
 } // TEST_SUITE("ModelPart")
