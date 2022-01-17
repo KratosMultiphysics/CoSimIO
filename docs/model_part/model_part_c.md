@@ -50,23 +50,43 @@ const char* name = CoSimIO_ModelPart_Name(model_part);
 CoSimIO_FreeModelPart(model_part);
 ```
 
-Nodes can be created like this:
+As single `Node` can be created with `CoSimIO_ModelPart_CreateNewNode`:
 ```c
-// memory of node is managed by model_part!
+/* memory of node is managed by model_part! */
 CoSimIO_Node node = CoSimIO_ModelPart_CreateNewNode(
     model_part,
-    1,    // Id
-    0.0,  // X-Coordinate
-    1.5,  // Y-Coordinate
-    -4.22 // Z-Coordinate
+    1,    /* Id */
+    0.0,  /* X-Coordinate */
+    1.5,  /* Y-Coordinate */
+    -4.22 /* Z-Coordinate */
+);
+```
+
+Multiple nodes can be created with `CoSimIO_ModelPart_CreateNewNodes`:
+```c
+int num_nodes = 10;
+int ids[10];
+double x_coords[10];
+double y_coords[10];
+double z_coords[10];
+
+/* initialize the vectors somehow ... */
+
+CoSimIO_ModelPart_CreateNewNodes(
+    model_part,
+    num_nodes,
+    ids,      /* Ids */
+    x_coords, /* X-Coordinates */
+    y_coords, /* Y-Coordinates */
+    z_coords  /* Z-Coordinates */
 );
 ```
 
 Elements can be created after nodes were created. The mesh connectivites are documented [here](../mesh_connectivities.md).
 ```c
-int connectivity[2] = {1,2}; // Ids of the Nodes
+int connectivity[2] = {1,2}; /* Ids of the Nodes */
 
-// memory of element is managed by model_part!
+/* memory of element is managed by model_part! */
 CoSimIO_Element element = CoSimIO_ModelPart_CreateNewElement(
     model_part,
     2, // Id
@@ -74,6 +94,34 @@ CoSimIO_Element element = CoSimIO_ModelPart_CreateNewElement(
     connectivity // Connectivity information, i.e. Ids of nodes that the element has
 );
 ```
+
+Multiple elements can be created with `CoSimIO_ModelPart_CreateNewElements`:
+```c
+int num_elements = 10;
+int ids[10];
+CoSimIO_ElementType types[10];
+
+int num_connectivities = ...; /*to be calculated, depends on element types!*/
+int connectivities[...];
+/*
+the connectivities vector is contiguous, not a vector of vectors!
+Example:
+types is [Line2D2 and Triangle3D3] connectivities is [1,2,3,4,5],
+the {1,2} are the connectivities for the line
+and {3,4,5}  are the connectivities for the triangle*/
+
+/* initialize the vectors somehow ... */
+
+CoSimIO_ModelPart_CreateNewElements(
+    model_part,
+    num_elements,       /* Number of elements */
+    ids,                /* Ids */
+    types,              /* Element types */
+    num_connectivities, /* Number of connectivities */
+    connectivities      /* Connectivities */
+);
+```
+
 Note: Node and Element Ids start with 1 (0 is not accepted).
 
 Use the following functions to get the number of nodes and elements:
@@ -85,16 +133,16 @@ int number_of_elements = CoSimIO_ModelPart_NumberOfElements(model_part);
 
 The nodes and elements can be iterated with:
 ```c
-// iterate nodes
+/* iterate nodes */
 for (int i=0; i<CoSimIO_ModelPart_NumberOfNodes(model_part); ++i) {
     CoSimIO_Node node = CoSimIO_ModelPart_GetNodeByIndex(model_part, i);
-    // do sth with node
+    /* do sth with node */
 }
 
 // iterate elements
 for (int i=0; i<CoSimIO_ModelPart_NumberOfElements(model_part); ++i) {
     CoSimIO_Element element = CoSimIO_ModelPart_GetElementByIndex(model_part, i);
-    // do sth with element
+    /* do sth with element */
 }
 ```
 
@@ -122,13 +170,36 @@ Ghost nodes that are local in another partition can be created like this:
 ```c
 CoSimIO_Node ghost_node = CoSimIO_ModelPart_CreateNewGhostNode(
     model_part,
-    1,    // Id
-    0.0,  // X-Coordinate
-    1.5,  // Y-Coordinate
-    -4.2, // Z-Coordinate
-    5     // Partition index where the node is local
+    1,    /* Id */
+    0.0,  /* X-Coordinate */
+    1.5,  /* Y-Coordinate */
+    -4.2, /* Z-Coordinate */
+    5     /* Partition index where the node is local */
 );
 ```
+
+Multiple ghost nodes can be created with `CreateNewGhostNodes`, similar to the creation of multiple (local) nodes:
+```c
+int num_nodes = 10;
+int ids[10];
+double x_coords[10];
+double y_coords[10];
+double z_coords[10];
+int partition_indices[10];
+
+/* initialize the vectors somehow ... */
+
+CoSimIO_ModelPart_CreateNewGhostNodes(
+    model_part,
+    num_nodes,
+    ids,              /* Ids */
+    x_coords,         /* X-Coordinates */
+    y_coords,         /* Y-Coordinates */
+    z_coords,         /* Z-Coordinates */
+    partition_indices /* Partition indices where the nodes are local */
+);
+```
+
 These ghost nodes can also be used for the creation of elements.
 Note that this node has to be created as local node in its local partition, otherwise deadlocks can occur!
 Also the Ids must be unique, again otherwise deadlocks can occur!
