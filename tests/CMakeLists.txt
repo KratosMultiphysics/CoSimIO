@@ -29,21 +29,6 @@ if (CO_SIM_IO_BUILD_MPI)
 
 endif()
 
-### Benchmarking ###
-function(add_benchmarking_executable BENCH_SOURCE_FILE)
-    get_filename_component(TEST_FILENAME ${BENCH_SOURCE_FILE} NAME)
-    string(REGEX REPLACE ".cpp" "" TEST_NAME ${TEST_FILENAME})
-    add_executable(${TEST_NAME} ${BENCH_SOURCE_FILE})
-    target_link_libraries(${TEST_NAME} co_sim_io)
-    install(TARGETS ${TEST_NAME} DESTINATION "bin/benchmarking")
-endfunction()
-
-file(GLOB cpp_benchmarking_files "benchmarking/*.cpp")
-
-foreach(cpp_bench_file ${cpp_benchmarking_files})
-add_benchmarking_executable(${cpp_bench_file})
-endforeach(cpp_bench_file)
-
 ### C++ tests ###
 function(add_cpp_executable TEST_SOURCE_FILE)
     get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
