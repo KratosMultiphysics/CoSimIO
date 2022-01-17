@@ -32,6 +32,8 @@ public:
     ~FileCommunication() override;
 
 private:
+    const bool mUseFileSerializer = true;
+
     std::string GetCommunicationName() const override {return "file";}
 
     Info ImportInfoImpl(const Info& I_Info) override;
@@ -53,6 +55,16 @@ private:
     Info ExportMeshImpl(
         const Info& I_Info,
         const ModelPart& I_ModelPart) override;
+
+    template<class TObjectType>
+    Info GenericSendWithFileSerializer(
+        const Info& I_Info,
+        const TObjectType& rObj);
+
+    template<class TObjectType>
+    Info GenericReceiveWithFileSerializer(
+        const Info& I_Info,
+        TObjectType& rObj);
 
     template<typename T>
     double GenericSend(

@@ -26,24 +26,30 @@ namespace {
 
 // Important: having this in a function also makes sure that the FileSerializer releases its resources (i.e. the file) at destruction
 template<class TObject>
-void SerializeToFile(const fs::path& rPath, const std::string& rTag, const TObject& rObject, const Serializer::TraceType SerializerTrace)
+void SerializeToFile(
+    const fs::path& rPath,
+    const TObject& rObject,
+    const Serializer::TraceType SerializerTrace)
 {
     CO_SIM_IO_TRY
 
     FileSerializer serializer(rPath.string(), SerializerTrace);
-    serializer.save(rTag, rObject);
+    serializer.save("obj", rObject);
 
     CO_SIM_IO_CATCH
 }
 
 // important: having this in a function also makes sure that the FileSerializer releases its resources (i.e. the file) at destruction
 template<class TObject>
-void SerializeFromFile(const fs::path& rPath, const std::string& rTag, TObject& rObject, const Serializer::TraceType SerializerTrace)
+void SerializeFromFile(
+    const fs::path& rPath,
+    TObject& rObject,
+    const Serializer::TraceType SerializerTrace)
 {
     CO_SIM_IO_TRY
 
     FileSerializer serializer(rPath.string(), SerializerTrace);
-    serializer.load(rTag, rObject);
+    serializer.load("obj", rObject);
 
     CO_SIM_IO_CATCH
 }
@@ -53,7 +59,8 @@ void SerializeFromFile(const fs::path& rPath, const std::string& rTag, TObject& 
 FileCommunication::FileCommunication(
     const Info& I_Settings,
     std::shared_ptr<DataCommunicator> I_DataComm)
-    : Communication(I_Settings, I_DataComm)
+    : Communication(I_Settings, I_DataComm),
+      mUseFileSerializer(I_Settings.Get<bool>("use_file_serializer", true))
 {
 }
 
@@ -74,6 +81,13 @@ Info FileCommunication::ImportInfoImpl(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
+    if (mUseFileSerializer) {
+        Info received_info;
+        const Info rec_info = GenericReceiveWithFileSerializer(I_Info, received_info);
+        received_info.Set<double>("elapsed_time", rec_info.Get<double>("elapsed_time"));
+        return received_info;
+    }
+
     return Communication::ImportInfoImpl(I_Info);
 
     CO_SIM_IO_CATCH
@@ -82,6 +96,10 @@ Info FileCommunication::ImportInfoImpl(const Info& I_Info)
 Info FileCommunication::ExportInfoImpl(const Info& I_Info)
 {
     CO_SIM_IO_TRY
+
+    if (mUseFileSerializer) {
+        return GenericSendWithFileSerializer(I_Info, I_Info);
+    }
 
     return Communication::ExportInfoImpl(I_Info);
 
@@ -94,6 +112,10 @@ Info FileCommunication::ImportDataImpl(
 {
     CO_SIM_IO_TRY
 
+    if (mUseFileSerializer && GetUseSerializerForData()) {
+        return GenericReceiveWithFileSerializer(I_Info, rData);
+    }
+
     return Communication::ImportDataImpl(I_Info, rData);
 
     CO_SIM_IO_CATCH
@@ -104,6 +126,10 @@ Info FileCommunication::ExportDataImpl(
     const Internals::DataContainer<double>& rData)
 {
     CO_SIM_IO_TRY
+
+    if (mUseFileSerializer && GetUseSerializerForData()) {
+        return GenericSendWithFileSerializer(I_Info, rData);
+    }
 
     return Communication::ExportDataImpl(I_Info, rData);
 
@@ -116,6 +142,10 @@ Info FileCommunication::ImportMeshImpl(
 {
     CO_SIM_IO_TRY
 
+    if (mUseFileSerializer) {
+        return GenericReceiveWithFileSerializer(I_Info, O_ModelPart);
+    }
+
     return Communication::ImportMeshImpl(I_Info, O_ModelPart);
 
     CO_SIM_IO_CATCH
@@ -127,11 +157,66 @@ Info FileCommunication::ExportMeshImpl(
 {
     CO_SIM_IO_TRY
 
+    if (mUseFileSerializer) {
+        return GenericSendWithFileSerializer(I_Info, I_ModelPart);
+    }
+
     return Communication::ExportMeshImpl(I_Info, I_ModelPart);
 
     CO_SIM_IO_CATCH
 }
 
+template<class TObjectType>
+Info FileCommunication::GenericSendWithFileSerializer(
+    const Info& I_Info,
+    const TObjectType& rObj)
+{
+    CO_SIM_IO_TRY
+
+    const std::string identifier = I_Info.Get<std::string>("identifier");
+
+    const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
+
+    WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
+
+    const auto start_time(std::chrono::steady_clock::now());
+    SerializeToFile(file_name, rObj, GetSerializerTraceType());
+
+    MakeFileVisible(file_name);
+
+    const double elapsed_time = Utilities::ElapsedSeconds(start_time);
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
+
+    CO_SIM_IO_CATCH
+}
+
+template<class TObjectType>
+Info FileCommunication::GenericReceiveWithFileSerializer(
+    const Info& I_Info,
+    TObjectType& rObj)
+{
+    CO_SIM_IO_TRY
+
+    const std::string identifier = I_Info.Get<std::string>("identifier");
+
+    const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
+
+    WaitForPath(file_name);
+
+    const auto start_time(std::chrono::steady_clock::now());
+    SerializeFromFile(file_name, rObj, GetSerializerTraceType());
+
+    RemovePath(file_name);
+
+    const double elapsed_time = Utilities::ElapsedSeconds(start_time);
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
+
+    CO_SIM_IO_CATCH
+}
 
 template<typename T>
 double FileCommunication::GenericSend(
