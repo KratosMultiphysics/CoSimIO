@@ -758,6 +758,45 @@ TEST_CASE("model_part_CreateNodes_std::array")
     }
 }
 
+TEST_CASE("model_part_CreateNodes_raw_array")
+{
+    ModelPart model_part("for_test");
+
+    constexpr std::size_t num_nodes = 234;
+
+    CoSimIO::IdType arr_ids[num_nodes];
+    double arr_x[num_nodes];
+    double arr_y[num_nodes];
+    double arr_z[num_nodes];
+
+    for (std::size_t i=0; i<num_nodes; ++i) {
+        arr_ids[i] = i+1;
+        arr_x[i] = i*1.1;
+        arr_y[i] = i+1.235;
+        arr_z[i] = i-10.89;
+    }
+
+    const CoSimIO::Internals::DataContainerRawMemoryReadOnly<CoSimIO::IdType> ids(arr_ids, num_nodes);
+    const CoSimIO::Internals::DataContainerRawMemoryReadOnly<double> x(arr_x, num_nodes);
+    const CoSimIO::Internals::DataContainerRawMemoryReadOnly<double> y(arr_y, num_nodes);
+    const CoSimIO::Internals::DataContainerRawMemoryReadOnly<double> z(arr_z, num_nodes);
+
+    model_part.CreateNewNodes(ids, x, y, z);
+
+    CHECK_EQ(model_part.NumberOfNodes(), num_nodes);
+    CHECK_EQ(model_part.NumberOfLocalNodes(), num_nodes);
+    CHECK_EQ(model_part.NumberOfGhostNodes(), 0);
+    CHECK_EQ(model_part.NumberOfElements(), 0);
+
+    for (std::size_t i=0; i<num_nodes; ++i) {
+        const Node& r_node = **(model_part.NodesBegin()+i);
+        CHECK_EQ(r_node.Id(), ids[i]);
+        CHECK_EQ(r_node.X(), doctest::Approx(x[i]));
+        CHECK_EQ(r_node.Y(), doctest::Approx(y[i]));
+        CHECK_EQ(r_node.Z(), doctest::Approx(z[i]));
+    }
+}
+
 } // TEST_SUITE("ModelPart")
 
 } // namespace CoSimIO
