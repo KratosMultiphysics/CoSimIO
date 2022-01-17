@@ -15,7 +15,6 @@
 
 // Project includes
 #include "includes/model_part.hpp"
-#include "includes/utilities.hpp"
 
 namespace CoSimIO {
 
