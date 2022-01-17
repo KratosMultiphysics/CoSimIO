@@ -82,10 +82,15 @@ Info FileCommunication::ImportInfoImpl(const Info& I_Info)
 
     WaitForPath(file_name);
 
+    const auto start_time(std::chrono::steady_clock::now());
+
     Info info;
     SerializeFromFile(file_name, "info", info, Serializer::TraceType::SERIALIZER_NO_TRACE);
 
     RemovePath(file_name);
+
+    const double elapsed_time = Utilities::ElapsedSeconds(start_time);
+    info.Set<double>("elapsed_time", elapsed_time);
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing Info" << std::endl;
 
@@ -107,13 +112,19 @@ Info FileCommunication::ExportInfoImpl(const Info& I_Info)
 
     WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
+    const auto start_time(std::chrono::steady_clock::now());
+
     SerializeToFile(GetTempFileName(file_name), "info", I_Info, Serializer::TraceType::SERIALIZER_NO_TRACE);
 
     MakeFileVisible(file_name);
 
+    const double elapsed_time = Utilities::ElapsedSeconds(start_time);
+
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting Info" << std::endl;
 
-    return Info(); // TODO use
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
 
     CO_SIM_IO_CATCH
 }
@@ -139,11 +150,13 @@ Info FileCommunication::ImportDataImpl(
 
     RemovePath(file_name);
 
+    const double elapsed_time = Utilities::ElapsedSeconds(start_time);
+
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing array with size: " << rData.size() << std::endl;
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Array \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
-
-    return Info(); // TODO use
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
 
     CO_SIM_IO_CATCH
 }
@@ -170,11 +183,13 @@ Info FileCommunication::ExportDataImpl(
 
     MakeFileVisible(file_name);
 
+    const double elapsed_time = Utilities::ElapsedSeconds(start_time);
+
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting array" << std::endl;
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Array \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
-
-    return Info(); // TODO use
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
 
     CO_SIM_IO_CATCH
 }
@@ -200,11 +215,13 @@ Info FileCommunication::ImportMeshImpl(
 
     RemovePath(file_name);
 
+    const double elapsed_time = Utilities::ElapsedSeconds(start_time);
+
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing mesh" << std::endl;
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Importing Mesh \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
-
-    return Info(); // TODO use
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
 
     CO_SIM_IO_CATCH
 }
@@ -230,11 +247,13 @@ Info FileCommunication::ExportMeshImpl(
 
     MakeFileVisible(file_name);
 
+    const double elapsed_time = Utilities::ElapsedSeconds(start_time);
+
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting mesh" << std::endl;
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetPrintTiming()) << "Exporting Mesh \"" << identifier << "\" took: " << Utilities::ElapsedSeconds(start_time) << " [sec]" << std::endl;
-
-    return Info(); // TODO use
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
 
     CO_SIM_IO_CATCH
 }
