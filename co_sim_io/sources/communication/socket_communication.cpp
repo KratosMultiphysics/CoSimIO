@@ -109,24 +109,11 @@ std::string GetIpAddress(const Info& I_Settings)
 SocketCommunication::SocketCommunication(
     const Info& I_Settings,
     std::shared_ptr<DataCommunicator> I_DataComm)
-    : Communication(I_Settings, I_DataComm)
+    : BaseType(I_Settings, I_DataComm)
 {
     CO_SIM_IO_TRY
 
     mIpAddress = GetIpAddress(I_Settings);
-
-    CO_SIM_IO_CATCH
-}
-
-SocketCommunication::~SocketCommunication()
-{
-    CO_SIM_IO_TRY
-
-    if (GetIsConnected()) {
-        CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not performed, attempting automatic disconnection!" << std::endl;
-        Info tmp;
-        Disconnect(tmp);
-    }
 
     CO_SIM_IO_CATCH
 }
@@ -148,31 +135,10 @@ Info SocketCommunication::ConnectDetail(const Info& I_Info)
         mpAsioSocket->connect(my_endpoint);
     }
 
-    // required such that asio keeps listening for incoming messages
-    mContextThread = std::thread([this]() { mAsioContext.run(); });
-
-    return Info();
+    return BaseType::ConnectDetail(I_Info);
 
     CO_SIM_IO_CATCH
 }
-
-Info SocketCommunication::DisconnectDetail(const Info& I_Info)
-{
-    CO_SIM_IO_TRY
-
-    // Request the context to close
-    mAsioContext.stop();
-
-    // Tidy up the context thread
-    if (mContextThread.joinable()) mContextThread.join();
-
-    mpAsioSocket->close();
-
-    return Info();
-
-    CO_SIM_IO_CATCH
-}
-
 
 void SocketCommunication::PrepareConnection(const Info& I_Info)
 {
@@ -186,6 +152,7 @@ void SocketCommunication::PrepareConnection(const Info& I_Info)
         tcp::endpoint port_selection_endpoint(asio::ip::make_address(mIpAddress), 0); // using port 0 means that it will look for a free port
         mpAsioAcceptor = std::make_shared<tcp::acceptor>(mAsioContext, port_selection_endpoint);
         mPortNumber = mpAsioAcceptor->local_endpoint().port();
+        // should mpAsioAcceptor be closed?
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using port number: " << mPortNumber << std::endl;
 
@@ -245,72 +212,6 @@ void SocketCommunication::GetPortNumber()
     mPortNumber = static_cast<unsigned short>(std::stoul(ports[GetDataCommunicator().Rank()]));
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using port number: " << mPortNumber << std::endl;
-
-    CO_SIM_IO_CATCH
-}
-
-double SocketCommunication::SendString(
-    const Info& I_Info,
-    const std::string& rData)
-{
-    SendSize(rData.size()); // serves also as synchronization for time measurement
-
-    const auto start_time(std::chrono::steady_clock::now());
-    asio::write(*mpAsioSocket, asio::buffer(rData.data(), rData.size()));
-    return Utilities::ElapsedSeconds(start_time);
-}
-
-double SocketCommunication::ReceiveString(
-    const Info& I_Info,
-    std::string& rData)
-{
-    std::size_t received_size = ReceiveSize(); // serves also as synchronization for time measurement
-
-    const auto start_time(std::chrono::steady_clock::now());
-    rData.resize(received_size);
-    asio::read(*mpAsioSocket, asio::buffer(&(rData.front()), received_size));
-    return Utilities::ElapsedSeconds(start_time);
-}
-
-double SocketCommunication::SendDataContainer(
-    const Info& I_Info,
-    const Internals::DataContainer<double>& rData)
-{
-    SendSize(rData.size()); // serves also as synchronization for time measurement
-
-    const auto start_time(std::chrono::steady_clock::now());
-    asio::write(*mpAsioSocket, asio::buffer(rData.data(), rData.size()*sizeof(double)));
-    return Utilities::ElapsedSeconds(start_time);
-}
-
-double SocketCommunication::ReceiveDataContainer(
-    const Info& I_Info,
-    Internals::DataContainer<double>& rData)
-{
-    std::size_t received_size = ReceiveSize(); // serves also as synchronization for time measurement
-
-    const auto start_time(std::chrono::steady_clock::now());
-    rData.resize(received_size);
-    asio::read(*mpAsioSocket, asio::buffer(rData.data(), rData.size()*sizeof(double)));
-    return Utilities::ElapsedSeconds(start_time);
-}
-
-void SocketCommunication::SendSize(const std::uint64_t Size)
-{
-    CO_SIM_IO_TRY
-
-    asio::write(*mpAsioSocket, asio::buffer(&Size, sizeof(Size)));
-
-    CO_SIM_IO_CATCH
-}
-
-std::uint64_t SocketCommunication::ReceiveSize()
-{
-    CO_SIM_IO_TRY
-
-    std::uint64_t imp_size_u;
-    asio::read(*mpAsioSocket, asio::buffer(&imp_size_u, sizeof(imp_size_u)));
-    return imp_size_u;
 
     CO_SIM_IO_CATCH
 }
