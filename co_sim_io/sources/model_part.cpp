@@ -151,6 +151,7 @@ Node& ModelPart::CreateNewGhostNode(
     const int PartitionIndex)
 {
     CO_SIM_IO_ERROR_IF(HasNode(I_Id)) << "The Node with Id " << I_Id << " exists already!" << std::endl;
+    CO_SIM_IO_ERROR_IF(PartitionIndex<0) << "PartitionIndex must be >= 0!" << std::endl;
 
     CoSimIO::intrusive_ptr<Node> new_node(CoSimIO::make_intrusive<Node>(I_Id, I_X, I_Y, I_Z));
 
