@@ -36,7 +36,7 @@ CoSimIO::ModelPart model_part("my_model_part");
 std::string name = model_part.Name();
 ```
 
-As single can be created like this:
+As single `Node` can be created with `CreateNewNode`:
 ```c++
 CoSimIO::Node& node = model_part.CreateNewNode(
     1,    // Id
@@ -83,7 +83,7 @@ std::vector<CoSimIO::ElementType> types(num_elements);
 std::vector<CoSimIO::IdType> connectivities;
 // the connectivities vector is contiguous, not a vector of vectors!
 // Example:
-// types is [Line2D2 and Trianle 3D3] connectivities is [1,2,3,4,5],
+// types is [Line2D2 and Triangle3D3] connectivities is [1,2,3,4,5],
 // the {1,2} are the connectivities for the line
 // and {3,4,5}  are the connectivities for the triangle
 
@@ -181,7 +181,7 @@ model_part.CreateNewGhostNodes(
     x_coords, // X-Coordinates
     y_coords, // Y-Coordinates
     z_coords, // Z-Coordinates
-    partition_indices, // Partition indices where the nodes are local
+    partition_indices // Partition indices where the nodes are local
 );
 ```
 
