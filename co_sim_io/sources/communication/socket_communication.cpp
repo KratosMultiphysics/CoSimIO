@@ -131,86 +131,6 @@ SocketCommunication::~SocketCommunication()
     CO_SIM_IO_CATCH
 }
 
-Info SocketCommunication::ImportInfoImpl(const Info& I_Info)
-{
-    CO_SIM_IO_TRY
-
-    Info imported_info;
-    const double elapsed_time = Receive(imported_info);
-    imported_info.Set<double>("elapsed_time", elapsed_time);
-    return imported_info;
-
-    CO_SIM_IO_CATCH
-}
-
-Info SocketCommunication::ExportInfoImpl(const Info& I_Info)
-{
-    CO_SIM_IO_TRY
-
-    const double elapsed_time = Send(I_Info);
-    Info info;
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
-Info SocketCommunication::ImportDataImpl(
-    const Info& I_Info,
-    Internals::DataContainer<double>& rData)
-{
-    CO_SIM_IO_TRY
-
-    const double elapsed_time = Receive(rData);
-    Info info;
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
-Info SocketCommunication::ExportDataImpl(
-    const Info& I_Info,
-    const Internals::DataContainer<double>& rData)
-{
-    CO_SIM_IO_TRY
-
-    const double elapsed_time = Send(rData);
-    Info info;
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
-Info SocketCommunication::ImportMeshImpl(
-    const Info& I_Info,
-    ModelPart& O_ModelPart)
-{
-    CO_SIM_IO_TRY
-
-    const double elapsed_time = Receive(O_ModelPart);
-    Info info;
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
-Info SocketCommunication::ExportMeshImpl(
-    const Info& I_Info,
-    const ModelPart& I_ModelPart)
-{
-    CO_SIM_IO_TRY
-
-    const double elapsed_time = Send(I_ModelPart);
-    Info info;
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
 Info SocketCommunication::ConnectDetail(const Info& I_Info)
 {
     CO_SIM_IO_TRY
@@ -329,29 +249,42 @@ void SocketCommunication::GetPortNumber()
     CO_SIM_IO_CATCH
 }
 
-double SocketCommunication::Write(const std::string& rData)
+double SocketCommunication::SendString(const std::string& rData)
 {
-    CO_SIM_IO_TRY
-
     SendSize(rData.size()); // serves also as synchronization for time measurement
+
     const auto start_time(std::chrono::steady_clock::now());
     asio::write(*mpAsioSocket, asio::buffer(rData.data(), rData.size()));
     return Utilities::ElapsedSeconds(start_time);
-
-    CO_SIM_IO_CATCH
 }
 
-double SocketCommunication::Read(std::string& rData)
+double SocketCommunication::ReceiveString(std::string& rData)
 {
-    CO_SIM_IO_TRY
-
     std::size_t received_size = ReceiveSize(); // serves also as synchronization for time measurement
+
     const auto start_time(std::chrono::steady_clock::now());
     rData.resize(received_size);
     asio::read(*mpAsioSocket, asio::buffer(&(rData.front()), received_size));
     return Utilities::ElapsedSeconds(start_time);
+}
 
-    CO_SIM_IO_CATCH
+double SocketCommunication::SendDataContainer(const Internals::DataContainer<double>& rData)
+{
+    SendSize(rData.size()); // serves also as synchronization for time measurement
+
+    const auto start_time(std::chrono::steady_clock::now());
+    asio::write(*mpAsioSocket, asio::buffer(rData.data(), rData.size()*sizeof(double)));
+    return Utilities::ElapsedSeconds(start_time);
+}
+
+double SocketCommunication::ReceiveDataContainer(Internals::DataContainer<double>& rData)
+{
+    std::size_t received_size = ReceiveSize(); // serves also as synchronization for time measurement
+
+    const auto start_time(std::chrono::steady_clock::now());
+    rData.resize(received_size);
+    asio::read(*mpAsioSocket, asio::buffer(rData.data(), rData.size()*sizeof(double)));
+    return Utilities::ElapsedSeconds(start_time);
 }
 
 void SocketCommunication::SendSize(const std::uint64_t Size)

@@ -156,6 +156,48 @@ protected:
 
     void SynchronizeAll(const std::string& rTag) const;
 
+    template<class TObjectType>
+    double SendObjectWithStreamSerializer(const TObjectType& rObject)
+    {
+        CO_SIM_IO_TRY
+
+        const auto start_time(std::chrono::steady_clock::now());
+        StreamSerializer serializer;
+        serializer.save("object", rObject);
+        const double elapsed_time_save = Utilities::ElapsedSeconds(start_time);
+
+        const double elapsed_time_write = SendString(serializer.GetStringRepresentation());
+        return elapsed_time_save + elapsed_time_write;
+
+        CO_SIM_IO_CATCH
+    }
+
+    template<class TObjectType>
+    double ReceiveObjectWithStreamSerializer(TObjectType& rObject)
+    {
+        CO_SIM_IO_TRY
+
+        std::string buffer;
+        const double elapsed_time_read = ReceiveString(buffer);
+
+        const auto start_time(std::chrono::steady_clock::now());
+        StreamSerializer serializer(buffer);
+        serializer.load("object", rObject);
+        const double elapsed_time_load = Utilities::ElapsedSeconds(start_time);
+
+        return elapsed_time_read+elapsed_time_load;
+
+        CO_SIM_IO_CATCH
+    }
+
+    virtual double SendString(const std::string& rData) = 0;
+
+    virtual double ReceiveString(std::string& rData) = 0;
+
+    virtual double SendDataContainer(const Internals::DataContainer<double>& rData) = 0;
+
+    virtual double ReceiveDataContainer(Internals::DataContainer<double>& rData) = 0;
+
 private:
     std::shared_ptr<DataCommunicator> mpDataComm;
 
@@ -186,49 +228,25 @@ private:
     virtual Info ConnectDetail(const Info& I_Info){return Info();}
     virtual Info DisconnectDetail(const Info& I_Info){return Info();}
 
-    virtual Info ImportInfoImpl(const Info& I_Info)
-    {
-        CO_SIM_IO_ERROR << "ImportInfo not implemented for this comm-type" << std::endl;
-        return Info();
-    }
+    virtual Info ImportInfoImpl(const Info& I_Info);
 
-    virtual Info ExportInfoImpl(const Info& I_Info)
-    {
-        CO_SIM_IO_ERROR << "ExportInfo not implemented for this comm-type" << std::endl;
-        return Info();
-    }
+    virtual Info ExportInfoImpl(const Info& I_Info);
 
     virtual Info ImportDataImpl(
         const Info& I_Info,
-        Internals::DataContainer<double>& rData)
-    {
-        CO_SIM_IO_ERROR << "ImportDataImpl not implemented for this comm-type!" << std::endl;
-        return Info();
-    }
+        Internals::DataContainer<double>& rData);
 
     virtual Info ExportDataImpl(
         const Info& I_Info,
-        const Internals::DataContainer<double>& rData)
-    {
-        CO_SIM_IO_ERROR << "ExportDataImpl not implemented for this comm-type!" << std::endl;
-        return Info();
-    }
+        const Internals::DataContainer<double>& rData);
 
     virtual Info ImportMeshImpl(
         const Info& I_Info,
-        ModelPart& O_ModelPart)
-    {
-        CO_SIM_IO_ERROR << "ImportMeshImpl not implemented for this comm-type!" << std::endl;
-        return Info();
-    }
+        ModelPart& O_ModelPart);
 
     virtual Info ExportMeshImpl(
         const Info& I_Info,
-        const ModelPart& I_ModelPart)
-    {
-        CO_SIM_IO_ERROR << "ExportMeshImpl not implemented for this comm-type!" << std::endl;
-        return Info();
-    }
+        const ModelPart& I_ModelPart);
 
     void HandShake(const Info& I_Info);
 

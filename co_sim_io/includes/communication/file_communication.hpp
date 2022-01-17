@@ -54,13 +54,21 @@ private:
         const Info& I_Info,
         const ModelPart& I_ModelPart) override;
 
+    double SendString(const std::string& rData) override {return 0.0;}
+
+    double ReceiveString(std::string& rData) override {return 0.0;}
+
+    double SendDataContainer(const Internals::DataContainer<double>& rData) override {return 0.0;}
+
+    double ReceiveDataContainer(Internals::DataContainer<double>& rData) override {return 0.0;}
+
     template<typename TDataType>
-    double Send(
+    double SendBuffer(
         const Internals::DataContainer<TDataType>& rData,
         const fs::path& rFileName);
 
     template<typename TDataType>
-    double Receive(
+    double ReceiveBuffer(
         Internals::DataContainer<TDataType>& rData,
         const fs::path& rFileName);
 };

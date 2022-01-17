@@ -41,53 +41,6 @@ public:
         const bool IsPrimary,
         const std::size_t BufferSize);
 
-    template<class TObjectType>
-    double Send(const TObjectType& rObject)
-    {
-        CO_SIM_IO_TRY
-
-        const auto start_time(std::chrono::steady_clock::now());
-        StreamSerializer serializer;
-        serializer.save("object", rObject);
-        const double elapsed_time_save = Utilities::ElapsedSeconds(start_time);
-
-        const double elapsed_time_write = Write(serializer.GetStringRepresentation(), 1);
-
-        return elapsed_time_save + elapsed_time_write;
-
-        CO_SIM_IO_CATCH
-    }
-
-    template<class TObjectType>
-    double Receive(TObjectType& rObject)
-    {
-        CO_SIM_IO_TRY
-
-        std::string buffer;
-        const double elapsed_time_read = Read(buffer, 1);
-
-        const auto start_time(std::chrono::steady_clock::now());
-        StreamSerializer serializer(buffer);
-        serializer.load("object", rObject);
-        const double elapsed_time_load = Utilities::ElapsedSeconds(start_time);
-
-        return elapsed_time_read + elapsed_time_load;
-
-        CO_SIM_IO_CATCH
-    }
-
-    template<typename TDataType>
-    double Send(const Internals::DataContainer<TDataType>& rData)
-    {
-        return Write(rData, sizeof(TDataType));
-    }
-
-    template<typename TDataType>
-    double Receive(Internals::DataContainer<TDataType>& rData)
-    {
-        return Read(rData, sizeof(TDataType));
-    }
-
     template<typename TDataType>
     double Write(const TDataType& rData, const std::size_t SizeDataType)
     {
@@ -175,25 +128,13 @@ private:
 
     Info DisconnectDetail(const Info& I_Info) override;
 
-    Info ImportInfoImpl(const Info& I_Info) override;
+    double SendString(const std::string& rData) override;
 
-    Info ExportInfoImpl(const Info& I_Info) override;
+    double ReceiveString(std::string& rData) override;
 
-    Info ImportDataImpl(
-        const Info& I_Info,
-        Internals::DataContainer<double>& rData) override;
+    double SendDataContainer(const Internals::DataContainer<double>& rData) override;
 
-    Info ExportDataImpl(
-        const Info& I_Info,
-        const Internals::DataContainer<double>& rData) override;
-
-    Info ImportMeshImpl(
-        const Info& I_Info,
-        ModelPart& O_ModelPart) override;
-
-    Info ExportMeshImpl(
-        const Info& I_Info,
-        const ModelPart& I_ModelPart) override;
+    double ReceiveDataContainer(Internals::DataContainer<double>& rData) override;
 
     void DerivedHandShake() const override;
 

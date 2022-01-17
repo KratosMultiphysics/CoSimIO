@@ -161,6 +161,88 @@ void Communication::BaseDisconnectDetail(const Info& I_Info)
     CO_SIM_IO_CATCH
 }
 
+Info Communication::ImportInfoImpl(const Info& I_Info)
+{
+    CO_SIM_IO_TRY
+
+    Info imported_info;
+    const double elapsed_time = ReceiveObjectWithStreamSerializer(imported_info);
+    imported_info.Set<double>("elapsed_time", elapsed_time);
+    return imported_info;
+
+    CO_SIM_IO_CATCH
+}
+
+Info Communication::ExportInfoImpl(const Info& I_Info)
+{
+    CO_SIM_IO_TRY
+
+    const double elapsed_time = SendObjectWithStreamSerializer(I_Info);
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
+
+    CO_SIM_IO_CATCH
+}
+
+Info Communication::ImportDataImpl(
+    const Info& I_Info,
+    Internals::DataContainer<double>& rData)
+{
+    CO_SIM_IO_TRY
+
+    // if use_serializer ...
+    const double elapsed_time = ReceiveDataContainer(rData);
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
+
+    CO_SIM_IO_CATCH
+}
+
+Info Communication::ExportDataImpl(
+    const Info& I_Info,
+    const Internals::DataContainer<double>& rData)
+{
+    CO_SIM_IO_TRY
+
+    // if use_serializer ...
+    const double elapsed_time = SendDataContainer(rData);
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
+
+    CO_SIM_IO_CATCH
+}
+
+Info Communication::ImportMeshImpl(
+    const Info& I_Info,
+    ModelPart& O_ModelPart)
+{
+    CO_SIM_IO_TRY
+
+    const double elapsed_time = ReceiveObjectWithStreamSerializer(O_ModelPart);
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
+
+    CO_SIM_IO_CATCH
+}
+
+Info Communication::ExportMeshImpl(
+    const Info& I_Info,
+    const ModelPart& I_ModelPart)
+{
+    CO_SIM_IO_TRY
+
+    const double elapsed_time = SendObjectWithStreamSerializer(I_ModelPart);
+    Info info;
+    info.Set<double>("elapsed_time", elapsed_time);
+    return info;
+
+    CO_SIM_IO_CATCH
+}
+
 void Communication::CheckConnection(const Info& I_Info)
 {
     CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "No active connection exists!" << std::endl;

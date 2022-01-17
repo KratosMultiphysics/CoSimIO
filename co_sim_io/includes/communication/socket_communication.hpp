@@ -43,26 +43,6 @@ public:
 
     Info DisconnectDetail(const Info& I_Info) override;
 
-    Info ImportInfoImpl(const Info& I_Info) override;
-
-    Info ExportInfoImpl(const Info& I_Info) override;
-
-    Info ImportDataImpl(
-        const Info& I_Info,
-        Internals::DataContainer<double>& rData) override;
-
-    Info ExportDataImpl(
-        const Info& I_Info,
-        const Internals::DataContainer<double>& rData) override;
-
-    Info ImportMeshImpl(
-        const Info& I_Info,
-        ModelPart& O_ModelPart) override;
-
-    Info ExportMeshImpl(
-        const Info& I_Info,
-        const ModelPart& I_ModelPart) override;
-
 private:
 
     asio::io_context mAsioContext;
@@ -83,72 +63,13 @@ private:
 
     void GetPortNumber();
 
-    double Write(const std::string& rData);
+    double SendString(const std::string& rData) override;
 
-    double Read(std::string& rData);
+    double ReceiveString(std::string& rData) override;
 
-    template<class TObjectType>
-    double Send(const TObjectType& rObject)
-    {
-        CO_SIM_IO_TRY
+    double SendDataContainer(const Internals::DataContainer<double>& rData) override;
 
-        const auto start_time(std::chrono::steady_clock::now());
-        StreamSerializer serializer;
-        serializer.save("object", rObject);
-        const double elapsed_time_save = Utilities::ElapsedSeconds(start_time);
-
-        const double elapsed_time_write = Write(serializer.GetStringRepresentation());
-        return elapsed_time_save + elapsed_time_write;
-
-        CO_SIM_IO_CATCH
-    }
-
-    template<class TObjectType>
-    double Receive(TObjectType& rObject)
-    {
-        CO_SIM_IO_TRY
-
-        std::string buffer;
-        const double elapsed_time_read = Read(buffer);
-
-        const auto start_time(std::chrono::steady_clock::now());
-        StreamSerializer serializer(buffer);
-        serializer.load("object", rObject);
-        const double elapsed_time_load = Utilities::ElapsedSeconds(start_time);
-
-        return elapsed_time_read+elapsed_time_load;
-
-        CO_SIM_IO_CATCH
-    }
-
-    template<typename TDataType>
-    double Send(const Internals::DataContainer<TDataType>& rData)
-    {
-        CO_SIM_IO_TRY
-
-        SendSize(rData.size()); // serves also as synchronization for time measurement
-
-        const auto start_time(std::chrono::steady_clock::now());
-        asio::write(*mpAsioSocket, asio::buffer(rData.data(), rData.size()*sizeof(TDataType)));
-        return Utilities::ElapsedSeconds(start_time);
-
-        CO_SIM_IO_CATCH
-    }
-
-    template<typename TDataType>
-    double Receive(Internals::DataContainer<TDataType>& rData)
-    {
-        CO_SIM_IO_TRY
-
-        std::size_t received_size = ReceiveSize(); // serves also as synchronization for time measurement
-
-        const auto start_time(std::chrono::steady_clock::now());
-        rData.resize(received_size);
-        asio::read(*mpAsioSocket, asio::buffer(rData.data(), received_size*sizeof(TDataType)));
-        return Utilities::ElapsedSeconds(start_time);
-
-        CO_SIM_IO_CATCH
-    }
+    double ReceiveDataContainer(Internals::DataContainer<double>& rData) override;
 
     void SendSize(const std::uint64_t Size);
 

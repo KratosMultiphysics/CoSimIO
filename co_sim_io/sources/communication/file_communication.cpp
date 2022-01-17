@@ -138,7 +138,7 @@ Info FileCommunication::ImportDataImpl(
 
     const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
-    const double elapsed_time = Receive(rData, file_name);
+    const double elapsed_time = ReceiveBuffer(rData, file_name);
 
     Info info;
     info.Set<double>("elapsed_time", elapsed_time);
@@ -157,7 +157,7 @@ Info FileCommunication::ExportDataImpl(
 
     const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
-    const double elapsed_time = Send(rData, file_name);
+    const double elapsed_time = SendBuffer(rData, file_name);
 
     Info info;
     info.Set<double>("elapsed_time", elapsed_time);
@@ -229,7 +229,7 @@ Info FileCommunication::ExportMeshImpl(
 }
 
 template<typename TDataType>
-double FileCommunication::Send(
+double FileCommunication::SendBuffer(
     const Internals::DataContainer<TDataType>& rData,
     const fs::path& rFileName)
 {
@@ -257,7 +257,7 @@ double FileCommunication::Send(
 }
 
 template<typename TDataType>
-double FileCommunication::Receive(
+double FileCommunication::ReceiveBuffer(
     Internals::DataContainer<TDataType>& rData,
     const fs::path& rFileName)
 {
