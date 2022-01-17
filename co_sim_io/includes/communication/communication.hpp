@@ -136,7 +136,7 @@ protected:
     bool GetPrintTiming() const                {return mPrintTiming;}
     bool GetIsConnected() const                {return mIsConnected;}
     const DataCommunicator& GetDataCommunicator()  const {return *mpDataComm;}
-    bool GetUseSerializerForData() const       {return mUseSerializerForData;}
+    bool GetAlwaysUseSerializer() const        {return mAlwaysUseSerializer;}
     Serializer::TraceType GetSerializerTraceType() const {return mSerializerTraceType;}
 
     Info GetMyInfo() const;
@@ -244,7 +244,7 @@ private:
     fs::path mCommFolder;
     bool mCommInFolder = true;
     bool mUseAuxFileForFileAvailability = false;
-    bool mUseSerializerForData = false;
+    bool mAlwaysUseSerializer = false;
     Serializer::TraceType mSerializerTraceType = Serializer::TraceType::SERIALIZER_NO_TRACE;
 
     fs::path mWorkingDirectory;

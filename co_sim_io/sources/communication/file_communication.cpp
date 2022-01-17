@@ -135,7 +135,7 @@ Info FileCommunication::ImportDataImpl(
 {
     CO_SIM_IO_TRY
 
-    if (mUseFileSerializer && GetUseSerializerForData()) {
+    if (mUseFileSerializer && GetAlwaysUseSerializer()) {
         return GenericReceiveWithFileSerializer(I_Info, rData);
     }
 
@@ -150,7 +150,7 @@ Info FileCommunication::ExportDataImpl(
 {
     CO_SIM_IO_TRY
 
-    if (mUseFileSerializer && GetUseSerializerForData()) {
+    if (mUseFileSerializer && GetAlwaysUseSerializer()) {
         return GenericSendWithFileSerializer(I_Info, rData);
     }
 

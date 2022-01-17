@@ -30,7 +30,7 @@ Communication::Communication(
       mMyName(I_Settings.Get<std::string>("my_name")),
       mConnectTo(I_Settings.Get<std::string>("connect_to")),
       mUseAuxFileForFileAvailability(I_Settings.Get<bool>("use_aux_file_for_file_availability", false)),
-      mUseSerializerForData(I_Settings.Get<bool>("use_serializer_for_data", false)),
+      mAlwaysUseSerializer(I_Settings.Get<bool>("always_use_serializer", false)),
       mWorkingDirectory(I_Settings.Get<std::string>("working_directory", fs::relative(fs::current_path()).string())),
       mEchoLevel(I_Settings.Get<int>("echo_level", 0)),
       mPrintTiming(I_Settings.Get<bool>("print_timing", false))
@@ -202,7 +202,7 @@ Info Communication::ImportDataImpl(
     CO_SIM_IO_TRY
 
     double elapsed_time;
-    if (mUseSerializerForData) {
+    if (mAlwaysUseSerializer) {
         elapsed_time = ReceiveObjectWithStreamSerializer(I_Info, rData);
     } else {
         elapsed_time = ReceiveDataContainer(I_Info, rData);
@@ -222,7 +222,7 @@ Info Communication::ExportDataImpl(
     CO_SIM_IO_TRY
 
     double elapsed_time;
-    if (mUseSerializerForData) {
+    if (mAlwaysUseSerializer) {
         elapsed_time = SendObjectWithStreamSerializer(I_Info, rData);
     } else {
         elapsed_time = SendDataContainer(I_Info, rData);
@@ -445,7 +445,8 @@ Info Communication::GetMyInfo() const
     my_info.Set<bool>("is_distributed", GetDataCommunicator().IsDistributed());
     my_info.Set<int>("num_processes",   GetDataCommunicator().Size());
 
-    my_info.Set<bool>("use_serializer_for_data", mUseSerializerForData);
+    my_info.Set<bool>("always_use_serializer", mAlwaysUseSerializer);
+    my_info.Set<std::string>("serializer_trace_type", mSerializerTraceType);
 
     my_info.Set<Info>("communication_settings", GetCommunicationSettings());
 
@@ -502,7 +503,7 @@ void Communication::HandShake(const Info& I_Info)
 
         CO_SIM_IO_ERROR_IF(GetDataCommunicator().IsDistributed() != mPartnerInfo.Get<bool>("is_distributed")) << "Mismatch calling Connect(MPI)!\nMyself called: " << (GetDataCommunicator().IsDistributed()?"ConnectMPI":"Connect") << "\nPartner called: " << (mPartnerInfo.Get<bool>("is_distributed")?"ConnectMPI":"Connect") << std::endl;
 
-        CO_SIM_IO_ERROR_IF(mUseSerializerForData != mPartnerInfo.Get<bool>("use_serializer_for_data")) << std::boolalpha << "Mismatch in use_serializer_for_data!\nMy use_serializer_for_data: " << mUseSerializerForData << "\nPartner use_serializer_for_data: " << mPartnerInfo.Get<bool>("use_serializer_for_data") << std::noboolalpha << std::endl;
+        CO_SIM_IO_ERROR_IF(mAlwaysUseSerializer != mPartnerInfo.Get<bool>("always_use_serializer")) << std::boolalpha << "Mismatch in always_use_serializer!\nMy always_use_serializer: " << mAlwaysUseSerializer << "\nPartner always_use_serializer: " << mPartnerInfo.Get<bool>("always_use_serializer") << std::noboolalpha << std::endl;
 
         // more things can be done in derived class if necessary
         DerivedHandShake();
