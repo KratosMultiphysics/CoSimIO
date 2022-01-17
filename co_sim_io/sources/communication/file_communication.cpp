@@ -70,67 +70,170 @@ FileCommunication::~FileCommunication()
     CO_SIM_IO_CATCH
 }
 
-Info FileCommunication::ImportInfoImpl(const Info& I_Info)
-{
-    CO_SIM_IO_TRY
+// Info FileCommunication::ImportInfoImpl(const Info& I_Info)
+// {
+//     CO_SIM_IO_TRY
 
-    const std::string identifier = I_Info.Get<std::string>("identifier");
+//     const std::string identifier = I_Info.Get<std::string>("identifier");
 
-    const fs::path file_name(GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
+//     const fs::path file_name(GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import Info in file " << file_name << " ..." << std::endl;
+//     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import Info in file " << file_name << " ..." << std::endl;
 
-    WaitForPath(file_name);
+//     WaitForPath(file_name);
 
-    const auto start_time(std::chrono::steady_clock::now());
+//     const auto start_time(std::chrono::steady_clock::now());
 
-    Info info;
-    SerializeFromFile(file_name, "info", info, Serializer::TraceType::SERIALIZER_NO_TRACE);
+//     Info info;
+//     SerializeFromFile(file_name, "info", info, Serializer::TraceType::SERIALIZER_NO_TRACE);
 
-    RemovePath(file_name);
+//     RemovePath(file_name);
 
-    const double elapsed_time = Utilities::ElapsedSeconds(start_time);
-    info.Set<double>("elapsed_time", elapsed_time);
+//     const double elapsed_time = Utilities::ElapsedSeconds(start_time);
+//     info.Set<double>("elapsed_time", elapsed_time);
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing Info" << std::endl;
+//     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing Info" << std::endl;
 
-    return info;
+//     return info;
 
-    CO_SIM_IO_CATCH
-}
+//     CO_SIM_IO_CATCH
+// }
 
-Info FileCommunication::ExportInfoImpl(const Info& I_Info)
-{
-    CO_SIM_IO_TRY
+// Info FileCommunication::ExportInfoImpl(const Info& I_Info)
+// {
+//     CO_SIM_IO_TRY
 
-    const std::string identifier = I_Info.Get<std::string>("identifier");
+//     const std::string identifier = I_Info.Get<std::string>("identifier");
 
-    const fs::path file_name(GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
+//     const fs::path file_name(GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export Info in file " << file_name << " ..." << std::endl;
+//     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export Info in file " << file_name << " ..." << std::endl;
 
-    WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
+//     WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
-    const auto start_time(std::chrono::steady_clock::now());
+//     const auto start_time(std::chrono::steady_clock::now());
 
-    SerializeToFile(GetTempFileName(file_name), "info", I_Info, Serializer::TraceType::SERIALIZER_NO_TRACE);
+//     SerializeToFile(GetTempFileName(file_name), "info", I_Info, Serializer::TraceType::SERIALIZER_NO_TRACE);
 
-    MakeFileVisible(file_name);
+//     MakeFileVisible(file_name);
 
-    const double elapsed_time = Utilities::ElapsedSeconds(start_time);
+//     const double elapsed_time = Utilities::ElapsedSeconds(start_time);
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting Info" << std::endl;
+//     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting Info" << std::endl;
 
-    Info info;
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
+//     Info info;
+//     info.Set<double>("elapsed_time", elapsed_time);
+//     return info;
 
-    CO_SIM_IO_CATCH
-}
+//     CO_SIM_IO_CATCH
+// }
 
-Info FileCommunication::ImportDataImpl(
+// Info FileCommunication::ImportDataImpl(
+//     const Info& I_Info,
+//     Internals::DataContainer<double>& rData)
+// {
+//     CO_SIM_IO_TRY
+
+//     const std::string identifier = I_Info.Get<std::string>("identifier");
+
+//     const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
+
+//     const double elapsed_time = ReceiveBuffer(rData, file_name);
+
+//     Info info;
+//     info.Set<double>("elapsed_time", elapsed_time);
+//     return info;
+
+//     CO_SIM_IO_CATCH
+// }
+
+// Info FileCommunication::ExportDataImpl(
+//     const Info& I_Info,
+//     const Internals::DataContainer<double>& rData)
+// {
+//     CO_SIM_IO_TRY
+
+//     const std::string identifier = I_Info.Get<std::string>("identifier");
+
+//     const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
+
+//     const double elapsed_time = SendBuffer(rData, file_name);
+
+//     Info info;
+//     info.Set<double>("elapsed_time", elapsed_time);
+//     return info;
+
+//     CO_SIM_IO_CATCH
+// }
+
+// Info FileCommunication::ImportMeshImpl(
+//     const Info& I_Info,
+//     ModelPart& O_ModelPart)
+// {
+//     CO_SIM_IO_TRY
+
+//     const std::string identifier = I_Info.Get<std::string>("identifier");
+
+//     const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "vtk"));
+
+//     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import mesh \"" << identifier << "\" in file " << file_name << " ..." << std::endl;
+
+//     WaitForPath(file_name);
+
+//     const auto start_time(std::chrono::steady_clock::now());
+
+//     SerializeFromFile(file_name, "model_part", O_ModelPart, Serializer::TraceType::SERIALIZER_NO_TRACE);
+
+//     RemovePath(file_name);
+
+//     const double elapsed_time = Utilities::ElapsedSeconds(start_time);
+
+//     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing mesh" << std::endl;
+
+//     Info info;
+//     info.Set<double>("elapsed_time", elapsed_time);
+//     return info;
+
+//     CO_SIM_IO_CATCH
+// }
+
+// Info FileCommunication::ExportMeshImpl(
+//     const Info& I_Info,
+//     const ModelPart& I_ModelPart)
+// {
+//     CO_SIM_IO_TRY
+
+//     const std::string identifier = I_Info.Get<std::string>("identifier");
+
+//     const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "vtk"));
+
+//     WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
+
+//     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export mesh \"" << identifier << "\" with " << I_ModelPart.NumberOfNodes() << " Nodes | " << I_ModelPart.NumberOfElements() << " Elements in file " << file_name << " ..." << std::endl;
+
+//     const auto start_time(std::chrono::steady_clock::now());
+
+//     SerializeToFile(GetTempFileName(file_name), "model_part", I_ModelPart, Serializer::TraceType::SERIALIZER_NO_TRACE);
+
+//     MakeFileVisible(file_name);
+
+//     const double elapsed_time = Utilities::ElapsedSeconds(start_time);
+
+//     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting mesh" << std::endl;
+
+//     Info info;
+//     info.Set<double>("elapsed_time", elapsed_time);
+//     return info;
+
+//     CO_SIM_IO_CATCH
+// }
+
+
+template<typename T>
+double FileCommunication::GenericSend(
     const Info& I_Info,
-    Internals::DataContainer<double>& rData)
+    const T& rData,
+    const int SizeOfData)
 {
     CO_SIM_IO_TRY
 
@@ -138,150 +241,82 @@ Info FileCommunication::ImportDataImpl(
 
     const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
-    const double elapsed_time = ReceiveBuffer(rData, file_name);
-
-    Info info;
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
-Info FileCommunication::ExportDataImpl(
-    const Info& I_Info,
-    const Internals::DataContainer<double>& rData)
-{
-    CO_SIM_IO_TRY
-
-    const std::string identifier = I_Info.Get<std::string>("identifier");
-
-    const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
-
-    const double elapsed_time = SendBuffer(rData, file_name);
-
-    Info info;
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
-Info FileCommunication::ImportMeshImpl(
-    const Info& I_Info,
-    ModelPart& O_ModelPart)
-{
-    CO_SIM_IO_TRY
-
-    const std::string identifier = I_Info.Get<std::string>("identifier");
-
-    const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "vtk"));
-
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import mesh \"" << identifier << "\" in file " << file_name << " ..." << std::endl;
-
-    WaitForPath(file_name);
-
-    const auto start_time(std::chrono::steady_clock::now());
-
-    SerializeFromFile(file_name, "model_part", O_ModelPart, Serializer::TraceType::SERIALIZER_NO_TRACE);
-
-    RemovePath(file_name);
-
-    const double elapsed_time = Utilities::ElapsedSeconds(start_time);
-
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing mesh" << std::endl;
-
-    Info info;
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
-Info FileCommunication::ExportMeshImpl(
-    const Info& I_Info,
-    const ModelPart& I_ModelPart)
-{
-    CO_SIM_IO_TRY
-
-    const std::string identifier = I_Info.Get<std::string>("identifier");
-
-    const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "vtk"));
-
     WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
-
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export mesh \"" << identifier << "\" with " << I_ModelPart.NumberOfNodes() << " Nodes | " << I_ModelPart.NumberOfElements() << " Elements in file " << file_name << " ..." << std::endl;
-
-    const auto start_time(std::chrono::steady_clock::now());
-
-    SerializeToFile(GetTempFileName(file_name), "model_part", I_ModelPart, Serializer::TraceType::SERIALIZER_NO_TRACE);
-
-    MakeFileVisible(file_name);
-
-    const double elapsed_time = Utilities::ElapsedSeconds(start_time);
-
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting mesh" << std::endl;
-
-    Info info;
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
-template<typename TDataType>
-double FileCommunication::SendBuffer(
-    const Internals::DataContainer<TDataType>& rData,
-    const fs::path& rFileName)
-{
-    CO_SIM_IO_TRY
-
-    WaitUntilFileIsRemoved(rFileName); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
     const std::size_t size = rData.size();
 
     const auto start_time(std::chrono::steady_clock::now());
 
-    std::ofstream output_file(GetTempFileName(rFileName), std::ios::out|std::ios::binary);
-    Utilities::CheckStream(output_file, rFileName);
+    std::ofstream output_file(GetTempFileName(file_name), std::ios::out|std::ios::binary);
+    Utilities::CheckStream(output_file, file_name);
 
     output_file.write(reinterpret_cast<const char *>(&size), sizeof(std::size_t));
 
-    output_file.write(reinterpret_cast<const char *>(&rData[0]), rData.size()*sizeof(TDataType));
+    output_file.write(reinterpret_cast<const char *>(&rData[0]), rData.size()*SizeOfData);
 
     output_file.close();
-    MakeFileVisible(rFileName);
+    MakeFileVisible(file_name);
 
     return Utilities::ElapsedSeconds(start_time);
 
     CO_SIM_IO_CATCH
 }
 
-template<typename TDataType>
-double FileCommunication::ReceiveBuffer(
-    Internals::DataContainer<TDataType>& rData,
-    const fs::path& rFileName)
+template<typename T>
+double FileCommunication::GenericReceive(
+    const Info& I_Info,
+    T& rData,
+    const int SizeOfData)
 {
     CO_SIM_IO_TRY
 
-    WaitForPath(rFileName);
+    const std::string identifier = I_Info.Get<std::string>("identifier");
+
+    const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
+
+    WaitForPath(file_name);
 
     const auto start_time(std::chrono::steady_clock::now());
 
-    std::ifstream input_file(rFileName, std::ios::binary|std::ios::in);
-    Utilities::CheckStream(input_file, rFileName);
+    std::ifstream input_file(file_name, std::ios::binary|std::ios::in);
+    Utilities::CheckStream(input_file, file_name);
 
     std::size_t size_read;
     input_file.read((char*)&size_read, sizeof(std::size_t));
 
     rData.resize(size_read);
-    input_file.read((char*)&rData[0], size_read*sizeof(TDataType));
+    input_file.read((char*)&rData[0], size_read*SizeOfData);
 
     input_file.close();
-    RemovePath(rFileName);
+    RemovePath(file_name);
 
     return Utilities::ElapsedSeconds(start_time);
 
     CO_SIM_IO_CATCH
+}
+
+double FileCommunication::SendString(const std::string& rData)
+{
+    Info I_Info;
+    return GenericSend(I_Info, rData, 1);
+}
+
+double FileCommunication::ReceiveString(std::string& rData)
+{
+    Info I_Info;
+    return GenericReceive(I_Info, rData, 1);
+}
+
+double FileCommunication::SendDataContainer(const Internals::DataContainer<double>& rData)
+{
+    Info I_Info;
+    return GenericSend(I_Info, rData, sizeof(double));
+}
+
+double FileCommunication::ReceiveDataContainer(Internals::DataContainer<double>& rData)
+{
+    Info I_Info;
+    return GenericReceive(I_Info, rData, sizeof(double));
 }
 
 } // namespace Internals

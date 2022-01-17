@@ -34,43 +34,45 @@ public:
 private:
     std::string GetCommunicationName() const override {return "file";}
 
-    Info ImportInfoImpl(const Info& I_Info) override;
+    // Info ImportInfoImpl(const Info& I_Info) override;
 
-    Info ExportInfoImpl(const Info& I_Info) override;
+    // Info ExportInfoImpl(const Info& I_Info) override;
 
-    Info ImportDataImpl(
+    // Info ImportDataImpl(
+    //     const Info& I_Info,
+    //     Internals::DataContainer<double>& rData) override;
+
+    // Info ExportDataImpl(
+    //     const Info& I_Info,
+    //     const Internals::DataContainer<double>& rData) override;
+
+    // Info ImportMeshImpl(
+    //     const Info& I_Info,
+    //     ModelPart& O_ModelPart) override;
+
+    // Info ExportMeshImpl(
+    //     const Info& I_Info,
+    //     const ModelPart& I_ModelPart) override;
+
+    template<typename T>
+    double GenericSend(
         const Info& I_Info,
-        Internals::DataContainer<double>& rData) override;
+        const T& rData,
+        const int SizeOfData);
 
-    Info ExportDataImpl(
+    template<typename T>
+    double GenericReceive(
         const Info& I_Info,
-        const Internals::DataContainer<double>& rData) override;
+        T& rData,
+        const int SizeOfData);
 
-    Info ImportMeshImpl(
-        const Info& I_Info,
-        ModelPart& O_ModelPart) override;
+    double SendString(const std::string& rData) override;
 
-    Info ExportMeshImpl(
-        const Info& I_Info,
-        const ModelPart& I_ModelPart) override;
+    double ReceiveString(std::string& rData) override;
 
-    double SendString(const std::string& rData) override {return 0.0;}
+    double SendDataContainer(const Internals::DataContainer<double>& rData) override;
 
-    double ReceiveString(std::string& rData) override {return 0.0;}
-
-    double SendDataContainer(const Internals::DataContainer<double>& rData) override {return 0.0;}
-
-    double ReceiveDataContainer(Internals::DataContainer<double>& rData) override {return 0.0;}
-
-    template<typename TDataType>
-    double SendBuffer(
-        const Internals::DataContainer<TDataType>& rData,
-        const fs::path& rFileName);
-
-    template<typename TDataType>
-    double ReceiveBuffer(
-        Internals::DataContainer<TDataType>& rData,
-        const fs::path& rFileName);
+    double ReceiveDataContainer(Internals::DataContainer<double>& rData) override;
 };
 
 } // namespace Internals
