@@ -36,6 +36,10 @@ private:
 
     std::string GetCommunicationName() const override {return "file";}
 
+    void DerivedHandShake() const override;
+
+    Info GetCommunicationSettings() const override;
+
     Info ImportInfoImpl(const Info& I_Info) override;
 
     Info ExportInfoImpl(const Info& I_Info) override;

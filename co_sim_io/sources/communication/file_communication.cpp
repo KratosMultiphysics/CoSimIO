@@ -77,6 +77,29 @@ FileCommunication::~FileCommunication()
     CO_SIM_IO_CATCH
 }
 
+void FileCommunication::DerivedHandShake() const
+{
+    CO_SIM_IO_TRY
+
+    const bool my_use_file_serializer = GetMyInfo().Get<Info>("communication_settings").Get<bool>("use_file_serializer");
+    const bool partner_use_file_serializer = GetPartnerInfo().Get<Info>("communication_settings").Get<bool>("use_file_serializer");
+    CO_SIM_IO_ERROR_IF(my_use_file_serializer != partner_use_file_serializer) << std::boolalpha << "Mismatch in use_file_serializer!\nMy use_file_serializer: " << my_use_file_serializer << "\nPartner use_file_serializer: " << partner_use_file_serializer << std::noboolalpha << std::endl;
+
+    CO_SIM_IO_CATCH
+}
+
+Info FileCommunication::GetCommunicationSettings() const
+{
+    CO_SIM_IO_TRY
+
+    Info info;
+    info.Set("use_file_serializer", mUseFileSerializer);
+
+    return info;
+
+    CO_SIM_IO_CATCH
+}
+
 Info FileCommunication::ImportInfoImpl(const Info& I_Info)
 {
     CO_SIM_IO_TRY

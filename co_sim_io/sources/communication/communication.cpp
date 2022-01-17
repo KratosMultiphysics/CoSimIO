@@ -445,6 +445,8 @@ Info Communication::GetMyInfo() const
     my_info.Set<bool>("is_distributed", GetDataCommunicator().IsDistributed());
     my_info.Set<int>("num_processes",   GetDataCommunicator().Size());
 
+    my_info.Set<bool>("use_serializer_for_data", mUseSerializerForData);
+
     my_info.Set<Info>("communication_settings", GetCommunicationSettings());
 
     return my_info;
@@ -497,6 +499,10 @@ void Communication::HandShake(const Info& I_Info)
         CO_SIM_IO_ERROR_IF(GetCommunicationName() != mPartnerInfo.Get<std::string>("communication_format")) << "Mismatch in communication_format!\nMy communication_format: " << GetCommunicationName() << "\nPartner communication_format: " << mPartnerInfo.Get<std::string>("communication_format") << std::endl;
 
         CO_SIM_IO_ERROR_IF(GetDataCommunicator().Size() != mPartnerInfo.Get<int>("num_processes")) << "Mismatch in num_processes!\nMy num_processes: " << GetDataCommunicator().Size() << "\nPartner num_processes: " << mPartnerInfo.Get<int>("num_processes") << std::endl;
+
+        CO_SIM_IO_ERROR_IF(GetDataCommunicator().IsDistributed() != mPartnerInfo.Get<bool>("is_distributed")) << "Mismatch calling Connect(MPI)!\nMyself called: " << (GetDataCommunicator().IsDistributed()?"ConnectMPI":"Connect") << "\nPartner called: " << (mPartnerInfo.Get<bool>("is_distributed")?"ConnectMPI":"Connect") << std::endl;
+
+        CO_SIM_IO_ERROR_IF(mUseSerializerForData != mPartnerInfo.Get<bool>("use_serializer_for_data")) << std::boolalpha << "Mismatch in use_serializer_for_data!\nMy use_serializer_for_data: " << mUseSerializerForData << "\nPartner use_serializer_for_data: " << mPartnerInfo.Get<bool>("use_serializer_for_data") << std::noboolalpha << std::endl;
 
         // more things can be done in derived class if necessary
         DerivedHandShake();
