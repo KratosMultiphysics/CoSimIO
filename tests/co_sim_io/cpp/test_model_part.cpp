@@ -807,7 +807,7 @@ void AuxCreateGhostNodesTestInitializeFunction(
         I_X[i] = i*1.1;
         I_Y[i] = i+1.235;
         I_Z[i] = i-10.89;
-        PartitionIndex[i] = i;
+        PartitionIndex[i] = static_cast<int>(i);
     }
 }
 
