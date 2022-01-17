@@ -156,6 +156,26 @@ protected:
 
     void SynchronizeAll(const std::string& rTag) const;
 
+    virtual Info ImportInfoImpl(const Info& I_Info);
+
+    virtual Info ExportInfoImpl(const Info& I_Info);
+
+    virtual Info ImportDataImpl(
+        const Info& I_Info,
+        Internals::DataContainer<double>& rData);
+
+    virtual Info ExportDataImpl(
+        const Info& I_Info,
+        const Internals::DataContainer<double>& rData);
+
+    virtual Info ImportMeshImpl(
+        const Info& I_Info,
+        ModelPart& O_ModelPart);
+
+    virtual Info ExportMeshImpl(
+        const Info& I_Info,
+        const ModelPart& I_ModelPart);
+
     template<class TObjectType>
     double SendObjectWithStreamSerializer(
         const Info& I_Info,
@@ -239,26 +259,6 @@ private:
     virtual void PrepareConnection(const Info& I_Info){}
     virtual Info ConnectDetail(const Info& I_Info){return Info();}
     virtual Info DisconnectDetail(const Info& I_Info){return Info();}
-
-    virtual Info ImportInfoImpl(const Info& I_Info);
-
-    virtual Info ExportInfoImpl(const Info& I_Info);
-
-    virtual Info ImportDataImpl(
-        const Info& I_Info,
-        Internals::DataContainer<double>& rData);
-
-    virtual Info ExportDataImpl(
-        const Info& I_Info,
-        const Internals::DataContainer<double>& rData);
-
-    virtual Info ImportMeshImpl(
-        const Info& I_Info,
-        ModelPart& O_ModelPart);
-
-    virtual Info ExportMeshImpl(
-        const Info& I_Info,
-        const ModelPart& I_ModelPart);
 
     void HandShake(const Info& I_Info);
 
