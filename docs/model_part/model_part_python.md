@@ -102,18 +102,19 @@ ghost_node = model_part.CreateNewGhostNode(
     1.5,  # Y-Coordinate
     -4.2, # Z-Coordinate
     5     # Partition index where the node is local
-);
+)
 ```
 These ghost nodes can also be used for the creation of elements.
 Note that this node has to be created as local node in its local partition, otherwise deadlocks can occur!
+Also the Ids must be unique, again otherwise deadlocks can occur!
 
 Use the following functions to get the number of local and ghost nodes:
 ```python
-number_of_local_nodes = model_part.NumberOfLocalNodes();
+number_of_local_nodes = model_part.NumberOfLocalNodes()
 
-number_of_ghost_nodes = model_part.NumberOfGhostNodes();
+number_of_ghost_nodes = model_part.NumberOfGhostNodes()
 
-number_of_all_nodes   = model_part.NumberOfNodes(); # local + ghost nodes
+number_of_all_nodes   = model_part.NumberOfNodes() # local + ghost nodes
 ```
 Note that `model_part.Nodes()` contains all the nodes, i.e. local and ghost nodes.
 

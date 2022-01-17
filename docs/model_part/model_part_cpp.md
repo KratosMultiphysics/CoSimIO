@@ -126,6 +126,7 @@ CoSimIO::Node& ghost_node = model_part.CreateNewGhostNode(
 ```
 These ghost nodes can also be used for the creation of elements.
 Note that this node has to be created as local node in its local partition, otherwise deadlocks can occur!
+Also the Ids must be unique, again otherwise deadlocks can occur!
 
 Use the following functions to get the number of local and ghost nodes:
 ```c++
