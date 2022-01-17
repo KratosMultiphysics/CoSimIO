@@ -30,6 +30,7 @@ Communication::Communication(
       mMyName(I_Settings.Get<std::string>("my_name")),
       mConnectTo(I_Settings.Get<std::string>("connect_to")),
       mUseAuxFileForFileAvailability(I_Settings.Get<bool>("use_aux_file_for_file_availability", false)),
+      mUseSerializerForData(I_Settings.Get<bool>("use_serializer_for_data", false)),
       mWorkingDirectory(I_Settings.Get<std::string>("working_directory", fs::relative(fs::current_path()).string())),
       mEchoLevel(I_Settings.Get<int>("echo_level", 0)),
       mPrintTiming(I_Settings.Get<bool>("print_timing", false))
