@@ -166,7 +166,7 @@ Info Communication::ImportInfoImpl(const Info& I_Info)
     CO_SIM_IO_TRY
 
     Info imported_info;
-    const double elapsed_time = ReceiveObjectWithStreamSerializer(imported_info);
+    const double elapsed_time = ReceiveObjectWithStreamSerializer(I_Info, imported_info);
     imported_info.Set<double>("elapsed_time", elapsed_time);
     return imported_info;
 
@@ -177,7 +177,7 @@ Info Communication::ExportInfoImpl(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    const double elapsed_time = SendObjectWithStreamSerializer(I_Info);
+    const double elapsed_time = SendObjectWithStreamSerializer(I_Info, I_Info);
     Info info;
     info.Set<double>("elapsed_time", elapsed_time);
     return info;
@@ -192,7 +192,7 @@ Info Communication::ImportDataImpl(
     CO_SIM_IO_TRY
 
     // if use_serializer ...
-    const double elapsed_time = ReceiveDataContainer(rData);
+    const double elapsed_time = ReceiveDataContainer(I_Info, rData);
     Info info;
     info.Set<double>("elapsed_time", elapsed_time);
     return info;
@@ -207,7 +207,7 @@ Info Communication::ExportDataImpl(
     CO_SIM_IO_TRY
 
     // if use_serializer ...
-    const double elapsed_time = SendDataContainer(rData);
+    const double elapsed_time = SendDataContainer(I_Info, rData);
     Info info;
     info.Set<double>("elapsed_time", elapsed_time);
     return info;
@@ -221,7 +221,7 @@ Info Communication::ImportMeshImpl(
 {
     CO_SIM_IO_TRY
 
-    const double elapsed_time = ReceiveObjectWithStreamSerializer(O_ModelPart);
+    const double elapsed_time = ReceiveObjectWithStreamSerializer(I_Info, O_ModelPart);
     Info info;
     info.Set<double>("elapsed_time", elapsed_time);
     return info;
@@ -235,7 +235,7 @@ Info Communication::ExportMeshImpl(
 {
     CO_SIM_IO_TRY
 
-    const double elapsed_time = SendObjectWithStreamSerializer(I_ModelPart);
+    const double elapsed_time = SendObjectWithStreamSerializer(I_Info, I_ModelPart);
     Info info;
     info.Set<double>("elapsed_time", elapsed_time);
     return info;

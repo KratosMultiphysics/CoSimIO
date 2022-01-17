@@ -131,22 +131,30 @@ std::uint64_t PipeCommunication::BidirectionalPipe::ReceiveSize()
     #endif
 }
 
-double PipeCommunication::SendString(const std::string& rData)
+double PipeCommunication::SendString(
+    const Info& I_Info,
+    const std::string& rData)
 {
     return mpPipe->Write(rData, 1);
 }
 
-double PipeCommunication::ReceiveString(std::string& rData)
+double PipeCommunication::ReceiveString(
+    const Info& I_Info,
+    std::string& rData)
 {
     return mpPipe->Read(rData, 1);
 }
 
-double PipeCommunication::SendDataContainer(const Internals::DataContainer<double>& rData)
+double PipeCommunication::SendDataContainer(
+    const Info& I_Info,
+    const Internals::DataContainer<double>& rData)
 {
     return mpPipe->Write(rData, sizeof(double));
 }
 
-double PipeCommunication::ReceiveDataContainer(Internals::DataContainer<double>& rData)
+double PipeCommunication::ReceiveDataContainer(
+    const Info& I_Info,
+    Internals::DataContainer<double>& rData)
 {
     return mpPipe->Read(rData, sizeof(double));
 }

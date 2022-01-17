@@ -249,7 +249,9 @@ void SocketCommunication::GetPortNumber()
     CO_SIM_IO_CATCH
 }
 
-double SocketCommunication::SendString(const std::string& rData)
+double SocketCommunication::SendString(
+    const Info& I_Info,
+    const std::string& rData)
 {
     SendSize(rData.size()); // serves also as synchronization for time measurement
 
@@ -258,7 +260,9 @@ double SocketCommunication::SendString(const std::string& rData)
     return Utilities::ElapsedSeconds(start_time);
 }
 
-double SocketCommunication::ReceiveString(std::string& rData)
+double SocketCommunication::ReceiveString(
+    const Info& I_Info,
+    std::string& rData)
 {
     std::size_t received_size = ReceiveSize(); // serves also as synchronization for time measurement
 
@@ -268,7 +272,9 @@ double SocketCommunication::ReceiveString(std::string& rData)
     return Utilities::ElapsedSeconds(start_time);
 }
 
-double SocketCommunication::SendDataContainer(const Internals::DataContainer<double>& rData)
+double SocketCommunication::SendDataContainer(
+    const Info& I_Info,
+    const Internals::DataContainer<double>& rData)
 {
     SendSize(rData.size()); // serves also as synchronization for time measurement
 
@@ -277,7 +283,9 @@ double SocketCommunication::SendDataContainer(const Internals::DataContainer<dou
     return Utilities::ElapsedSeconds(start_time);
 }
 
-double SocketCommunication::ReceiveDataContainer(Internals::DataContainer<double>& rData)
+double SocketCommunication::ReceiveDataContainer(
+    const Info& I_Info,
+    Internals::DataContainer<double>& rData)
 {
     std::size_t received_size = ReceiveSize(); // serves also as synchronization for time measurement
 

@@ -91,7 +91,9 @@ Info LocalSocketCommunication::DisconnectDetail(const Info& I_Info)
     return Info();
 }
 
-double LocalSocketCommunication::SendString(const std::string& rData)
+double LocalSocketCommunication::SendString(
+    const Info& I_Info,
+    const std::string& rData)
 {
     SendSize(rData.size()); // serves also as synchronization for time measurement
 
@@ -100,7 +102,9 @@ double LocalSocketCommunication::SendString(const std::string& rData)
     return Utilities::ElapsedSeconds(start_time);
 }
 
-double LocalSocketCommunication::ReceiveString(std::string& rData)
+double LocalSocketCommunication::ReceiveString(
+    const Info& I_Info,
+    std::string& rData)
 {
     std::size_t received_size = ReceiveSize(); // serves also as synchronization for time measurement
 
@@ -110,7 +114,9 @@ double LocalSocketCommunication::ReceiveString(std::string& rData)
     return Utilities::ElapsedSeconds(start_time);
 }
 
-double LocalSocketCommunication::SendDataContainer(const Internals::DataContainer<double>& rData)
+double LocalSocketCommunication::SendDataContainer(
+    const Info& I_Info,
+    const Internals::DataContainer<double>& rData)
 {
     SendSize(rData.size()); // serves also as synchronization for time measurement
 
@@ -119,7 +125,9 @@ double LocalSocketCommunication::SendDataContainer(const Internals::DataContaine
     return Utilities::ElapsedSeconds(start_time);
 }
 
-double LocalSocketCommunication::ReceiveDataContainer(Internals::DataContainer<double>& rData)
+double LocalSocketCommunication::ReceiveDataContainer(
+    const Info& I_Info,
+    Internals::DataContainer<double>& rData)
 {
     std::size_t received_size = ReceiveSize(); // serves also as synchronization for time measurement
 

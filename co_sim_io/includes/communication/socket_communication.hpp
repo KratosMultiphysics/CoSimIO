@@ -63,13 +63,21 @@ private:
 
     void GetPortNumber();
 
-    double SendString(const std::string& rData) override;
+    double SendString(
+        const Info& I_Info,
+        const std::string& rData) override;
 
-    double ReceiveString(std::string& rData) override;
+    double ReceiveString(
+        const Info& I_Info,
+        std::string& rData) override;
 
-    double SendDataContainer(const Internals::DataContainer<double>& rData) override;
+    double SendDataContainer(
+        const Info& I_Info,
+        const Internals::DataContainer<double>& rData) override;
 
-    double ReceiveDataContainer(Internals::DataContainer<double>& rData) override;
+    double ReceiveDataContainer(
+        const Info& I_Info,
+        Internals::DataContainer<double>& rData) override;
 
     void SendSize(const std::uint64_t Size);
 

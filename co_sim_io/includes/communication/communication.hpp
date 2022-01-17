@@ -157,7 +157,9 @@ protected:
     void SynchronizeAll(const std::string& rTag) const;
 
     template<class TObjectType>
-    double SendObjectWithStreamSerializer(const TObjectType& rObject)
+    double SendObjectWithStreamSerializer(
+        const Info& I_Info,
+        const TObjectType& rObject)
     {
         CO_SIM_IO_TRY
 
@@ -166,19 +168,21 @@ protected:
         serializer.save("object", rObject);
         const double elapsed_time_save = Utilities::ElapsedSeconds(start_time);
 
-        const double elapsed_time_write = SendString(serializer.GetStringRepresentation());
+        const double elapsed_time_write = SendString(I_Info, serializer.GetStringRepresentation());
         return elapsed_time_save + elapsed_time_write;
 
         CO_SIM_IO_CATCH
     }
 
     template<class TObjectType>
-    double ReceiveObjectWithStreamSerializer(TObjectType& rObject)
+    double ReceiveObjectWithStreamSerializer(
+        const Info& I_Info,
+        TObjectType& rObject)
     {
         CO_SIM_IO_TRY
 
         std::string buffer;
-        const double elapsed_time_read = ReceiveString(buffer);
+        const double elapsed_time_read = ReceiveString(I_Info, buffer);
 
         const auto start_time(std::chrono::steady_clock::now());
         StreamSerializer serializer(buffer);
@@ -190,13 +194,21 @@ protected:
         CO_SIM_IO_CATCH
     }
 
-    virtual double SendString(const std::string& rData) = 0;
+    virtual double SendString(
+        const Info& I_Info,
+        const std::string& rData) = 0;
 
-    virtual double ReceiveString(std::string& rData) = 0;
+    virtual double ReceiveString(
+        const Info& I_Info,
+        std::string& rData) = 0;
 
-    virtual double SendDataContainer(const Internals::DataContainer<double>& rData) = 0;
+    virtual double SendDataContainer(
+        const Info& I_Info,
+        const Internals::DataContainer<double>& rData) = 0;
 
-    virtual double ReceiveDataContainer(Internals::DataContainer<double>& rData) = 0;
+    virtual double ReceiveDataContainer(
+        const Info& I_Info,
+        Internals::DataContainer<double>& rData) = 0;
 
 private:
     std::shared_ptr<DataCommunicator> mpDataComm;

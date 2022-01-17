@@ -295,27 +295,31 @@ double FileCommunication::GenericReceive(
     CO_SIM_IO_CATCH
 }
 
-double FileCommunication::SendString(const std::string& rData)
+double FileCommunication::SendString(
+    const Info& I_Info,
+    const std::string& rData)
 {
-    Info I_Info;
     return GenericSend(I_Info, rData, 1);
 }
 
-double FileCommunication::ReceiveString(std::string& rData)
+double FileCommunication::ReceiveString(
+    const Info& I_Info,
+    std::string& rData)
 {
-    Info I_Info;
     return GenericReceive(I_Info, rData, 1);
 }
 
-double FileCommunication::SendDataContainer(const Internals::DataContainer<double>& rData)
+double FileCommunication::SendDataContainer(
+    const Info& I_Info,
+    const Internals::DataContainer<double>& rData)
 {
-    Info I_Info;
     return GenericSend(I_Info, rData, sizeof(double));
 }
 
-double FileCommunication::ReceiveDataContainer(Internals::DataContainer<double>& rData)
+double FileCommunication::ReceiveDataContainer(
+    const Info& I_Info,
+    Internals::DataContainer<double>& rData)
 {
-    Info I_Info;
     return GenericReceive(I_Info, rData, sizeof(double));
 }
 
