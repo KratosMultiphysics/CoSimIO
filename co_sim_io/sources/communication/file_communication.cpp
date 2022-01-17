@@ -12,6 +12,7 @@
 
 // System includes
 #include <chrono>
+#include <iomanip>
 
 // Project includes
 #include "includes/communication/file_communication.hpp"
@@ -74,7 +75,6 @@ Info FileCommunication::ImportInfoImpl(const Info& I_Info)
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    Utilities::CheckEntry(identifier, "identifier");
 
     const fs::path file_name(GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
@@ -104,7 +104,6 @@ Info FileCommunication::ExportInfoImpl(const Info& I_Info)
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    Utilities::CheckEntry(identifier, "identifier");
 
     const fs::path file_name(GetFileName("CoSimIO_info_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
@@ -136,23 +135,10 @@ Info FileCommunication::ImportDataImpl(
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    Utilities::CheckEntry(identifier, "identifier");
 
     const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to import array \"" << identifier << "\" in file " << file_name << " ..." << std::endl;
-
-    WaitForPath(file_name);
-
-    const auto start_time(std::chrono::steady_clock::now());
-
-    SerializeFromFile(file_name, "data", rData, Serializer::TraceType::SERIALIZER_NO_TRACE);
-
-    RemovePath(file_name);
-
-    const double elapsed_time = Utilities::ElapsedSeconds(start_time);
-
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished importing array with size: " << rData.size() << std::endl;
+    const double elapsed_time = Receive(rData, file_name);
 
     Info info;
     info.Set<double>("elapsed_time", elapsed_time);
@@ -168,24 +154,10 @@ Info FileCommunication::ExportDataImpl(
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    Utilities::CheckEntry(identifier, "identifier");
 
     const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
-    WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
-
-    const std::size_t size = rData.size();
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Attempting to export array \"" << identifier << "\" with size: " << size << " in file " << file_name << " ..." << std::endl;
-
-    const auto start_time(std::chrono::steady_clock::now());
-
-    SerializeToFile(GetTempFileName(file_name), "data", rData, Serializer::TraceType::SERIALIZER_NO_TRACE);
-
-    MakeFileVisible(file_name);
-
-    const double elapsed_time = Utilities::ElapsedSeconds(start_time);
-
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Finished exporting array" << std::endl;
+    const double elapsed_time = Send(rData, file_name);
 
     Info info;
     info.Set<double>("elapsed_time", elapsed_time);
@@ -201,7 +173,6 @@ Info FileCommunication::ImportMeshImpl(
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    Utilities::CheckEntry(identifier, "identifier");
 
     const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "vtk"));
 
@@ -233,7 +204,6 @@ Info FileCommunication::ExportMeshImpl(
     CO_SIM_IO_TRY
 
     const std::string identifier = I_Info.Get<std::string>("identifier");
-    Utilities::CheckEntry(identifier, "identifier");
 
     const fs::path file_name(GetFileName("CoSimIO_mesh_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "vtk"));
 
@@ -254,6 +224,62 @@ Info FileCommunication::ExportMeshImpl(
     Info info;
     info.Set<double>("elapsed_time", elapsed_time);
     return info;
+
+    CO_SIM_IO_CATCH
+}
+
+template<typename TDataType>
+double FileCommunication::Send(
+    const Internals::DataContainer<TDataType>& rData,
+    const fs::path& rFileName)
+{
+    CO_SIM_IO_TRY
+
+    WaitUntilFileIsRemoved(rFileName); // TODO maybe this can be queued somehow ... => then it would not block the sender
+
+    const std::size_t size = rData.size();
+
+    const auto start_time(std::chrono::steady_clock::now());
+
+    std::ofstream output_file(GetTempFileName(rFileName), std::ios::out|std::ios::binary);
+    Utilities::CheckStream(output_file, rFileName);
+
+    output_file.write(reinterpret_cast<const char *>(&size), sizeof(std::size_t));
+
+    output_file.write(reinterpret_cast<const char *>(&rData[0]), rData.size()*sizeof(TDataType));
+
+    output_file.close();
+    MakeFileVisible(rFileName);
+
+    return Utilities::ElapsedSeconds(start_time);
+
+    CO_SIM_IO_CATCH
+}
+
+template<typename TDataType>
+double FileCommunication::Receive(
+    Internals::DataContainer<TDataType>& rData,
+    const fs::path& rFileName)
+{
+    CO_SIM_IO_TRY
+
+    WaitForPath(rFileName);
+
+    const auto start_time(std::chrono::steady_clock::now());
+
+    std::ifstream input_file(rFileName, std::ios::binary|std::ios::in);
+    Utilities::CheckStream(input_file, rFileName);
+
+    std::size_t size_read;
+    input_file.read((char*)&size_read, sizeof(std::size_t));
+
+    rData.resize(size_read);
+    input_file.read((char*)&rData[0], size_read*sizeof(TDataType));
+
+    input_file.close();
+    RemovePath(rFileName);
+
+    return Utilities::ElapsedSeconds(start_time);
 
     CO_SIM_IO_CATCH
 }

@@ -53,6 +53,16 @@ private:
     Info ExportMeshImpl(
         const Info& I_Info,
         const ModelPart& I_ModelPart) override;
+
+    template<typename TDataType>
+    double Send(
+        const Internals::DataContainer<TDataType>& rData,
+        const fs::path& rFileName);
+
+    template<typename TDataType>
+    double Receive(
+        Internals::DataContainer<TDataType>& rData,
+        const fs::path& rFileName);
 };
 
 } // namespace Internals
