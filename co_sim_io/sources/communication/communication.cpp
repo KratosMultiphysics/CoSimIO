@@ -48,6 +48,15 @@ Communication::Communication(
 
     CO_SIM_IO_ERROR_IF_NOT(fs::exists(mWorkingDirectory)) << "The working directory " << mWorkingDirectory << " does not exist!" << std::endl;
 
+
+    if (I_Settings.Has("serializer_trace_type")) {
+        const std::string trace_type = I_Settings.Get<std::string>("serializer_trace_type");
+        if (trace_type == "no_trace") {mSerializerTraceType = Serializer::TraceType::SERIALIZER_NO_TRACE;}
+        else if (trace_type == "trace_error") {mSerializerTraceType = Serializer::TraceType::SERIALIZER_TRACE_ERROR;}
+        else if (trace_type == "trace_all") {mSerializerTraceType = Serializer::TraceType::SERIALIZER_TRACE_ALL;}
+        else {CO_SIM_IO_ERROR << "Invalid serializer_trace_type! Valid options are: no_trace, trace_error, trace_all" << std::endl;}
+    }
+
     mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", true);
     mCommFolder = GetWorkingDirectory();
     if (mCommInFolder) {
@@ -191,8 +200,13 @@ Info Communication::ImportDataImpl(
 {
     CO_SIM_IO_TRY
 
-    // if use_serializer ...
-    const double elapsed_time = ReceiveDataContainer(I_Info, rData);
+    double elapsed_time;
+    if (mUseSerializerForData) {
+        elapsed_time = ReceiveObjectWithStreamSerializer(I_Info, rData);
+    } else {
+        elapsed_time = ReceiveDataContainer(I_Info, rData);
+    }
+
     Info info;
     info.Set<double>("elapsed_time", elapsed_time);
     return info;
@@ -206,8 +220,13 @@ Info Communication::ExportDataImpl(
 {
     CO_SIM_IO_TRY
 
-    // if use_serializer ...
-    const double elapsed_time = SendDataContainer(I_Info, rData);
+    double elapsed_time;
+    if (mUseSerializerForData) {
+        elapsed_time = SendObjectWithStreamSerializer(I_Info, rData);
+    } else {
+        elapsed_time = SendDataContainer(I_Info, rData);
+    }
+
     Info info;
     info.Set<double>("elapsed_time", elapsed_time);
     return info;

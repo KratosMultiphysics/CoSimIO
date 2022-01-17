@@ -184,7 +184,7 @@ protected:
         CO_SIM_IO_TRY
 
         const auto start_time(std::chrono::steady_clock::now());
-        StreamSerializer serializer;
+        StreamSerializer serializer(mSerializerTraceType);
         serializer.save("object", rObject);
         const double elapsed_time_save = Utilities::ElapsedSeconds(start_time);
 
@@ -205,7 +205,7 @@ protected:
         const double elapsed_time_read = ReceiveString(I_Info, buffer);
 
         const auto start_time(std::chrono::steady_clock::now());
-        StreamSerializer serializer(buffer);
+        StreamSerializer serializer(buffer, mSerializerTraceType);
         serializer.load("object", rObject);
         const double elapsed_time_load = Utilities::ElapsedSeconds(start_time);
 
@@ -242,6 +242,8 @@ private:
     fs::path mCommFolder;
     bool mCommInFolder = true;
     bool mUseAuxFileForFileAvailability = false;
+    bool mUseSerializerForData = false;
+    Serializer::TraceType mSerializerTraceType = Serializer::TraceType::SERIALIZER_NO_TRACE;
 
     fs::path mWorkingDirectory;
     int mEchoLevel = 1;
