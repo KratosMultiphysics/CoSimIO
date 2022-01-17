@@ -354,50 +354,92 @@ class CoSimIO_ModelPart(unittest.TestCase):
 
         num_nodes = 256
 
-        with self.subTest("from_list"):
+        with self.subTest("from_list"): # could also be e.g. numpy.array or CoSimIO.Vector in the future
             ids = [i+1 for i in range(num_nodes)]
             x = [i*1 for i in range(num_nodes)]
             y = [i*-96.87 for i in range(num_nodes)]
             z = [i*3.85 for i in range(num_nodes)]
 
-            model_part.CreateNewNodes(ids, x, y, z)
+        model_part.CreateNewNodes(ids, x, y, z)
 
+        self.assertEqual(model_part.NumberOfNodes(), num_nodes)
+        self.assertEqual(model_part.NumberOfLocalNodes(), num_nodes)
+        self.assertEqual(model_part.NumberOfGhostNodes(), 0)
+        self.assertEqual(model_part.NumberOfElements(), 0)
 
-            self.assertEqual(model_part.NumberOfNodes(), num_nodes)
-            self.assertEqual(model_part.NumberOfLocalNodes(), num_nodes)
-            self.assertEqual(model_part.NumberOfGhostNodes(), 0)
-            self.assertEqual(model_part.NumberOfElements(), 0)
-
-            for i, node in enumerate(model_part.Nodes):
-                self.assertEqual(ids[i], node.Id())
-                self.assertAlmostEqual(x[i], node.X())
-                self.assertAlmostEqual(y[i], node.Y())
-                self.assertAlmostEqual(z[i], node.Z())
+        for i, node in enumerate(model_part.Nodes):
+            self.assertEqual(ids[i], node.Id())
+            self.assertAlmostEqual(x[i], node.X())
+            self.assertAlmostEqual(y[i], node.Y())
+            self.assertAlmostEqual(z[i], node.Z())
 
     def test_CreateNewGhostNodes(self):
         model_part = CoSimIO.ModelPart("for_test")
 
         num_nodes = 256
 
-        with self.subTest("from_list"):
+        with self.subTest("from_list"): # could also be e.g. numpy.array or CoSimIO.Vector in the future
             ids = [i+1 for i in range(num_nodes)]
             x = [i*1 for i in range(num_nodes)]
             y = [i*-96.87 for i in range(num_nodes)]
             z = [i*3.85 for i in range(num_nodes)]
             part = [i+1 for i in range(num_nodes)]
 
-            model_part.CreateNewGhostNodes(ids, x, y, z, part)
+        model_part.CreateNewGhostNodes(ids, x, y, z, part)
+
+        self.assertEqual(model_part.NumberOfNodes(), num_nodes)
+        self.assertEqual(model_part.NumberOfLocalNodes(), 0)
+        self.assertEqual(model_part.NumberOfGhostNodes(), num_nodes)
+        self.assertEqual(model_part.NumberOfElements(), 0)
+
+        for i, node in enumerate(model_part.Nodes):
+            self.assertEqual(ids[i], node.Id())
+            self.assertAlmostEqual(x[i], node.X())
+            self.assertAlmostEqual(y[i], node.Y())
+            self.assertAlmostEqual(z[i], node.Z())
+
+    def test_CreateNewNodes(self):
+        model_part = CoSimIO.ModelPart("for_test")
+
+        num_nodes = 256
+        num_elements = 123
+
+        with self.subTest("from_list"): # could also be e.g. numpy.array or CoSimIO.Vector in the future
+            node_ids = [i+1 for i in range(num_nodes)]
+            x = [i*1 for i in range(num_nodes)]
+            y = [i*-96.87 for i in range(num_nodes)]
+            z = [i*3.85 for i in range(num_nodes)]
+
+            model_part.CreateNewNodes(node_ids, x, y, z)
 
             self.assertEqual(model_part.NumberOfNodes(), num_nodes)
-            self.assertEqual(model_part.NumberOfLocalNodes(), 0)
-            self.assertEqual(model_part.NumberOfGhostNodes(), num_nodes)
+            self.assertEqual(model_part.NumberOfLocalNodes(), num_nodes)
+            self.assertEqual(model_part.NumberOfGhostNodes(), 0)
             self.assertEqual(model_part.NumberOfElements(), 0)
 
-            for i, node in enumerate(model_part.Nodes):
-                self.assertEqual(ids[i], node.Id())
-                self.assertAlmostEqual(x[i], node.X())
-                self.assertAlmostEqual(y[i], node.Y())
-                self.assertAlmostEqual(z[i], node.Z())
+            ids = [i+1 for i in range(num_elements)]
+            types = [CoSimIO.ElementType.Line2D2 if i%2==0 else CoSimIO.ElementType.Triangle3D3 for i in range(num_elements)]
+            conns = []
+            for i in range(num_elements):
+                n_nodes = 2 if types[i] == CoSimIO.ElementType.Line2D2 else 3
+                for j in range(n_nodes):
+                    conns.append(i+j+1)
+
+        model_part.CreateNewElements(ids, types, conns)
+
+        self.assertEqual(model_part.NumberOfNodes(), num_nodes)
+        self.assertEqual(model_part.NumberOfLocalNodes(), num_nodes)
+        self.assertEqual(model_part.NumberOfGhostNodes(), 0)
+        self.assertEqual(model_part.NumberOfElements(), num_elements)
+
+        conn_counter = 0
+        for i, elem in enumerate(model_part.Elements):
+            self.assertEqual(ids[i], elem.Id())
+            self.assertEqual(types[i], elem.Type())
+            n_nodes = 2 if types[i] == CoSimIO.ElementType.Line2D2 else 3
+            for node in elem.Nodes:
+                self.assertEqual(conns[conn_counter], node.Id())
+                conn_counter += 1
 
 
 if __name__ == '__main__':

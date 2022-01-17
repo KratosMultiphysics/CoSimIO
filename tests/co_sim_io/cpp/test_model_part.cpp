@@ -927,14 +927,15 @@ TEST_CASE("model_part_CreateElements_std::vector")
     }
 
     model_part.CreateNewElements(ids, types, connectivities);
+    CHECK_EQ(model_part.NumberOfElements(), num_elements);
 
     std::size_t conn_counter=0;
     for (std::size_t i=0; i<num_elements; ++i) {
         const Element& r_element = **(model_part.ElementsBegin()+i);
         CHECK_EQ(r_element.Id(), ids[i]);
         CHECK_EQ(r_element.Type(), types[i]);
-        for (int j=0; j<CoSimIO::Utilities::GetNumberOfNodesForElementType(r_element.Type()); ++j) {
-            CHECK_EQ(connectivities[conn_counter++], (**(r_element.NodesBegin()+j)).Id());
+        for (const auto& r_node : r_element.Nodes()) {
+            CHECK_EQ(connectivities[conn_counter++], r_node.Id());
         }
     }
 }

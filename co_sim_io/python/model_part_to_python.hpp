@@ -71,7 +71,9 @@ void AddCoSimIOModelPartToPython(pybind11::module& m)
                                                                                std::vector<double>,
                                                                                std::vector<int>>)
         .def("CreateNewElement",      &CoSimIO::ModelPart::CreateNewElement, py::return_value_policy::reference_internal)
-        // .def("CreateNewElements",     &CoSimIO::ModelPart::CreateNewElements<>)
+        .def("CreateNewElements",     &CoSimIO::ModelPart::CreateNewElements<std::vector<CoSimIO::IdType>,
+                                                                             std::vector<CoSimIO::ElementType>,
+                                                                             std::vector<CoSimIO::IdType>>)
         .def("GetNode",               [](CoSimIO::ModelPart& I_ModelPart, const CoSimIO::IdType I_Id){
             return I_ModelPart.pGetNode(I_Id);}, py::return_value_policy::reference_internal)
         .def("GetElement",            [](CoSimIO::ModelPart& I_ModelPart, const CoSimIO::IdType I_Id){
