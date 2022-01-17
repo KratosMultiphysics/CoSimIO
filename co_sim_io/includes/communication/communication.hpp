@@ -135,7 +135,9 @@ protected:
     bool GetIsPrimaryConnection() const        {return mIsPrimaryConnection;}
     bool GetPrintTiming() const                {return mPrintTiming;}
     bool GetIsConnected() const                {return mIsConnected;}
-    const DataCommunicator& GetDataCommunicator() const                {return *mpDataComm;}
+    const DataCommunicator& GetDataCommunicator()  const {return *mpDataComm;}
+    bool GetUseSerializerForData() const       {return mUseSerializerForData;}
+    Serializer::TraceType GetSerializerTraceType() const {return mSerializerTraceType;}
 
     Info GetMyInfo() const;
     Info GetPartnerInfo() const {return mPartnerInfo;};
