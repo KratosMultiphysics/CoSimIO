@@ -48,6 +48,8 @@ The following settings are available for all methods of communication:
 | working_directory     | string | - | current working directory | path to the working directory |
 | use_folder_for_communication | bool | - | true  | whether the files used for communication are written in a dedicated folder. Deadlocks from leftover files from previous executions are less likely to happen as they can be cleanup up. |
 | use_aux_file_for_file_availability | bool | - | false  | select whether files are made available by use of an auxiliary file or via rename. |
+| always_use_serializer | bool | - | false  | use the Serializer also when it is not necessary, e.g. for basic types such as Im-/ExportData. This is ~ 10x slower but more stable, especially when combined with ascii-serialization |
+| serializer_trace_type | string | - | no_trace | mode for the `Serializer`: `no_trace` (fastest method, binary format, without any debugging checks), `trace_error` (ascii format, limited error checking), `trace_all` (slow, ascii format, detailed error checking, should only be used for debugging) |
 | echo_level            | int    | - | 0 | decides how much output is printed |
 | print_timing          | bool   | - | false | whether timing information should be printed |
 
@@ -72,7 +74,7 @@ Set `communication_format` to `file`.
 
 | name | type | required | default| description |
 |---|---|---|---|---|
-|currently_nothing|
+| use_file_serializer | bool   | - | true | Using the `FileSerializer` (which directly uses a file stream to read/write data) over the `StreamSerializer` (which first to reads/writes to a stringstream before writing everything to the file at once) |
 
 ## Socket-based communication
 The data is communicated through network sockets by using the TCP communication protocol (using IPv4). No data is written to the filesystem, this makes it more efficient than the file-based communication.
