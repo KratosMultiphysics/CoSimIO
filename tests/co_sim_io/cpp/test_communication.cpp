@@ -599,6 +599,22 @@ TEST_CASE("FileCommunication_default_settings" * doctest::timeout(250))
     RunAllCommunication(settings);
 }
 
+TEST_CASE("FileCommunication_not_file_serializer" * doctest::timeout(250))
+{
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "file");
+    settings.Set<bool>("use_file_serializer", false);
+    RunAllCommunication(settings);
+}
+
+TEST_CASE("FileCommunication_serializer_data" * doctest::timeout(250))
+{
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "file");
+    settings.Set<bool>("use_serializer_for_data", true);
+    RunAllCommunication(settings);
+}
+
 TEST_CASE("FileCommunication_avail_file" * doctest::timeout(250))
 {
     CoSimIO::Info settings;
