@@ -36,13 +36,31 @@ CoSimIO::ModelPart model_part("my_model_part");
 std::string name = model_part.Name();
 ```
 
-Nodes can be created like this:
+As single can be created like this:
 ```c++
 CoSimIO::Node& node = model_part.CreateNewNode(
     1,    // Id
     0.0,  // X-Coordinate
     1.5,  // Y-Coordinate
     -4.22 // Z-Coordinate
+);
+```
+
+Multiple nodes can be created with `CreateNewNodes`:
+```c++
+std::size_t num_nodes = 10;
+std::vector<CoSimIO::IdType> ids(num_nodes);
+std::vector<double> x_coords(num_nodes);
+std::vector<double> y_coords(num_nodes);
+std::vector<double> z_coords(num_nodes);
+
+// initialize the vectors somehow ...
+
+model_part.CreateNewNodes(
+    ids,      // Ids
+    x_coords, // X-Coordinates
+    y_coords, // Y-Coordinates
+    z_coords  // Z-Coordinates
 );
 ```
 
@@ -56,6 +74,28 @@ CoSimIO::Element& element = model_part.CreateNewElement(
     connectivity // Connectivity information, i.e. Ids of nodes that the element has
 );
 ```
+
+Multiple elements can be created with `CreateNewElements`:
+```c++
+std::size_t num_elements = 10;
+std::vector<CoSimIO::IdType> ids(num_elements);
+std::vector<CoSimIO::ElementType> types(num_elements);
+std::vector<CoSimIO::IdType> connectivities;
+// the connectivities vector is contiguous, not a vector of vectors!
+// Example:
+// types is [Line2D2 and Trianle 3D3] connectivities is [1,2,3,4,5],
+// the {1,2} are the connectivities for the line
+// and {3,4,5}  are the connectivities for the triangle
+
+// initialize the vectors somehow ...
+
+model_part.CreateNewElements(
+    ids,           // Ids
+    types,         // Element types
+    connectivities // Connectivities
+);
+```
+
 Note: Node and Element Ids start with 1 (0 is not accepted).
 
 Use the following functions to get the number of nodes and elements:
@@ -124,6 +164,27 @@ CoSimIO::Node& ghost_node = model_part.CreateNewGhostNode(
     5     // Partition index where the node is local
 );
 ```
+
+Multiple ghost nodes can be created with `CreateNewGhostNodes`, similar to the creation of multiple (local) nodes:
+```c++
+std::size_t num_nodes = 10;
+std::vector<CoSimIO::IdType> ids(num_nodes);
+std::vector<double> x_coords(num_nodes);
+std::vector<double> y_coords(num_nodes);
+std::vector<double> z_coords(num_nodes);
+std::vector<int> partition_indices(num_nodes);
+
+// initialize the vectors somehow ...
+
+model_part.CreateNewGhostNodes(
+    ids,      // Ids
+    x_coords, // X-Coordinates
+    y_coords, // Y-Coordinates
+    z_coords, // Z-Coordinates
+    partition_indices, // Partition indices where the nodes are local
+);
+```
+
 These ghost nodes can also be used for the creation of elements.
 Note that this node has to be created as local node in its local partition, otherwise deadlocks can occur!
 Also the Ids must be unique, again otherwise deadlocks can occur!
