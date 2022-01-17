@@ -31,6 +31,7 @@ see https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/mod
 #include "define.hpp"
 #include "data_container.hpp"
 #include "serializer.hpp"
+#include "includes/utilities.hpp"
 
 namespace CoSimIO {
 
@@ -357,13 +358,15 @@ public:
         const double I_Z,
         const int PartitionIndex);
 
-    template<class TContainerType>
+    template<class TIdContainerType,
+             class TCoordsContainerType,
+             class TPartitionIndexContainerType>
     void CreateNewGhostNodes(
-        const TContainerType& I_Id,
-        const TContainerType& I_X,
-        const TContainerType& I_Y,
-        const TContainerType& I_Z,
-        const TContainerType& PartitionIndex);
+        const TIdContainerType& I_Id,
+        const TCoordsContainerType& I_X,
+        const TCoordsContainerType& I_Y,
+        const TCoordsContainerType& I_Z,
+        const TPartitionIndexContainerType& PartitionIndex);
 
     // element creation interface
     Element& CreateNewElement(
@@ -371,11 +374,13 @@ public:
         const ElementType I_Type,
         const ConnectivitiesType& I_Connectivities);
 
-    template<class TContainerType>
+    template<class TIdContainerType,
+             class TTypeContainerType,
+             class TConnectivitiesContainerType>
     void CreateNewElements(
-        const TContainerType& I_Id,
-        const TContainerType& I_Type,
-        const TContainerType& I_Connectivities);
+        const TIdContainerType& I_Id,
+        const TTypeContainerType& I_Type,
+        const TConnectivitiesContainerType& I_Connectivities);
 
     const Internals::PointerVector<NodePointerType> Nodes() const {return Internals::PointerVector<NodePointerType>(mNodes.data());}
     const Internals::PointerVector<NodePointerType> LocalNodes() const {return Internals::PointerVector<NodePointerType>(GetLocalModelPart().Nodes());}
@@ -471,9 +476,6 @@ inline void ModelPart::CreateNewNodes(
     const TCoordsContainerType& I_Y,
     const TCoordsContainerType& I_Z)
 {
-    static_assert(std::is_same<typename TIdContainerType::value_type, CoSimIO::IdType>::value, "wrong type for Ids!");
-    static_assert(std::is_same<typename TCoordsContainerType::value_type, double>::value, "wrong type for Ids!");
-
     const std::size_t num_new_nodes = I_Id.size();
 
     CO_SIM_IO_ERROR_IF(num_new_nodes != I_X.size()) << "Wrong number of X-Coordinates!" << std::endl;
@@ -485,6 +487,71 @@ inline void ModelPart::CreateNewNodes(
 
     for (std::size_t i=0; i<num_new_nodes; ++i) {
         CreateNewNode(I_Id[i], I_X[i], I_Y[i], I_Z[i]);
+    }
+}
+
+template<class TIdContainerType,
+         class TCoordsContainerType,
+         class TPartitionIndexContainerType>
+inline void ModelPart::CreateNewGhostNodes(
+    const TIdContainerType& I_Id,
+    const TCoordsContainerType& I_X,
+    const TCoordsContainerType& I_Y,
+    const TCoordsContainerType& I_Z,
+    const TPartitionIndexContainerType& PartitionIndex)
+{
+    const std::size_t num_new_nodes = I_Id.size();
+
+    CO_SIM_IO_ERROR_IF(num_new_nodes != I_X.size()) << "Wrong number of X-Coordinates!" << std::endl;
+    CO_SIM_IO_ERROR_IF(num_new_nodes != I_Y.size()) << "Wrong number of Y-Coordinates!" << std::endl;
+    CO_SIM_IO_ERROR_IF(num_new_nodes != I_Z.size()) << "Wrong number of Z-Coordinates!" << std::endl;
+    CO_SIM_IO_ERROR_IF(num_new_nodes != PartitionIndex.size()) << "Wrong number of partition indices!" << std::endl;
+
+    mNodes.reserve(mNodes.size()+num_new_nodes);
+    GetGhostModelPart().mNodes.reserve(GetGhostModelPart().mNodes.size()+num_new_nodes);
+    // preparing the sizes in the PartitionModelParts requires to compute how many nodes go to which partition
+    // => num_nodes_this_rank
+    // as this might be expensive, it is skipped for now
+    // GetPartitionModelPart(num_nodes_this_rank).mNodes.reserve(GetPartitionModelPart(num_nodes_this_rank).mNodes.size()+num_new_nodes);
+
+    for (std::size_t i=0; i<num_new_nodes; ++i) {
+        CreateNewGhostNode(I_Id[i], I_X[i], I_Y[i], I_Z[i], PartitionIndex[i]);
+    }
+}
+
+template<class TIdContainerType,
+         class TTypeContainerType,
+         class TConnectivitiesContainerType>
+inline void ModelPart::CreateNewElements(
+    const TIdContainerType& I_Id,
+    const TTypeContainerType& I_Type,
+    const TConnectivitiesContainerType& I_Connectivities)
+{
+    const std::size_t num_new_elements = I_Id.size();
+
+    CO_SIM_IO_ERROR_IF(num_new_elements != I_Type.size()) << "Wrong number of Types!" << std::endl;
+
+    std::size_t exp_num_connectivities = 0;
+    for (std::size_t i=0; i<I_Type.size(); ++i) {
+        exp_num_connectivities += Utilities::GetNumberOfNodesForElementType(I_Type[i]);
+    }
+
+    CO_SIM_IO_ERROR_IF(exp_num_connectivities != I_Connectivities.size()) << "Wrong number of Connectivities! Expected: " << exp_num_connectivities << " but got " << I_Connectivities.size() << std::endl;
+
+    mElements.reserve(mElements.size()+num_new_elements);
+    GetLocalModelPart().mElements.reserve(GetLocalModelPart().mElements.size()+num_new_elements);
+
+    ConnectivitiesType conn;
+    std::size_t conn_counter = 0;
+    for (std::size_t i=0; i<num_new_elements; ++i) {
+        const int num_nodes = Utilities::GetNumberOfNodesForElementType(I_Type[i]);
+        conn.resize(num_nodes);
+        for (int j=0; j<num_nodes;++j) {
+            conn[j] = I_Connectivities[conn_counter];
+            conn_counter++;
+        }
+
+        CreateNewElement(I_Id[i], I_Type[i], conn);
     }
 }
 
