@@ -49,13 +49,8 @@ Communication::Communication(
 
     CO_SIM_IO_ERROR_IF_NOT(fs::exists(mWorkingDirectory)) << "The working directory " << mWorkingDirectory << " does not exist!" << std::endl;
 
-
     if (I_Settings.Has("serializer_trace_type")) {
-        const std::string trace_type = I_Settings.Get<std::string>("serializer_trace_type");
-        if (trace_type == "no_trace") {mSerializerTraceType = Serializer::TraceType::SERIALIZER_NO_TRACE;}
-        else if (trace_type == "trace_error") {mSerializerTraceType = Serializer::TraceType::SERIALIZER_TRACE_ERROR;}
-        else if (trace_type == "trace_all") {mSerializerTraceType = Serializer::TraceType::SERIALIZER_TRACE_ALL;}
-        else {CO_SIM_IO_ERROR << "Invalid serializer_trace_type! Valid options are: no_trace, trace_error, trace_all" << std::endl;}
+        mSerializerTraceType = Serializer::StringToTraceType(I_Settings.Get<std::string>("serializer_trace_type"));
     }
 
     mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", true);
@@ -446,7 +441,7 @@ Info Communication::GetMyInfo() const
     my_info.Set<int>("num_processes",   GetDataCommunicator().Size());
 
     my_info.Set<bool>("always_use_serializer", mAlwaysUseSerializer);
-    my_info.Set<std::string>("serializer_trace_type", mSerializerTraceType);
+    my_info.Set<std::string>("serializer_trace_type", Serializer::TraceTypeToString(mSerializerTraceType));
 
     my_info.Set<Info>("communication_settings", GetCommunicationSettings());
 
@@ -504,6 +499,8 @@ void Communication::HandShake(const Info& I_Info)
         CO_SIM_IO_ERROR_IF(GetDataCommunicator().IsDistributed() != mPartnerInfo.Get<bool>("is_distributed")) << "Mismatch calling Connect(MPI)!\nMyself called: " << (GetDataCommunicator().IsDistributed()?"ConnectMPI":"Connect") << "\nPartner called: " << (mPartnerInfo.Get<bool>("is_distributed")?"ConnectMPI":"Connect") << std::endl;
 
         CO_SIM_IO_ERROR_IF(mAlwaysUseSerializer != mPartnerInfo.Get<bool>("always_use_serializer")) << std::boolalpha << "Mismatch in always_use_serializer!\nMy always_use_serializer: " << mAlwaysUseSerializer << "\nPartner always_use_serializer: " << mPartnerInfo.Get<bool>("always_use_serializer") << std::noboolalpha << std::endl;
+
+        CO_SIM_IO_ERROR_IF(Serializer::TraceTypeToString(mSerializerTraceType) != mPartnerInfo.Get<std::string>("serializer_trace_type")) << "Mismatch in serializer_trace_type!\nMy serializer_trace_type: " << Serializer::TraceTypeToString(mSerializerTraceType) << "\nPartner serializer_trace_type: " << mPartnerInfo.Get<std::string>("serializer_trace_type") << std::endl;
 
         // more things can be done in derived class if necessary
         DerivedHandShake();
