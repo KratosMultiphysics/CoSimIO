@@ -694,10 +694,62 @@ TEST_CASE("model_part_pointer_vector")
     CHECK(PointerVectorChecker(model_part.Elements()));
 }
 
-TEST_CASE("model_part_CreateNodes_std::vector")
+template<class TIdContainerType,
+         class TCoordsContainerType>
+void AuxCreateNodesTestInitializeFunction(
+    const std::size_t NumNodes,
+    TIdContainerType& I_Id,
+    TCoordsContainerType& I_X,
+    TCoordsContainerType& I_Y,
+    TCoordsContainerType& I_Z)
 {
+    for (std::size_t i=0; i<NumNodes; ++i) {
+        I_Id[i] = i+1;
+        I_X[i] = i*1.1;
+        I_Y[i] = i+1.235;
+        I_Z[i] = i-10.89;
+    }
+}
+
+template<class TIdContainerType,
+         class TCoordsContainerType>
+void AuxCreateNodesTestFunction(
+    const std::size_t NumNodes,
+    TIdContainerType& I_Id,
+    TCoordsContainerType& I_X,
+    TCoordsContainerType& I_Y,
+    TCoordsContainerType& I_Z)
+{
+    REQUIRE_EQ(I_Id.size(), NumNodes);
+    REQUIRE_EQ(I_X.size(), NumNodes);
+    REQUIRE_EQ(I_Y.size(), NumNodes);
+    REQUIRE_EQ(I_Z.size(), NumNodes);
+
+    const auto& r_ids = I_Id;
+    const auto& r_x = I_X;
+    const auto& r_y = I_Y;
+    const auto& r_z = I_Z;
+
     ModelPart model_part("for_test");
 
+    model_part.CreateNewNodes(r_ids, r_x, r_y, r_z);
+
+    CHECK_EQ(model_part.NumberOfNodes(), NumNodes);
+    CHECK_EQ(model_part.NumberOfLocalNodes(), NumNodes);
+    CHECK_EQ(model_part.NumberOfGhostNodes(), 0);
+    CHECK_EQ(model_part.NumberOfElements(), 0);
+
+    for (std::size_t i=0; i<NumNodes; ++i) {
+        const Node& r_node = **(model_part.NodesBegin()+i);
+        CHECK_EQ(r_node.Id(), r_ids[i]);
+        CHECK_EQ(r_node.X(), doctest::Approx(r_x[i]));
+        CHECK_EQ(r_node.Y(), doctest::Approx(r_y[i]));
+        CHECK_EQ(r_node.Z(), doctest::Approx(r_z[i]));
+    }
+}
+
+TEST_CASE("model_part_CreateNodes_std::vector")
+{
     constexpr std::size_t num_nodes = 234;
 
     std::vector<CoSimIO::IdType> ids(num_nodes);
@@ -705,25 +757,8 @@ TEST_CASE("model_part_CreateNodes_std::vector")
     std::vector<double> y(num_nodes);
     std::vector<double> z(num_nodes);
 
-    std::iota(ids.begin(), ids.end(), 1);
-    std::iota(x.begin(), x.end(), 1);
-    std::iota(y.begin(), y.end(), 1);
-    std::iota(z.begin(), z.end(), 1);
-
-    model_part.CreateNewNodes(ids, x, y, z);
-
-    CHECK_EQ(model_part.NumberOfNodes(), num_nodes);
-    CHECK_EQ(model_part.NumberOfLocalNodes(), num_nodes);
-    CHECK_EQ(model_part.NumberOfGhostNodes(), 0);
-    CHECK_EQ(model_part.NumberOfElements(), 0);
-
-    for (std::size_t i=0; i<num_nodes; ++i) {
-        const Node& r_node = **(model_part.NodesBegin()+i);
-        CHECK_EQ(r_node.Id(), ids[i]);
-        CHECK_EQ(r_node.X(), doctest::Approx(x[i]));
-        CHECK_EQ(r_node.Y(), doctest::Approx(y[i]));
-        CHECK_EQ(r_node.Z(), doctest::Approx(z[i]));
-    }
+    AuxCreateNodesTestInitializeFunction(num_nodes, ids, x, y, z);
+    AuxCreateNodesTestFunction(num_nodes, ids, x, y, z);
 }
 
 TEST_CASE("model_part_CreateNodes_std::array")
@@ -737,31 +772,12 @@ TEST_CASE("model_part_CreateNodes_std::array")
     std::array<double, num_nodes> y;
     std::array<double, num_nodes> z;
 
-    std::iota(ids.begin(), ids.end(), 1);
-    std::iota(x.begin(), x.end(), 1);
-    std::iota(y.begin(), y.end(), 1);
-    std::iota(z.begin(), z.end(), 1);
-
-    model_part.CreateNewNodes(ids, x, y, z);
-
-    CHECK_EQ(model_part.NumberOfNodes(), num_nodes);
-    CHECK_EQ(model_part.NumberOfLocalNodes(), num_nodes);
-    CHECK_EQ(model_part.NumberOfGhostNodes(), 0);
-    CHECK_EQ(model_part.NumberOfElements(), 0);
-
-    for (std::size_t i=0; i<num_nodes; ++i) {
-        const Node& r_node = **(model_part.NodesBegin()+i);
-        CHECK_EQ(r_node.Id(), ids[i]);
-        CHECK_EQ(r_node.X(), doctest::Approx(x[i]));
-        CHECK_EQ(r_node.Y(), doctest::Approx(y[i]));
-        CHECK_EQ(r_node.Z(), doctest::Approx(z[i]));
-    }
+    AuxCreateNodesTestInitializeFunction(num_nodes, ids, x, y, z);
+    AuxCreateNodesTestFunction(num_nodes, ids, x, y, z);
 }
 
 TEST_CASE("model_part_CreateNodes_raw_array")
 {
-    ModelPart model_part("for_test");
-
     constexpr std::size_t num_nodes = 234;
 
     CoSimIO::IdType arr_ids[num_nodes];
@@ -769,32 +785,14 @@ TEST_CASE("model_part_CreateNodes_raw_array")
     double arr_y[num_nodes];
     double arr_z[num_nodes];
 
-    for (std::size_t i=0; i<num_nodes; ++i) {
-        arr_ids[i] = i+1;
-        arr_x[i] = i*1.1;
-        arr_y[i] = i+1.235;
-        arr_z[i] = i-10.89;
-    }
+    AuxCreateNodesTestInitializeFunction(num_nodes, arr_ids, arr_x, arr_y, arr_z);
 
     const CoSimIO::Internals::DataContainerRawMemoryReadOnly<CoSimIO::IdType> ids(arr_ids, num_nodes);
     const CoSimIO::Internals::DataContainerRawMemoryReadOnly<double> x(arr_x, num_nodes);
     const CoSimIO::Internals::DataContainerRawMemoryReadOnly<double> y(arr_y, num_nodes);
     const CoSimIO::Internals::DataContainerRawMemoryReadOnly<double> z(arr_z, num_nodes);
 
-    model_part.CreateNewNodes(ids, x, y, z);
-
-    CHECK_EQ(model_part.NumberOfNodes(), num_nodes);
-    CHECK_EQ(model_part.NumberOfLocalNodes(), num_nodes);
-    CHECK_EQ(model_part.NumberOfGhostNodes(), 0);
-    CHECK_EQ(model_part.NumberOfElements(), 0);
-
-    for (std::size_t i=0; i<num_nodes; ++i) {
-        const Node& r_node = **(model_part.NodesBegin()+i);
-        CHECK_EQ(r_node.Id(), ids[i]);
-        CHECK_EQ(r_node.X(), doctest::Approx(x[i]));
-        CHECK_EQ(r_node.Y(), doctest::Approx(y[i]));
-        CHECK_EQ(r_node.Z(), doctest::Approx(z[i]));
-    }
+    AuxCreateNodesTestFunction(num_nodes, ids, x, y, z);
 }
 
 } // TEST_SUITE("ModelPart")
