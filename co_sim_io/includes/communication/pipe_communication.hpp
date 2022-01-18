@@ -120,6 +120,8 @@ private:
     std::uint64_t ReceiveSize();
 };
 
+    const std::size_t mBufferSize;
+
     std::shared_ptr<BidirectionalPipe> mpPipe;
 
     std::string GetCommunicationName() const override {return "pipe";}
@@ -146,7 +148,7 @@ private:
 
     void DerivedHandShake() const override;
 
-    std::size_t GetPipeBufferSize(const Info& I_Info) const;
+    Info GetCommunicationSettings() const override;
 };
 
 } // namespace Internals

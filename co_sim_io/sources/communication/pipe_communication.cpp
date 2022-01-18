@@ -32,10 +32,20 @@
 namespace CoSimIO {
 namespace Internals {
 
+namespace {
+
+std::size_t GetPipeBufferSize(const Info& I_Info)
+{
+    return I_Info.Get<std::size_t>("buffer_size", 8192);
+}
+
+} // anonymous namespace
+
 PipeCommunication::PipeCommunication(
     const Info& I_Settings,
     std::shared_ptr<DataCommunicator> I_DataComm)
-    : Communication(I_Settings, I_DataComm)
+    : Communication(I_Settings, I_DataComm),
+      mBufferSize(GetPipeBufferSize(I_Settings))
 {
 }
 
@@ -68,6 +78,21 @@ Info PipeCommunication::DisconnectDetail(const Info& I_Info)
 void PipeCommunication::DerivedHandShake() const
 {
     CO_SIM_IO_ERROR_IF(GetMyInfo().Get<std::string>("operating_system") != GetPartnerInfo().Get<std::string>("operating_system")) << "Pipe communication cannot be used between different operating systems!" << std::endl;
+
+    const std::size_t my_use_buffer_size = GetMyInfo().Get<Info>("communication_settings").Get<std::size_t>("buffer_size");
+    const std::size_t partner_buffer_size = GetPartnerInfo().Get<Info>("communication_settings").Get<std::size_t>("buffer_size");
+    CO_SIM_IO_ERROR_IF(my_use_buffer_size != partner_buffer_size) << "Mismatch in buffer_size!\nMy buffer_size: " << my_use_buffer_size << "\nPartner buffer_size: " << partner_buffer_size << std::noboolalpha << std::endl;
+}
+
+Info PipeCommunication::GetCommunicationSettings() const
+{
+    CO_SIM_IO_TRY
+
+    Info info;
+    info.Set("buffer_size", mBufferSize);
+    return info;
+
+    CO_SIM_IO_CATCH
 }
 
 
@@ -157,11 +182,6 @@ double PipeCommunication::ReceiveDataContainer(
     Internals::DataContainer<double>& rData)
 {
     return mpPipe->Read(rData, sizeof(double));
-}
-
-std::size_t PipeCommunication::GetPipeBufferSize(const Info& I_Info) const
-{
-    return I_Info.Get<int>("buffer_size", 8192);
 }
 
 } // namespace Internals
