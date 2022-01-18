@@ -214,7 +214,7 @@ TEST_CASE("info_int_and_size_t")
     Info info;
 
     info.Set("signed", -1);
-    info.Set("specunsigned", 1UL);
+    info.Set("specunsigned", static_cast<std::size_t>(1)); // 1u is C++23
     info.Set<std::size_t>("unsigned", 1); // this would be an int!
 
     CHECK_UNARY(info.Has("signed"));
