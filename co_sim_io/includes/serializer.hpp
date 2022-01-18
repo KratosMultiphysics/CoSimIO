@@ -155,6 +155,10 @@ public:
     /// Trace type is one of SERIALIZER_NO_TRACE,SERIALIZER_TRACE_ERROR,SERIALIZER_TRACE_ALL
     TraceType GetTraceType() const {return mTrace;}
 
+    static std::string TraceTypeToString(Serializer::TraceType Trace);
+
+    static Serializer::TraceType StringToTraceType(const std::string& Trace);
+
     void SetBuffer(BufferType* pBuffer)
     {
         mpBuffer = pBuffer;

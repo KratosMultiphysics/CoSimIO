@@ -212,7 +212,11 @@ Can only be called with an active connection (i.e. after calling `Connect` and b
     | identifier       | string | x | - | identifier of the data |
 
 #### Returns
-Instance of `CoSimIO::Info` which contains whatever information was specified by the connection partner.
+Instance of `CoSimIO::Info` which contains whatever information was specified by the connection partner. Also `elapsed_time` is specified.
+
+| name | type | description |
+|---|---|---|
+| elapsed_time | double | time for IPC (without waiting) |
 
 #### Syntax C++
 ~~~c++
@@ -257,7 +261,7 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 |---|---|---|
-|currently_nothing|
+| elapsed_time | double | time for IPC (without waiting) |
 
 #### Syntax C++
 ~~~c++
@@ -301,7 +305,7 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 |---|---|---|
-|currently_nothing|
+| elapsed_time | double | time for IPC (without waiting) |
 
 #### Syntax C++
 ~~~c++
@@ -348,7 +352,7 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 |---|---|---|
-|currently_nothing|
+| elapsed_time | double | time for IPC (without waiting) |
 
 #### Syntax C++
 ~~~c++
@@ -395,7 +399,7 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 |---|---|---|
-|currently_nothing|
+| elapsed_time | double | time for IPC (without waiting) |
 
 #### Syntax C++
 ~~~c++
@@ -445,7 +449,7 @@ Instance of `CoSimIO::Info` which contains the following:
 
 | name | type | description |
 |---|---|---|
-|currently_nothing|
+| elapsed_time | double | time for IPC (without waiting) |
 
 #### Syntax C++
 ~~~c++

@@ -30,6 +30,7 @@ Communication::Communication(
       mMyName(I_Settings.Get<std::string>("my_name")),
       mConnectTo(I_Settings.Get<std::string>("connect_to")),
       mUseAuxFileForFileAvailability(I_Settings.Get<bool>("use_aux_file_for_file_availability", false)),
+      mAlwaysUseSerializer(I_Settings.Get<bool>("always_use_serializer", false)),
       mWorkingDirectory(I_Settings.Get<std::string>("working_directory", fs::relative(fs::current_path()).string())),
       mEchoLevel(I_Settings.Get<int>("echo_level", 0)),
       mPrintTiming(I_Settings.Get<bool>("print_timing", false))
@@ -47,6 +48,10 @@ Communication::Communication(
     mConnectionName = Utilities::CreateConnectionName(mMyName, mConnectTo);
 
     CO_SIM_IO_ERROR_IF_NOT(fs::exists(mWorkingDirectory)) << "The working directory " << mWorkingDirectory << " does not exist!" << std::endl;
+
+    if (I_Settings.Has("serializer_trace_type")) {
+        mSerializerTraceType = Serializer::StringToTraceType(I_Settings.Get<std::string>("serializer_trace_type"));
+    }
 
     mCommInFolder = I_Settings.Get<bool>("use_folder_for_communication", true);
     mCommFolder = GetWorkingDirectory();
@@ -154,9 +159,93 @@ void Communication::BaseDisconnectDetail(const Info& I_Info)
         std::error_code ec;
         fs::remove_all(mCommFolder, ec);
         if (ec) {
-            CO_SIM_IO_INFO("CoSimIO") << "Warning, communication directory (" << mCommFolder << ")could not be deleted!\nError code: " << ec.message() << std::endl;
+            CO_SIM_IO_INFO("CoSimIO") << "Warning, communication directory (" << mCommFolder << ") could not be deleted!\nError code: " << ec.message() << std::endl;
         }
     }
+
+    CO_SIM_IO_CATCH
+}
+
+Info Communication::ImportInfoImpl(const Info& I_Info)
+{
+    CO_SIM_IO_TRY
+
+    Info imported_info;
+    Info rec_info = ReceiveObjectWithStreamSerializer(I_Info, imported_info);
+    imported_info.Set<double>("elapsed_time", rec_info.Get<double>("elapsed_time"));
+    imported_info.Set<double>("elapsed_time_ipc", rec_info.Get<double>("elapsed_time_ipc"));
+    imported_info.Set<double>("elapsed_time_serializer", rec_info.Get<double>("elapsed_time_serializer"));
+    imported_info.Set<std::size_t>("memory_usage_ipc", rec_info.Get<std::size_t>("memory_usage_ipc"));
+    return imported_info;
+
+    CO_SIM_IO_CATCH
+}
+
+Info Communication::ExportInfoImpl(const Info& I_Info)
+{
+    CO_SIM_IO_TRY
+
+    return SendObjectWithStreamSerializer(I_Info, I_Info);
+
+    CO_SIM_IO_CATCH
+}
+
+Info Communication::ImportDataImpl(
+    const Info& I_Info,
+    Internals::DataContainer<double>& rData)
+{
+    CO_SIM_IO_TRY
+
+    if (mAlwaysUseSerializer) {
+        return ReceiveObjectWithStreamSerializer(I_Info, rData);
+    } else {
+        Info info;
+        const double elapsed_time = ReceiveDataContainer(I_Info, rData);
+        info.Set<double>("elapsed_time", elapsed_time);
+        info.Set<std::size_t>("memory_usage_ipc", rData.size()*sizeof(double));
+        return info;
+    }
+
+    CO_SIM_IO_CATCH
+}
+
+Info Communication::ExportDataImpl(
+    const Info& I_Info,
+    const Internals::DataContainer<double>& rData)
+{
+    CO_SIM_IO_TRY
+
+    if (mAlwaysUseSerializer) {
+        return SendObjectWithStreamSerializer(I_Info, rData);
+    } else {
+        Info info;
+        const double elapsed_time = SendDataContainer(I_Info, rData);
+        info.Set<double>("elapsed_time", elapsed_time);
+        info.Set<std::size_t>("memory_usage_ipc", rData.size()*sizeof(double));
+        return info;
+    }
+
+    CO_SIM_IO_CATCH
+}
+
+Info Communication::ImportMeshImpl(
+    const Info& I_Info,
+    ModelPart& O_ModelPart)
+{
+    CO_SIM_IO_TRY
+
+    return ReceiveObjectWithStreamSerializer(I_Info, O_ModelPart);
+
+    CO_SIM_IO_CATCH
+}
+
+Info Communication::ExportMeshImpl(
+    const Info& I_Info,
+    const ModelPart& I_ModelPart)
+{
+    CO_SIM_IO_TRY
+
+    return SendObjectWithStreamSerializer(I_Info, I_ModelPart);
 
     CO_SIM_IO_CATCH
 }
@@ -165,6 +254,13 @@ void Communication::CheckConnection(const Info& I_Info)
 {
     CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "No active connection exists!" << std::endl;
     CO_SIM_IO_ERROR_IF_NOT(I_Info.Has("identifier")) << "\"identifier\" must be specified!" << std::endl;
+    Utilities::CheckEntry(I_Info.Get<std::string>("identifier"), "identifier");
+}
+
+void Communication::PostChecks(const Info& I_Info)
+{
+    CO_SIM_IO_ERROR_IF_NOT(I_Info.Has("elapsed_time")) << "\"elapsed_time\" must be specified!" << std::endl;
+    CO_SIM_IO_ERROR_IF_NOT(I_Info.Has("memory_usage_ipc")) << "\"memory_usage_ipc\" must be specified!" << std::endl;
 }
 
 fs::path Communication::GetTempFileName(const fs::path& rPath) const
@@ -342,6 +438,9 @@ Info Communication::GetMyInfo() const
     my_info.Set<bool>("is_distributed", GetDataCommunicator().IsDistributed());
     my_info.Set<int>("num_processes",   GetDataCommunicator().Size());
 
+    my_info.Set<bool>("always_use_serializer", mAlwaysUseSerializer);
+    my_info.Set<std::string>("serializer_trace_type", Serializer::TraceTypeToString(mSerializerTraceType));
+
     my_info.Set<Info>("communication_settings", GetCommunicationSettings());
 
     return my_info;
@@ -394,6 +493,12 @@ void Communication::HandShake(const Info& I_Info)
         CO_SIM_IO_ERROR_IF(GetCommunicationName() != mPartnerInfo.Get<std::string>("communication_format")) << "Mismatch in communication_format!\nMy communication_format: " << GetCommunicationName() << "\nPartner communication_format: " << mPartnerInfo.Get<std::string>("communication_format") << std::endl;
 
         CO_SIM_IO_ERROR_IF(GetDataCommunicator().Size() != mPartnerInfo.Get<int>("num_processes")) << "Mismatch in num_processes!\nMy num_processes: " << GetDataCommunicator().Size() << "\nPartner num_processes: " << mPartnerInfo.Get<int>("num_processes") << std::endl;
+
+        CO_SIM_IO_ERROR_IF(GetDataCommunicator().IsDistributed() != mPartnerInfo.Get<bool>("is_distributed")) << "Mismatch calling Connect(MPI)!\nMyself called: " << (GetDataCommunicator().IsDistributed()?"ConnectMPI":"Connect") << "\nPartner called: " << (mPartnerInfo.Get<bool>("is_distributed")?"ConnectMPI":"Connect") << std::endl;
+
+        CO_SIM_IO_ERROR_IF(mAlwaysUseSerializer != mPartnerInfo.Get<bool>("always_use_serializer")) << std::boolalpha << "Mismatch in always_use_serializer!\nMy always_use_serializer: " << mAlwaysUseSerializer << "\nPartner always_use_serializer: " << mPartnerInfo.Get<bool>("always_use_serializer") << std::noboolalpha << std::endl;
+
+        CO_SIM_IO_ERROR_IF(Serializer::TraceTypeToString(mSerializerTraceType) != mPartnerInfo.Get<std::string>("serializer_trace_type")) << "Mismatch in serializer_trace_type!\nMy serializer_trace_type: " << Serializer::TraceTypeToString(mSerializerTraceType) << "\nPartner serializer_trace_type: " << mPartnerInfo.Get<std::string>("serializer_trace_type") << std::endl;
 
         // more things can be done in derived class if necessary
         DerivedHandShake();

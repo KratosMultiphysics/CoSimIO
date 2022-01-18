@@ -65,86 +65,6 @@ Info PipeCommunication::DisconnectDetail(const Info& I_Info)
     return Info(); // TODO use
 }
 
-Info PipeCommunication::ImportInfoImpl(const Info& I_Info)
-{
-    CO_SIM_IO_TRY
-
-    Info imported_info;
-    const double elapsed_time = mpPipe->Receive(imported_info);
-    imported_info.Set<double>("elapsed_time", elapsed_time);
-    return imported_info;
-
-    CO_SIM_IO_CATCH
-}
-
-Info PipeCommunication::ExportInfoImpl(const Info& I_Info)
-{
-    CO_SIM_IO_TRY
-
-    const double elapsed_time = mpPipe->Send(I_Info);
-    Info info;
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
-Info PipeCommunication::ImportDataImpl(
-    const Info& I_Info,
-    Internals::DataContainer<double>& rData)
-{
-    CO_SIM_IO_TRY
-
-    const double elapsed_time = mpPipe->Receive(rData);
-    Info info;
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
-Info PipeCommunication::ExportDataImpl(
-    const Info& I_Info,
-    const Internals::DataContainer<double>& rData)
-{
-    CO_SIM_IO_TRY
-
-    const double elapsed_time = mpPipe->Send(rData);
-    Info info;
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
-Info PipeCommunication::ImportMeshImpl(
-    const Info& I_Info,
-    ModelPart& O_ModelPart)
-{
-    CO_SIM_IO_TRY
-
-    const double elapsed_time = mpPipe->Receive(O_ModelPart);
-    Info info;
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
-Info PipeCommunication::ExportMeshImpl(
-    const Info& I_Info,
-    const ModelPart& I_ModelPart)
-{
-    CO_SIM_IO_TRY
-
-    const double elapsed_time = mpPipe->Send(I_ModelPart);
-    Info info;
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
-
-    CO_SIM_IO_CATCH
-}
-
 void PipeCommunication::DerivedHandShake() const
 {
     CO_SIM_IO_ERROR_IF(GetMyInfo().Get<std::string>("operating_system") != GetPartnerInfo().Get<std::string>("operating_system")) << "Pipe communication cannot be used between different operating systems!" << std::endl;
@@ -209,7 +129,34 @@ std::uint64_t PipeCommunication::BidirectionalPipe::ReceiveSize()
     #else
     return 0;
     #endif
+}
 
+double PipeCommunication::SendString(
+    const Info& I_Info,
+    const std::string& rData)
+{
+    return mpPipe->Write(rData, 1);
+}
+
+double PipeCommunication::ReceiveString(
+    const Info& I_Info,
+    std::string& rData)
+{
+    return mpPipe->Read(rData, 1);
+}
+
+double PipeCommunication::SendDataContainer(
+    const Info& I_Info,
+    const Internals::DataContainer<double>& rData)
+{
+    return mpPipe->Write(rData, sizeof(double));
+}
+
+double PipeCommunication::ReceiveDataContainer(
+    const Info& I_Info,
+    Internals::DataContainer<double>& rData)
+{
+    return mpPipe->Read(rData, sizeof(double));
 }
 
 std::size_t PipeCommunication::GetPipeBufferSize(const Info& I_Info) const
