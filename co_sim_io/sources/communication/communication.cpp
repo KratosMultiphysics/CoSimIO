@@ -171,11 +171,11 @@ Info Communication::ImportInfoImpl(const Info& I_Info)
     CO_SIM_IO_TRY
 
     Info imported_info;
-    double time_ipc, time_serializer;
-    std::tie(time_ipc, time_serializer) = ReceiveObjectWithStreamSerializer(I_Info, imported_info);
-    imported_info.Set<double>("elapsed_time", time_ipc+time_serializer);
-    imported_info.Set<double>("elapsed_time_ipc", time_ipc);
-    imported_info.Set<double>("elapsed_time_serializer", time_serializer);
+    Info rec_info = ReceiveObjectWithStreamSerializer(I_Info, imported_info);
+    imported_info.Set<double>("elapsed_time", rec_info.Get<double>("elapsed_time"));
+    imported_info.Set<double>("elapsed_time_ipc", rec_info.Get<double>("elapsed_time_ipc"));
+    imported_info.Set<double>("elapsed_time_serializer", rec_info.Get<double>("elapsed_time_serializer"));
+    imported_info.Set<int>("memory_usage_ipc", rec_info.Get<int>("memory_usage_ipc"));
     return imported_info;
 
     CO_SIM_IO_CATCH
@@ -185,13 +185,7 @@ Info Communication::ExportInfoImpl(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    double time_ipc, time_serializer;
-    std::tie(time_ipc, time_serializer) = SendObjectWithStreamSerializer(I_Info, I_Info);
-    Info info;
-    info.Set<double>("elapsed_time", time_ipc+time_serializer);
-    info.Set<double>("elapsed_time_ipc", time_ipc);
-    info.Set<double>("elapsed_time_serializer", time_serializer);
-    return info;
+    return SendObjectWithStreamSerializer(I_Info, I_Info);
 
     CO_SIM_IO_CATCH
 }
@@ -202,20 +196,15 @@ Info Communication::ImportDataImpl(
 {
     CO_SIM_IO_TRY
 
-    Info info;
-    double elapsed_time;
     if (mAlwaysUseSerializer) {
-        double time_ipc, time_serializer;
-        std::tie(time_ipc, time_serializer) = ReceiveObjectWithStreamSerializer(I_Info, rData);
-        info.Set<double>("elapsed_time_ipc", time_ipc);
-        info.Set<double>("elapsed_time_serializer", time_serializer);
-        elapsed_time = time_ipc+time_serializer;
+        return ReceiveObjectWithStreamSerializer(I_Info, rData);
     } else {
-        elapsed_time = ReceiveDataContainer(I_Info, rData);
+        Info info;
+        const double elapsed_time = ReceiveDataContainer(I_Info, rData);
+        info.Set<double>("elapsed_time", elapsed_time);
+        info.Set<int>("memory_usage_ipc", rData.size()*sizeof(double));
+        return info;
     }
-
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
 
     CO_SIM_IO_CATCH
 }
@@ -226,20 +215,15 @@ Info Communication::ExportDataImpl(
 {
     CO_SIM_IO_TRY
 
-    Info info;
-    double elapsed_time;
     if (mAlwaysUseSerializer) {
-        double time_ipc, time_serializer;
-        std::tie(time_ipc, time_serializer) = SendObjectWithStreamSerializer(I_Info, rData);
-        info.Set<double>("elapsed_time_ipc", time_ipc);
-        info.Set<double>("elapsed_time_serializer", time_serializer);
-        elapsed_time = time_ipc+time_serializer;
+        return SendObjectWithStreamSerializer(I_Info, rData);
     } else {
-        elapsed_time = SendDataContainer(I_Info, rData);
+        Info info;
+        const double elapsed_time = SendDataContainer(I_Info, rData);
+        info.Set<double>("elapsed_time", elapsed_time);
+        info.Set<int>("memory_usage_ipc", rData.size()*sizeof(double));
+        return info;
     }
-
-    info.Set<double>("elapsed_time", elapsed_time);
-    return info;
 
     CO_SIM_IO_CATCH
 }
@@ -250,13 +234,7 @@ Info Communication::ImportMeshImpl(
 {
     CO_SIM_IO_TRY
 
-    double time_ipc, time_serializer;
-    std::tie(time_ipc, time_serializer) = ReceiveObjectWithStreamSerializer(I_Info, O_ModelPart);
-    Info info;
-    info.Set<double>("elapsed_time", time_ipc+time_serializer);
-    info.Set<double>("elapsed_time_ipc", time_ipc);
-    info.Set<double>("elapsed_time_serializer", time_serializer);
-    return info;
+    return ReceiveObjectWithStreamSerializer(I_Info, O_ModelPart);
 
     CO_SIM_IO_CATCH
 }
@@ -267,13 +245,7 @@ Info Communication::ExportMeshImpl(
 {
     CO_SIM_IO_TRY
 
-    double time_ipc, time_serializer;
-    std::tie(time_ipc, time_serializer) = SendObjectWithStreamSerializer(I_Info, I_ModelPart);
-    Info info;
-    info.Set<double>("elapsed_time", time_ipc+time_serializer);
-    info.Set<double>("elapsed_time_ipc", time_ipc);
-    info.Set<double>("elapsed_time_serializer", time_serializer);
-    return info;
+    return SendObjectWithStreamSerializer(I_Info, I_ModelPart);
 
     CO_SIM_IO_CATCH
 }
@@ -283,6 +255,12 @@ void Communication::CheckConnection(const Info& I_Info)
     CO_SIM_IO_ERROR_IF_NOT(mIsConnected) << "No active connection exists!" << std::endl;
     CO_SIM_IO_ERROR_IF_NOT(I_Info.Has("identifier")) << "\"identifier\" must be specified!" << std::endl;
     Utilities::CheckEntry(I_Info.Get<std::string>("identifier"), "identifier");
+}
+
+void Communication::PostChecks(const Info& I_Info)
+{
+    CO_SIM_IO_ERROR_IF_NOT(I_Info.Has("elapsed_time")) << "\"elapsed_time\" must be specified!" << std::endl;
+    CO_SIM_IO_ERROR_IF_NOT(I_Info.Has("memory_usage_ipc")) << "\"memory_usage_ipc\" must be specified!" << std::endl;
 }
 
 fs::path Communication::GetTempFileName(const fs::path& rPath) const

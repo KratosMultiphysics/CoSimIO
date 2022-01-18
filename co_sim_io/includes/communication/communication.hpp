@@ -54,6 +54,8 @@ public:
 
         Info o_info = ExportInfoImpl(std::forward<Args>(args)...);
 
+        PostChecks(o_info);
+
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1 && mpDataComm->Rank()==0) << "Finished exporting Info " << i_info.Get<std::string>("identifier") << "\""<< std::endl;
 
         PrintElapsedTime(i_info, o_info, "Export info");
@@ -71,6 +73,8 @@ public:
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1 && mpDataComm->Rank()==0) << "Importing Info \"" << i_info.Get<std::string>("identifier") << "\" ..." << std::endl;
 
         Info o_info = ImportInfoImpl(std::forward<Args>(args)...);
+
+        PostChecks(o_info);
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1 && mpDataComm->Rank()==0) << "Finished importing Info " << i_info.Get<std::string>("identifier") << "\""<< std::endl;
 
@@ -90,6 +94,8 @@ public:
 
         Info o_info = ImportDataImpl(std::forward<Args>(args)...);
 
+        PostChecks(o_info);
+
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1 && mpDataComm->Rank()==0) << "Finished importing Data " << i_info.Get<std::string>("identifier") << "\""<< std::endl;
 
         PrintElapsedTime(i_info, o_info, "Import data");
@@ -107,6 +113,8 @@ public:
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1 && mpDataComm->Rank()==0) << "Exporting Data \"" << i_info.Get<std::string>("identifier") << "\" ..." << std::endl;
 
         Info o_info = ExportDataImpl(std::forward<Args>(args)...);
+
+        PostChecks(o_info);
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1 && mpDataComm->Rank()==0) << "Finished exporting Data " << i_info.Get<std::string>("identifier") << "\""<< std::endl;
 
@@ -126,6 +134,8 @@ public:
 
         Info o_info = ImportMeshImpl(std::forward<Args>(args)...);
 
+        PostChecks(o_info);
+
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1 && mpDataComm->Rank()==0) << "Finished importing Mesh " << i_info.Get<std::string>("identifier") << "\""<< std::endl;
 
         PrintElapsedTime(i_info, o_info, "Import mesh");
@@ -143,6 +153,8 @@ public:
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1 && mpDataComm->Rank()==0) << "Exporting Mesh \"" << i_info.Get<std::string>("identifier") << "\" ..." << std::endl;
 
         Info o_info = ExportMeshImpl(std::forward<Args>(args)...);
+
+        PostChecks(o_info);
 
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1 && mpDataComm->Rank()==0) << "Finished exporting Mesh " << i_info.Get<std::string>("identifier") << "\""<< std::endl;
 
@@ -203,29 +215,40 @@ protected:
         const ModelPart& I_ModelPart);
 
     template<class TObjectType>
-    std::tuple<double,double> SendObjectWithStreamSerializer(
+    Info SendObjectWithStreamSerializer(
         const Info& I_Info,
         const TObjectType& rObject)
     {
         CO_SIM_IO_TRY
+
+        Info info;
 
         const auto start_time(std::chrono::steady_clock::now());
         StreamSerializer serializer(mSerializerTraceType);
         serializer.save("object", rObject);
         const double elapsed_time_save = Utilities::ElapsedSeconds(start_time);
 
-        const double elapsed_time_write = SendString(I_Info, serializer.GetStringRepresentation());
-        return std::make_tuple(elapsed_time_write, elapsed_time_save);
+        const std::string& data = serializer.GetStringRepresentation();
+        const double elapsed_time_write = SendString(I_Info, data);
+
+        info.Set<double>("elapsed_time", elapsed_time_write+elapsed_time_save);
+        info.Set<double>("elapsed_time_ipc", elapsed_time_write);
+        info.Set<double>("elapsed_time_serializer", elapsed_time_save);
+        info.Set<int>("memory_usage_ipc", data.size());
+
+        return info;
 
         CO_SIM_IO_CATCH
     }
 
     template<class TObjectType>
-    std::tuple<double,double> ReceiveObjectWithStreamSerializer(
+    Info ReceiveObjectWithStreamSerializer(
         const Info& I_Info,
         TObjectType& rObject)
     {
         CO_SIM_IO_TRY
+
+        Info info;
 
         std::string buffer;
         const double elapsed_time_read = ReceiveString(I_Info, buffer);
@@ -235,7 +258,12 @@ protected:
         serializer.load("object", rObject);
         const double elapsed_time_load = Utilities::ElapsedSeconds(start_time);
 
-        return std::make_tuple(elapsed_time_read, elapsed_time_load);
+        info.Set<double>("elapsed_time", elapsed_time_read+elapsed_time_load);
+        info.Set<double>("elapsed_time_ipc", elapsed_time_read);
+        info.Set<double>("elapsed_time_serializer", elapsed_time_load);
+        info.Set<int>("memory_usage_ipc", buffer.size());
+
+        return info;
 
         CO_SIM_IO_CATCH
     }
@@ -279,6 +307,7 @@ private:
     bool mIsConnected = false;
 
     void CheckConnection(const Info& I_Info);
+    void PostChecks(const Info& I_Info);
     virtual std::string GetCommunicationName() const = 0;
     virtual Info GetCommunicationSettings() const {return Info();}
 

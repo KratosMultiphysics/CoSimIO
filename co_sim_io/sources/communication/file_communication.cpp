@@ -108,6 +108,7 @@ Info FileCommunication::ImportInfoImpl(const Info& I_Info)
         Info received_info;
         const Info rec_info = GenericReceiveWithFileSerializer(I_Info, received_info);
         received_info.Set<double>("elapsed_time", rec_info.Get<double>("elapsed_time"));
+        received_info.Set<int>("memory_usage_ipc", rec_info.Get<int>("memory_usage_ipc"));
         return received_info;
     }
 
@@ -196,6 +197,8 @@ Info FileCommunication::GenericSendWithFileSerializer(
 {
     CO_SIM_IO_TRY
 
+    Info info;
+
     const std::string identifier = I_Info.Get<std::string>("identifier");
 
     const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
@@ -205,10 +208,11 @@ Info FileCommunication::GenericSendWithFileSerializer(
     const auto start_time(std::chrono::steady_clock::now());
     SerializeToFile(GetTempFileName(file_name), rObj, GetSerializerTraceType());
 
+    info.Set<int>("memory_usage_ipc", fs::file_size(GetTempFileName(file_name)));
+
     MakeFileVisible(file_name);
 
     const double elapsed_time = Utilities::ElapsedSeconds(start_time);
-    Info info;
     info.Set<double>("elapsed_time", elapsed_time);
     return info;
 
@@ -222,11 +226,15 @@ Info FileCommunication::GenericReceiveWithFileSerializer(
 {
     CO_SIM_IO_TRY
 
+    Info info;
+
     const std::string identifier = I_Info.Get<std::string>("identifier");
 
     const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
     WaitForPath(file_name);
+
+    info.Set<int>("memory_usage_ipc", fs::file_size(file_name));
 
     const auto start_time(std::chrono::steady_clock::now());
     SerializeFromFile(file_name, rObj, GetSerializerTraceType());
@@ -234,7 +242,6 @@ Info FileCommunication::GenericReceiveWithFileSerializer(
     RemovePath(file_name);
 
     const double elapsed_time = Utilities::ElapsedSeconds(start_time);
-    Info info;
     info.Set<double>("elapsed_time", elapsed_time);
     return info;
 
