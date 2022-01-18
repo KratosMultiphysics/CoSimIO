@@ -12,6 +12,7 @@
 
 // CoSimulation includes
 #include "co_sim_io.hpp"
+#include "data_exchange_testing_matrix.hpp"
 
 #define COSIMIO_CHECK_EQUAL(a, b)                                \
     if (a != b) {                                                \
@@ -20,31 +21,62 @@
         return 1;                                                \
     }
 
+
+
 int main()
 {
-    CoSimIO::Info settings;
-    settings.Set("my_name", "cpp_import_solver");
-    settings.Set("connect_to", "cpp_export_solver");
-    settings.Set("echo_level", 1);
-    settings.Set("version", "1.25");
+    int counter = 0;
+    for (CoSimIO::Info config : GetTestingMatrix()) {
+        std::cout << "Current configuration:\n" << config << std::endl;
+        const std::string my_name = "cpp_import_solver_" + std::to_string(counter);
+        const std::string connect_to = "cpp_export_solver_" + std::to_string(counter);
+        counter++;
 
-    auto info = CoSimIO::Connect(settings);
-    COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
-    const std::string connection_name = info.Get<std::string>("connection_name");
 
-    std::vector<double> receive_data;
-    info.Clear();
-    info.Set("identifier", "vector_of_pi");
-    info.Set("connection_name", connection_name);
-    info = CoSimIO::ImportData(info, receive_data);
+        config.Set("my_name", my_name);
+        config.Set("connect_to", connect_to);
 
-    for(auto& value : receive_data)
-        COSIMIO_CHECK_EQUAL(value, 3.14);
+        auto info = CoSimIO::Connect(config);
+        COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
+        const std::string connection_name = info.Get<std::string>("connection_name");
 
-    CoSimIO::Info disconnect_settings;
-    disconnect_settings.Set("connection_name", connection_name);
-    info = CoSimIO::Disconnect(disconnect_settings); // disconnect afterwards
-    COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Disconnected);
+        std::vector<double> receive_data;
+
+        double accum_time = 0.0;
+        std::size_t accum_mem = 0;
+
+        for (int i=0; i<NUM_EVALUATIONS+1; ++i) {
+            info.Clear();
+            info.Set("identifier", "vector_of_pi");
+            info.Set("connection_name", connection_name);
+            info = CoSimIO::ImportData(info, receive_data);
+
+            if (i>0) {
+                accum_time += info.Get<double>("elapsed_time");
+                accum_mem  += info.Get<std::size_t>("memory_usage_ipc");
+                // std::cout << "\n    Elapsed time: " << info.Get<double>("elapsed_time") << std::endl;
+                // std::cout << "    Memory usage: " << HumanReadableSize(info.Get<std::size_t>("memory_usage_ipc")) << std::endl;
+                // std::cout << "    Speed: " << HumanReadableSize(info.Get<std::size_t>("memory_usage_ipc")/info.Get<double>("elapsed_time")) << "/[s]" << std::endl;
+                // if (info.Has("elapsed_time_ipc")) {
+                //     std::cout << "    IPC time: " << info.Get<double>("elapsed_time_ipc") << std::endl;
+                //     std::cout << "    Serializer time: " << info.Get<double>("elapsed_time_serializer") << std::endl;
+                // }
+            }
+        }
+
+        std::cout << "\n    Elapsed time: " << accum_time/NUM_EVALUATIONS << std::endl;
+        std::cout << "    Memory usage: " << HumanReadableSize(accum_mem/NUM_EVALUATIONS) << std::endl;
+        std::cout << "    Speed: " << HumanReadableSize(accum_mem/accum_time) << "/[s]" << std::endl;
+
+        for(auto& value : receive_data)
+            COSIMIO_CHECK_EQUAL(value, 3.14);
+
+        CoSimIO::Info disconnect_settings;
+        disconnect_settings.Set("connection_name", connection_name);
+        info = CoSimIO::Disconnect(disconnect_settings); // disconnect afterwards
+        COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Disconnected);
+        std::cout << "\n" << std::endl;
+    }
 
     return 0;
 }

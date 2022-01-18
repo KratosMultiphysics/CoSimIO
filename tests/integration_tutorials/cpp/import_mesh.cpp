@@ -29,6 +29,8 @@ int main()
     CoSimIO::Info settings;
     settings.Set("my_name", "cpp_mesh_import_solver");
     settings.Set("connect_to", "cpp_mesh_export_solver");
+    settings.Set("communication_format", "pipe");
+    settings.Set("use_file_serializer", false);
     settings.Set("echo_level", 1);
     settings.Set("version", "1.25");
 
@@ -59,6 +61,13 @@ int main()
     CoSimIO::ModelPart model_part("mp_exchange");
 
     info = CoSimIO::ImportMesh(info, model_part);
+
+    std::cout << "    Elapsed time: " << info.Get<double>("elapsed_time") << std::endl;
+    std::cout << "    Memory usage: " << info.Get<std::size_t>("memory_usage_ipc") << std::endl;
+    if (info.Has("elapsed_time_ipc")) {
+        std::cout << "    IPC time: " << info.Get<double>("elapsed_time_ipc") << std::endl;
+        std::cout << "    Serializer time: " << info.Get<double>("elapsed_time_serializer") << std::endl;
+    }
 
     COSIMIO_CHECK_EQUAL(model_part.NumberOfNodes(), expected_nodal_coords.size());
     COSIMIO_CHECK_EQUAL(model_part.NumberOfElements(), expected_element_connectivities.size());
