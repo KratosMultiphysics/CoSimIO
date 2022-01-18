@@ -175,7 +175,7 @@ Info Communication::ImportInfoImpl(const Info& I_Info)
     imported_info.Set<double>("elapsed_time", rec_info.Get<double>("elapsed_time"));
     imported_info.Set<double>("elapsed_time_ipc", rec_info.Get<double>("elapsed_time_ipc"));
     imported_info.Set<double>("elapsed_time_serializer", rec_info.Get<double>("elapsed_time_serializer"));
-    imported_info.Set<int>("memory_usage_ipc", rec_info.Get<int>("memory_usage_ipc"));
+    imported_info.Set<std::size_t>("memory_usage_ipc", rec_info.Get<std::size_t>("memory_usage_ipc"));
     return imported_info;
 
     CO_SIM_IO_CATCH
@@ -202,7 +202,7 @@ Info Communication::ImportDataImpl(
         Info info;
         const double elapsed_time = ReceiveDataContainer(I_Info, rData);
         info.Set<double>("elapsed_time", elapsed_time);
-        info.Set<int>("memory_usage_ipc", rData.size()*sizeof(double));
+        info.Set<std::size_t>("memory_usage_ipc", rData.size()*sizeof(double));
         return info;
     }
 
@@ -221,7 +221,7 @@ Info Communication::ExportDataImpl(
         Info info;
         const double elapsed_time = SendDataContainer(I_Info, rData);
         info.Set<double>("elapsed_time", elapsed_time);
-        info.Set<int>("memory_usage_ipc", rData.size()*sizeof(double));
+        info.Set<std::size_t>("memory_usage_ipc", rData.size()*sizeof(double));
         return info;
     }
 

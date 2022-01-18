@@ -108,7 +108,7 @@ Info FileCommunication::ImportInfoImpl(const Info& I_Info)
         Info received_info;
         const Info rec_info = GenericReceiveWithFileSerializer(I_Info, received_info);
         received_info.Set<double>("elapsed_time", rec_info.Get<double>("elapsed_time"));
-        received_info.Set<int>("memory_usage_ipc", rec_info.Get<int>("memory_usage_ipc"));
+        received_info.Set<std::size_t>("memory_usage_ipc", rec_info.Get<std::size_t>("memory_usage_ipc"));
         return received_info;
     }
 
@@ -208,7 +208,7 @@ Info FileCommunication::GenericSendWithFileSerializer(
     const auto start_time(std::chrono::steady_clock::now());
     SerializeToFile(GetTempFileName(file_name), rObj, GetSerializerTraceType());
 
-    info.Set<int>("memory_usage_ipc", fs::file_size(GetTempFileName(file_name)));
+    info.Set<std::size_t>("memory_usage_ipc", fs::file_size(GetTempFileName(file_name)));
 
     MakeFileVisible(file_name);
 
@@ -234,7 +234,7 @@ Info FileCommunication::GenericReceiveWithFileSerializer(
 
     WaitForPath(file_name);
 
-    info.Set<int>("memory_usage_ipc", fs::file_size(file_name));
+    info.Set<std::size_t>("memory_usage_ipc", fs::file_size(file_name));
 
     const auto start_time(std::chrono::steady_clock::now());
     SerializeFromFile(file_name, rObj, GetSerializerTraceType());

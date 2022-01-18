@@ -234,7 +234,7 @@ protected:
         info.Set<double>("elapsed_time", elapsed_time_write+elapsed_time_save);
         info.Set<double>("elapsed_time_ipc", elapsed_time_write);
         info.Set<double>("elapsed_time_serializer", elapsed_time_save);
-        info.Set<int>("memory_usage_ipc", data.size());
+        info.Set<std::size_t>("memory_usage_ipc", data.size());
 
         return info;
 
@@ -261,7 +261,7 @@ protected:
         info.Set<double>("elapsed_time", elapsed_time_read+elapsed_time_load);
         info.Set<double>("elapsed_time_ipc", elapsed_time_read);
         info.Set<double>("elapsed_time_serializer", elapsed_time_load);
-        info.Set<int>("memory_usage_ipc", buffer.size());
+        info.Set<std::size_t>("memory_usage_ipc", buffer.size());
 
         return info;
 
