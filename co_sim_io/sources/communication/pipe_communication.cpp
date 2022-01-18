@@ -134,6 +134,7 @@ PipeCommunication::BidirectionalPipe::BidirectionalPipe(
         CO_SIM_IO_ERROR_IF((mPipeHandleWrite = open(mPipeNameWrite.c_str(), O_WRONLY)) < 0) << "Pipe " << mPipeNameWrite << " could not be opened!" << std::endl;
     }
 
+    #ifdef CO_SIM_IO_COMPILED_IN_LINUX
     const int pipe_buffer_size_read = fcntl(mPipeHandleRead, F_GETPIPE_SZ);
     const int pipe_buffer_size_write = fcntl(mPipeHandleWrite, F_GETPIPE_SZ);
 
@@ -150,12 +151,13 @@ PipeCommunication::BidirectionalPipe::BidirectionalPipe(
         CO_SIM_IO_ERROR_IF(new_pipe_buffer_size != fcntl(mPipeHandleWrite, F_GETPIPE_SZ)) << "Different buffer sizes after changing size, this should not happen!" << std::endl;
 
         // not comparing equal, as pipe buffer size is multiple of getpagesize()
-        CO_SIM_IO_INFO_IF("CoSimIO", new_pipe_buffer_size == BufferSize) << "Resizing pipe buffer was successful! Pipe buffer size is now " << new_pipe_buffer_size << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", new_pipe_buffer_size == BufferSize && EchoLevel>0) << "Resizing pipe buffer was successful! Pipe buffer size is now " << new_pipe_buffer_size << std::endl;
         CO_SIM_IO_INFO_IF("CoSimIO", new_pipe_buffer_size < BufferSize) << "Resizing pipe buffer was not successful! Pipe buffer size is " << new_pipe_buffer_size << " even though " << BufferSize << " was requested!" << std::endl;
     }
 
     const int final_pipe_buffer_size = fcntl(mPipeHandleRead, F_GETPIPE_SZ);
     if (BufferSize >= final_pipe_buffer_size) {mBufferSize = final_pipe_buffer_size-1;} // crashes if same size or larger!
+    #endif
 
     #endif
 }
