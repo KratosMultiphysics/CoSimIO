@@ -159,7 +159,7 @@ void Communication::BaseDisconnectDetail(const Info& I_Info)
         std::error_code ec;
         fs::remove_all(mCommFolder, ec);
         if (ec) {
-            CO_SIM_IO_INFO("CoSimIO") << "Warning, communication directory (" << mCommFolder << ")could not be deleted!\nError code: " << ec.message() << std::endl;
+            CO_SIM_IO_INFO("CoSimIO") << "Warning, communication directory (" << mCommFolder << ") could not be deleted!\nError code: " << ec.message() << std::endl;
         }
     }
 
