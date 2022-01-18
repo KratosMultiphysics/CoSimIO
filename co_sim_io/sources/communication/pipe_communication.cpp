@@ -34,9 +34,15 @@ namespace Internals {
 
 namespace {
 
-std::size_t GetPipeBufferSize(const Info& I_Info)
+int GetPipeBufferSize(const Info& I_Info)
 {
-    return I_Info.Get<std::size_t>("buffer_size", 8192);
+    int default_buffer_size = 8192;
+
+    #ifdef CO_SIM_IO_COMPILED_IN_LINUX
+    default_buffer_size = 65536;
+    #endif
+
+    return I_Info.Get<int>("buffer_size", default_buffer_size);
 }
 
 } // anonymous namespace
@@ -64,7 +70,8 @@ Info PipeCommunication::ConnectDetail(const Info& I_Info)
         GetCommunicationDirectory(),
         GetConnectionName() + "_r" + std::to_string(GetDataCommunicator().Rank()),
         GetIsPrimaryConnection(),
-        GetPipeBufferSize(I_Info));
+        GetPipeBufferSize(I_Info),
+        GetEchoLevel());
 
     return Info(); // TODO use
 }
@@ -100,7 +107,8 @@ PipeCommunication::BidirectionalPipe::BidirectionalPipe(
     const fs::path& rPipeDir,
     const fs::path& rBasePipeName,
     const bool IsPrimary,
-    const std::size_t BufferSize) : mBufferSize(BufferSize)
+    const int BufferSize,
+    const int EchoLevel) : mBufferSize(BufferSize)
 {
     mPipeNameWrite = mPipeNameRead = rPipeDir / rBasePipeName;
 
@@ -125,6 +133,30 @@ PipeCommunication::BidirectionalPipe::BidirectionalPipe(
         CO_SIM_IO_ERROR_IF((mPipeHandleRead = open(mPipeNameRead.c_str(), O_RDONLY)) < 0) << "Pipe " << mPipeNameRead << " could not be opened!" << std::endl;
         CO_SIM_IO_ERROR_IF((mPipeHandleWrite = open(mPipeNameWrite.c_str(), O_WRONLY)) < 0) << "Pipe " << mPipeNameWrite << " could not be opened!" << std::endl;
     }
+
+    const int pipe_buffer_size_read = fcntl(mPipeHandleRead, F_GETPIPE_SZ);
+    const int pipe_buffer_size_write = fcntl(mPipeHandleWrite, F_GETPIPE_SZ);
+
+    const int max_pipe_buffer = std::max(pipe_buffer_size_read, pipe_buffer_size_write);
+    if (pipe_buffer_size_read  < max_pipe_buffer) {fcntl(mPipeHandleRead,  F_SETPIPE_SZ, BufferSize);}
+    if (pipe_buffer_size_write < max_pipe_buffer) {fcntl(mPipeHandleWrite, F_SETPIPE_SZ, BufferSize);}
+
+    if (BufferSize > max_pipe_buffer) {
+        CO_SIM_IO_INFO_IF("CoSimIO", EchoLevel>0) << "Requested buffer size (" << BufferSize << ") is larger than pipe buffer size (" << max_pipe_buffer << "). Attempting to increase size of pipe buffer" << std::endl;
+        fcntl(mPipeHandleRead,  F_SETPIPE_SZ, BufferSize);
+        fcntl(mPipeHandleWrite, F_SETPIPE_SZ, BufferSize);
+
+        const int new_pipe_buffer_size = fcntl(mPipeHandleRead, F_GETPIPE_SZ);
+        CO_SIM_IO_ERROR_IF(new_pipe_buffer_size != fcntl(mPipeHandleWrite, F_GETPIPE_SZ)) << "Different buffer sizes after changing size, this should not happen!" << std::endl;
+
+        // not comparing equal, as pipe buffer size is multiple of getpagesize()
+        CO_SIM_IO_INFO_IF("CoSimIO", new_pipe_buffer_size == BufferSize) << "Resizing pipe buffer was successful! Pipe buffer size is now " << new_pipe_buffer_size << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", new_pipe_buffer_size < BufferSize) << "Resizing pipe buffer was not successful! Pipe buffer size is " << new_pipe_buffer_size << " even though " << BufferSize << " was requested!" << std::endl;
+    }
+
+    const int final_pipe_buffer_size = fcntl(mPipeHandleRead, F_GETPIPE_SZ);
+    if (BufferSize >= final_pipe_buffer_size) {mBufferSize = final_pipe_buffer_size-1;} // crashes if same size or larger!
+
     #endif
 }
 

@@ -39,7 +39,8 @@ public:
         const fs::path& rPipeDir,
         const fs::path& rBasePipeName,
         const bool IsPrimary,
-        const std::size_t BufferSize);
+        const int BufferSize,
+        const int EchoLevel);
 
     template<typename TDataType>
     double Write(const TDataType& rData, const std::size_t SizeDataType)
@@ -113,7 +114,7 @@ private:
     fs::path mPipeNameWrite;
     fs::path mPipeNameRead;
 
-    const std::size_t mBufferSize;
+    std::size_t mBufferSize;
 
     void SendSize(const std::uint64_t Size);
 
