@@ -209,6 +209,7 @@ Info Communication::ImportDataImpl(
         std::tie(time_ipc, time_serializer) = ReceiveObjectWithStreamSerializer(I_Info, rData);
         info.Set<double>("elapsed_time_ipc", time_ipc);
         info.Set<double>("elapsed_time_serializer", time_serializer);
+        elapsed_time = time_ipc+time_serializer;
     } else {
         elapsed_time = ReceiveDataContainer(I_Info, rData);
     }
