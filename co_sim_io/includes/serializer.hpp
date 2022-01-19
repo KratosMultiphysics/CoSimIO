@@ -98,7 +98,7 @@ public:
     ///@{
 
     enum PointerType {SP_INVALID_POINTER, SP_BASE_CLASS_POINTER, SP_DERIVED_CLASS_POINTER};
-    enum TraceType {SERIALIZER_NO_TRACE=0, SERIALIZER_TRACE_ERROR=1, SERIALIZER_TRACE_ALL=2};
+    enum TraceType {SERIALIZER_NO_TRACE=0, SERIALIZER_TRACE_ERROR=1, SERIALIZER_TRACE_ALL=2, SERIALIZER_ASCII=3};
 
     ///@}
     ///@name Type Definitions
@@ -583,7 +583,7 @@ public:
 
     void save_trace_point(std::string const & rTag)
     {
-        if(mTrace) {
+        if(mTrace == SERIALIZER_TRACE_ERROR || mTrace == SERIALIZER_TRACE_ALL) {
             write(rTag);
         }
     }
