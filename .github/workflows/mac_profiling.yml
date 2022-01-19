@@ -1,6 +1,8 @@
 name: Mac-Profiling
 
 on:
+  push:
+
   workflow_dispatch:
 
 
