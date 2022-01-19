@@ -39,7 +39,8 @@ public:
         const fs::path& rPipeDir,
         const fs::path& rBasePipeName,
         const bool IsPrimary,
-        const std::size_t BufferSize);
+        const int BufferSize,
+        const int EchoLevel);
 
     template<typename TDataType>
     double Write(const TDataType& rData, const std::size_t SizeDataType)
@@ -113,12 +114,14 @@ private:
     fs::path mPipeNameWrite;
     fs::path mPipeNameRead;
 
-    const std::size_t mBufferSize;
+    std::size_t mBufferSize;
 
     void SendSize(const std::uint64_t Size);
 
     std::uint64_t ReceiveSize();
 };
+
+    const std::size_t mBufferSize;
 
     std::shared_ptr<BidirectionalPipe> mpPipe;
 
@@ -146,7 +149,7 @@ private:
 
     void DerivedHandShake() const override;
 
-    std::size_t GetPipeBufferSize(const Info& I_Info) const;
+    Info GetCommunicationSettings() const override;
 };
 
 } // namespace Internals
