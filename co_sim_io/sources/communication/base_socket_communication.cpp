@@ -72,6 +72,7 @@ double BaseSocketCommunication<TSocketType>::SendString(
 
     const auto start_time(std::chrono::steady_clock::now());
     asio::write(*mpAsioSocket, asio::buffer(rData.data(), rData.size()));
+    // PrintSocketSize();
     return Utilities::ElapsedSeconds(start_time);
 }
 
@@ -85,6 +86,7 @@ double BaseSocketCommunication<TSocketType>::ReceiveString(
     const auto start_time(std::chrono::steady_clock::now());
     rData.resize(received_size);
     asio::read(*mpAsioSocket, asio::buffer(&(rData.front()), received_size));
+    // PrintSocketSize();
     return Utilities::ElapsedSeconds(start_time);
 }
 
@@ -97,6 +99,7 @@ double BaseSocketCommunication<TSocketType>::SendDataContainer(
 
     const auto start_time(std::chrono::steady_clock::now());
     asio::write(*mpAsioSocket, asio::buffer(rData.data(), rData.size()*sizeof(double)));
+    // PrintSocketSize();
     return Utilities::ElapsedSeconds(start_time);
 }
 
@@ -110,6 +113,7 @@ double BaseSocketCommunication<TSocketType>::ReceiveDataContainer(
     const auto start_time(std::chrono::steady_clock::now());
     rData.resize(received_size);
     asio::read(*mpAsioSocket, asio::buffer(rData.data(), rData.size()*sizeof(double)));
+    // PrintSocketSize();
     return Utilities::ElapsedSeconds(start_time);
 }
 
@@ -131,6 +135,25 @@ std::uint64_t BaseSocketCommunication<TSocketType>::ReceiveSize()
     std::uint64_t imp_size_u;
     asio::read(*mpAsioSocket, asio::buffer(&imp_size_u, sizeof(imp_size_u)));
     return imp_size_u;
+
+    CO_SIM_IO_CATCH
+}
+
+template<class TSocketType>
+void BaseSocketCommunication<TSocketType>::PrintSocketSize()
+{
+    CO_SIM_IO_TRY
+    asio::socket_base::receive_buffer_size option;
+    mpAsioSocket->get_option(option);
+    int size = option.value();
+
+    std::cout << "CURRENT SOCKET SIZE (receive buffer): " << size << std::endl;
+
+    asio::socket_base::send_buffer_size option_2;
+    mpAsioSocket->get_option(option_2);
+    size = option_2.value();
+
+    std::cout << "CURRENT SOCKET SIZE (send buffer): " << size << std::endl;
 
     CO_SIM_IO_CATCH
 }
