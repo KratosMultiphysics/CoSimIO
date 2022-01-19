@@ -337,7 +337,7 @@ void Communication::WaitUntilFileIsRemoved(const fs::path& rPath) const
     if (fs::exists(rPath, ec)) { // only issue the wating message if the file exists initially
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << " to be removed" << std::endl;
         while(fs::exists(rPath, ec)) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(5)); // wait 0.001s before next check
+            std::this_thread::sleep_for(std::chrono::microseconds(10)); // wait 0.001s before next check
         }
         CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << rPath << " was removed" << std::endl;
     }
