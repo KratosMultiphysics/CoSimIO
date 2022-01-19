@@ -1,0 +1,30 @@
+name: Mac-Profiling
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  MacOS-Cpp-C:
+    runs-on: macOS-latest
+    name: MacOS C++ & C
+    timeout-minutes: 15
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build CoSimIO
+      run: |
+        cmake -H"." -B"build"        \
+          -DCMAKE_BUILD_TYPE="Debug" \
+          -DCO_SIM_IO_BUILD_C=ON               \
+          -DCO_SIM_IO_STRICT_COMPILER=ON
+
+        cmake --build "build" --target install -- -j2
+
+    - name: Running tests
+      run: |
+        ./bin/tests_cpp/export_data_cpp_test & ./bin/tests_cpp/import_data_cpp_test
+
+        ll data_exchange_profiling/
+
