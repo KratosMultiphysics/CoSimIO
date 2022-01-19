@@ -197,8 +197,10 @@ jobs:
 
     - name: Running tests
       run: |
-        cd build
-        ctest --output-on-failure
+        ./bin/tests_cpp/export_data_cpp_test & ./bin/tests_cpp/import_data_cpp_test
+
+        ll data_exchange_profiling/
+
 
 
   MacOS-Python:
