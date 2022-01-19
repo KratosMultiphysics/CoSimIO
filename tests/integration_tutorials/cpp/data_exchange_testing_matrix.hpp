@@ -38,7 +38,7 @@ std::vector<CoSimIO::Info> GetTestingMatrix()
         if (r_method == "pipe")info.Set("buffer_size", 1048576);
 
         info.Set("communication_format", r_method);
-        /configs.push_back(info);
+        configs.push_back(info);
 
         // "no_trace" is the default
         info.Set("always_use_serializer", true);

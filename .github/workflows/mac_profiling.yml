@@ -27,5 +27,5 @@ jobs:
         export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/bin
         ./bin/tests_cpp/export_data_cpp_test & ./bin/tests_cpp/import_data_cpp_test
 
-        ll data_exchange_profiling/
+        ls data_exchange_profiling/
 
