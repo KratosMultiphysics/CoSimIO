@@ -10,7 +10,6 @@ jobs:
   MacOS-Cpp-C:
     runs-on: macOS-latest
     name: MacOS C++ & C
-    timeout-minutes: 15
 
     steps:
     - uses: actions/checkout@v2
