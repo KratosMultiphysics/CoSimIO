@@ -130,7 +130,7 @@ int main()
             }
             res_file << "\n";
 
-            const bool break_and_go_to_next_config = ElapsedSeconds(start_time) > 5;
+            const bool break_and_go_to_next_config = ElapsedSeconds(start_time) > 60;
 
             CoSimIO::Info loop_info;
             loop_info.Set("identifier", "loop_info");

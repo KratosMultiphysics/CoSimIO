@@ -26,10 +26,10 @@ std::vector<CoSimIO::Info> GetTestingMatrix()
     // }
 
     std::vector<std::string> comm_methods {
-        // "pipe"
-        // ,"file"
-        "socket"
-        // ,"local_socket"
+        "pipe"
+        ,"file",
+        "socket",
+        "local_socket"
     };
 
     // adding basic configs
@@ -38,11 +38,11 @@ std::vector<CoSimIO::Info> GetTestingMatrix()
         if (r_method == "pipe")info.Set("buffer_size", 1048576);
 
         info.Set("communication_format", r_method);
-        // configs.push_back(info);
+        /configs.push_back(info);
 
         // "no_trace" is the default
         info.Set("always_use_serializer", true);
-        // configs.push_back(info);
+        configs.push_back(info);
 
         info.Set("serializer_trace_type", "ascii");
         configs.push_back(info);
@@ -53,10 +53,10 @@ std::vector<CoSimIO::Info> GetTestingMatrix()
     info.Set("communication_format", "file");
     info.Set("always_use_serializer", true);
     info.Set("use_file_serializer", false);
-    // configs.push_back(info);
+    configs.push_back(info);
 
     info.Set("serializer_trace_type", "ascii");
-    // configs.push_back(info);
+    configs.push_back(info);
 
     std::cout << "Number of configurations: " << configs.size() << std::endl;
 
@@ -121,7 +121,7 @@ std::string HumanReadableSize(std::size_t InBytes) {
     std::stringstream output;
     output.precision(4);
 
-    double output_size = InBytes;
+    double output_size = static_cast<double>(InBytes);
     int i = 0;
     for (; i < 7; i++) {
       if (output_size < 1024) {
