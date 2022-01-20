@@ -23,24 +23,7 @@ std::vector<CoSimIO::Info> GetTestingMatrix()
 
         info.Set("communication_format", r_method);
         configs.push_back(info);
-
-        // "no_trace" is the default
-        info.Set("always_use_serializer", true);
-        configs.push_back(info);
-
-        info.Set("serializer_trace_type", "ascii");
-        configs.push_back(info);
     }
-
-    // adding additional configs
-    info.Clear();
-    info.Set("communication_format", "file");
-    info.Set("always_use_serializer", true);
-    info.Set("use_file_serializer", false);
-    configs.push_back(info);
-
-    info.Set("serializer_trace_type", "ascii");
-    configs.push_back(info);
 
     std::cout << "Number of configurations: " << configs.size() << std::endl;
 
