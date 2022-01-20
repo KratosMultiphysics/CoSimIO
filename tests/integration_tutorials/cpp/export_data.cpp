@@ -155,9 +155,9 @@ int main()
 
             res_file.close();
         }
-    } catch (...) {
-        std::cout << "some EXCEPTION occured" << std::endl;
-    }
+    }catch(CoSimIO::Internals::Exception& e)      {  std::cout << "CoSimIO exception occured: " << e.what() << std::endl; } \
+catch(std::exception& e) { std::cout << "std exception occured: " << e.what() << std::endl; }                   \
+catch(...)               { std::cout << "Unknown error"; }
 
     return 0;
 }

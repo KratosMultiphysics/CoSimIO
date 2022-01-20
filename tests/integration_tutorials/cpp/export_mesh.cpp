@@ -32,7 +32,7 @@ std::string HumanReadableSize(std::size_t InBytes) {
     std::stringstream output;
     output.precision(4);
 
-    double output_size = InBytes;
+    double output_size = static_cast<double>(InBytes);
     int i = 0;
     for (; i < 7; i++) {
       if (output_size < 1024) {
