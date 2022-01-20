@@ -26,10 +26,10 @@ std::vector<CoSimIO::Info> GetTestingMatrix()
     // }
 
     std::vector<std::string> comm_methods {
-        "pipe"
-        ,"file",
+        //"pipe"
         "socket",
-        "local_socket"
+        "file"
+        //"local_socket"
     };
 
     // adding basic configs
@@ -100,12 +100,12 @@ std::vector<std::size_t> VEC_SIZES {
     ,static_cast<std::size_t>(1e1)
     ,static_cast<std::size_t>(1e2)
     ,static_cast<std::size_t>(1e3)
-    ,static_cast<std::size_t>(1e4)
-    ,static_cast<std::size_t>(1e5)
-    ,static_cast<std::size_t>(1e6)
-    ,static_cast<std::size_t>(1e7)
-    ,static_cast<std::size_t>(1e8)
-    ,static_cast<std::size_t>(2e8)
+    //,static_cast<std::size_t>(1e4)
+    //,static_cast<std::size_t>(1e5)
+    //,static_cast<std::size_t>(1e6)
+    //,static_cast<std::size_t>(1e7)
+    //,static_cast<std::size_t>(1e8)
+    //,static_cast<std::size_t>(2e8)
 };
 
 
