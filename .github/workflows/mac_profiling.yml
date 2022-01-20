@@ -28,3 +28,7 @@ jobs:
 
         ls data_exchange_profiling/
 
+    - uses: actions/upload-artifact@v2
+      with:
+        name: profiling results"
+        path: ${{ github.workspace }}/data_exchange_profiling

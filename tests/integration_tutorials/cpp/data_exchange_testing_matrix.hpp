@@ -35,7 +35,7 @@ std::vector<CoSimIO::Info> GetTestingMatrix()
     // adding basic configs
     for (const auto& r_method : comm_methods) {
         info.Clear();
-        if (r_method == "pipe")info.Set("buffer_size", 1048576);
+        // if (r_method == "pipe")info.Set("buffer_size", 1048576);
 
         info.Set("communication_format", r_method);
         configs.push_back(info);

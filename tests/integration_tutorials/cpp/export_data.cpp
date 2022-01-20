@@ -57,6 +57,7 @@ int main()
 
         config.Set("my_name", my_name);
         config.Set("connect_to", connect_to);
+        // config.Set("echo_level", 2);
 
         auto info = CoSimIO::Connect(config);
         COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
@@ -130,7 +131,7 @@ int main()
             }
             res_file << "\n";
 
-            const bool break_and_go_to_next_config = ElapsedSeconds(start_time) > 60;
+            const bool break_and_go_to_next_config = ElapsedSeconds(start_time) > 2;
 
             CoSimIO::Info loop_info;
             loop_info.Set("identifier", "loop_info");
