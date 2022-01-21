@@ -184,9 +184,13 @@ protected:
 
     fs::path GetFileName(const fs::path& rPath, const int Rank, const std::string& rExtension) const;
 
-    void WaitForPath(const fs::path& rPath) const;
+    void WaitForPath(
+        const fs::path& rPath,
+        const int PrintEchoLevel=3) const;
 
-    void WaitUntilFileIsRemoved(const fs::path& rPath) const;
+    void WaitUntilFileIsRemoved(
+        const fs::path& rPath,
+        const int PrintEchoLevel=3) const;
 
     void MakeFileVisible(const fs::path& rPath) const;
 
