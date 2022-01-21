@@ -104,26 +104,6 @@ std::string GetIpAddress(const Info& I_Settings)
     CO_SIM_IO_CATCH
 }
 
-struct ConnectionInfo
-{
-    int PortNumber;
-    std::string IpAddress;
-
-    friend class CoSimIO::Internals::Serializer;
-
-    void save(CoSimIO::Internals::Serializer& rSerializer) const
-    {
-        rSerializer.save("PortNumber", PortNumber);
-        rSerializer.save("IpAddress", IpAddress);
-    }
-
-    void load(CoSimIO::Internals::Serializer& rSerializer)
-    {
-        rSerializer.load("PortNumber", PortNumber);
-        rSerializer.load("IpAddress", IpAddress);
-    }
-};
-
 } // helpers namespace
 
 SocketCommunication::SocketCommunication(
@@ -133,9 +113,7 @@ SocketCommunication::SocketCommunication(
 {
     CO_SIM_IO_TRY
 
-    if (GetIsPrimaryConnection()) {
-        mIpAddress = GetIpAddress(I_Settings);
-    }
+    mIpAddress = GetIpAddress(I_Settings);
 
     CO_SIM_IO_CATCH
 }
@@ -144,9 +122,7 @@ Info SocketCommunication::ConnectDetail(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    if (!GetIsPrimaryConnection()) {GetConnectionInformation();}
-
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Using IP-Address: " << mIpAddress << " and port number: " << mPortNumber << std::endl;
+    if (!GetIsPrimaryConnection()) {GetPortNumber();}
 
     using namespace asio::ip;
 
@@ -168,6 +144,8 @@ void SocketCommunication::PrepareConnection(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
+    // CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Using IP Address: " << GetIpAddress(true) << std::endl;
+
     // preparing the acceptors to get the ports used for connecting the sockets
     if (GetIsPrimaryConnection()) {
         using namespace asio::ip;
@@ -176,28 +154,26 @@ void SocketCommunication::PrepareConnection(const Info& I_Info)
         mPortNumber = mpAsioAcceptor->local_endpoint().port();
         // should mpAsioAcceptor be closed?
 
-        // collect all IP-addresses and port numbers on rank 0 to
-        // exchange them during the handshake (which happens only on rank 0)
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using port number: " << mPortNumber << std::endl;
 
+        // collect all port numbers on rank 0
+        // to exchange them during the handshake
+        // (which happens only on rank 0)
         const auto& r_data_comm = GetDataCommunicator();
-        std::vector<ConnectionInfo> conn_infos;
-
-        ConnectionInfo my_conn_info {mPortNumber, mIpAddress};
-
-        if (r_data_comm.Rank() == 0) {
-            conn_infos.resize(r_data_comm.Size());
-            conn_infos[0] = {mPortNumber, mIpAddress};
-            for (int i=1; i<r_data_comm.Size(); ++i) {
-                r_data_comm.Recv(conn_infos[i], i);
-            }
-        } else {
-            r_data_comm.Send(my_conn_info, 0);
-        }
-
-        StreamSerializer serializer(Serializer::TraceType::SERIALIZER_ASCII); // deliberately using ascii as the info will be saved as string
-        serializer.save("conn_info", conn_infos); // tag is not used here
-        mSerializedConnectionInfo = serializer.GetStringRepresentation();
+        mAllPortNumbers.resize(r_data_comm.Size());
+        std::vector<int> my_ports(1);
+        my_ports[0] = mPortNumber;
+        r_data_comm.Gather(my_ports, mAllPortNumbers, 0);
     }
+
+    CO_SIM_IO_CATCH
+}
+
+void SocketCommunication::DerivedHandShake() const
+{
+    CO_SIM_IO_TRY
+
+    CO_SIM_IO_ERROR_IF(GetMyInfo().Get<Info>("communication_settings").Get<std::string>("ip_address") != GetPartnerInfo().Get<Info>("communication_settings").Get<std::string>("ip_address")) << "IP addresses don't match!" << std::endl;
 
     CO_SIM_IO_CATCH
 }
@@ -210,7 +186,9 @@ Info SocketCommunication::GetCommunicationSettings() const
     info.Set("ip_address", mIpAddress);
 
     if (GetIsPrimaryConnection() && GetDataCommunicator().Rank() == 0) {
-        info.Set("connection_info", mSerializedConnectionInfo);
+        std::stringstream port_numbers_stream;
+        std::copy(mAllPortNumbers.begin(), mAllPortNumbers.end(), std::ostream_iterator<int>(port_numbers_stream, "-"));
+        info.Set("port_numbers", port_numbers_stream.str());
     }
 
     return info;
@@ -218,25 +196,22 @@ Info SocketCommunication::GetCommunicationSettings() const
     CO_SIM_IO_CATCH
 }
 
-void SocketCommunication::GetConnectionInformation()
+void SocketCommunication::GetPortNumber()
 {
     CO_SIM_IO_TRY
 
     CO_SIM_IO_ERROR_IF(GetIsPrimaryConnection()) << "This function can only be used as secondary connection!" << std::endl;
 
     const auto partner_info = GetPartnerInfo();
-    const std::string serialized_info = partner_info.Get<Info>("communication_settings").Get<std::string>("connection_info");
+    const std::string ports_string = partner_info.Get<Info>("communication_settings").Get<std::string>("port_numbers");
 
-    std::vector<ConnectionInfo> conn_infos;
+    std::vector<std::string> ports = SplitStringByDelimiter(ports_string, '-');
 
-    StreamSerializer serializer(serialized_info, Serializer::TraceType::SERIALIZER_ASCII);
-    serializer.load("conn_info", conn_infos);
+    CO_SIM_IO_ERROR_IF(static_cast<int>(ports.size()) != GetDataCommunicator().Size()) << "Wrong number of ports!" << std::endl;
 
-    CO_SIM_IO_ERROR_IF(static_cast<int>(conn_infos.size()) != GetDataCommunicator().Size()) << "Wrong number of connection infos!" << std::endl;
+    mPortNumber = static_cast<unsigned short>(std::stoul(ports[GetDataCommunicator().Rank()]));
 
-    const auto& my_conn_info = conn_infos[GetDataCommunicator().Rank()];
-    mPortNumber = my_conn_info.PortNumber;
-    mIpAddress = my_conn_info.IpAddress;
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using port number: " << mPortNumber << std::endl;
 
     CO_SIM_IO_CATCH
 }
