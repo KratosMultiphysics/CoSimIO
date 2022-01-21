@@ -786,6 +786,9 @@ private:
 
         CO_SIM_IO_SERIALIZER_MODE_ASCII
 
+        CO_SIM_IO_DEBUG_ERROR_IF_NOT(rValue.find('"') == std::string::npos)  << "String contains a quote character, which is not supported!" << std::endl;
+        CO_SIM_IO_DEBUG_ERROR_IF_NOT(rValue.find('\n') == std::string::npos) << "String contains a newline character, which is not supported!" << std::endl;
+
         *mpBuffer << "\"" << rValue << "\"" << std::endl;
 
         CO_SIM_IO_SERIALIZER_MODE_END
