@@ -685,12 +685,12 @@ TEST_CASE("SocketCommunication_serializer_data_trace_error" * doctest::timeout(2
     RunAllCommunication(settings);
 }
 
-TEST_CASE("SocketCommunication_serializer_data_trace_all" * doctest::timeout(250))
+TEST_CASE("SocketCommunication_serializer_data_ascii" * doctest::timeout(250))
 {
     CoSimIO::Info settings;
     settings.Set<std::string>("communication_format", "socket");
     settings.Set<bool>("use_serializer_for_data", true);
-    settings.Set<std::string>("serializer_trace_type", "trace_all");
+    settings.Set<std::string>("serializer_trace_type", "ascii");
     RunAllCommunication(settings);
 }
 
