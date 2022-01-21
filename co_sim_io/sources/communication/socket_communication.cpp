@@ -207,18 +207,6 @@ void SocketCommunication::PrepareConnection(const Info& I_Info)
     CO_SIM_IO_CATCH
 }
 
-void SocketCommunication::DerivedHandShake() const
-{
-    CO_SIM_IO_TRY
-
-    const std::string my_ip_address = GetMyInfo().Get<Info>("communication_settings").Get<std::string>("ip_address");
-    const std::string partner_ip_address = GetPartnerInfo().Get<Info>("communication_settings").Get<std::string>("ip_address");
-
-    CO_SIM_IO_ERROR_IF(my_ip_address != partner_ip_address) << "Mismatch in IP addresses!\nMy IP address:      " << my_ip_address << "\nPartner IP address: " << partner_ip_address << std::endl;
-
-    CO_SIM_IO_CATCH
-}
-
 Info SocketCommunication::GetCommunicationSettings() const
 {
     CO_SIM_IO_TRY
@@ -242,7 +230,7 @@ void SocketCommunication::GetConnectionInformation()
     CO_SIM_IO_ERROR_IF(GetIsPrimaryConnection()) << "This function can only be used as secondary connection!" << std::endl;
 
     const auto partner_info = GetPartnerInfo();
-    const std::string serialized_info = partner_info.Get<Info>("communication_settings").Get<std::string>("conn_info");
+    const std::string serialized_info = partner_info.Get<Info>("communication_settings").Get<std::string>("connection_info");
 
     std::vector<ConnectionInfo> conn_infos;
 

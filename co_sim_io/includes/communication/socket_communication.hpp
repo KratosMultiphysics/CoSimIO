@@ -43,8 +43,6 @@ private:
 
     void PrepareConnection(const Info& I_Info) override;
 
-    void DerivedHandShake() const override;
-
     Info GetCommunicationSettings() const override;
 
     void GetConnectionInformation();
