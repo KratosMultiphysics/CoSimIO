@@ -186,20 +186,18 @@ void SocketCommunication::PrepareConnection(const Info& I_Info)
         std::vector<ConnectionInfo> conn_infos;
 
         ConnectionInfo my_conn_info {mPortNumber, mIpAddress};
+
         if (r_data_comm.Rank() == 0) {
             conn_infos.resize(r_data_comm.Size());
             conn_infos[0] = {mPortNumber, mIpAddress};
-        }
-
-        for (int i=1; i<r_data_comm.Size(); ++i) {
-            if (r_data_comm.Rank() == i) {
-                r_data_comm.Send(my_conn_info, 0);
-            } else {
+            for (int i=1; i<r_data_comm.Size(); ++i) {
                 r_data_comm.Recv(conn_infos[i], i);
             }
+        } else {
+            r_data_comm.Send(my_conn_info, 0);
         }
 
-        StreamSerializer ser(Serializer::TraceType::SERIALIZER_TRACE_ALL);
+        StreamSerializer ser(Serializer::TraceType::SERIALIZER_TRACE_ERROR);
         ser.save("conn_info", conn_infos);
         mSerializedConnectionInfo = ser.GetStringRepresentation();
     }
@@ -234,7 +232,7 @@ void SocketCommunication::GetConnectionInformation()
 
     std::vector<ConnectionInfo> conn_infos;
 
-    StreamSerializer ser(serialized_info, Serializer::TraceType::SERIALIZER_TRACE_ALL);
+    StreamSerializer ser(serialized_info, Serializer::TraceType::SERIALIZER_TRACE_ERROR);
     ser.load("conn_info", conn_infos);
 
     CO_SIM_IO_ERROR_IF(static_cast<int>(conn_infos.size()) != GetDataCommunicator().Size()) << "Wrong number of connection infos!" << std::endl;
