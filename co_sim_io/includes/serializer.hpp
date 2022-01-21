@@ -758,11 +758,8 @@ private:
 
         SizeType size;
         mpBuffer->read((char *)(&size),sizeof(SizeType));
-        char* c_binStream = new char [size];
-        mpBuffer->read(c_binStream,size);
-        std::string s_binStream(c_binStream,size);
-        rValue = s_binStream;
-        delete [] c_binStream;
+        rValue.resize(size);
+        mpBuffer->read(&rValue.front(),size);
 
         CO_SIM_IO_SERIALIZER_MODE_ASCII
 
@@ -788,6 +785,9 @@ private:
         mpBuffer->write(data,rData_size);
 
         CO_SIM_IO_SERIALIZER_MODE_ASCII
+
+        CO_SIM_IO_DEBUG_ERROR_IF_NOT(rValue.find('"') == std::string::npos)  << "String contains a quote character, which is not supported!" << std::endl;
+        CO_SIM_IO_DEBUG_ERROR_IF_NOT(rValue.find('\n') == std::string::npos) << "String contains a newline character, which is not supported!" << std::endl;
 
         *mpBuffer << "\"" << rValue << "\"" << std::endl;
 
