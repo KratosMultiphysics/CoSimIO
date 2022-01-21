@@ -13,6 +13,7 @@
 // CoSimulation includes
 #include "co_sim_io_mpi.hpp"
 #include "ghc/filesystem.hpp"
+#include <thread>
 
 #include "data_exchange_testing_matrix_mpi.hpp"
 
@@ -22,6 +23,18 @@
                   << " is not equal to " << b << std::endl;      \
         return 1;                                                \
     }
+
+void MPISafeCreateDirectories(const ghc::filesystem::path& rPath)
+{
+    if (!ghc::filesystem::exists(rPath)) {
+        ghc::filesystem::create_directories(rPath);
+    }
+    if (!ghc::filesystem::exists(rPath)) { // wait for the path to appear in the filesystem
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    }
+}
+
+#define cout_r0 if (rank == 0) std::cout
 
 
 int main(int argc, char** argv)
@@ -38,18 +51,19 @@ int main(int argc, char** argv)
 
     fs::path res_dir("data_exchange_profiling");
 
-    fs::remove_all(res_dir);
-    fs::create_directory(res_dir);
+    MPISafeCreateDirectories(res_dir);
 
     bool header_written = false;
     bool uses_serializer = false;
+
+    cout_r0 << "Number of configurations: " << GetTestingMatrix().size() << std::endl;
 
     int counter = 0;
     for (CoSimIO::Info config : GetTestingMatrix()) {
         header_written = false;
         uses_serializer = false;
 
-        const std::string file_name = GetFileName(config);
+        const std::string file_name = GetFileName(config, "_r"+std::to_string(rank));
 
         fs::path res_file_name = res_dir / fs::path(file_name);
 
@@ -58,7 +72,7 @@ int main(int argc, char** argv)
         res_file << "# "; // comment for file
         config.Print(res_file, "#");
 
-        std::cout << "Current configuration (" << file_name << "):\n" << config << std::endl;
+        cout_r0 << "Current configuration (" << file_name << "):\n" << config << std::endl;
         const std::string my_name = "cpp_export_solver_" + std::to_string(counter);
         const std::string connect_to = "cpp_import_solver_" + std::to_string(counter);
         counter++;
@@ -77,7 +91,7 @@ int main(int argc, char** argv)
             const auto start_time(std::chrono::steady_clock::now());
 
             data_to_send.resize(vec_size);
-            std::cout << "\nCurrent vector size: " << vec_size << std::endl;
+            cout_r0 << "\nCurrent vector size: " << vec_size << std::endl;
 
             double accum_time = 0.0;
             std::size_t accum_mem = 0;
@@ -120,9 +134,9 @@ int main(int argc, char** argv)
             const double avg_time_serializer = accum_time_serializer/(NUM_EVALUATIONS*2);
             const std::size_t avg_mem = accum_mem/(NUM_EVALUATIONS*2);
 
-            std::cout << "    Elapsed time: " << avg_time << std::endl;
-            std::cout << "    Memory usage: " << HumanReadableSize(avg_mem) << std::endl;
-            std::cout << "    Speed: " << HumanReadableSize(avg_mem/avg_time) << "/s" << std::endl;
+            cout_r0 << "    Elapsed time: " << avg_time << std::endl;
+            cout_r0 << "    Memory usage: " << HumanReadableSize(avg_mem) << std::endl;
+            cout_r0 << "    Speed: " << HumanReadableSize(avg_mem/avg_time) << "/s" << std::endl;
 
             if (!header_written) {
                 header_written = true;
@@ -139,17 +153,20 @@ int main(int argc, char** argv)
             }
             res_file << "\n";
 
-            const bool break_and_go_to_next_config = ElapsedSeconds(start_time) > 60;
+            int break_and_go_to_next_config = ElapsedSeconds(start_time) > 60;
+
+            // rank 0 is the one deciding
+            MPI_Bcast(&break_and_go_to_next_config, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
             CoSimIO::Info loop_info;
             loop_info.Set("identifier", "loop_info");
             loop_info.Set("connection_name", connection_name);
-            loop_info.Set("loop_info", break_and_go_to_next_config);
+            loop_info.Set<bool>("loop_info", break_and_go_to_next_config);
 
             CoSimIO::ExportInfo(loop_info);
 
             if (break_and_go_to_next_config) {
-                std::cout << "BREAKING ..." << std::endl;
+                cout_r0 << "BREAKING ..." << std::endl;
                 break;
             }
         }
@@ -158,7 +175,8 @@ int main(int argc, char** argv)
         disconnect_settings.Set("connection_name", connection_name);
         info = CoSimIO::Disconnect(disconnect_settings); // disconnect afterwards
         COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Disconnected);
-        std::cout << "\n" << std::endl;
+
+        cout_r0 << "\n" << std::endl;
 
         res_file.close();
     }

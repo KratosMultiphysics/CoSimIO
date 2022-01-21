@@ -25,12 +25,10 @@ std::vector<CoSimIO::Info> GetTestingMatrix()
         configs.push_back(info);
     }
 
-    std::cout << "Number of configurations: " << configs.size() << std::endl;
-
     return configs;
 }
 
-std::string GetFileName(const CoSimIO::Info& rInfo)
+std::string GetFileName(const CoSimIO::Info& rInfo, const std::string& rAppendix="")
 {
     const std::string comm_format = rInfo.Get<std::string>("communication_format");
     std::string file_name = comm_format;
@@ -57,7 +55,7 @@ std::string GetFileName(const CoSimIO::Info& rInfo)
     //     file_name += "_buf_" + std::to_string(rInfo.Get<int>("buffer_size"));
     // }
 
-    return file_name+".dat";
+    return file_name+rAppendix+".dat";
 }
 
 
