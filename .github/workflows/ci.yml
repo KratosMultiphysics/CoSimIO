@@ -193,7 +193,7 @@ jobs:
           -DCO_SIM_IO_BUILD_C=ON               \
           -DCO_SIM_IO_STRICT_COMPILER=ON
 
-        cmake --build "build" --target install -- -j2
+        cmake --build "build" --target install -- -j3
 
     - name: Running tests
       run: |
@@ -226,7 +226,7 @@ jobs:
           -DPYBIND11_PYTHON_VERSION=${{ matrix.python-version }} \
           -DCO_SIM_IO_STRICT_COMPILER=ON
 
-        cmake --build "build" --target install -- -j2
+        cmake --build "build" --target install -- -j3
 
     - name: Running tests
       run: |
