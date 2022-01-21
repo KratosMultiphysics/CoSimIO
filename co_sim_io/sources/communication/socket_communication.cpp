@@ -26,25 +26,6 @@ namespace Internals {
 
 namespace {
 
-std::vector<std::string> SplitStringByDelimiter(
-const std::string& rString,
-const char Delimiter)
-{
-    CO_SIM_IO_TRY
-
-    std::istringstream ss(rString);
-    std::string token;
-
-    std::vector<std::string> splitted_string;
-    while(std::getline(ss, token, Delimiter)) {
-        splitted_string.push_back(token);
-    }
-
-    return splitted_string;
-
-    CO_SIM_IO_CATCH
-}
-
 std::unordered_map<std::string, std::string> GetIpv4Addresses()
 {
     CO_SIM_IO_TRY
