@@ -146,6 +146,8 @@ Info SocketCommunication::ConnectDetail(const Info& I_Info)
 
     if (!GetIsPrimaryConnection()) {GetConnectionInformation();}
 
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Using IP-Address: " << mIpAddress << " and port number: " << mPortNumber << std::endl;
+
     using namespace asio::ip;
 
     mpAsioSocket = std::make_shared<asio::ip::tcp::socket>(mAsioContext);
@@ -166,8 +168,6 @@ void SocketCommunication::PrepareConnection(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    // CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Using IP Address: " << GetIpAddress(true) << std::endl;
-
     // preparing the acceptors to get the ports used for connecting the sockets
     if (GetIsPrimaryConnection()) {
         using namespace asio::ip;
@@ -176,11 +176,8 @@ void SocketCommunication::PrepareConnection(const Info& I_Info)
         mPortNumber = mpAsioAcceptor->local_endpoint().port();
         // should mpAsioAcceptor be closed?
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using port number: " << mPortNumber << std::endl;
-
-        // collect all IP-addresses and port numbers on rank 0
-        // to exchange them during the handshake
-        // (which happens only on rank 0)
+        // collect all IP-addresses and port numbers on rank 0 to
+        // exchange them during the handshake (which happens only on rank 0)
 
         const auto& r_data_comm = GetDataCommunicator();
         std::vector<ConnectionInfo> conn_infos;
@@ -197,7 +194,7 @@ void SocketCommunication::PrepareConnection(const Info& I_Info)
             r_data_comm.Send(my_conn_info, 0);
         }
 
-        StreamSerializer serializer(Serializer::TraceType::SERIALIZER_TRACE_ERROR); // deliberately not using the globally defined trace type as the info will be saved as string
+        StreamSerializer serializer(Serializer::TraceType::SERIALIZER_ASCII); // deliberately using ascii as the info will be saved as string
         serializer.save("conn_info", conn_infos); // tag is not used here
         mSerializedConnectionInfo = serializer.GetStringRepresentation();
     }
@@ -232,7 +229,7 @@ void SocketCommunication::GetConnectionInformation()
 
     std::vector<ConnectionInfo> conn_infos;
 
-    StreamSerializer serializer(serialized_info, Serializer::TraceType::SERIALIZER_TRACE_ERROR);
+    StreamSerializer serializer(serialized_info, Serializer::TraceType::SERIALIZER_ASCII);
     serializer.load("conn_info", conn_infos);
 
     CO_SIM_IO_ERROR_IF(static_cast<int>(conn_infos.size()) != GetDataCommunicator().Size()) << "Wrong number of connection infos!" << std::endl;
@@ -240,8 +237,6 @@ void SocketCommunication::GetConnectionInformation()
     const auto& my_conn_info = conn_infos[GetDataCommunicator().Rank()];
     mPortNumber = my_conn_info.PortNumber;
     mIpAddress = my_conn_info.IpAddress;
-
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using IpAddress: " << mIpAddress << " and port number: " << mPortNumber << std::endl;
 
     CO_SIM_IO_CATCH
 }
