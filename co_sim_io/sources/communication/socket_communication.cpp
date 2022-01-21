@@ -26,25 +26,6 @@ namespace Internals {
 
 namespace {
 
-std::vector<std::string> SplitStringByDelimiter(
-const std::string& rString,
-const char Delimiter)
-{
-    CO_SIM_IO_TRY
-
-    std::istringstream ss(rString);
-    std::string token;
-
-    std::vector<std::string> splitted_string;
-    while(std::getline(ss, token, Delimiter)) {
-        splitted_string.push_back(token);
-    }
-
-    return splitted_string;
-
-    CO_SIM_IO_CATCH
-}
-
 std::unordered_map<std::string, std::string> GetIpv4Addresses()
 {
     CO_SIM_IO_TRY
@@ -124,6 +105,24 @@ struct ConnectionInfo
     }
 };
 
+// this is required as the serializer cannot handle newlines
+void PrepareStringForAsciiSerialization(std::string& rString)
+{
+    const char disallowed_chars[] = {'<', '>'};
+    for (const auto ch : disallowed_chars) {
+        CO_SIM_IO_ERROR_IF_NOT(rString.find(ch) == std::string::npos) << "String contains a character that is not allowed: \"" << std::string(1,ch) << "\"!" << std::endl;
+    }
+
+    std::replace(rString.begin(), rString.end(), '\n', '<');
+    std::replace(rString.begin(), rString.end(), '"', '>');
+}
+
+void RevertAsciiSerialization(std::string& rString)
+{
+    std::replace(rString.begin(), rString.end(), '<', '\n');
+    std::replace(rString.begin(), rString.end(), '>', '"');
+}
+
 } // helpers namespace
 
 SocketCommunication::SocketCommunication(
@@ -194,9 +193,12 @@ void SocketCommunication::PrepareConnection(const Info& I_Info)
             r_data_comm.Send(my_conn_info, 0);
         }
 
-        StreamSerializer serializer(Serializer::TraceType::SERIALIZER_ASCII); // deliberately using ascii as the info will be saved as string
-        serializer.save("conn_info", conn_infos); // tag is not used here
+        StreamSerializer serializer(GetSerializerTraceType());
+        serializer.save("conn_info", conn_infos);
         mSerializedConnectionInfo = serializer.GetStringRepresentation();
+        if (GetSerializerTraceType() != Serializer::TraceType::SERIALIZER_NO_TRACE) {
+            PrepareStringForAsciiSerialization(mSerializedConnectionInfo);
+        }
     }
 
     CO_SIM_IO_CATCH
@@ -225,11 +227,15 @@ void SocketCommunication::GetConnectionInformation()
     CO_SIM_IO_ERROR_IF(GetIsPrimaryConnection()) << "This function can only be used as secondary connection!" << std::endl;
 
     const auto partner_info = GetPartnerInfo();
-    const std::string serialized_info = partner_info.Get<Info>("communication_settings").Get<std::string>("connection_info");
+    std::string serialized_info = partner_info.Get<Info>("communication_settings").Get<std::string>("connection_info");
+
+    if (GetSerializerTraceType() != Serializer::TraceType::SERIALIZER_NO_TRACE) {
+        RevertAsciiSerialization(serialized_info);
+    }
 
     std::vector<ConnectionInfo> conn_infos;
 
-    StreamSerializer serializer(serialized_info, Serializer::TraceType::SERIALIZER_ASCII);
+    StreamSerializer serializer(serialized_info, GetSerializerTraceType());
     serializer.load("conn_info", conn_infos);
 
     CO_SIM_IO_ERROR_IF(static_cast<int>(conn_infos.size()) != GetDataCommunicator().Size()) << "Wrong number of connection infos!" << std::endl;

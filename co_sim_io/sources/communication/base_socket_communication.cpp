@@ -68,12 +68,16 @@ double BaseSocketCommunication<TSocketType>::SendString(
     const Info& I_Info,
     const std::string& rData)
 {
+    CO_SIM_IO_TRY
+
     SendSize(rData.size()); // serves also as synchronization for time measurement
 
     const auto start_time(std::chrono::steady_clock::now());
     asio::write(*mpAsioSocket, asio::buffer(rData.data(), rData.size()));
     // PrintSocketSize();
     return Utilities::ElapsedSeconds(start_time);
+
+    CO_SIM_IO_CATCH
 }
 
 template<class TSocketType>
@@ -81,6 +85,8 @@ double BaseSocketCommunication<TSocketType>::ReceiveString(
     const Info& I_Info,
     std::string& rData)
 {
+    CO_SIM_IO_TRY
+
     std::size_t received_size = ReceiveSize(); // serves also as synchronization for time measurement
 
     const auto start_time(std::chrono::steady_clock::now());
@@ -88,6 +94,8 @@ double BaseSocketCommunication<TSocketType>::ReceiveString(
     asio::read(*mpAsioSocket, asio::buffer(&(rData.front()), received_size));
     // PrintSocketSize();
     return Utilities::ElapsedSeconds(start_time);
+
+    CO_SIM_IO_CATCH
 }
 
 template<class TSocketType>
@@ -95,12 +103,16 @@ double BaseSocketCommunication<TSocketType>::SendDataContainer(
     const Info& I_Info,
     const Internals::DataContainer<double>& rData)
 {
+    CO_SIM_IO_TRY
+
     SendSize(rData.size()); // serves also as synchronization for time measurement
 
     const auto start_time(std::chrono::steady_clock::now());
     asio::write(*mpAsioSocket, asio::buffer(rData.data(), rData.size()*sizeof(double)));
     // PrintSocketSize();
     return Utilities::ElapsedSeconds(start_time);
+
+    CO_SIM_IO_CATCH
 }
 
 template<class TSocketType>
@@ -108,6 +120,8 @@ double BaseSocketCommunication<TSocketType>::ReceiveDataContainer(
     const Info& I_Info,
     Internals::DataContainer<double>& rData)
 {
+    CO_SIM_IO_TRY
+
     std::size_t received_size = ReceiveSize(); // serves also as synchronization for time measurement
 
     const auto start_time(std::chrono::steady_clock::now());
@@ -115,6 +129,8 @@ double BaseSocketCommunication<TSocketType>::ReceiveDataContainer(
     asio::read(*mpAsioSocket, asio::buffer(rData.data(), rData.size()*sizeof(double)));
     // PrintSocketSize();
     return Utilities::ElapsedSeconds(start_time);
+
+    CO_SIM_IO_CATCH
 }
 
 template<class TSocketType>
