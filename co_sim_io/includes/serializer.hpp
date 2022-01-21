@@ -758,11 +758,8 @@ private:
 
         SizeType size;
         mpBuffer->read((char *)(&size),sizeof(SizeType));
-        char* c_binStream = new char [size];
-        mpBuffer->read(c_binStream,size);
-        std::string s_binStream(c_binStream,size);
-        rValue = s_binStream;
-        delete [] c_binStream;
+        rValue.resize(size);
+        mpBuffer->read(&rValue.front(),size);
 
         CO_SIM_IO_SERIALIZER_MODE_ASCII
 
