@@ -308,11 +308,13 @@ fs::path Communication::GetFileName(const fs::path& rPath, const int Rank, const
     CO_SIM_IO_CATCH
 }
 
-void Communication::WaitForPath(const fs::path& rPath) const
+void Communication::WaitForPath(
+    const fs::path& rPath,
+    const int PrintEchoLevel) const
 {
     CO_SIM_IO_TRY
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << std::endl;
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>=PrintEchoLevel) << "Waiting for: " << rPath << std::endl;
     if (!mUseAuxFileForFileAvailability) {
         Utilities::WaitUntilPathExists(rPath);
     } else {
@@ -324,22 +326,24 @@ void Communication::WaitForPath(const fs::path& rPath) const
         fs::remove(avail_file, ec);
         CO_SIM_IO_ERROR_IF(ec) << avail_file << " could not be removed!\nError code: " << ec.message() << std::endl;
     }
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Found: " << rPath << std::endl;
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>=PrintEchoLevel) << "Found: " << rPath << std::endl;
 
     CO_SIM_IO_CATCH
 }
 
-void Communication::WaitUntilFileIsRemoved(const fs::path& rPath) const
+void Communication::WaitUntilFileIsRemoved(
+    const fs::path& rPath,
+    const int PrintEchoLevel) const
 {
     CO_SIM_IO_TRY
 
     std::error_code ec;
     if (fs::exists(rPath, ec)) { // only issue the wating message if the file exists initially
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Waiting for: " << rPath << " to be removed" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>=PrintEchoLevel) << "Waiting for: " << rPath << " to be removed" << std::endl;
         while(fs::exists(rPath, ec)) {
             std::this_thread::sleep_for(std::chrono::microseconds(10)); // wait 0.001s before next check
         }
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << rPath << " was removed" << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>=PrintEchoLevel) << rPath << " was removed" << std::endl;
     }
 
     CO_SIM_IO_CATCH
@@ -399,12 +403,12 @@ void Communication::SynchronizeAll(const std::string& rTag) const
             CO_SIM_IO_ERROR_IF_NOT(fs::exists(GetTempFileName(file_name_primary))) << "Primary sync file " << file_name_primary << " could not be created!" << std::endl;
             MakeFileVisible(file_name_primary);
 
-            WaitForPath(file_name_secondary);
+            WaitForPath(file_name_secondary, 2);
             RemovePath(file_name_secondary);
 
-            WaitUntilFileIsRemoved(file_name_primary);
+            WaitUntilFileIsRemoved(file_name_primary, 2);
         } else {
-            WaitForPath(file_name_primary);
+            WaitForPath(file_name_primary, 2);
             RemovePath(file_name_primary);
 
             std::ofstream sync_file;
@@ -413,7 +417,7 @@ void Communication::SynchronizeAll(const std::string& rTag) const
             CO_SIM_IO_ERROR_IF_NOT(fs::exists(GetTempFileName(file_name_secondary))) << "Secondary sync file " << file_name_secondary << " could not be created!" << std::endl;
             MakeFileVisible(file_name_secondary);
 
-            WaitUntilFileIsRemoved(file_name_secondary);
+            WaitUntilFileIsRemoved(file_name_secondary, 2);
         }
     }
 
@@ -458,7 +462,7 @@ void Communication::HandShake(const Info& I_Info)
             const fs::path& rMyFileName, const fs::path& rOtherFileName){
 
             // first export my info
-            WaitUntilFileIsRemoved(rMyFileName); // in case of leftovers
+            WaitUntilFileIsRemoved(rMyFileName,1); // in case of leftovers
 
             { // necessary as FileSerializer releases resources on destruction!
                 FileSerializer serializer_save(GetTempFileName(rMyFileName).string(), mSerializerTraceType);
@@ -468,7 +472,7 @@ void Communication::HandShake(const Info& I_Info)
             MakeFileVisible(rMyFileName);
 
             // now get the info from the other
-            WaitForPath(rOtherFileName);
+            WaitForPath(rOtherFileName, 1);
 
             { // necessary as FileSerializer releases resources on destruction!
                 FileSerializer serializer_load(rOtherFileName.string(), mSerializerTraceType);
