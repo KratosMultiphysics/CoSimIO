@@ -180,7 +180,7 @@ std::string GetElementName(const ElementType I_ElementType)
 void WaitUntilPathExists(const fs::path& rPath)
 {
     std::error_code ec;
-    while(!fs::exists(rPath, ec)) {std::this_thread::sleep_for(std::chrono::milliseconds(5));} // wait 0.005s before next check
+    while(!fs::exists(rPath, ec)) {std::this_thread::sleep_for(std::chrono::microseconds(10));} // wait 0.005s before next check
 }
 
 std::set<std::size_t> ComputePartnerRanksAsImporter(

@@ -98,7 +98,7 @@ public:
     ///@{
 
     enum PointerType {SP_INVALID_POINTER, SP_BASE_CLASS_POINTER, SP_DERIVED_CLASS_POINTER};
-    enum TraceType {SERIALIZER_NO_TRACE=0, SERIALIZER_TRACE_ERROR=1, SERIALIZER_TRACE_ALL=2};
+    enum TraceType {SERIALIZER_NO_TRACE=0, SERIALIZER_TRACE_ERROR=1, SERIALIZER_TRACE_ALL=2, SERIALIZER_ASCII=3};
 
     ///@}
     ///@name Type Definitions
@@ -583,31 +583,18 @@ public:
 
     void save_trace_point(std::string const & rTag)
     {
-        if(mTrace) {
+        if(mTrace == SERIALIZER_TRACE_ERROR || mTrace == SERIALIZER_TRACE_ALL) {
             write(rTag);
         }
     }
 
     bool load_trace_point(std::string const & rTag)
     {
-        if(mTrace == SERIALIZER_TRACE_ERROR) {// only reporting the errors
+        if (mTrace == SERIALIZER_TRACE_ERROR || mTrace == SERIALIZER_TRACE_ALL) {
             std::string read_tag;
             read(read_tag);
             if(read_tag == rTag) {
-                return true;
-            } else {
-                std::stringstream buffer;
-                buffer << "In line " << mNumberOfLines;
-                buffer << " the trace tag is not the expected one:" << std::endl;
-                buffer << "    Tag found : " << read_tag << std::endl;
-                buffer << "    Tag given : " << rTag << std::endl;
-                CO_SIM_IO_ERROR << buffer.str() << std::endl;
-            }
-        } else if (mTrace == SERIALIZER_TRACE_ALL) {// also reporting matched tags.
-            std::string read_tag;
-            read(read_tag);
-            if(read_tag == rTag) {
-                CO_SIM_IO_INFO("Serializer") << "In line " << mNumberOfLines << " loading " << rTag << " as expected" << std::endl;
+                CO_SIM_IO_INFO_IF("CoSimIO-Serializer", mTrace==SERIALIZER_TRACE_ALL) << "In line " << mNumberOfLines << " loading " << rTag << " as expected" << std::endl;
                 return true;
             } else {
                 std::stringstream buffer;
