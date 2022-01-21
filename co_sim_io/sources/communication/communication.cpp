@@ -461,7 +461,7 @@ void Communication::HandShake(const Info& I_Info)
             WaitUntilFileIsRemoved(rMyFileName); // in case of leftovers
 
             { // necessary as FileSerializer releases resources on destruction!
-                FileSerializer serializer_save(GetTempFileName(rMyFileName).string());
+                FileSerializer serializer_save(GetTempFileName(rMyFileName).string(), mSerializerTraceType);
                 serializer_save.save("info", GetMyInfo());
             }
 
@@ -471,7 +471,7 @@ void Communication::HandShake(const Info& I_Info)
             WaitForPath(rOtherFileName);
 
             { // necessary as FileSerializer releases resources on destruction!
-                FileSerializer serializer_load(rOtherFileName.string());
+                FileSerializer serializer_load(rOtherFileName.string(), mSerializerTraceType);
                 serializer_load.load("info", mPartnerInfo);
             }
 
