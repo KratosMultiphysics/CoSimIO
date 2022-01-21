@@ -36,18 +36,16 @@ public:
 private:
     std::shared_ptr<asio::ip::tcp::acceptor> mpAsioAcceptor; // probably sufficient to have local in function
     unsigned short mPortNumber=0;
-    std::vector<int> mAllPortNumbers;
     std::string mIpAddress;
+    std::string mSerializedConnectionInfo;
 
     std::string GetCommunicationName() const override {return "socket";}
 
     void PrepareConnection(const Info& I_Info) override;
 
-    void DerivedHandShake() const override;
-
     Info GetCommunicationSettings() const override;
 
-    void GetPortNumber();
+    void GetConnectionInformation();
 };
 
 } // namespace Internals
