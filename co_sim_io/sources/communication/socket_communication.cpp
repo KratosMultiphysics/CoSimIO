@@ -197,9 +197,9 @@ void SocketCommunication::PrepareConnection(const Info& I_Info)
             r_data_comm.Send(my_conn_info, 0);
         }
 
-        StreamSerializer ser(Serializer::TraceType::SERIALIZER_TRACE_ERROR);
-        ser.save("conn_info", conn_infos);
-        mSerializedConnectionInfo = ser.GetStringRepresentation();
+        StreamSerializer serializer(Serializer::TraceType::SERIALIZER_TRACE_ERROR); // deliberately not using the globally defined trace type as the info will be saved as string
+        serializer.save("conn_info", conn_infos); // tag is not used here
+        mSerializedConnectionInfo = serializer.GetStringRepresentation();
     }
 
     CO_SIM_IO_CATCH
@@ -232,8 +232,8 @@ void SocketCommunication::GetConnectionInformation()
 
     std::vector<ConnectionInfo> conn_infos;
 
-    StreamSerializer ser(serialized_info, Serializer::TraceType::SERIALIZER_TRACE_ERROR);
-    ser.load("conn_info", conn_infos);
+    StreamSerializer serializer(serialized_info, Serializer::TraceType::SERIALIZER_TRACE_ERROR);
+    serializer.load("conn_info", conn_infos);
 
     CO_SIM_IO_ERROR_IF(static_cast<int>(conn_infos.size()) != GetDataCommunicator().Size()) << "Wrong number of connection infos!" << std::endl;
 
