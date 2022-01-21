@@ -21,7 +21,7 @@
         return 1;                                                \
     }
 
-
+#define cout_r0 if (rank == 0) std::cout
 
 int main(int argc, char** argv)
 {
@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 
     int counter = 0;
     for (CoSimIO::Info config : GetTestingMatrix()) {
-        std::cout << "Current configuration:\n" << config << std::endl;
+        cout_r0 << "Current configuration:\n" << config << std::endl;
         const std::string my_name = "cpp_import_solver_" + std::to_string(counter);
         const std::string connect_to = "cpp_export_solver_" + std::to_string(counter);
         counter++;
@@ -61,7 +61,7 @@ int main(int argc, char** argv)
                 info.Set("connection_name", connection_name);
                 info = CoSimIO::ImportData(info, receive_data);
 
-                if (receive_data.size() != VEC_SIZES[v]) {std::cout << "WRONG SIZE! should be " << VEC_SIZES[v] << " but is " << receive_data.size() << std::endl;}
+                if (receive_data.size() != VEC_SIZES[v]) {cout_r0 << "WRONG SIZE! should be " << VEC_SIZES[v] << " but is " << receive_data.size() << std::endl;}
 
                 if (i>0) {
                     accum_time += info.Get<double>("elapsed_time");
@@ -86,9 +86,9 @@ int main(int argc, char** argv)
                 }
             }
 
-            std::cout << "\n    Elapsed time: " << accum_time/(NUM_EVALUATIONS*2) << std::endl;
-            std::cout << "    Memory usage: " << HumanReadableSize(accum_mem/(NUM_EVALUATIONS*2)) << std::endl;
-            std::cout << "    Speed: " << HumanReadableSize(accum_mem/accum_time) << "/s" << std::endl;
+            cout_r0 << "\n    Elapsed time: " << accum_time/(NUM_EVALUATIONS*2) << std::endl;
+            cout_r0 << "    Memory usage: " << HumanReadableSize(accum_mem/(NUM_EVALUATIONS*2)) << std::endl;
+            cout_r0 << "    Speed: " << HumanReadableSize(accum_mem/accum_time) << "/s" << std::endl;
 
             CoSimIO::Info loop_info;
             loop_info.Set("identifier", "loop_info");
@@ -97,7 +97,7 @@ int main(int argc, char** argv)
             CoSimIO::Info rec_info = CoSimIO::ImportInfo(loop_info);
 
             if (rec_info.Get<bool>("loop_info")) {
-                std::cout << "BREAKING ..." << std::endl;
+                cout_r0 << "BREAKING ..." << std::endl;
                 break;
             }
         }
@@ -106,7 +106,7 @@ int main(int argc, char** argv)
         disconnect_settings.Set("connection_name", connection_name);
         info = CoSimIO::Disconnect(disconnect_settings); // disconnect afterwards
         COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Disconnected);
-        std::cout << "\n" << std::endl;
+        cout_r0 << "\n" << std::endl;
     }
 
     MPI_Finalize();
