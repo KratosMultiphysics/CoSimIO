@@ -257,7 +257,8 @@ jobs:
           -G"Visual Studio 16 2019"   ^
           -H"."                       ^
           -B"build"                   ^
-          -DCO_SIM_IO_BUILD_C=ON                ^
+          -DCMAKE_BUILD_TYPE="Debug"  ^
+          -DCO_SIM_IO_BUILD_C=ON      ^
           -DCO_SIM_IO_STRICT_COMPILER=ON        || goto :error
 
         cmake --build "build" --target install -- /p:Platform=x64 || goto :error
