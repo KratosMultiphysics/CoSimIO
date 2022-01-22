@@ -759,7 +759,9 @@ private:
         SizeType size;
         mpBuffer->read((char *)(&size),sizeof(SizeType));
         rValue.resize(size);
-        mpBuffer->read(&rValue.front(),size);
+        if (size>0) {
+            mpBuffer->read(&rValue.front(),size);
+        }
 
         CO_SIM_IO_SERIALIZER_MODE_ASCII
 

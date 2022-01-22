@@ -57,6 +57,7 @@ Info BaseSocketCommunication<TSocketType>::DisconnectDetail(const Info& I_Info)
     if (mContextThread.joinable()) mContextThread.join();
 
     mpAsioSocket->close();
+    mpAsioSocket.reset();
 
     return Info();
 

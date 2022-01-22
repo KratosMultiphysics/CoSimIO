@@ -153,6 +153,7 @@ Info SocketCommunication::ConnectDetail(const Info& I_Info)
     if (GetIsPrimaryConnection()) { // this is the server
         mpAsioAcceptor->accept(*mpAsioSocket);
         mpAsioAcceptor->close();
+        mpAsioAcceptor.reset();
     } else { // this is the client
         tcp::endpoint my_endpoint(asio::ip::make_address(mIpAddress), mPortNumber);
         mpAsioSocket->connect(my_endpoint);
@@ -173,7 +174,6 @@ void SocketCommunication::PrepareConnection(const Info& I_Info)
         tcp::endpoint port_selection_endpoint(asio::ip::make_address(mIpAddress), 0); // using port 0 means that it will look for a free port
         mpAsioAcceptor = std::make_shared<tcp::acceptor>(mAsioContext, port_selection_endpoint);
         mPortNumber = mpAsioAcceptor->local_endpoint().port();
-        // should mpAsioAcceptor be closed?
 
         // collect all IP-addresses and port numbers on rank 0 to
         // exchange them during the handshake (which happens only on rank 0)
