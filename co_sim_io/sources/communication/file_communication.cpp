@@ -82,6 +82,10 @@ void FileCommunication::DerivedHandShake() const
 {
     CO_SIM_IO_TRY
 
+    const bool my_use_aux_file_for_file_availability = GetMyInfo().Get<Info>("communication_settings").Get<bool>("use_aux_file_for_file_availability");
+    const bool partner_use_aux_file_for_file_availability = GetPartnerInfo().Get<Info>("communication_settings").Get<bool>("use_aux_file_for_file_availability");
+    CO_SIM_IO_ERROR_IF(my_use_aux_file_for_file_availability != partner_use_aux_file_for_file_availability) << std::boolalpha << "Mismatch in use_aux_file_for_file_availability!\nMy use_aux_file_for_file_availability: " << my_use_aux_file_for_file_availability << "\nPartner use_aux_file_for_file_availability: " << partner_use_aux_file_for_file_availability << std::noboolalpha << "\nNote that the default on unix is false, while the default on windows is true!"<< std::endl;
+
     const bool my_use_file_serializer = GetMyInfo().Get<Info>("communication_settings").Get<bool>("use_file_serializer");
     const bool partner_use_file_serializer = GetPartnerInfo().Get<Info>("communication_settings").Get<bool>("use_file_serializer");
     CO_SIM_IO_ERROR_IF(my_use_file_serializer != partner_use_file_serializer) << std::boolalpha << "Mismatch in use_file_serializer!\nMy use_file_serializer: " << my_use_file_serializer << "\nPartner use_file_serializer: " << partner_use_file_serializer << std::noboolalpha << std::endl;
@@ -94,6 +98,7 @@ Info FileCommunication::GetCommunicationSettings() const
     CO_SIM_IO_TRY
 
     Info info;
+    info.Set("use_aux_file_for_file_availability", mUseAuxFileForFileAvailability);
     info.Set("use_file_serializer", mUseFileSerializer);
 
     return info;
