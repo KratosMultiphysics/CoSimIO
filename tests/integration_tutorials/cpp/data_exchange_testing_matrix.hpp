@@ -101,7 +101,7 @@ std::string GetFileName(const CoSimIO::Info& rInfo)
 
     if (comm_format == "file" && rInfo.Has("use_aux_file_for_file_availability")) {
         const bool use_aux_file_for_file_availability = rInfo.Get<bool>("use_aux_file_for_file_availability");
-        if (!use_aux_file_for_file_availability) {
+        if (use_aux_file_for_file_availability) {
             file_name += "_aux_file";
         }
     }
