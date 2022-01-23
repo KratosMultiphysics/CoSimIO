@@ -26,17 +26,22 @@ std::vector<CoSimIO::Info> GetTestingMatrix()
     // }
 
     std::vector<std::string> comm_methods {
-        //"pipe"
         "socket",
-        "file",
-        "local_socket"
+        "file"
     };
+
+#ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
+    comm_methods.push_back("local_socket");
+#endif
+
+#ifdef CO_SIM_IO_COMPILED_IN_LINUX
+    comm_methods.push_back("pipe");
+#endif
 
     // adding basic configs
     for (const auto& r_method : comm_methods) {
         info.Clear();
-        // if (r_method == "pipe")info.Set("buffer_size", 1048576);
-        //if (r_method == "file") info.Set("use_aux_file_for_file_availability", true);
+        if (r_method == "pipe")info.Set("buffer_size", 1048576);
 
         info.Set("communication_format", r_method);
         configs.push_back(info);
@@ -58,6 +63,13 @@ std::vector<CoSimIO::Info> GetTestingMatrix()
 
     info.Set("serializer_trace_type", "ascii");
     configs.push_back(info);
+
+#ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
+    info.Clear();
+    info.Set("communication_format", "file");
+    info.Set("use_aux_file_for_file_availability", true);
+    configs.push_back(info);
+#endif
 
     std::cout << "Number of configurations: " << configs.size() << std::endl;
 
@@ -84,6 +96,13 @@ std::string GetFileName(const CoSimIO::Info& rInfo)
         const bool use_file_serializer = rInfo.Get<bool>("use_file_serializer");
         if (!use_file_serializer) {
             file_name += "_stream_ser";
+        }
+    }
+
+    if (comm_format == "file" && rInfo.Has("use_aux_file_for_file_availability")) {
+        const bool use_aux_file_for_file_availability = rInfo.Get<bool>("use_aux_file_for_file_availability");
+        if (!use_aux_file_for_file_availability) {
+            file_name += "_aux_file";
         }
     }
 
