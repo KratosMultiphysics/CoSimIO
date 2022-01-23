@@ -178,7 +178,9 @@ protected:
     Info GetMyInfo() const;
     Info GetPartnerInfo() const {return mPartnerInfo;};
 
-    fs::path GetTempFileName(const fs::path& rPath) const;
+    fs::path GetTempFileName(
+        const fs::path& rPath,
+        const bool UseAuxFileForFileAvailability=true) const;
 
     fs::path GetFileName(const fs::path& rPath, const std::string& rExtension) const;
 
@@ -186,13 +188,16 @@ protected:
 
     void WaitForPath(
         const fs::path& rPath,
+        const bool UseAuxFileForFileAvailability=true,
         const int PrintEchoLevel=3) const;
 
     void WaitUntilFileIsRemoved(
         const fs::path& rPath,
         const int PrintEchoLevel=3) const;
 
-    void MakeFileVisible(const fs::path& rPath) const;
+    void MakeFileVisible(
+        const fs::path& rPath,
+        const bool UseAuxFileForFileAvailability=true) const;
 
     void RemovePath(const fs::path& rPath) const;
 
@@ -299,7 +304,6 @@ private:
 
     fs::path mCommFolder;
     bool mCommInFolder = true;
-    bool mUseAuxFileForFileAvailability = false;
     bool mAlwaysUseSerializer = false;
     Serializer::TraceType mSerializerTraceType = Serializer::TraceType::SERIALIZER_NO_TRACE;
 

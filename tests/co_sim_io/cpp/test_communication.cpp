@@ -617,6 +617,7 @@ TEST_CASE("FileCommunication_serializer_data" * doctest::timeout(250))
 
 TEST_CASE("FileCommunication_avail_file" * doctest::timeout(250))
 {
+    // could be skipped as in Win by default the aux file is used
     CoSimIO::Info settings;
     settings.Set<std::string>("communication_format", "file");
     settings.Set<bool>("use_aux_file_for_file_availability", true);

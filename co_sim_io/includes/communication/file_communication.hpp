@@ -22,6 +22,12 @@
 namespace CoSimIO {
 namespace Internals {
 
+#ifdef CO_SIM_IO_COMPILED_IN_WINDOWS
+constexpr bool USE_AUX_FILE_FOR_FILE_AVAILABILITY = true;
+#else
+constexpr bool USE_AUX_FILE_FOR_FILE_AVAILABILITY = false;
+#endif
+
 class CO_SIM_IO_API FileCommunication : public Communication
 {
 public:
@@ -32,6 +38,7 @@ public:
     ~FileCommunication() override;
 
 private:
+    bool mUseAuxFileForFileAvailability = USE_AUX_FILE_FOR_FILE_AVAILABILITY;
     const bool mUseFileSerializer = true;
 
     std::string GetCommunicationName() const override {return "file";}

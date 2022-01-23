@@ -29,7 +29,6 @@ Communication::Communication(
     : mpDataComm(I_DataComm),
       mMyName(I_Settings.Get<std::string>("my_name")),
       mConnectTo(I_Settings.Get<std::string>("connect_to")),
-      mUseAuxFileForFileAvailability(I_Settings.Get<bool>("use_aux_file_for_file_availability", false)),
       mAlwaysUseSerializer(I_Settings.Get<bool>("always_use_serializer", false)),
       mWorkingDirectory(I_Settings.Get<std::string>("working_directory", fs::relative(fs::current_path()).string())),
       mEchoLevel(I_Settings.Get<int>("echo_level", 0)),
@@ -263,11 +262,13 @@ void Communication::PostChecks(const Info& I_Info)
     CO_SIM_IO_ERROR_IF_NOT(I_Info.Has("memory_usage_ipc")) << "\"memory_usage_ipc\" must be specified!" << std::endl;
 }
 
-fs::path Communication::GetTempFileName(const fs::path& rPath) const
+fs::path Communication::GetTempFileName(
+    const fs::path& rPath,
+    const bool UseAuxFileForFileAvailability) const
 {
     CO_SIM_IO_TRY
 
-    if (!mUseAuxFileForFileAvailability) {
+    if (!UseAuxFileForFileAvailability) {
         if (mCommInFolder) {
             return rPath.string().insert(mCommFolder.string().length()+1, ".");
         } else {
@@ -310,12 +311,13 @@ fs::path Communication::GetFileName(const fs::path& rPath, const int Rank, const
 
 void Communication::WaitForPath(
     const fs::path& rPath,
+    const bool UseAuxFileForFileAvailability,
     const int PrintEchoLevel) const
 {
     CO_SIM_IO_TRY
 
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>=PrintEchoLevel) << "Waiting for: " << rPath << std::endl;
-    if (!mUseAuxFileForFileAvailability) {
+    if (!UseAuxFileForFileAvailability) {
         Utilities::WaitUntilPathExists(rPath);
     } else {
         fs::path avail_file = fs::path(rPath.string()+".avail");
@@ -349,13 +351,15 @@ void Communication::WaitUntilFileIsRemoved(
     CO_SIM_IO_CATCH
 }
 
-void Communication::MakeFileVisible(const fs::path& rPath) const
+void Communication::MakeFileVisible(
+    const fs::path& rPath,
+    const bool UseAuxFileForFileAvailability) const
 {
     CO_SIM_IO_TRY
 
-    if (!mUseAuxFileForFileAvailability) {
+    if (!UseAuxFileForFileAvailability) {
         std::error_code ec;
-        fs::rename(GetTempFileName(rPath), rPath, ec);
+        fs::rename(GetTempFileName(rPath, UseAuxFileForFileAvailability), rPath, ec);
         CO_SIM_IO_ERROR_IF(ec) << rPath << " could not be made visible!\nError code: " << ec.message() << std::endl;
     } else {
         std::ofstream avail_file;
@@ -403,12 +407,12 @@ void Communication::SynchronizeAll(const std::string& rTag) const
             CO_SIM_IO_ERROR_IF_NOT(fs::exists(GetTempFileName(file_name_primary))) << "Primary sync file " << file_name_primary << " could not be created!" << std::endl;
             MakeFileVisible(file_name_primary);
 
-            WaitForPath(file_name_secondary, 2);
+            WaitForPath(file_name_secondary, true, 2);
             RemovePath(file_name_secondary);
 
             WaitUntilFileIsRemoved(file_name_primary, 2);
         } else {
-            WaitForPath(file_name_primary, 2);
+            WaitForPath(file_name_primary, true, 2);
             RemovePath(file_name_primary);
 
             std::ofstream sync_file;
@@ -472,7 +476,7 @@ void Communication::HandShake(const Info& I_Info)
             MakeFileVisible(rMyFileName);
 
             // now get the info from the other
-            WaitForPath(rOtherFileName, 1);
+            WaitForPath(rOtherFileName, true, 1);
 
             { // necessary as FileSerializer releases resources on destruction!
                 FileSerializer serializer_load(rOtherFileName.string(), mSerializerTraceType);

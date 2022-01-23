@@ -60,8 +60,12 @@ FileCommunication::FileCommunication(
     const Info& I_Settings,
     std::shared_ptr<DataCommunicator> I_DataComm)
     : Communication(I_Settings, I_DataComm),
+      mUseAuxFileForFileAvailability(I_Settings.Get<bool>("use_aux_file_for_file_availability", USE_AUX_FILE_FOR_FILE_AVAILABILITY)),
       mUseFileSerializer(I_Settings.Get<bool>("use_file_serializer", true))
 {
+#ifdef CO_SIM_IO_COMPILED_IN_WINDOWS
+    CO_SIM_IO_INFO_IF("CoSimIO", !mUseAuxFileForFileAvailability) << "WARNING: Using rename for making files available can cause race conditions as it is not atomic in Windows! Use \"use_aux_file_for_file_availability\" = false to avoid this" << std::endl;
+#endif
 }
 
 FileCommunication::~FileCommunication()
@@ -81,6 +85,10 @@ void FileCommunication::DerivedHandShake() const
 {
     CO_SIM_IO_TRY
 
+    const bool my_use_aux_file_for_file_availability = GetMyInfo().Get<Info>("communication_settings").Get<bool>("use_aux_file_for_file_availability");
+    const bool partner_use_aux_file_for_file_availability = GetPartnerInfo().Get<Info>("communication_settings").Get<bool>("use_aux_file_for_file_availability");
+    CO_SIM_IO_ERROR_IF(my_use_aux_file_for_file_availability != partner_use_aux_file_for_file_availability) << std::boolalpha << "Mismatch in use_aux_file_for_file_availability!\nMy use_aux_file_for_file_availability: " << my_use_aux_file_for_file_availability << "\nPartner use_aux_file_for_file_availability: " << partner_use_aux_file_for_file_availability << std::noboolalpha << "\nNote that the default on unix is false, while the default on windows is true!"<< std::endl;
+
     const bool my_use_file_serializer = GetMyInfo().Get<Info>("communication_settings").Get<bool>("use_file_serializer");
     const bool partner_use_file_serializer = GetPartnerInfo().Get<Info>("communication_settings").Get<bool>("use_file_serializer");
     CO_SIM_IO_ERROR_IF(my_use_file_serializer != partner_use_file_serializer) << std::boolalpha << "Mismatch in use_file_serializer!\nMy use_file_serializer: " << my_use_file_serializer << "\nPartner use_file_serializer: " << partner_use_file_serializer << std::noboolalpha << std::endl;
@@ -93,6 +101,7 @@ Info FileCommunication::GetCommunicationSettings() const
     CO_SIM_IO_TRY
 
     Info info;
+    info.Set("use_aux_file_for_file_availability", mUseAuxFileForFileAvailability);
     info.Set("use_file_serializer", mUseFileSerializer);
 
     return info;
@@ -206,11 +215,11 @@ Info FileCommunication::GenericSendWithFileSerializer(
     WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
     const auto start_time(std::chrono::steady_clock::now());
-    SerializeToFile(GetTempFileName(file_name), rObj, GetSerializerTraceType());
+    SerializeToFile(GetTempFileName(file_name, mUseAuxFileForFileAvailability), rObj, GetSerializerTraceType());
 
-    info.Set<std::size_t>("memory_usage_ipc", fs::file_size(GetTempFileName(file_name)));
+    info.Set<std::size_t>("memory_usage_ipc", fs::file_size(GetTempFileName(file_name, mUseAuxFileForFileAvailability)));
 
-    MakeFileVisible(file_name);
+    MakeFileVisible(file_name, mUseAuxFileForFileAvailability);
 
     const double elapsed_time = Utilities::ElapsedSeconds(start_time);
     info.Set<double>("elapsed_time", elapsed_time);
@@ -232,7 +241,7 @@ Info FileCommunication::GenericReceiveWithFileSerializer(
 
     const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
-    WaitForPath(file_name);
+    WaitForPath(file_name, mUseAuxFileForFileAvailability);
 
     info.Set<std::size_t>("memory_usage_ipc", fs::file_size(file_name));
 
@@ -266,7 +275,7 @@ double FileCommunication::GenericSend(
 
     const auto start_time(std::chrono::steady_clock::now());
 
-    std::ofstream output_file(GetTempFileName(file_name), std::ios::out|std::ios::binary);
+    std::ofstream output_file(GetTempFileName(file_name, mUseAuxFileForFileAvailability), std::ios::out|std::ios::binary);
     Utilities::CheckStream(output_file, file_name);
 
     output_file.write(reinterpret_cast<const char *>(&size), sizeof(std::size_t));
@@ -274,7 +283,7 @@ double FileCommunication::GenericSend(
     output_file.write(reinterpret_cast<const char *>(&rData[0]), rData.size()*SizeOfData);
 
     output_file.close();
-    MakeFileVisible(file_name);
+    MakeFileVisible(file_name, mUseAuxFileForFileAvailability);
 
     return Utilities::ElapsedSeconds(start_time);
 
@@ -293,7 +302,7 @@ double FileCommunication::GenericReceive(
 
     const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
-    WaitForPath(file_name);
+    WaitForPath(file_name, mUseAuxFileForFileAvailability);
 
     const auto start_time(std::chrono::steady_clock::now());
 
