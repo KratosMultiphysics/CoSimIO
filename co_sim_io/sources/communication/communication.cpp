@@ -359,7 +359,7 @@ void Communication::MakeFileVisible(
 
     if (!UseAuxFileForFileAvailability) {
         std::error_code ec;
-        fs::rename(GetTempFileName(rPath), rPath, ec);
+        fs::rename(GetTempFileName(rPath, UseAuxFileForFileAvailability), rPath, ec);
         CO_SIM_IO_ERROR_IF(ec) << rPath << " could not be made visible!\nError code: " << ec.message() << std::endl;
     } else {
         std::ofstream avail_file;
