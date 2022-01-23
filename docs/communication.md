@@ -48,7 +48,7 @@ The following settings are available for all methods of communication:
 | working_directory     | string | - | current working directory | path to the working directory |
 | use_folder_for_communication | bool | - | true  | whether the files used for communication are written in a dedicated folder. Deadlocks from leftover files from previous executions are less likely to happen as they can be cleanup up. |
 | always_use_serializer | bool | - | false  | use the Serializer also when it is not necessary, e.g. for basic types such as Im-/ExportData. This is ~ 10x slower but more stable, especially when combined with ascii-serialization |
-| serializer_trace_type | string | - | no_trace | mode for the `Serializer`: `no_trace` (fastest method, binary format, without any debugging checks), `trace_error` (ascii format, limited error checking), `trace_all` (slow, ascii format, detailed error checking, should only be used for debugging) |
+| serializer_trace_type | string | - | no_trace | mode for the `Serializer`: `no_trace` (fastest method, binary format, without any debugging checks), `ascii` (ascii format, without any debugging checks), `trace_error` (ascii format, checks are enabled), `trace_all` (ascii format, checks are enabled and printed, hence very verbose!) |
 | echo_level            | int    | - | 0 | decides how much output is printed |
 | print_timing          | bool   | - | false | whether timing information should be printed |
 
