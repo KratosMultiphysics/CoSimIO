@@ -47,9 +47,8 @@ The following settings are available for all methods of communication:
 | is_primary_connection | bool   | - | determined from other input | whether this is the primary connection, if not specified it is determined automatically from the names of the partners |
 | working_directory     | string | - | current working directory | path to the working directory |
 | use_folder_for_communication | bool | - | true  | whether the files used for communication are written in a dedicated folder. Deadlocks from leftover files from previous executions are less likely to happen as they can be cleanup up. |
-| use_aux_file_for_file_availability | bool | - | false  | select whether files are made available by use of an auxiliary file or via rename. |
 | always_use_serializer | bool | - | false  | use the Serializer also when it is not necessary, e.g. for basic types such as Im-/ExportData. This is ~ 10x slower but more stable, especially when combined with ascii-serialization |
-| serializer_trace_type | string | - | no_trace | mode for the `Serializer`: `no_trace` (fastest method, binary format, without any debugging checks), `trace_error` (ascii format, limited error checking), `trace_all` (slow, ascii format, detailed error checking, should only be used for debugging) |
+| serializer_trace_type | string | - | no_trace | mode for the `Serializer`: `no_trace` (fastest method, binary format, without any debugging checks), `ascii` (ascii format, without any debugging checks), `trace_error` (ascii format, checks are enabled), `trace_all` (ascii format, checks are enabled and printed, hence very verbose!) |
 | echo_level            | int    | - | 0 | decides how much output is printed |
 | print_timing          | bool   | - | false | whether timing information should be printed |
 
@@ -65,6 +64,9 @@ The following settings are available for all methods of communication:
 
 ## File-based communication
 As the name indicates, this method uses files for communicating data. It is robust and useful for debugging. It is the preferred method for implementing the _CoSimIO_ in a new code, as it is intuitive to follow the flow of data through the files.
+In order to prevent race conditions when accessing the files, two mechanisms are available (which can be selected with `use_aux_file_for_file_availability`):
+- `use_aux_file_for_file_availability == true`: An empty auxiliary file is created once the real file with the data is ready to be read. This is used unconditionally for any synchronization files.
+- `use_aux_file_for_file_availability == false`: On Unix operating systems, renaming of files is atomic (on Windows it is not which can cause race conditions!). Hence the data is written to a file with a temporary name. Once the writing is complete, the file is renamed to the real name for the other partner to read from it. This is especially useful for clusters since it avoids writing of auxiliar files on slow filesystems.
 
 The implementation of the _FileCommunication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/includes/communication/file_communication.hpp).
 
@@ -74,6 +76,7 @@ Set `communication_format` to `file`.
 
 | name | type | required | default| description |
 |---|---|---|---|---|
+| use_aux_file_for_file_availability | bool | - | Windows: true; Unix: false  | select whether files are made available by use of an auxiliary file or via rename. |
 | use_file_serializer | bool   | - | true | Using the `FileSerializer` (which directly uses a file stream to read/write data) over the `StreamSerializer` (which first to reads/writes to a stringstream before writing everything to the file at once) |
 
 ## Socket-based communication
