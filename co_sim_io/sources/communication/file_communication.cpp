@@ -60,6 +60,7 @@ FileCommunication::FileCommunication(
     const Info& I_Settings,
     std::shared_ptr<DataCommunicator> I_DataComm)
     : Communication(I_Settings, I_DataComm),
+      mUseAuxFileForFileAvailability(I_Settings.Get<bool>("use_aux_file_for_file_availability", USE_AUX_FILE_FOR_FILE_AVAILABILITY)),
       mUseFileSerializer(I_Settings.Get<bool>("use_file_serializer", true))
 {
 }
@@ -206,11 +207,11 @@ Info FileCommunication::GenericSendWithFileSerializer(
     WaitUntilFileIsRemoved(file_name); // TODO maybe this can be queued somehow ... => then it would not block the sender
 
     const auto start_time(std::chrono::steady_clock::now());
-    SerializeToFile(GetTempFileName(file_name), rObj, GetSerializerTraceType());
+    SerializeToFile(GetTempFileName(file_name, mUseAuxFileForFileAvailability), rObj, GetSerializerTraceType());
 
-    info.Set<std::size_t>("memory_usage_ipc", fs::file_size(GetTempFileName(file_name)));
+    info.Set<std::size_t>("memory_usage_ipc", fs::file_size(GetTempFileName(file_name, mUseAuxFileForFileAvailability)));
 
-    MakeFileVisible(file_name);
+    MakeFileVisible(file_name, mUseAuxFileForFileAvailability);
 
     const double elapsed_time = Utilities::ElapsedSeconds(start_time);
     info.Set<double>("elapsed_time", elapsed_time);
@@ -232,7 +233,7 @@ Info FileCommunication::GenericReceiveWithFileSerializer(
 
     const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
-    WaitForPath(file_name);
+    WaitForPath(file_name, mUseAuxFileForFileAvailability);
 
     info.Set<std::size_t>("memory_usage_ipc", fs::file_size(file_name));
 
@@ -266,7 +267,7 @@ double FileCommunication::GenericSend(
 
     const auto start_time(std::chrono::steady_clock::now());
 
-    std::ofstream output_file(GetTempFileName(file_name), std::ios::out|std::ios::binary);
+    std::ofstream output_file(GetTempFileName(file_name, mUseAuxFileForFileAvailability), std::ios::out|std::ios::binary);
     Utilities::CheckStream(output_file, file_name);
 
     output_file.write(reinterpret_cast<const char *>(&size), sizeof(std::size_t));
@@ -274,7 +275,7 @@ double FileCommunication::GenericSend(
     output_file.write(reinterpret_cast<const char *>(&rData[0]), rData.size()*SizeOfData);
 
     output_file.close();
-    MakeFileVisible(file_name);
+    MakeFileVisible(file_name, mUseAuxFileForFileAvailability);
 
     return Utilities::ElapsedSeconds(start_time);
 
@@ -293,7 +294,7 @@ double FileCommunication::GenericReceive(
 
     const fs::path file_name(GetFileName("CoSimIO_data_" + GetConnectionName() + "_" + identifier + "_" + std::to_string(GetDataCommunicator().Rank()), "dat"));
 
-    WaitForPath(file_name);
+    WaitForPath(file_name, mUseAuxFileForFileAvailability);
 
     const auto start_time(std::chrono::steady_clock::now());
 
