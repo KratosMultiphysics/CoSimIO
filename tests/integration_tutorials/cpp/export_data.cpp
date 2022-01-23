@@ -13,6 +13,9 @@
 // CoSimulation includes
 #include "co_sim_io.hpp"
 #include "ghc/filesystem.hpp"
+#include <thread>
+#include <algorithm>
+#include <cmath>
 
 #include "data_exchange_testing_matrix.hpp"
 
@@ -23,6 +26,12 @@
         return 1;                                                \
     }
 
+#define COSIMIO_CHECK_ALMOST_EQUAL(a, b)                                \
+    if (std::abs((a-b)/b)>1e-9) {                                                \
+        std::cout << "in line " << __LINE__ << " : " << a        \
+                  << " is not equal to " << b << std::endl;      \
+        return 1;                                                \
+    }
 
 int main()
 {
@@ -59,11 +68,14 @@ int main()
 
         config.Set("my_name", my_name);
         config.Set("connect_to", connect_to);
-        // config.Set("echo_level", 2);
+        config.Set("echo_level", 1);
 
         auto info = CoSimIO::Connect(config);
         COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
         const std::string connection_name = info.Get<std::string>("connection_name");
+
+        const double ref_value_export = counter;
+        const double ref_value_import = ref_value_export*2.23;
 
         std::vector<double> data_to_send(VEC_SIZES.back());
         for (std::size_t vec_size : VEC_SIZES) {
@@ -71,7 +83,8 @@ int main()
             const auto start_time(std::chrono::steady_clock::now());
 
             data_to_send.resize(vec_size);
-            std::cout << "\nCurrent vector size: " << vec_size << std::endl;
+            std::cout << "   Current vector size: " << vec_size << std::endl;
+
 
             double accum_time = 0.0;
             std::size_t accum_mem = 0;
@@ -79,6 +92,10 @@ int main()
             double accum_time_serializer = 0.0;
 
             for (int i=0; i<NUM_EVALUATIONS+1; ++i) {
+                std::cout << "        Current i: " << i << std::endl;
+
+                std::fill(data_to_send.begin(), data_to_send.end(), ref_value_export+i);
+
                 info.Clear();
                 info.Set("identifier", "vector_of_pi_1");
                 info.Set("connection_name", connection_name);
@@ -98,6 +115,9 @@ int main()
                 info.Set("identifier", "vector_of_pi_2");
                 info.Set("connection_name", connection_name);
                 info = CoSimIO::ImportData(info, data_to_send);
+
+                const double current_ref_value = ref_value_import+i;
+                for (double value : data_to_send) COSIMIO_CHECK_ALMOST_EQUAL(value, current_ref_value);
 
                 if (i>0) {
                     accum_time += info.Get<double>("elapsed_time");
@@ -132,6 +152,7 @@ int main()
                 res_file << " " << avg_time_ipc << " " << avg_time_serializer;
             }
             res_file << "\n";
+            res_file.flush();
 
             const bool break_and_go_to_next_config = ElapsedSeconds(start_time) > 60;
 
@@ -148,15 +169,16 @@ int main()
             }
         }
 
+        res_file.close();
+
         CoSimIO::Info disconnect_settings;
         disconnect_settings.Set("connection_name", connection_name);
         info = CoSimIO::Disconnect(disconnect_settings); // disconnect afterwards
         COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Disconnected);
         std::cout << "\n" << std::endl;
-
-        res_file.close();
     }
 
     CO_SIM_IO_CATCH
+
     return 0;
 }

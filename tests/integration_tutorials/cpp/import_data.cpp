@@ -13,6 +13,9 @@
 // CoSimulation includes
 #include "co_sim_io.hpp"
 #include "data_exchange_testing_matrix.hpp"
+#include <algorithm>
+#include <cmath>
+#include <iomanip>
 
 #define COSIMIO_CHECK_EQUAL(a, b)                                \
     if (a != b) {                                                \
@@ -21,6 +24,12 @@
         return 1;                                                \
     }
 
+#define COSIMIO_CHECK_ALMOST_EQUAL(a, b)                                \
+    if (std::abs((a-b)/b)>1e-9) {                                                \
+        std::cout << "in line " << __LINE__ << " : " << a        \
+                  << " is not equal to " << b << std::endl;      \
+        return 1;                                                \
+    }
 
 
 int main()
@@ -36,10 +45,14 @@ int main()
 
         config.Set("my_name", my_name);
         config.Set("connect_to", connect_to);
+        config.Set("echo_level", 1);
 
         auto info = CoSimIO::Connect(config);
         COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);
         const std::string connection_name = info.Get<std::string>("connection_name");
+
+        const double ref_value_import = counter;
+        const double ref_value_export = ref_value_import*2.23;
 
         std::vector<double> receive_data(VEC_SIZES.back());
 
@@ -55,6 +68,9 @@ int main()
 
                 if (receive_data.size() != VEC_SIZES[v]) {std::cout << "WRONG SIZE! should be " << VEC_SIZES[v] << " but is " << receive_data.size() << std::endl;}
 
+                const double current_ref_value = ref_value_import+i;
+                for (double value : receive_data)  COSIMIO_CHECK_ALMOST_EQUAL(value, current_ref_value);
+
                 if (i>0) {
                     accum_time += info.Get<double>("elapsed_time");
                     accum_mem  += info.Get<std::size_t>("memory_usage_ipc");
@@ -66,6 +82,8 @@ int main()
                     //     std::cout << "    Serializer time: " << info.Get<double>("elapsed_time_serializer") << std::endl;
                     // }
                 }
+
+                std::fill(receive_data.begin(), receive_data.end(), ref_value_export+i);
 
                 info.Clear();
                 info.Set("identifier", "vector_of_pi_2");
