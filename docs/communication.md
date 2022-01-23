@@ -66,7 +66,7 @@ The following settings are available for all methods of communication:
 As the name indicates, this method uses files for communicating data. It is robust and useful for debugging. It is the preferred method for implementing the _CoSimIO_ in a new code, as it is intuitive to follow the flow of data through the files.
 In order to prevent race conditions when accessing the files, two mechanisms are available (which can be selected with `use_aux_file_for_file_availability`):
 - `use_aux_file_for_file_availability == true`: An empty auxiliary file is created once the real file with the data is ready to be read. This is used unconditionally for any synchronization files.
-- `use_aux_file_for_file_availability == false`: On Unix operating systems, renaming of files is atomic. Hence the data is written to a file with a temporary name. Once the writing is complete, the file is renamed to the real name for the other partner to read from it. This is especially useful for clusters since it avoids writing of auxiliar files on slow filesystems.
+- `use_aux_file_for_file_availability == false`: On Unix operating systems, renaming of files is atomic (on Windows it is not which can cause race conditions!). Hence the data is written to a file with a temporary name. Once the writing is complete, the file is renamed to the real name for the other partner to read from it. This is especially useful for clusters since it avoids writing of auxiliar files on slow filesystems.
 
 The implementation of the _FileCommunication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/includes/communication/file_communication.hpp).
 

@@ -63,6 +63,9 @@ FileCommunication::FileCommunication(
       mUseAuxFileForFileAvailability(I_Settings.Get<bool>("use_aux_file_for_file_availability", USE_AUX_FILE_FOR_FILE_AVAILABILITY)),
       mUseFileSerializer(I_Settings.Get<bool>("use_file_serializer", true))
 {
+#ifdef CO_SIM_IO_COMPILED_IN_WINDOWS
+    CO_SIM_IO_INFO_IF("CoSimIO", !mUseAuxFileForFileAvailability) << "WARNING: Using rename for making files available can cause race conditions as it is not atomic in Windows! Use \"use_aux_file_for_file_availability\" = false to avoid this" << std::endl;
+#endif
 }
 
 FileCommunication::~FileCommunication()
