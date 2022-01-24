@@ -90,8 +90,8 @@ void Connection::Initialize(const Info& I_Settings)
     Info comm_settings(I_Settings);
     if (!comm_settings.Has("communication_format")) {
         // set default communication format if not provided by user
-        // default is file-communication
-        comm_settings.Set<std::string>("communication_format", "file");
+        // default is socket-communication
+        comm_settings.Set<std::string>("communication_format", "socket");
     }
 
     const std::string comm_format = comm_settings.Get<std::string>("communication_format");
