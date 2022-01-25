@@ -15,7 +15,7 @@
 <!-- /code_chunk_output -->
 ---
 
-Exchanging data between two codes using interprocess communication (IPC) is the main task of the _CoSimIO_. Different methods with specific advantags / disadvantages exist, see below.
+Exchanging data between two codes using interprocess communication (IPC) is the main task of the _CoSimIO_. Different methods with specific advantags / disadvantages exist, see below. The default way of communicating is by using sockets, see [here](#socket-based-communication).
 
 When initially establishing a connection between two codes, a handshake of both partners is performed. During this handshake some basic information is exchanged between the partners, including the check if the versions of _CoSimIO_ are compatible. The handshake is always done via files as it is the most robust way of communication.
 
