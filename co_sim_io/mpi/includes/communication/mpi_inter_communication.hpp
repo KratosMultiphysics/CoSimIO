@@ -55,15 +55,16 @@ public:
         const Info& I_Info,
         Internals::DataContainer<double>& rData) override;
 
-    void DerivedHandShake() const override;
-
     Info GetCommunicationSettings() const override;
 
 private:
     MPI_Comm mInterComm;
     std::string mPortName;
+    std::string mSerializedConnectionInfo;
 
     void PrepareConnection(const Info& I_Info) override;
+
+    void GetConnectionInformation();
 
 };
 
