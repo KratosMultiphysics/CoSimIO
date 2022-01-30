@@ -15,6 +15,9 @@
 
 // System includes
 
+// External includes
+#include "mpi.h"
+
 // Project includes
 #include "includes/communication/communication.hpp"
 
@@ -57,6 +60,7 @@ public:
     Info GetCommunicationSettings() const override;
 
 private:
+    MPI_Comm mInterComm;
     std::string mPortName;
 
     void PrepareConnection(const Info& I_Info) override;

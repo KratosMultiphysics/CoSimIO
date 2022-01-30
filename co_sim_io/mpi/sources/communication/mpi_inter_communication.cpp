@@ -12,11 +12,9 @@
 
 // System includes
 
-// External includes
-#include "mpi.h"
-
 // Project includes
 #include "mpi/includes/communication/mpi_inter_communication.hpp"
+#include "mpi/includes/mpi_data_communicator.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -60,14 +58,16 @@ Info MPIInterCommunication::ConnectDetail(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
+    MPI_Comm my_comm = MPIDataCommunicator::GetMPICommunicator(GetDataCommunicator());
+
     if (GetIsPrimaryConnection()) {
-        // MPI_Comm_accept(mPortName, MPI_INFO_NULL, 0, MPI_Comm comm, MPI_Comm *newcomm) // todo check return code
+        MPI_Comm_accept(mPortName.c_str(), MPI_INFO_NULL, 0, my_comm, &mInterComm); // todo check return code
     } else {
-        // MPI_Comm_connect(mPortName, MPI_INFO_NULL, 0, MPI_Comm comm, MPI_Comm *newcomm) // todo check return code
+        MPI_Comm_connect(mPortName.c_str(), MPI_INFO_NULL, 0, my_comm, &mInterComm); // todo check return code
     }
 
 
-    // SYNC
+    // SYNC ???
 
 
     return Info(); // TODO use
@@ -79,9 +79,9 @@ Info MPIInterCommunication::DisconnectDetail(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    // MPI_Comm_disconnect(MPI_Comm *comm) // todo check return code
+    MPI_Comm_disconnect(&mInterComm); // todo check return code
 
-    // SYNC
+    // SYNC => probably not necessary as "MPI_Comm_disconnect" is collective
 
     if (GetIsPrimaryConnection()) {
         MPI_Close_port(mPortName.c_str()); // todo check return code
@@ -144,7 +144,7 @@ double MPIInterCommunication::SendString(
         MPI_CHAR,
         GetDataCommunicator().Rank(),
         0,
-        MPI_COMM_WORLD); // todo check return code
+        mInterComm); // todo check return code
 
     return Utilities::ElapsedSeconds(start_time);
 
@@ -157,7 +157,7 @@ double MPIInterCommunication::ReceiveString(
 {
     CO_SIM_IO_TRY
 
-    const int size = ReceiveSize(MPI_COMM_WORLD, MPI_CHAR, GetDataCommunicator().Rank()); // serves also as synchronization for time measurement
+    const int size = ReceiveSize(mInterComm, MPI_CHAR, GetDataCommunicator().Rank()); // serves also as synchronization for time measurement
     rData.resize(size);
 
     const auto start_time(std::chrono::steady_clock::now());
@@ -168,7 +168,7 @@ double MPIInterCommunication::ReceiveString(
         MPI_CHAR,
         GetDataCommunicator().Rank(),
         0,
-        MPI_COMM_WORLD,
+        mInterComm,
         MPI_STATUS_IGNORE); // todo check return code
 
     return Utilities::ElapsedSeconds(start_time);
@@ -190,7 +190,7 @@ double MPIInterCommunication::SendDataContainer(
         MPI_DOUBLE,
         GetDataCommunicator().Rank(),
         0,
-        MPI_COMM_WORLD); // todo check return code
+        mInterComm); // todo check return code
 
     return Utilities::ElapsedSeconds(start_time);
 
@@ -203,7 +203,7 @@ double MPIInterCommunication::ReceiveDataContainer(
 {
     CO_SIM_IO_TRY
 
-    const int size = ReceiveSize(MPI_COMM_WORLD, MPI_DOUBLE, GetDataCommunicator().Rank()); // serves also as synchronization for time measurement
+    const int size = ReceiveSize(mInterComm, MPI_DOUBLE, GetDataCommunicator().Rank()); // serves also as synchronization for time measurement
     rData.resize(size);
 
     const auto start_time(std::chrono::steady_clock::now());
@@ -214,7 +214,7 @@ double MPIInterCommunication::ReceiveDataContainer(
         MPI_DOUBLE,
         GetDataCommunicator().Rank(),
         0,
-        MPI_COMM_WORLD,
+        mInterComm,
         MPI_STATUS_IGNORE); // todo check return code
 
     return Utilities::ElapsedSeconds(start_time);
