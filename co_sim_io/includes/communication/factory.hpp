@@ -36,10 +36,10 @@ protected:
     using CommCreateFctType = std::function<std::unique_ptr<Communication>(const Info&, const std::shared_ptr<DataCommunicator>)>;
     using CommCreateFctsType = std::unordered_map<std::string, CommCreateFctType>;
 
-    virtual CommCreateFctsType GetCommunicationCreateFunctions() const;
+    virtual CommCreateFctsType CO_SIM_IO_API GetCommunicationCreateFunctions() const;
 
 private:
-    bool IsMPI() const {return false;}
+    virtual bool CO_SIM_IO_API IsMPI() const {return false;}
 };
 
 } // namespace Internals

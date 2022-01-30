@@ -25,7 +25,7 @@ class MPICommunicationFactory : public CommunicationFactory
 {
 
 private:
-    bool IsMPI() const {return true;}
+    bool IsMPI() const override {return true;}
 };
 
 } // namespace Internals
