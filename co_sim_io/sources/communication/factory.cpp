@@ -22,6 +22,13 @@
 namespace CoSimIO {
 namespace Internals {
 
+bool StartsWith(
+    const std::string& TheString,
+    const std::string& Start)
+{
+    return TheString.rfind(Start,0)==0;
+}
+
 std::unique_ptr<Communication> CommunicationFactory::Create(
     const Info& I_Settings,
     const std::shared_ptr<DataCommunicator> pDataComm) const
@@ -41,6 +48,10 @@ std::unique_ptr<Communication> CommunicationFactory::Create(
         for (const auto& name_fct_pair : fcts) {
             err_msg << "\n    " << name_fct_pair.first;
         }
+        if (!IsMPI() && StartsWith(comm_format, "mpi")) {
+            err_msg << "\nNote: mpi communication formats are only available when using ConnectMPI!";
+        }
+
         CO_SIM_IO_ERROR << err_msg.str() << std::endl;
     }
 }
