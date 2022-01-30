@@ -34,6 +34,8 @@ std::unique_ptr<Communication> CommunicationFactory::Create(
     const Info& I_Settings,
     const std::shared_ptr<DataCommunicator> pDataComm) const
 {
+    CO_SIM_IO_TRY
+
     // deliberately not providing a default
     const std::string comm_format = I_Settings.Get<std::string>("communication_format");
 
@@ -55,10 +57,14 @@ std::unique_ptr<Communication> CommunicationFactory::Create(
 
         CO_SIM_IO_ERROR << err_msg.str() << std::endl;
     }
+
+    KRATOS_CATCH
 }
 
 CommunicationFactory::CommCreateFctsType CommunicationFactory::GetCommunicationCreateFunctions() const
 {
+    CO_SIM_IO_TRY
+
     CommunicationFactory::CommCreateFctsType fcts;
 
     fcts["file"] = [](
@@ -82,6 +88,8 @@ CommunicationFactory::CommCreateFctsType CommunicationFactory::GetCommunicationC
             return CoSimIO::make_unique<SocketCommunication>(I_Settings, pDataComm);};
 
     return fcts;
+
+    KRATOS_CATCH
 }
 
 } // namespace Internals

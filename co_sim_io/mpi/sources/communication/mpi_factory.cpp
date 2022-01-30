@@ -22,6 +22,8 @@ namespace Internals {
 
 CommunicationFactory::CommCreateFctsType MPICommunicationFactory::GetCommunicationCreateFunctions() const
 {
+    CO_SIM_IO_TRY
+
     auto fcts = CommunicationFactory::GetCommunicationCreateFunctions();
 
     fcts["mpi_inter"] = [](
@@ -30,6 +32,8 @@ CommunicationFactory::CommCreateFctsType MPICommunicationFactory::GetCommunicati
             return CoSimIO::make_unique<MPIInterCommunication>(I_Settings, pDataComm);};
 
     return fcts;
+
+    KRATOS_CATCH
 }
 
 } // namespace Internals
