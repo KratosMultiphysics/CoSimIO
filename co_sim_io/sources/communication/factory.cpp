@@ -14,6 +14,7 @@
 
 // Project includes
 #include "includes/communication/factory.hpp"
+
 #include "includes/communication/file_communication.hpp"
 #include "includes/communication/pipe_communication.hpp"
 #include "includes/communication/local_socket_communication.hpp"
