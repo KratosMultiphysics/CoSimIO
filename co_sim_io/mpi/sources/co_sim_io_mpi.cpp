@@ -19,6 +19,7 @@ This file contains the implementation of the functions defined in "co_sim_io_mpi
 // Project includes
 #include "co_sim_io_mpi.hpp"
 #include "includes/connect_impl.hpp"
+#include "mpi/includes/communication/mpi_factory.hpp"
 #include "mpi/includes/mpi_data_communicator.hpp"
 
 namespace CoSimIO {
@@ -38,8 +39,8 @@ Info ConnectMPI(
 
     return Internals::ConnectImpl(
         I_Settings,
-        std::make_shared<CoSimIO::Internals::MPIDataCommunicator>(ThisMPIComm),
-        Internals::CommunicationFactory());
+        std::make_shared<Internals::MPIDataCommunicator>(ThisMPIComm),
+        Internals::MPICommunicationFactory());
 }
 
 } // namespace CoSimIO
