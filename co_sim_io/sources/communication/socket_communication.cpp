@@ -209,7 +209,6 @@ Info SocketCommunication::GetCommunicationSettings() const
     CO_SIM_IO_TRY
 
     Info info;
-    info.Set("ip_address", mIpAddress);
 
     if (GetIsPrimaryConnection() && GetDataCommunicator().Rank() == 0) {
         info.Set("connection_info", mSerializedConnectionInfo);
