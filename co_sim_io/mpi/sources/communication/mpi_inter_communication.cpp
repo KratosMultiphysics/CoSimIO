@@ -13,6 +13,7 @@
 // System includes
 
 // External includes
+#include "mpi.h"
 
 // Project includes
 #include "mpi/includes/communication/mpi_inter_communication.hpp"
@@ -26,6 +27,7 @@ MPIInterCommunication::MPIInterCommunication(
     std::shared_ptr<DataCommunicator> I_DataComm)
     : Communication(I_Settings, I_DataComm)
 {
+    CO_SIM_IO_ERROR_IF_NOT(I_DataComm->IsDistributed()) << "MPI communication only works with a MPIDataCommunicator!" << std::endl;
 }
 
 MPIInterCommunication::~MPIInterCommunication()
@@ -39,20 +41,56 @@ MPIInterCommunication::~MPIInterCommunication()
 
 Info MPIInterCommunication::ConnectDetail(const Info& I_Info)
 {
-    // mpPipe = std::make_shared<BidirectionalPipe>(
-    //     GetCommunicationDirectory(),
-    //     GetConnectionName() + "_r" + std::to_string(GetDataCommunicator().Rank()),
-    //     GetIsPrimaryConnection(),
-    //     GetPipeBufferSize(I_Info),
-    //     GetEchoLevel());
+    CO_SIM_IO_TRY
+
+    if (GetIsPrimaryConnection()) {
+        // MPI_Comm_accept(mPortName, MPI_INFO_NULL, 0, MPI_Comm comm, MPI_Comm *newcomm) // todo check return code
+    } else {
+        // MPI_Comm_connect(mPortName, MPI_INFO_NULL, 0, MPI_Comm comm, MPI_Comm *newcomm) // todo check return code
+    }
+
+
+    // SYNC
+
 
     return Info(); // TODO use
+
+    CO_SIM_IO_CATCH
 }
 
 Info MPIInterCommunication::DisconnectDetail(const Info& I_Info)
 {
-    // mpPipe->Close();
+    CO_SIM_IO_TRY
+
+    // MPI_Comm_disconnect(MPI_Comm *comm) // todo check return code
+
+    // SYNC
+
+    if (GetIsPrimaryConnection()) {
+        MPI_Close_port(mPortName.c_str()); // todo check return code
+    }
+
     return Info(); // TODO use
+    CO_SIM_IO_CATCH
+}
+void MPIInterCommunication::PrepareConnection(const Info& I_Info)
+{
+    CO_SIM_IO_TRY
+
+    if (GetIsPrimaryConnection()) {
+        mPortName.resize(MPI_MAX_PORT_NAME);
+        MPI_Open_port(MPI_INFO_NULL, &mPortName.front()); // todo check return code
+
+        std::cout << "Rank: " << GetDataCommunicator().Rank() << " PORT NAME: " << mPortName << std::endl;
+    }
+
+    // Rank: 0 PORT NAME: 3326935041.0:1705561554
+    // Rank: 1 PORT NAME: 3326935041.1:1705561554
+    // Rank: 2 PORT NAME: 3326935041.2:1705561554
+
+
+
+    CO_SIM_IO_CATCH
 }
 
 void MPIInterCommunication::DerivedHandShake() const

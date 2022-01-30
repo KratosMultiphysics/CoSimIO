@@ -55,6 +55,12 @@ public:
     void DerivedHandShake() const override;
 
     Info GetCommunicationSettings() const override;
+
+private:
+    std::string mPortName;
+
+    void PrepareConnection(const Info& I_Info) override;
+
 };
 
 } // namespace Internals
