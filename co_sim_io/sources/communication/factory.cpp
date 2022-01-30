@@ -58,7 +58,7 @@ std::unique_ptr<Communication> CommunicationFactory::Create(
         CO_SIM_IO_ERROR << err_msg.str() << std::endl;
     }
 
-    KRATOS_CATCH
+    CO_SIM_IO_CATCH
 }
 
 CommunicationFactory::CommCreateFctsType CommunicationFactory::GetCommunicationCreateFunctions() const
@@ -89,7 +89,7 @@ CommunicationFactory::CommCreateFctsType CommunicationFactory::GetCommunicationC
 
     return fcts;
 
-    KRATOS_CATCH
+    CO_SIM_IO_CATCH
 }
 
 } // namespace Internals

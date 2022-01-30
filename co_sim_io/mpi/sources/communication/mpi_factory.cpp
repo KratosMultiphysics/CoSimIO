@@ -33,7 +33,7 @@ CommunicationFactory::CommCreateFctsType MPICommunicationFactory::GetCommunicati
 
     return fcts;
 
-    KRATOS_CATCH
+    CO_SIM_IO_CATCH
 }
 
 } // namespace Internals
