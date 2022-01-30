@@ -14,16 +14,33 @@
 #define CO_SIM_IO_COMMUNICATION_FACTORY_INCLUDED
 
 // System includes
+#include <unordered_map>
+#include <functional>
 
 // Project includes
 #include "communication.hpp"
+#include "includes/info.hpp"
+#include "includes/data_communicator.hpp"
 
 namespace CoSimIO {
 namespace Internals {
 
-std::unique_ptr<Communication> CO_SIM_IO_API CreateCommunication(
-    const Info& I_Settings,
-    const std::shared_ptr<DataCommunicator> pDataComm);
+class CommunicationFactory
+{
+public:
+    std::unique_ptr<Communication> CO_SIM_IO_API Create(
+        const Info& I_Settings,
+        const std::shared_ptr<DataCommunicator> pDataComm) const;
+
+protected:
+    using CommCreateFctType = std::function<std::unique_ptr<Communication>(const Info&, const std::shared_ptr<DataCommunicator>)>;
+    using CommCreateFctsType = std::unordered_map<std::string, CommCreateFctType>;
+
+    virtual CommCreateFctsType CO_SIM_IO_API GetCommunicationCreateFunctions() const;
+
+private:
+    virtual bool CO_SIM_IO_API IsMPI() const {return false;}
+};
 
 } // namespace Internals
 } // namespace CoSimIO

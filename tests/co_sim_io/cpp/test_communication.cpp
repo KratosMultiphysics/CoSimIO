@@ -189,7 +189,7 @@ void ConnectDisconnect(CoSimIO::Info settings)
     settings.Set<int>("echo_level", 0);
 
     using Communication = CoSimIO::Internals::Communication;
-    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
+    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CommunicationFactory().Create(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
     // the secondary thread should wait a bit until the primary has created the folder!
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -215,7 +215,7 @@ void ExportInfoHelper(
     settings.Set<int>("echo_level", 0);
 
     using Communication = CoSimIO::Internals::Communication;
-    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
+    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CommunicationFactory().Create(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
     // the secondary thread should wait a bit until the primary has created the folder!
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -252,7 +252,7 @@ void ExportDataHelper(
     settings.Set<int>("echo_level", 0);
 
     using Communication = CoSimIO::Internals::Communication;
-    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
+    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CommunicationFactory().Create(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
     // the secondary thread should wait a bit until the primary has created the folder!
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -286,7 +286,7 @@ void ExportMeshHelper(
     settings.Set<int>("echo_level", 0);
 
     using Communication = CoSimIO::Internals::Communication;
-    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
+    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CommunicationFactory().Create(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
     // the secondary thread should wait a bit until the primary has created the folder!
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -321,7 +321,7 @@ void RunAllCommunication(CoSimIO::Info settings)
 
     using Communication = CoSimIO::Internals::Communication;
 
-    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
+    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CommunicationFactory().Create(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
     SUBCASE("connect_disconnect_once")
     {
@@ -342,7 +342,7 @@ void RunAllCommunication(CoSimIO::Info settings)
         for (std::size_t i=0; i<3; ++i) {
             // need to make a fresh obj of "Communication" each time we connect again
             // (because the same is done in the ext thread)
-            std::unique_ptr<Communication> p_internal_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
+            std::unique_ptr<Communication> p_internal_comm = CoSimIO::Internals::CommunicationFactory().Create(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
             std::thread ext_thread(ConnectDisconnect, settings);
 

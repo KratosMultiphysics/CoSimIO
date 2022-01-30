@@ -324,9 +324,7 @@ void Communication::WaitForPath(
         Utilities::WaitUntilPathExists(avail_file);
 
         // once the file exists it means that the real file was written, hence it can be removed
-        std::error_code ec;
-        fs::remove(avail_file, ec);
-        CO_SIM_IO_ERROR_IF(ec) << avail_file << " could not be removed!\nError code: " << ec.message() << std::endl;
+        RemovePath(avail_file);
     }
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>=PrintEchoLevel) << "Found: " << rPath << std::endl;
 
