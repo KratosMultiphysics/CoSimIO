@@ -22,9 +22,9 @@
 namespace CoSimIO {
 namespace Internals {
 
-std::unique_ptr<Communication> CreateCommunication(
+std::unique_ptr<Communication> CommunicationFactory::Create(
     const Info& I_Settings,
-    const std::shared_ptr<DataCommunicator> pDataComm)
+    const std::shared_ptr<DataCommunicator> pDataComm) const
 {
     // deliberately not providing a default
     const std::string comm_format = I_Settings.Get<std::string>("communication_format");

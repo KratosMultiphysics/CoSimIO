@@ -23,10 +23,11 @@ namespace Internals {
 
 Connection::Connection(
     const Info& I_Settings,
-    std::shared_ptr<DataCommunicator> I_DataComm)
+    std::shared_ptr<DataCommunicator> I_DataComm,
+    const CommunicationFactory& rCommFactory)
     : mpDatacomm(I_DataComm)
 {
-    Initialize(I_Settings);
+    Initialize(I_Settings, rCommFactory);
 }
 
 Info Connection::Connect(const Info& I_Info)
@@ -85,7 +86,9 @@ Info Connection::Run(const Info& I_Info)
     return Info(); // TODO use this
 }
 
-void Connection::Initialize(const Info& I_Settings)
+void Connection::Initialize(
+    const Info& I_Settings,
+    const CommunicationFactory& rCommFactory)
 {
     Info comm_settings(I_Settings);
     if (!comm_settings.Has("communication_format")) {
@@ -98,7 +101,7 @@ void Connection::Initialize(const Info& I_Settings)
 
     CO_SIM_IO_INFO_IF("CoSimIO", mpDatacomm->Rank()==0) << "CoSimIO from \"" << comm_settings.Get<std::string>("my_name") << "\" to \"" << comm_settings.Get<std::string>("connect_to") << "\" uses communication format: " << comm_format << std::endl;
 
-    mpComm = CreateCommunication(comm_settings, mpDatacomm);
+    mpComm = rCommFactory.Create(comm_settings, mpDatacomm);
 }
 
 void Connection::CheckIfNameIsValid(const std::string& rName) const

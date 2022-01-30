@@ -21,9 +21,13 @@
 namespace CoSimIO {
 namespace Internals {
 
-std::unique_ptr<Communication> CO_SIM_IO_API CreateCommunication(
-    const Info& I_Settings,
-    const std::shared_ptr<DataCommunicator> pDataComm);
+class CommunicationFactory
+{
+public:
+    virtual std::unique_ptr<Communication> CO_SIM_IO_API Create(
+        const Info& I_Settings,
+        const std::shared_ptr<DataCommunicator> pDataComm) const;
+};
 
 } // namespace Internals
 } // namespace CoSimIO
