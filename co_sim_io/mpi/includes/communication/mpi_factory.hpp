@@ -23,6 +23,9 @@ namespace Internals {
 
 class MPICommunicationFactory : public CommunicationFactory
 {
+
+private:
+    bool IsMPI() const {return true;}
 };
 
 } // namespace Internals

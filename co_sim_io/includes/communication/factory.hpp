@@ -37,6 +37,9 @@ protected:
     using CommCreateFctsType = std::unordered_map<std::string, CommCreateFctType>;
 
     virtual CommCreateFctsType GetCommunicationCreateFunctions() const;
+
+private:
+    bool IsMPI() const {return false;}
 };
 
 } // namespace Internals
