@@ -127,8 +127,7 @@ void Connection::CheckIfNameIsValid(const std::string& rName) const
         for (const auto& name : allowed_names) {
             err_msg << "\n    " << name;
         }
-        err_msg << std::endl;
-        CO_SIM_IO_ERROR << err_msg.str();
+        CO_SIM_IO_ERROR << err_msg.str() << std::endl;
     }
 }
 
