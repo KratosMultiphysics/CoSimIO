@@ -134,6 +134,10 @@ double MPIInterCommunication::SendString(
     const Info& I_Info,
     const std::string& rData)
 {
+    CO_SIM_IO_TRY
+
+    const auto start_time(std::chrono::steady_clock::now());
+
     MPI_Send(
         rData.data(),
         rData.size(),
@@ -142,15 +146,21 @@ double MPIInterCommunication::SendString(
         0,
         MPI_COMM_WORLD); // todo check return code
 
-    return 0.0;
+    return Utilities::ElapsedSeconds(start_time);
+
+    CO_SIM_IO_CATCH
 }
 
 double MPIInterCommunication::ReceiveString(
     const Info& I_Info,
     std::string& rData)
 {
-    const int size = ReceiveSize(MPI_COMM_WORLD, MPI_CHAR, GetDataCommunicator().Rank());
+    CO_SIM_IO_TRY
+
+    const int size = ReceiveSize(MPI_COMM_WORLD, MPI_CHAR, GetDataCommunicator().Rank()); // serves also as synchronization for time measurement
     rData.resize(size);
+
+    const auto start_time(std::chrono::steady_clock::now());
 
     MPI_Recv(
         &(rData.front()),
@@ -161,13 +171,19 @@ double MPIInterCommunication::ReceiveString(
         MPI_COMM_WORLD,
         MPI_STATUS_IGNORE); // todo check return code
 
-    return 0.0;
+    return Utilities::ElapsedSeconds(start_time);
+
+    CO_SIM_IO_CATCH
 }
 
 double MPIInterCommunication::SendDataContainer(
     const Info& I_Info,
     const Internals::DataContainer<double>& rData)
 {
+    CO_SIM_IO_TRY
+
+    const auto start_time(std::chrono::steady_clock::now());
+
     MPI_Send(
         rData.data(),
         rData.size(),
@@ -176,15 +192,21 @@ double MPIInterCommunication::SendDataContainer(
         0,
         MPI_COMM_WORLD); // todo check return code
 
-    return 0.0;
+    return Utilities::ElapsedSeconds(start_time);
+
+    CO_SIM_IO_CATCH
 }
 
 double MPIInterCommunication::ReceiveDataContainer(
     const Info& I_Info,
     Internals::DataContainer<double>& rData)
 {
-    const int size = ReceiveSize(MPI_COMM_WORLD, MPI_DOUBLE, GetDataCommunicator().Rank());
+    CO_SIM_IO_TRY
+
+    const int size = ReceiveSize(MPI_COMM_WORLD, MPI_DOUBLE, GetDataCommunicator().Rank()); // serves also as synchronization for time measurement
     rData.resize(size);
+
+    const auto start_time(std::chrono::steady_clock::now());
 
     MPI_Recv(
         rData.data(),
@@ -195,7 +217,9 @@ double MPIInterCommunication::ReceiveDataContainer(
         MPI_COMM_WORLD,
         MPI_STATUS_IGNORE); // todo check return code
 
-    return 0.0;
+    return Utilities::ElapsedSeconds(start_time);
+
+    CO_SIM_IO_CATCH
 }
 
 } // namespace Internals
