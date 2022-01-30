@@ -28,7 +28,7 @@ namespace Internals {
 class CommunicationFactory
 {
 public:
-    virtual std::unique_ptr<Communication> CO_SIM_IO_API Create(
+    std::unique_ptr<Communication> CO_SIM_IO_API Create(
         const Info& I_Settings,
         const std::shared_ptr<DataCommunicator> pDataComm) const;
 

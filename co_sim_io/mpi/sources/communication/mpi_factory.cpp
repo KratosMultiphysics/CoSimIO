@@ -18,12 +18,5 @@
 namespace CoSimIO {
 namespace Internals {
 
-std::unique_ptr<Communication> MPICommunicationFactory::Create(
-    const Info& I_Settings,
-    const std::shared_ptr<DataCommunicator> pDataComm) const
-{
-    return CommunicationFactory::Create(I_Settings, pDataComm);
-}
-
 } // namespace Internals
 } // namespace CoSimIO

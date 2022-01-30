@@ -23,10 +23,6 @@ namespace Internals {
 
 class MPICommunicationFactory : public CommunicationFactory
 {
-public:
-    std::unique_ptr<Communication> CO_SIM_IO_API Create(
-        const Info& I_Settings,
-        const std::shared_ptr<DataCommunicator> pDataComm) const override;
 };
 
 } // namespace Internals
