@@ -59,6 +59,17 @@ double ElapsedSeconds(const std::chrono::steady_clock::time_point& rStartTime)
     return duration_cast<duration<double>>(steady_clock::now() - rStartTime).count();
 }
 
+bool IsBigEndian()
+{
+    // from: https://stackoverflow.com/a/1001373
+    union {
+        uint32_t i;
+        char c[4];
+    } bint = {0x01020304};
+
+    return bint.c[0] == 1;
+}
+
 int GetNumberOfNodesForElementType(const ElementType I_ElementType)
 {
     // using switch over map as the compiler warns if some enum values are not handled in the switch
