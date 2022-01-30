@@ -14,9 +14,13 @@
 #define CO_SIM_IO_COMMUNICATION_FACTORY_INCLUDED
 
 // System includes
+#include <unordered_map>
+#include <functional>
 
 // Project includes
 #include "communication.hpp"
+#include "includes/info.hpp"
+#include "includes/data_communicator.hpp"
 
 namespace CoSimIO {
 namespace Internals {
@@ -27,6 +31,12 @@ public:
     virtual std::unique_ptr<Communication> CO_SIM_IO_API Create(
         const Info& I_Settings,
         const std::shared_ptr<DataCommunicator> pDataComm) const;
+
+protected:
+    using CommCreateFctType = std::function<std::unique_ptr<Communication>(const Info&, const std::shared_ptr<DataCommunicator>)>;
+    using CommCreateFctsType = std::unordered_map<std::string, CommCreateFctType>;
+
+    virtual CommCreateFctsType GetCommunicationCreateFunctions() const;
 };
 
 } // namespace Internals
