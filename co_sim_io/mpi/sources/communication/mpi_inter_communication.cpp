@@ -21,6 +21,23 @@
 namespace CoSimIO {
 namespace Internals {
 
+namespace {
+
+template<typename TMPIDataType>
+int ReceiveSize(
+    MPI_Comm Comm,
+    TMPIDataType DataType,
+    const int Rank)
+{
+    int size;
+    MPI_Status status;
+    MPI_Probe(Rank, 0, Comm, &status);
+    MPI_Get_count(&status, DataType, &size);
+    return size;
+}
+
+}
+
 
 MPIInterCommunication::MPIInterCommunication(
     const Info& I_Settings,
@@ -117,7 +134,14 @@ double MPIInterCommunication::SendString(
     const Info& I_Info,
     const std::string& rData)
 {
-    // return mpPipe->Write(rData, 1);
+    MPI_Send(
+        rData.data(),
+        rData.size(),
+        MPI_CHAR,
+        GetDataCommunicator().Rank(),
+        0,
+        MPI_COMM_WORLD); // todo check return code
+
     return 0.0;
 }
 
@@ -125,7 +149,18 @@ double MPIInterCommunication::ReceiveString(
     const Info& I_Info,
     std::string& rData)
 {
-    // return mpPipe->Read(rData, 1);
+    const int size = ReceiveSize(MPI_COMM_WORLD, MPI_CHAR, GetDataCommunicator().Rank());
+    rData.resize(size);
+
+    MPI_Recv(
+        &(rData.front()),
+        rData.size(),
+        MPI_CHAR,
+        GetDataCommunicator().Rank(),
+        0,
+        MPI_COMM_WORLD,
+        MPI_STATUS_IGNORE); // todo check return code
+
     return 0.0;
 }
 
@@ -133,7 +168,14 @@ double MPIInterCommunication::SendDataContainer(
     const Info& I_Info,
     const Internals::DataContainer<double>& rData)
 {
-    // return mpPipe->Write(rData, sizeof(double));
+    MPI_Send(
+        rData.data(),
+        rData.size(),
+        MPI_DOUBLE,
+        GetDataCommunicator().Rank(),
+        0,
+        MPI_COMM_WORLD); // todo check return code
+
     return 0.0;
 }
 
@@ -141,7 +183,18 @@ double MPIInterCommunication::ReceiveDataContainer(
     const Info& I_Info,
     Internals::DataContainer<double>& rData)
 {
-    // return mpPipe->Read(rData, sizeof(double));
+    const int size = ReceiveSize(MPI_COMM_WORLD, MPI_DOUBLE, GetDataCommunicator().Rank());
+    rData.resize(size);
+
+    MPI_Recv(
+        rData.data(),
+        rData.size(),
+        MPI_DOUBLE,
+        GetDataCommunicator().Rank(),
+        0,
+        MPI_COMM_WORLD,
+        MPI_STATUS_IGNORE); // todo check return code
+
     return 0.0;
 }
 
