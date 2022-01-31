@@ -26,10 +26,19 @@ CommunicationFactory::CommCreateFctsType MPICommunicationFactory::GetCommunicati
 
     auto fcts = CommunicationFactory::GetCommunicationCreateFunctions();
 
+#ifdef CO_SIM_IO_BUILD_MPI_COMMUNICATION
     fcts["mpi_inter"] = [](
         const Info& I_Settings,
         const std::shared_ptr<DataCommunicator> pDataComm){
             return CoSimIO::make_unique<MPIInterCommunication>(I_Settings, pDataComm);};
+#else
+    fcts["mpi_inter"] = [](
+        const Info& I_Settings,
+        const std::shared_ptr<DataCommunicator> pDataComm){
+            CO_SIM_IO_ERROR << "Communication via MPI must be enabled at compile time with \"CO_SIM_IO_BUILD_MPI_COMMUNICATION\"!" << std::endl;
+            return nullptr;};
+
+#endif // CO_SIM_IO_BUILD_MPI_COMMUNICATION
 
     return fcts;
 

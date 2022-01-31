@@ -24,6 +24,8 @@
 namespace CoSimIO {
 namespace Internals {
 
+#ifdef CO_SIM_IO_BUILD_MPI_COMMUNICATION
+
 class CO_SIM_IO_API MPIInterCommunication : public Communication
 {
 public:
@@ -63,6 +65,8 @@ private:
 
     Info GetCommunicationSettings() const override;
 };
+
+#endif // CO_SIM_IO_BUILD_MPI_COMMUNICATION
 
 } // namespace Internals
 } // namespace CoSimIO
