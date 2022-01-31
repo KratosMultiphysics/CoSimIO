@@ -78,10 +78,16 @@ jobs:
           source /opt/intel/oneapi/setvars.sh
         fi
 
+        build_mpi_comm=OFF
+        if [ ${{ matrix.mpi }} = IntelMPI ]; then
+          build_mpi_comm=ON
+        fi
+
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
           -DCO_SIM_IO_BUILD_C=ON               \
           -DCO_SIM_IO_BUILD_MPI=ON    \
+          -DCO_SIM_IO_BUILD_MPI_COMMUNICATION=$build_mpi_comm \
           -DCO_SIM_IO_STRICT_COMPILER=ON
 
         cmake --build "build" --target install -- -j2
