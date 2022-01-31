@@ -34,41 +34,6 @@ int ReceiveSize(
     return size;
 }
 
-struct PortsConnectionInfo
-{
-    std::string PortName;
-
-    friend class CoSimIO::Internals::Serializer;
-
-    void save(CoSimIO::Internals::Serializer& rSerializer) const
-    {
-        rSerializer.save("PortName", PortName);
-    }
-
-    void load(CoSimIO::Internals::Serializer& rSerializer)
-    {
-        rSerializer.load("PortName", PortName);
-    }
-};
-
-// this is required as the serializer cannot handle newlines
-void PrepareStringForAsciiSerialization(std::string& rString)
-{
-    const char disallowed_chars[] = {'<', '>'};
-    for (const auto ch : disallowed_chars) {
-        CO_SIM_IO_ERROR_IF_NOT(rString.find(ch) == std::string::npos) << "String contains a character that is not allowed: \"" << std::string(1,ch) << "\"!" << std::endl;
-    }
-
-    std::replace(rString.begin(), rString.end(), '\n', '<');
-    std::replace(rString.begin(), rString.end(), '"', '>');
-}
-
-void RevertAsciiSerialization(std::string& rString)
-{
-    std::replace(rString.begin(), rString.end(), '<', '\n');
-    std::replace(rString.begin(), rString.end(), '>', '"');
-}
-
 }
 
 
@@ -93,7 +58,9 @@ Info MPIInterCommunication::ConnectDetail(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    if (!GetIsPrimaryConnection()) {GetConnectionInformation();}
+    if (!GetIsPrimaryConnection()) {
+        mPortName = GetPartnerInfo().Get<std::string>("port_name");
+    }
 
     MPI_Comm my_comm = MPIDataCommunicator::GetMPICommunicator(GetDataCommunicator());
 
@@ -102,10 +69,6 @@ Info MPIInterCommunication::ConnectDetail(const Info& I_Info)
     } else {
         MPI_Comm_connect(mPortName.c_str(), MPI_INFO_NULL, 0, my_comm, &mInterComm); // todo check return code
     }
-
-
-    // SYNC ???
-
 
     return Info(); // TODO use
 
@@ -118,9 +81,7 @@ Info MPIInterCommunication::DisconnectDetail(const Info& I_Info)
 
     MPI_Comm_disconnect(&mInterComm); // todo check return code
 
-    // SYNC => probably not necessary as "MPI_Comm_disconnect" is collective
-
-    if (GetIsPrimaryConnection()) {
+    if (GetIsPrimaryConnection() && GetDataCommunicator().Rank()==0) {
         MPI_Close_port(mPortName.c_str()); // todo check return code
     }
 
@@ -131,60 +92,14 @@ void MPIInterCommunication::PrepareConnection(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    if (GetIsPrimaryConnection()) {
+    const auto& r_data_comm = GetDataCommunicator();
+
+    if (GetIsPrimaryConnection() && r_data_comm.Rank()==0) {
         mPortName.resize(MPI_MAX_PORT_NAME);
         MPI_Open_port(MPI_INFO_NULL, &mPortName.front()); // todo check return code
-
-        std::cout << "Rank: " << GetDataCommunicator().Rank() << " PORT NAME: " << mPortName << std::endl;
-
-        const auto& r_data_comm = GetDataCommunicator();
-        std::vector<PortsConnectionInfo> conn_infos;
-
-        PortsConnectionInfo my_conn_info {mPortName};
-
-        if (r_data_comm.Rank() == 0) {
-            conn_infos.resize(r_data_comm.Size());
-            conn_infos[0] = {mPortName};
-            for (int i=1; i<r_data_comm.Size(); ++i) {
-                r_data_comm.Recv(conn_infos[i], i);
-            }
-        } else {
-            r_data_comm.Send(my_conn_info, 0);
-        }
-
-        StreamSerializer serializer(GetSerializerTraceType());
-        serializer.save("conn_info", conn_infos);
-        mSerializedConnectionInfo = serializer.GetStringRepresentation();
-        if (GetSerializerTraceType() != Serializer::TraceType::SERIALIZER_NO_TRACE) {
-            PrepareStringForAsciiSerialization(mSerializedConnectionInfo);
-        }
     }
 
-    CO_SIM_IO_CATCH
-}
-
-void MPIInterCommunication::GetConnectionInformation()
-{
-    CO_SIM_IO_TRY
-
-    CO_SIM_IO_ERROR_IF(GetIsPrimaryConnection()) << "This function can only be used as secondary connection!" << std::endl;
-
-    const auto partner_info = GetPartnerInfo();
-    std::string serialized_info = partner_info.Get<Info>("communication_settings").Get<std::string>("connection_info");
-
-    if (GetSerializerTraceType() != Serializer::TraceType::SERIALIZER_NO_TRACE) {
-        RevertAsciiSerialization(serialized_info);
-    }
-
-    std::vector<PortsConnectionInfo> conn_infos;
-
-    StreamSerializer serializer(serialized_info, GetSerializerTraceType());
-    serializer.load("conn_info", conn_infos);
-
-    CO_SIM_IO_ERROR_IF(static_cast<int>(conn_infos.size()) != GetDataCommunicator().Size()) << "Wrong number of connection infos!" << std::endl;
-
-    const auto& my_conn_info = conn_infos[GetDataCommunicator().Rank()];
-    mPortName = my_conn_info.PortName;
+    r_data_comm.Broadcast(mPortName, 0);
 
     CO_SIM_IO_CATCH
 }
@@ -196,7 +111,7 @@ Info MPIInterCommunication::GetCommunicationSettings() const
     Info info;
 
     if (GetIsPrimaryConnection() && GetDataCommunicator().Rank() == 0) {
-        info.Set("connection_info", mSerializedConnectionInfo);
+        info.Set("port_name", mPortName);
     }
 
     return info;
