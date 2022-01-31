@@ -11,6 +11,7 @@
 - [Socket-based communication](#socket-based-communication)
 - [Unix domain socket-based communication](#unix-domain-socket-based-communication)
 - [Pipe-based communication](#pipe-based-communication)
+- [MPI-based communication](#mpi-based-communication)
 
 <!-- /code_chunk_output -->
 ---
@@ -111,6 +112,8 @@ This form of communication is currently only available under Unix, the Windows i
 
 The implementation of the _LocalSocketCommunication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/includes/communication/local_socket_communication.hpp).
 
+**Important**: This form of communication does not support distributed memory machines!
+
 **Specific Input:**
 
 Set `communication_format` to `local_socket`.
@@ -129,10 +132,38 @@ This form of communication is currently only available under Unix, the Windows i
 
 The implementation of the _PipeCommunication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/includes/communication/pipe_communication.hpp).
 
+**Important**: This form of communication does not support distributed memory machines!
+
 **Specific Input:**
 
 Set `communication_format` to `pipe`.
 
 | name | type | required | default| description |
 |---|---|---|---|---|
-| buffer_size | int | - | 8192 (8 KB) | buffer size of pipe, differs between OSs. |
+| buffer_size | int | - | Linux: 65536 (64 KB); others: 8192 (8 KB) | buffer size of pipe, differs between OSs. |
+
+
+## MPI-based communication
+**This form of communication is experimental**
+MPI is usually used to communicate between different ranks within an executable/one MPI-communicator. MPI 2.0 added functionalities with which the communication can be done also between independent communicators. This can be done similarly to the socket based communication through opening ports and accepting connection (on the primary/server side) and connecting to the opened port (on the secondary/client side). After the connection is established, communication is done with the standard MPI calls like `MPI_Send` and `MPI_Recv`. This is oftentimes the fastest way of exchanging data in a distributed memory environment.
+
+The disadvantage of this form of communication is that the features required for establishing communication across communicators are not robustly available for all MPI implementations. Experience shows that it is problematic with OpenMPI but works well with IntelMPI. Furthermore it might be required to use the same compilers and MPI implementation for successfully connecting.
+
+As this form of communication is less robust and relies on MPI features that might not be available on older systems, it is required to manually enable it at compile time with `CO_SIM_IO_BUILD_MPI_COMMUNICATION`.
+
+This form of communication is based on MPI and is hence only available if a connection is established with `CoSimIO::ConnectMPI`.
+
+The two executables are expected to be started with separate MPI calls:
+~~~
+mpiexec -np 4 ./execubtable_1 & mpiexec -np 4 ./execubtable_2
+~~~
+
+The implementation of the _MPIInterCommunication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/mpi/includes/communication/mpi_inter_communication.hpp).
+
+**Specific Input:**
+
+Set `communication_format` to `mpi_inter`.
+
+| name | type | required | default| description |
+|---|---|---|---|---|
+|currently_nothing|

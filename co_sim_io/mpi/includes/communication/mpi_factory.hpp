@@ -24,6 +24,12 @@ namespace Internals {
 class MPICommunicationFactory : public CommunicationFactory
 {
 
+protected:
+    using CommCreateFctType = CommunicationFactory::CommCreateFctType;
+    using CommCreateFctsType = CommunicationFactory::CommCreateFctsType;
+
+    CommCreateFctsType GetCommunicationCreateFunctions() const override;
+
 private:
     bool IsMPI() const override {return true;}
 };

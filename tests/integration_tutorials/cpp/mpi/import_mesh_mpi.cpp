@@ -39,7 +39,9 @@ int main(int argc, char** argv)
     CoSimIO::Info settings;
     settings.Set("my_name", "cpp_mesh_import_solver");
     settings.Set("connect_to", "cpp_mesh_export_solver");
-    settings.Set("communication_format", "socket");
+#ifdef CO_SIM_IO_BUILD_MPI_COMMUNICATION
+    settings.Set("communication_format", "mpi_inter");
+#endif
     settings.Set("echo_level", 1);
     settings.Set("version", "1.25");
 

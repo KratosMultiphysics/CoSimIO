@@ -149,6 +149,11 @@ install(TARGETS co_sim_io DESTINATION bin)
 
 if (CO_SIM_IO_BUILD_MPI)
     # Adding CoSimIO library
+    OPTION ( CO_SIM_IO_BUILD_MPI_COMMUNICATION "Enabling communication via MPI" OFF )
+    if (CO_SIM_IO_BUILD_MPI_COMMUNICATION)
+        add_definitions( -DCO_SIM_IO_BUILD_MPI_COMMUNICATION )
+        message("Enabled communication via MPI")
+    endif()
     file(GLOB_RECURSE co_sim_io_mpi_source_files ${CMAKE_CURRENT_SOURCE_DIR}/co_sim_io/mpi/sources/*.cpp)
     add_library (co_sim_io_mpi SHARED ${co_sim_io_mpi_source_files})
 
