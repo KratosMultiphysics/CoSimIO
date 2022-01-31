@@ -153,6 +153,11 @@ As this form of communication is less robust and relies on MPI features that mig
 
 This form of communication is based on MPI and is hence only available if a connection is established with `CoSimIO::ConnectMPI`.
 
+The two executables are expected to be started with separate MPI calls:
+~~~
+mpiexec -np 4 ./execubtable_1 & mpiexec -np 4 ./execubtable_2
+~~~
+
 The implementation of the _MPIInterCommunication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/mpi/includes/communication/mpi_inter_communication.hpp).
 
 **Specific Input:**
