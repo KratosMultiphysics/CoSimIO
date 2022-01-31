@@ -36,6 +36,7 @@ int ReceiveSize(
 
 }
 
+#ifdef CO_SIM_IO_BUILD_MPI_COMMUNICATION
 
 MPIInterCommunication::MPIInterCommunication(
     const Info& I_Settings,
@@ -59,7 +60,8 @@ Info MPIInterCommunication::ConnectDetail(const Info& I_Info)
     CO_SIM_IO_TRY
 
     if (!GetIsPrimaryConnection()) {
-        mPortName = GetPartnerInfo().Get<std::string>("port_name");
+        mPortName = GetPartnerInfo().Get<Info>("communication_settings").Get<std::string>("port_name");
+        std::cout << "SEC SIZE: " << mPortName.size() << std::endl;
     }
 
     MPI_Comm my_comm = MPIDataCommunicator::GetMPICommunicator(GetDataCommunicator());
@@ -86,20 +88,25 @@ Info MPIInterCommunication::DisconnectDetail(const Info& I_Info)
     }
 
     return Info(); // TODO use
+
     CO_SIM_IO_CATCH
 }
 void MPIInterCommunication::PrepareConnection(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    const auto& r_data_comm = GetDataCommunicator();
-
-    if (GetIsPrimaryConnection() && r_data_comm.Rank()==0) {
+    if (GetIsPrimaryConnection()) {
+        const auto& r_data_comm = GetDataCommunicator();
         mPortName.resize(MPI_MAX_PORT_NAME);
-        MPI_Open_port(MPI_INFO_NULL, &mPortName.front()); // todo check return code
-    }
 
-    r_data_comm.Broadcast(mPortName, 0);
+        if (r_data_comm.Rank()==0) {
+            MPI_Open_port(MPI_INFO_NULL, &mPortName.front()); // todo check return code
+        }
+
+        r_data_comm.Broadcast(mPortName, 0);
+
+        mPortName.erase(mPortName.find('\0'));
+    }
 
     CO_SIM_IO_CATCH
 }
@@ -210,6 +217,8 @@ double MPIInterCommunication::ReceiveDataContainer(
 
     CO_SIM_IO_CATCH
 }
+
+#endif // CO_SIM_IO_BUILD_MPI_COMMUNICATION
 
 } // namespace Internals
 } // namespace CoSimIO
