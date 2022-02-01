@@ -145,7 +145,7 @@ Set `communication_format` to `pipe`.
 
 ## MPI-based communication
 **This form of communication is experimental**
-MPI is usually used to communicate between different ranks within an executable/one MPI-communicator. MPI 2.0 added functionalities with which the communication can be done also between independent communicators. This can be done similarly to the socket based communication through opening ports and accepting connection (on the primary/server side) and connecting to the opened port (on the secondary/client side). After the connection is established, communication is done with the standard MPI calls like `MPI_Send` and `MPI_Recv`. This is oftentimes the fastest way of exchanging data in a distributed memory environment.
+MPI is usually used to communicate between different ranks within an executable/one MPI-communicator. MPI 2.0 added functionalities with which the communication can be done also between independent communicators (i.e. if two executables were started separately with MPI as shown below). This can be done similarly to the socket based communication through opening ports and accepting connection (on the primary/server side) and connecting to the opened port (on the secondary/client side). After the connection is established, communication is done with the standard MPI calls like `MPI_Send` and `MPI_Recv`. This is oftentimes the fastest way of exchanging data in a distributed memory environment.
 
 The disadvantage of this form of communication is that the features required for establishing communication across communicators are not robustly available for all MPI implementations. Experience shows that it is problematic with OpenMPI but works well with IntelMPI. Furthermore it might be required to use the same compilers and MPI implementation for successfully connecting.
 
@@ -155,7 +155,13 @@ This form of communication is based on MPI and is hence only available if a conn
 
 The two executables are expected to be started with separate MPI calls:
 ~~~
-mpiexec -np 4 ./execubtable_1 & mpiexec -np 4 ./execubtable_2
+mpiexec -np 4 ./execubtable_1  &  mpiexec -np 4 ./execubtable_2
+~~~
+
+OpenMPI works only with very recent versions (4.1) and requires additionally to start an `ompi-server`:
+~~~
+ompi-server -r server.txt
+mpiexec --ompi-server file:server.txt -np 4 ./execubtable_1  &  mpiexec --ompi-server file:server.txt -np 4 ./execubtable_2
 ~~~
 
 The implementation of the _MPIInterCommunication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/mpi/includes/communication/mpi_inter_communication.hpp).
