@@ -58,6 +58,6 @@ All important and notable changes in the _CoSimIO_ are documented in this file.
 - Improved synchronization during initial handshake to avoid deadlocks
 - Experimental support for unix domain sockets was added (see [here](https://kratosmultiphysics.github.io/CoSimIO/communication.html#unix-domain-socket-based-communication))
 - PipeCommunication now supports large data (data larger than pipe buffer). Furthermore the buffer size can be configured with `buffer_size`, see the [documentation](https://kratosmultiphysics.github.io/CoSimIO/communication.html#pipe-based-communication).
-- Experimental support for communication based on `MPI_Ports` was added (see [here](https://kratosmultiphysics.github.io/CoSimIO/communication.html#mpi-based-communication))
+- Experimental support for communication based on `MPI_Ports` was added (see [here](https://kratosmultiphysics.github.io/CoSimIO/communication.html#mpi-based-communication)). It is available when connection is done with MPI and can be enabled with `CO_SIM_IO_BUILD_MPI_COMMUNICATION`
 - Printing timing information for communication is now unified for all communication methods (can be enabled with `print_timing`)
 - other minor interal improvements and fixes
