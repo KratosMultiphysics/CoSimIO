@@ -50,7 +50,7 @@ All important and notable changes in the _CoSimIO_ are documented in this file.
 - Several minor improvements to the CI (continuous integration)
 - Internal errors now give much better error messages including detailed stacktraces
 
-## 3.1.0
+## 4.0.0
 - Socket based communication was added (using network sockets with IPv4). Documentation is available [here](https://kratosmultiphysics.github.io/CoSimIO/communication.html#socket-based-communication)
 - Creating entities in the ModelPart is now significantly faster
 - New interfaces are added to the ModelPart with which multiple entities can be created.
