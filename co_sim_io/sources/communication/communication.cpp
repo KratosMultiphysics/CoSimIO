@@ -136,7 +136,7 @@ void Communication::BaseConnectDetail(const Info& I_Info)
         // delete and recreate directory to remove potential leftovers
         std::error_code ec;
         fs::remove_all(mCommFolder, ec);
-        CO_SIM_IO_INFO_IF("CoSimIO", ec) << "Warning, communication directory (" << mCommFolder << ")could not be deleted!\nError code: " << ec.message() << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", ec) << "Warning, communication directory (" << mCommFolder << ") could not be deleted!\nError code: " << ec.message() << std::endl;
         if (!fs::exists(mCommFolder)) {
             fs::create_directory(mCommFolder);
         }
