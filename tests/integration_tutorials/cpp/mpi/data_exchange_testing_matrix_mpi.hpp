@@ -21,9 +21,33 @@ std::vector<CoSimIO::Info> GetTestingMatrix()
     for (const auto& r_method : comm_methods) {
         info.Clear();
 
+        if (r_method == "socket") info.Set("network_name", "ib0");
+
         info.Set("communication_format", r_method);
         configs.push_back(info);
+
+        // "no_trace" is the default
+        info.Set("always_use_serializer", true);
+        configs.push_back(info);
+
+        info.Set("serializer_trace_type", "ascii");
+        configs.push_back(info);
     }
+
+    // adding additional configs
+    info.Clear();
+    info.Set("communication_format", "file");
+    info.Set("always_use_serializer", true);
+    info.Set("use_file_serializer", false);
+    configs.push_back(info);
+
+    info.Set("serializer_trace_type", "ascii");
+    configs.push_back(info);
+
+    info.Clear();
+    info.Set("communication_format", "file");
+    info.Set("use_aux_file_for_file_availability", true);
+    configs.push_back(info);
 
     return configs;
 }
@@ -51,6 +75,13 @@ std::string GetFileName(const CoSimIO::Info& rInfo, const std::string& rAppendix
         }
     }
 
+    if (comm_format == "file" && rInfo.Has("use_aux_file_for_file_availability")) {
+        const bool use_aux_file_for_file_availability = rInfo.Get<bool>("use_aux_file_for_file_availability");
+        if (use_aux_file_for_file_availability) {
+            file_name += "_aux_file";
+        }
+    }
+
     // if (comm_format == "pipe" && rInfo.Has("buffer_size")) {
     //     file_name += "_buf_" + std::to_string(rInfo.Get<int>("buffer_size"));
     // }
@@ -69,7 +100,7 @@ std::vector<std::size_t> VEC_SIZES {
     ,static_cast<std::size_t>(1e5)
     ,static_cast<std::size_t>(1e6)
     ,static_cast<std::size_t>(1e7)
-    ,static_cast<std::size_t>(1e8)
+    // ,static_cast<std::size_t>(1e8)
     //,static_cast<std::size_t>(2e8)
 };
 
@@ -81,7 +112,7 @@ double ElapsedSeconds(const std::chrono::steady_clock::time_point& rStartTime)
 }
 
 std::string HumanReadableSize(std::size_t InBytes) {
-    constexpr char extension[] = {'\0', 'K', 'M', 'G', 'T', 'P', 'E', 'E'};
+    constexpr char extension[] = {' ', 'K', 'M', 'G', 'T', 'P', 'E', 'E'};
 
     std::stringstream output;
     output.precision(4);
