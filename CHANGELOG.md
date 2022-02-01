@@ -51,12 +51,13 @@ All important and notable changes in the _CoSimIO_ are documented in this file.
 - Internal errors now give much better error messages including detailed stacktraces
 
 ## 4.0.0
-- Socket based communication was added (using network sockets with IPv4). Documentation is available [here](https://kratosmultiphysics.github.io/CoSimIO/communication.html#socket-based-communication)
+- Socket based communication was added (using network sockets with IPv4). Documentation is available [here](https://kratosmultiphysics.github.io/CoSimIO/communication.html#socket-based-communication). Due to its versatility it is the new default (previously it was file-based communication)
 - Creating entities in the ModelPart is now significantly faster
 - New interfaces are added to the ModelPart with which multiple entities can be created.
 - Improved and extended documentation
 - Improved synchronization during initial handshake to avoid deadlocks
-- Experimental support for unix domain sockets was added
+- Experimental support for unix domain sockets was added (see [here](https://kratosmultiphysics.github.io/CoSimIO/communication.html#unix-domain-socket-based-communication))
 - PipeCommunication now supports large data (data larger than pipe buffer). Furthermore the buffer size can be configured with `buffer_size`, see the [documentation](https://kratosmultiphysics.github.io/CoSimIO/communication.html#pipe-based-communication).
+- Experimental support for communication based on `MPI_Ports` was added (see [here](https://kratosmultiphysics.github.io/CoSimIO/communication.html#mpi-based-communication))
 - Printing timing information for communication is now unified for all communication methods (can be enabled with `print_timing`)
 - other minor interal improvements and fixes
