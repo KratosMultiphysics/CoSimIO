@@ -38,46 +38,22 @@ public:
     BidirectionalPipe(
         const fs::path& rPipeDir,
         const fs::path& rBasePipeName,
-        const bool IsPrimary);
-
-    template<class TObjectType>
-    void Send(const TObjectType& rObject)
-    {
-        StreamSerializer serializer;
-        serializer.save("object", rObject);
-
-        Write(serializer.GetStringRepresentation(), 1);
-    }
-
-    template<class TObjectType>
-    void Receive(TObjectType& rObject)
-    {
-        std::string buffer;
-        Read(buffer, 1);
-        StreamSerializer serializer(buffer);
-        serializer.load("object", rObject);
-    }
+        const bool IsPrimary,
+        const int BufferSize,
+        const int EchoLevel);
 
     template<typename TDataType>
-    void Send(const Internals::DataContainer<TDataType>& rData)
+    double Write(const TDataType& rData, const std::size_t SizeDataType)
     {
-        Write(rData, sizeof(TDataType));
-    }
+        CO_SIM_IO_TRY
 
-    template<typename TDataType>
-    void Receive(Internals::DataContainer<TDataType>& rData)
-    {
-        Read(rData, sizeof(TDataType));
-    }
-
-    template<typename TDataType>
-    void Write(const TDataType& rData, const std::size_t SizeDataType)
-    {
         #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
         const std::size_t data_size = rData.size();
         std::size_t written_size=0;
-        SendSize(data_size);
-        const std::size_t buffer_size = GetPipeBufferSize()/SizeDataType;
+        SendSize(data_size); // serves also as synchronization for time measurement
+
+        const auto start_time(std::chrono::steady_clock::now());
+        const std::size_t buffer_size = mBufferSize/SizeDataType;
 
         while(written_size<data_size) {
             const std::size_t data_left_to_write = data_size - written_size;
@@ -88,17 +64,27 @@ public:
 
             written_size += current_buffer_size;
         }
+        return Utilities::ElapsedSeconds(start_time);
+        #else
+        return 0.0;
+
         #endif
+
+        CO_SIM_IO_CATCH
     }
 
     template<typename TDataType>
-    void Read(TDataType& rData, const std::size_t SizeDataType)
+    double Read(TDataType& rData, const std::size_t SizeDataType)
     {
+        CO_SIM_IO_TRY
+
         #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
-        std::size_t received_size = ReceiveSize();
+        std::size_t received_size = ReceiveSize(); // serves also as synchronization for time measurement
         std::size_t read_size=0;
+
+        const auto start_time(std::chrono::steady_clock::now());
         rData.resize(received_size);
-        const std::size_t buffer_size = GetPipeBufferSize()/SizeDataType;
+        const std::size_t buffer_size = mBufferSize/SizeDataType;
 
         while(read_size<received_size) {
             const std::size_t data_left_to_read = received_size - read_size;
@@ -109,7 +95,13 @@ public:
 
             read_size += current_buffer_size;
         }
+        return Utilities::ElapsedSeconds(start_time);
+        #else
+        return 0.0;
+
         #endif
+
+        CO_SIM_IO_CATCH
     }
 
     void Close();
@@ -122,12 +114,14 @@ private:
     fs::path mPipeNameWrite;
     fs::path mPipeNameRead;
 
+    std::size_t mBufferSize;
+
     void SendSize(const std::uint64_t Size);
 
     std::uint64_t ReceiveSize();
-
-    std::size_t GetPipeBufferSize();
 };
+
+    const std::size_t mBufferSize;
 
     std::shared_ptr<BidirectionalPipe> mpPipe;
 
@@ -137,27 +131,25 @@ private:
 
     Info DisconnectDetail(const Info& I_Info) override;
 
-    Info ImportInfoImpl(const Info& I_Info) override;
-
-    Info ExportInfoImpl(const Info& I_Info) override;
-
-    Info ImportDataImpl(
+    double SendString(
         const Info& I_Info,
-        Internals::DataContainer<double>& rData) override;
+        const std::string& rData) override;
 
-    Info ExportDataImpl(
+    double ReceiveString(
+        const Info& I_Info,
+        std::string& rData) override;
+
+    double SendDataContainer(
         const Info& I_Info,
         const Internals::DataContainer<double>& rData) override;
 
-    Info ImportMeshImpl(
+    double ReceiveDataContainer(
         const Info& I_Info,
-        ModelPart& O_ModelPart) override;
-
-    Info ExportMeshImpl(
-        const Info& I_Info,
-        const ModelPart& I_ModelPart) override;
+        Internals::DataContainer<double>& rData) override;
 
     void DerivedHandShake() const override;
+
+    Info GetCommunicationSettings() const override;
 };
 
 } // namespace Internals

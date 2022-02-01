@@ -522,9 +522,9 @@ TEST_CASE("Serializer_trace_error")
     RunAllSerializationTests(serializer);
 }
 
-TEST_CASE("Serializer_trace_all")
+TEST_CASE("Serializer_ascii")
 {
-    CoSimIO::Internals::StreamSerializer serializer(CoSimIO::Internals::Serializer::TraceType::SERIALIZER_TRACE_ALL);
+    CoSimIO::Internals::StreamSerializer serializer(CoSimIO::Internals::Serializer::TraceType::SERIALIZER_ASCII);
     RunAllSerializationTests(serializer);
 }
 

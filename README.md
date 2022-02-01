@@ -17,6 +17,8 @@ The implementation is defined in [co_sim_io](https://github.com/KratosMultiphysi
 
 Documentation and tutorials can be found [here](https://kratosmultiphysics.github.io/CoSimIO/)
 
+Different methods for interprocess communication are available, their documentation can be found [here](https://kratosmultiphysics.github.io/CoSimIO/communication)
+
 The tests are contained in [tests](https://github.com/KratosMultiphysics/CoSimIO/blob/master/tests)
 
 The [changelog](https://github.com/KratosMultiphysics/CoSimIO/blob/master/CHANGELOG.md) contains information about relevant changes in the different versions.

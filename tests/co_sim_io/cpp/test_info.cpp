@@ -36,6 +36,19 @@ TEST_CASE("info_basics_int")
     CHECK_EQ(info.Get<int>("echo_level"), 1);
 }
 
+TEST_CASE("info_basics_size_t")
+{
+    Info info;
+
+    CHECK_UNARY_FALSE(info.Has("echo_level"));
+
+    info.Set<std::size_t>("echo_level", 1);
+
+    CHECK_UNARY(info.Has("echo_level"));
+
+    CHECK_EQ(info.Get<std::size_t>("echo_level"), 1);
+}
+
 TEST_CASE("info_basics_double")
 {
     Info info;
@@ -131,7 +144,19 @@ TEST_CASE("info_int_default")
 
     CHECK_UNARY_FALSE(info.Has("echo_level"));
 
-    CHECK_EQ(info.Get<int>("echo_level", 3), 3);
+    CHECK_EQ(info.Get<int>("echo_level", -3), -3);
+
+    CHECK_UNARY_FALSE(info.Has("echo_level")); // getting the default must not insert it!
+}
+
+
+TEST_CASE("info_size_t_default")
+{
+    Info info;
+
+    CHECK_UNARY_FALSE(info.Has("echo_level"));
+
+    CHECK_EQ(info.Get<std::size_t>("echo_level", 3), 3);
 
     CHECK_UNARY_FALSE(info.Has("echo_level")); // getting the default must not insert it!
 }
@@ -182,6 +207,22 @@ TEST_CASE("info_info_default")
     CHECK_EQ(info.Get<Info>("identifier", other_info).Size(), 1);
 
     CHECK_UNARY_FALSE(info.Has("identifier")); // getting the default must not insert it!
+}
+
+TEST_CASE("info_int_and_size_t")
+{
+    Info info;
+
+    info.Set("signed", -1);
+    info.Set("specunsigned", static_cast<std::size_t>(1)); // 1u is C++23
+    info.Set<std::size_t>("unsigned", 1); // this would be an int!
+
+    CHECK_UNARY(info.Has("signed"));
+    CHECK_UNARY(info.Has("unsigned"));
+
+    CHECK_EQ(info.Get<int>("signed"), -1);
+    CHECK_EQ(info.Get<std::size_t>("specunsigned"), 1);
+    CHECK_EQ(info.Get<std::size_t>("unsigned"), 1);
 }
 
 TEST_CASE("info_non_existing_key")
@@ -240,11 +281,13 @@ TEST_CASE("info_many_values_nested")
     CHECK_UNARY_FALSE(info.Has("is_converged"));
     CHECK_UNARY_FALSE(info.Has("tol"));
     CHECK_UNARY_FALSE(info.Has("echo_level"));
+    CHECK_UNARY_FALSE(info.Has("counter"));
 
     info.Set<std::string>("identifier", "velocity_interface");
     info.Set<bool>("is_converged", true);
     info.Set<double>("tol", 0.008);
-    info.Set<int>("echo_level", 2);
+    info.Set<int>("echo_level", -2);
+    info.Set<std::size_t>("counter", 2);
 
     sub_info.Set<std::string>("abc", "something");
     sub_info.Set<bool>("minor", false);
@@ -277,7 +320,8 @@ TEST_CASE("info_many_values_nested")
     CHECK_EQ(info.Get<std::string>("identifier"), "velocity_interface");
     CHECK_UNARY(info.Get<bool>("is_converged"));
     CHECK_EQ(info.Get<double>("tol"), doctest::Approx(0.008));
-    CHECK_EQ(info.Get<int>("echo_level"), 2);
+    CHECK_EQ(info.Get<int>("echo_level"), -2);
+    CHECK_EQ(info.Get<std::size_t>("counter"), 2);
 
     Info ret_sub_info = info.Get<Info>("sub");
 
@@ -390,16 +434,18 @@ TEST_CASE("info_serialization")
     info_save.Set<bool>("is_converged", true);
     info_save.Set<std::string>("keyword", "awesome");
     info_save.Set<double>("tol", 0.008);
-    info_save.Set<int>("echo_level", 2);
+    info_save.Set<int>("echo_level", -2);
     info_save.Set<int>("checking", 22);
+    info_save.Set<std::size_t>("count", 123456789);
 
     CoSimIO::Internals::StreamSerializer serializer;
     serializer.save("info", info_save);
     serializer.load("info", info_load);
 
-    CHECK_EQ(info_load.Size(), 5);
+    CHECK_EQ(info_load.Size(), 6);
     CHECK_EQ(info_load.Get<int>("checking"), 22);
-    CHECK_EQ(info_load.Get<int>("echo_level"), 2);
+    CHECK_EQ(info_load.Get<int>("echo_level"), -2);
+    CHECK_EQ(info_load.Get<std::size_t>("count"), 123456789);
     CHECK_EQ(info_load.Get<std::string>("keyword"), "awesome");
     CHECK_UNARY(info_load.Get<bool>("is_converged"));
     CHECK_EQ(info_load.Get<double>("tol"), doctest::Approx(0.008));
@@ -489,16 +535,16 @@ TEST_CASE("info_ostream")
     Info info;
     info.Set<std::string>("keyword", "awesome");
     info.Set<bool>("is_converged", true);
-    info.Set<std::string>("keyword", "awesome");
     info.Set<double>("tol", 0.008);
-    info.Set<int>("echo_level", 2);
+    info.Set<int>("echo_level", -2);
     info.Set<int>("checking", 22);
+    info.Set<std::size_t>("count", 132569748);
 
     std::stringstream test_stream;
 
     test_stream << info;
 
-    const std::string exp_string = "CoSimIO-Info; containing 5 entries\n  name: checking | value: 22 | type: int\n  name: echo_level | value: 2 | type: int\n  name: is_converged | value: true | type: bool\n  name: keyword | value: awesome | type: string\n  name: tol | value: 0.008 | type: double\n";
+    const std::string exp_string = "CoSimIO-Info; containing 6 entries\n  name: checking | value: 22 | type: int\n  name: count | value: 132569748 | type: size_t\n  name: echo_level | value: -2 | type: int\n  name: is_converged | value: true | type: bool\n  name: keyword | value: awesome | type: string\n  name: tol | value: 0.008 | type: double\n";
 
     CHECK_EQ(test_stream.str(), exp_string);
 }
@@ -510,7 +556,6 @@ TEST_CASE("info_ostream_nested")
     Info sub_sub_info;
     info.Set<std::string>("keyword", "awesome");
     info.Set<bool>("is_converged", true);
-    info.Set<std::string>("keyword", "awesome");
     info.Set<double>("tol", 0.008);
     info.Set<int>("echo_level", 2);
     info.Set<int>("checking", 22);
@@ -556,14 +601,16 @@ TEST_CASE("info_copy_constructor")
     info.Set<bool>("is_converged", true);
     info.Set<std::string>("keyword", "awesome");
     info.Set<double>("tol", 0.008);
-    info.Set<int>("echo_level", 2);
+    info.Set<int>("echo_level", -2);
     info.Set<int>("checking", 22);
+    info.Set<std::size_t>("count", 12584422);
 
     Info another_info(info);
 
-    CHECK_EQ(another_info.Size(), 5);
+    CHECK_EQ(another_info.Size(), 6);
     CHECK_EQ(another_info.Get<int>("checking"), 22);
-    CHECK_EQ(another_info.Get<int>("echo_level"), 2);
+    CHECK_EQ(another_info.Get<std::size_t>("count"), 12584422);
+    CHECK_EQ(another_info.Get<int>("echo_level"), -2);
     CHECK_EQ(another_info.Get<std::string>("keyword"), "awesome");
     CHECK_UNARY(another_info.Get<bool>("is_converged"));
     CHECK_EQ(another_info.Get<double>("tol"), doctest::Approx(0.008));
@@ -579,15 +626,17 @@ TEST_CASE("info_assignment")
     info.Set<bool>("is_converged", true);
     info.Set<std::string>("keyword", "awesome");
     info.Set<double>("tol", 0.008);
-    info.Set<int>("echo_level", 2);
+    info.Set<int>("echo_level", -2);
     info.Set<int>("checking", 22);
+    info.Set<std::size_t>("count", 12584422);
 
     Info another_info;
     another_info = info;
 
-    CHECK_EQ(another_info.Size(), 5);
+    CHECK_EQ(another_info.Size(), 6);
     CHECK_EQ(another_info.Get<int>("checking"), 22);
-    CHECK_EQ(another_info.Get<int>("echo_level"), 2);
+    CHECK_EQ(another_info.Get<std::size_t>("count"), 12584422);
+    CHECK_EQ(another_info.Get<int>("echo_level"), -2);
     CHECK_EQ(another_info.Get<std::string>("keyword"), "awesome");
     CHECK_UNARY(another_info.Get<bool>("is_converged"));
     CHECK_EQ(another_info.Get<double>("tol"), doctest::Approx(0.008));

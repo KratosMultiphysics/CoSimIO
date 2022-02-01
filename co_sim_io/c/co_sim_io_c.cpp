@@ -273,6 +273,21 @@ CoSimIO_Node CoSimIO_ModelPart_CreateNewNode(
     return node;
 }
 
+void CoSimIO_ModelPart_CreateNewNodes(
+    CoSimIO_ModelPart I_ModelPart,
+    const int I_NumberOfNodes,
+    const int* I_Id,
+    const double* I_X,
+    const double* I_Y,
+    const double* I_Z)
+{
+    CoSimIO::Internals::DataContainerRawMemoryReadOnly<int> ids(I_Id, I_NumberOfNodes);
+    CoSimIO::Internals::DataContainerRawMemoryReadOnly<double> x(I_X, I_NumberOfNodes);
+    CoSimIO::Internals::DataContainerRawMemoryReadOnly<double> y(I_Y, I_NumberOfNodes);
+    CoSimIO::Internals::DataContainerRawMemoryReadOnly<double> z(I_Z, I_NumberOfNodes);
+    static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->CreateNewNodes(ids, x, y, z);
+}
+
 CoSimIO_Node CoSimIO_ModelPart_CreateNewGhostNode(
     CoSimIO_ModelPart I_ModelPart,
     const int I_Id,
@@ -285,6 +300,23 @@ CoSimIO_Node CoSimIO_ModelPart_CreateNewGhostNode(
     CoSimIO_Node node;
     node.PtrCppNode = &cpp_node;
     return node;
+}
+
+void CoSimIO_ModelPart_CreateNewGhostNodes(
+    CoSimIO_ModelPart I_ModelPart,
+    const int I_NumberOfNodes,
+    const int* I_Id,
+    const double* I_X,
+    const double* I_Y,
+    const double* I_Z,
+    const int* PartitionIndex)
+{
+    CoSimIO::Internals::DataContainerRawMemoryReadOnly<int> ids(I_Id, I_NumberOfNodes);
+    CoSimIO::Internals::DataContainerRawMemoryReadOnly<double> x(I_X, I_NumberOfNodes);
+    CoSimIO::Internals::DataContainerRawMemoryReadOnly<double> y(I_Y, I_NumberOfNodes);
+    CoSimIO::Internals::DataContainerRawMemoryReadOnly<double> z(I_Z, I_NumberOfNodes);
+    CoSimIO::Internals::DataContainerRawMemoryReadOnly<int> p_idx(PartitionIndex, I_NumberOfNodes);
+    static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->CreateNewGhostNodes(ids, x, y, z, p_idx);
 }
 
 CoSimIO_Element CoSimIO_ModelPart_CreateNewElement(
@@ -302,6 +334,21 @@ CoSimIO_Element CoSimIO_ModelPart_CreateNewElement(
     CoSimIO_Element elem;
     elem.PtrCppElement = &cpp_elem;
     return elem;
+}
+
+void CoSimIO_ModelPart_CreateNewElements(
+    CoSimIO_ModelPart I_ModelPart,
+    const int I_NumberOfElements,
+    const int* I_Id,
+    const CoSimIO_ElementType* I_Type,
+    const int I_NumberOfConnectivities,
+    const int* I_Connectivities)
+{
+    CoSimIO::Internals::DataContainerRawMemoryReadOnly<int> ids(I_Id, I_NumberOfElements);
+    std::vector<CoSimIO::ElementType> types(I_NumberOfElements);
+    for (int i=0; i<I_NumberOfElements; ++i) {types[i] = static_cast<CoSimIO::ElementType>(I_Type[i]);}
+    CoSimIO::Internals::DataContainerRawMemoryReadOnly<int> connectivities(I_Connectivities, I_NumberOfConnectivities);
+    static_cast<CoSimIO::ModelPart*>(I_ModelPart.PtrCppModelPart)->CreateNewElements(ids, types, connectivities);
 }
 
 

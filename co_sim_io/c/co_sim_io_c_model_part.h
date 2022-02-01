@@ -99,6 +99,14 @@ CoSimIO_Node CoSimIO_ModelPart_CreateNewNode(
     const double I_Y,
     const double I_Z);
 
+void CoSimIO_ModelPart_CreateNewNodes(
+    CoSimIO_ModelPart I_ModelPart,
+    const int I_NumberOfNodes,
+    const int* I_Id,
+    const double* I_X,
+    const double* I_Y,
+    const double* I_Z);
+
 CoSimIO_Node CoSimIO_ModelPart_CreateNewGhostNode(
     CoSimIO_ModelPart I_ModelPart,
     const int I_Id,
@@ -107,10 +115,27 @@ CoSimIO_Node CoSimIO_ModelPart_CreateNewGhostNode(
     const double I_Z,
     const int PartitionIndex);
 
+void CoSimIO_ModelPart_CreateNewGhostNodes(
+    CoSimIO_ModelPart I_ModelPart,
+    const int I_NumberOfNodes,
+    const int* I_Id,
+    const double* I_X,
+    const double* I_Y,
+    const double* I_Z,
+    const int* PartitionIndex);
+
 CoSimIO_Element CoSimIO_ModelPart_CreateNewElement(
     CoSimIO_ModelPart I_ModelPart,
     const int I_Id,
     const CoSimIO_ElementType I_Type,
+    const int* I_Connectivities);
+
+void CoSimIO_ModelPart_CreateNewElements(
+    CoSimIO_ModelPart I_ModelPart,
+    const int I_NumberOfElements,
+    const int* I_Id,
+    const CoSimIO_ElementType* I_Type,
+    const int I_NumberOfConnectivities,
     const int* I_Connectivities);
 
 

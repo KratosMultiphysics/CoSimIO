@@ -189,7 +189,7 @@ void ConnectDisconnect(CoSimIO::Info settings)
     settings.Set<int>("echo_level", 0);
 
     using Communication = CoSimIO::Internals::Communication;
-    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
+    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CommunicationFactory().Create(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
     // the secondary thread should wait a bit until the primary has created the folder!
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -215,7 +215,7 @@ void ExportInfoHelper(
     settings.Set<int>("echo_level", 0);
 
     using Communication = CoSimIO::Internals::Communication;
-    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
+    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CommunicationFactory().Create(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
     // the secondary thread should wait a bit until the primary has created the folder!
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -252,7 +252,7 @@ void ExportDataHelper(
     settings.Set<int>("echo_level", 0);
 
     using Communication = CoSimIO::Internals::Communication;
-    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
+    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CommunicationFactory().Create(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
     // the secondary thread should wait a bit until the primary has created the folder!
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -286,7 +286,7 @@ void ExportMeshHelper(
     settings.Set<int>("echo_level", 0);
 
     using Communication = CoSimIO::Internals::Communication;
-    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
+    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CommunicationFactory().Create(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
     // the secondary thread should wait a bit until the primary has created the folder!
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -321,7 +321,7 @@ void RunAllCommunication(CoSimIO::Info settings)
 
     using Communication = CoSimIO::Internals::Communication;
 
-    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
+    std::unique_ptr<Communication> p_comm = CoSimIO::Internals::CommunicationFactory().Create(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
     SUBCASE("connect_disconnect_once")
     {
@@ -342,7 +342,7 @@ void RunAllCommunication(CoSimIO::Info settings)
         for (std::size_t i=0; i<3; ++i) {
             // need to make a fresh obj of "Communication" each time we connect again
             // (because the same is done in the ext thread)
-            std::unique_ptr<Communication> p_internal_comm = CoSimIO::Internals::CreateCommunication(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
+            std::unique_ptr<Communication> p_internal_comm = CoSimIO::Internals::CommunicationFactory().Create(settings, std::make_shared<CoSimIO::Internals::DataCommunicator>());
 
             std::thread ext_thread(ConnectDisconnect, settings);
 
@@ -599,8 +599,25 @@ TEST_CASE("FileCommunication_default_settings" * doctest::timeout(250))
     RunAllCommunication(settings);
 }
 
+TEST_CASE("FileCommunication_not_file_serializer" * doctest::timeout(250))
+{
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "file");
+    settings.Set<bool>("use_file_serializer", false);
+    RunAllCommunication(settings);
+}
+
+TEST_CASE("FileCommunication_serializer_data" * doctest::timeout(250))
+{
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "file");
+    settings.Set<bool>("use_serializer_for_data", true);
+    RunAllCommunication(settings);
+}
+
 TEST_CASE("FileCommunication_avail_file" * doctest::timeout(250))
 {
+    // could be skipped as in Win by default the aux file is used
     CoSimIO::Info settings;
     settings.Set<std::string>("communication_format", "file");
     settings.Set<bool>("use_aux_file_for_file_availability", true);
@@ -616,6 +633,16 @@ TEST_CASE("PipeCommunication" * doctest::timeout(250))
 #endif
 }
 
+TEST_CASE("PipeCommunication_serializer_data" * doctest::timeout(250))
+{
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "pipe");
+    settings.Set<bool>("use_serializer_for_data", true);
+#ifndef CO_SIM_IO_COMPILED_IN_WINDOWS // pipe comm is currenlty not implemented in Win
+    RunAllCommunication(settings);
+#endif
+}
+
 TEST_CASE("LocalSocketCommunication" * doctest::timeout(250))
 {
     CoSimIO::Info settings;
@@ -625,10 +652,46 @@ TEST_CASE("LocalSocketCommunication" * doctest::timeout(250))
 #endif
 }
 
+TEST_CASE("LocalSocketCommunication_serializer_data" * doctest::timeout(250))
+{
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "local_socket");
+    settings.Set<bool>("use_serializer_for_data", true);
+#ifndef CO_SIM_IO_COMPILED_IN_WINDOWS // some debugging is needed to make it work in Win
+    RunAllCommunication(settings);
+#endif
+}
+
 TEST_CASE("SocketCommunication" * doctest::timeout(250))
 {
     CoSimIO::Info settings;
     settings.Set<std::string>("communication_format", "socket");
+    RunAllCommunication(settings);
+}
+
+TEST_CASE("SocketCommunication_serializer_data" * doctest::timeout(250))
+{
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "socket");
+    settings.Set<bool>("use_serializer_for_data", true);
+    RunAllCommunication(settings);
+}
+
+TEST_CASE("SocketCommunication_serializer_data_trace_error" * doctest::timeout(250))
+{
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "socket");
+    settings.Set<bool>("use_serializer_for_data", true);
+    settings.Set<std::string>("serializer_trace_type", "trace_error");
+    RunAllCommunication(settings);
+}
+
+TEST_CASE("SocketCommunication_serializer_data_ascii" * doctest::timeout(250))
+{
+    CoSimIO::Info settings;
+    settings.Set<std::string>("communication_format", "socket");
+    settings.Set<bool>("use_serializer_for_data", true);
+    settings.Set<std::string>("serializer_trace_type", "ascii");
     RunAllCommunication(settings);
 }
 

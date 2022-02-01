@@ -32,10 +32,26 @@
 namespace CoSimIO {
 namespace Internals {
 
+namespace {
+
+int GetPipeBufferSize(const Info& I_Info)
+{
+    int default_buffer_size = 8192;
+
+    #ifdef CO_SIM_IO_COMPILED_IN_LINUX
+    default_buffer_size = 65536;
+    #endif
+
+    return I_Info.Get<int>("buffer_size", default_buffer_size);
+}
+
+} // anonymous namespace
+
 PipeCommunication::PipeCommunication(
     const Info& I_Settings,
     std::shared_ptr<DataCommunicator> I_DataComm)
-    : Communication(I_Settings, I_DataComm)
+    : Communication(I_Settings, I_DataComm),
+      mBufferSize(GetPipeBufferSize(I_Settings))
 {
 }
 
@@ -53,7 +69,9 @@ Info PipeCommunication::ConnectDetail(const Info& I_Info)
     mpPipe = std::make_shared<BidirectionalPipe>(
         GetCommunicationDirectory(),
         GetConnectionName() + "_r" + std::to_string(GetDataCommunicator().Rank()),
-        GetIsPrimaryConnection());
+        GetIsPrimaryConnection(),
+        GetPipeBufferSize(I_Info),
+        GetEchoLevel());
 
     return Info(); // TODO use
 }
@@ -64,61 +82,33 @@ Info PipeCommunication::DisconnectDetail(const Info& I_Info)
     return Info(); // TODO use
 }
 
-Info PipeCommunication::ImportInfoImpl(const Info& I_Info)
-{
-    Info imported_info;
-    mpPipe->Receive(imported_info);
-    return imported_info;
-}
-
-Info PipeCommunication::ExportInfoImpl(const Info& I_Info)
-{
-    mpPipe->Send(I_Info);
-    return Info(); // TODO use
-}
-
-Info PipeCommunication::ImportDataImpl(
-    const Info& I_Info,
-    Internals::DataContainer<double>& rData)
-{
-    mpPipe->Receive(rData);
-    return Info(); // TODO use
-}
-
-Info PipeCommunication::ExportDataImpl(
-    const Info& I_Info,
-    const Internals::DataContainer<double>& rData)
-{
-    mpPipe->Send(rData);
-    return Info(); // TODO use
-}
-
-Info PipeCommunication::ImportMeshImpl(
-    const Info& I_Info,
-    ModelPart& O_ModelPart)
-{
-    mpPipe->Receive(O_ModelPart);
-    return Info(); // TODO use
-}
-
-Info PipeCommunication::ExportMeshImpl(
-    const Info& I_Info,
-    const ModelPart& I_ModelPart)
-{
-    mpPipe->Send(I_ModelPart);
-    return Info(); // TODO use
-}
-
 void PipeCommunication::DerivedHandShake() const
 {
     CO_SIM_IO_ERROR_IF(GetMyInfo().Get<std::string>("operating_system") != GetPartnerInfo().Get<std::string>("operating_system")) << "Pipe communication cannot be used between different operating systems!" << std::endl;
+
+    const std::size_t my_use_buffer_size = GetMyInfo().Get<Info>("communication_settings").Get<std::size_t>("buffer_size");
+    const std::size_t partner_buffer_size = GetPartnerInfo().Get<Info>("communication_settings").Get<std::size_t>("buffer_size");
+    CO_SIM_IO_ERROR_IF(my_use_buffer_size != partner_buffer_size) << "Mismatch in buffer_size!\nMy buffer_size: " << my_use_buffer_size << "\nPartner buffer_size: " << partner_buffer_size << std::noboolalpha << std::endl;
+}
+
+Info PipeCommunication::GetCommunicationSettings() const
+{
+    CO_SIM_IO_TRY
+
+    Info info;
+    info.Set("buffer_size", mBufferSize);
+    return info;
+
+    CO_SIM_IO_CATCH
 }
 
 
 PipeCommunication::BidirectionalPipe::BidirectionalPipe(
     const fs::path& rPipeDir,
     const fs::path& rBasePipeName,
-    const bool IsPrimary)
+    const bool IsPrimary,
+    const int BufferSize,
+    const int EchoLevel) : mBufferSize(BufferSize)
 {
     mPipeNameWrite = mPipeNameRead = rPipeDir / rBasePipeName;
 
@@ -143,6 +133,32 @@ PipeCommunication::BidirectionalPipe::BidirectionalPipe(
         CO_SIM_IO_ERROR_IF((mPipeHandleRead = open(mPipeNameRead.c_str(), O_RDONLY)) < 0) << "Pipe " << mPipeNameRead << " could not be opened!" << std::endl;
         CO_SIM_IO_ERROR_IF((mPipeHandleWrite = open(mPipeNameWrite.c_str(), O_WRONLY)) < 0) << "Pipe " << mPipeNameWrite << " could not be opened!" << std::endl;
     }
+
+    #ifdef CO_SIM_IO_COMPILED_IN_LINUX
+    const int pipe_buffer_size_read = fcntl(mPipeHandleRead, F_GETPIPE_SZ);
+    const int pipe_buffer_size_write = fcntl(mPipeHandleWrite, F_GETPIPE_SZ);
+
+    const int max_pipe_buffer = std::max(pipe_buffer_size_read, pipe_buffer_size_write);
+    if (pipe_buffer_size_read  < max_pipe_buffer) {fcntl(mPipeHandleRead,  F_SETPIPE_SZ, BufferSize);}
+    if (pipe_buffer_size_write < max_pipe_buffer) {fcntl(mPipeHandleWrite, F_SETPIPE_SZ, BufferSize);}
+
+    if (BufferSize > max_pipe_buffer) {
+        CO_SIM_IO_INFO_IF("CoSimIO", EchoLevel>0) << "Requested buffer size (" << BufferSize << ") is larger than pipe buffer size (" << max_pipe_buffer << "). Attempting to increase size of pipe buffer" << std::endl;
+        fcntl(mPipeHandleRead,  F_SETPIPE_SZ, BufferSize);
+        fcntl(mPipeHandleWrite, F_SETPIPE_SZ, BufferSize);
+
+        const int new_pipe_buffer_size = fcntl(mPipeHandleRead, F_GETPIPE_SZ);
+        CO_SIM_IO_ERROR_IF(new_pipe_buffer_size != fcntl(mPipeHandleWrite, F_GETPIPE_SZ)) << "Different buffer sizes after changing size, this should not happen!" << std::endl;
+
+        // not comparing equal, as pipe buffer size is multiple of getpagesize()
+        CO_SIM_IO_INFO_IF("CoSimIO", new_pipe_buffer_size == BufferSize && EchoLevel>0) << "Resizing pipe buffer was successful! Pipe buffer size is now " << new_pipe_buffer_size << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", new_pipe_buffer_size < BufferSize) << "Resizing pipe buffer was not successful! Pipe buffer size is " << new_pipe_buffer_size << " even though " << BufferSize << " was requested!" << std::endl;
+    }
+
+    const int final_pipe_buffer_size = fcntl(mPipeHandleRead, F_GETPIPE_SZ);
+    if (BufferSize >= final_pipe_buffer_size) {mBufferSize = final_pipe_buffer_size-1;} // crashes if same size or larger!
+    #endif
+
     #endif
 }
 
@@ -172,16 +188,34 @@ std::uint64_t PipeCommunication::BidirectionalPipe::ReceiveSize()
     #else
     return 0;
     #endif
-
 }
 
-std::size_t PipeCommunication::BidirectionalPipe::GetPipeBufferSize()
+double PipeCommunication::SendString(
+    const Info& I_Info,
+    const std::string& rData)
 {
-    #ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
-    return 8192;
-    #else
-    return 0;
-    #endif
+    return mpPipe->Write(rData, 1);
+}
+
+double PipeCommunication::ReceiveString(
+    const Info& I_Info,
+    std::string& rData)
+{
+    return mpPipe->Read(rData, 1);
+}
+
+double PipeCommunication::SendDataContainer(
+    const Info& I_Info,
+    const Internals::DataContainer<double>& rData)
+{
+    return mpPipe->Write(rData, sizeof(double));
+}
+
+double PipeCommunication::ReceiveDataContainer(
+    const Info& I_Info,
+    Internals::DataContainer<double>& rData)
+{
+    return mpPipe->Read(rData, sizeof(double));
 }
 
 } // namespace Internals

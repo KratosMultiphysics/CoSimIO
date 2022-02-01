@@ -26,25 +26,6 @@ namespace Internals {
 
 namespace {
 
-std::vector<std::string> SplitStringByDelimiter(
-const std::string& rString,
-const char Delimiter)
-{
-    CO_SIM_IO_TRY
-
-    std::istringstream ss(rString);
-    std::string token;
-
-    std::vector<std::string> splitted_string;
-    while(std::getline(ss, token, Delimiter)) {
-        splitted_string.push_back(token);
-    }
-
-    return splitted_string;
-
-    CO_SIM_IO_CATCH
-}
-
 std::unordered_map<std::string, std::string> GetIpv4Addresses()
 {
     CO_SIM_IO_TRY
@@ -104,98 +85,56 @@ std::string GetIpAddress(const Info& I_Settings)
     CO_SIM_IO_CATCH
 }
 
+struct ConnectionInfo
+{
+    int PortNumber;
+    std::string IpAddress;
+
+    friend class CoSimIO::Internals::Serializer;
+
+    void save(CoSimIO::Internals::Serializer& rSerializer) const
+    {
+        rSerializer.save("PortNumber", PortNumber);
+        rSerializer.save("IpAddress", IpAddress);
+    }
+
+    void load(CoSimIO::Internals::Serializer& rSerializer)
+    {
+        rSerializer.load("PortNumber", PortNumber);
+        rSerializer.load("IpAddress", IpAddress);
+    }
+};
+
+// this is required as the serializer cannot handle newlines
+void PrepareStringForAsciiSerialization(std::string& rString)
+{
+    const char disallowed_chars[] = {'<', '>'};
+    for (const auto ch : disallowed_chars) {
+        CO_SIM_IO_ERROR_IF_NOT(rString.find(ch) == std::string::npos) << "String contains a character that is not allowed: \"" << std::string(1,ch) << "\"!" << std::endl;
+    }
+
+    std::replace(rString.begin(), rString.end(), '\n', '<');
+    std::replace(rString.begin(), rString.end(), '"', '>');
+}
+
+void RevertAsciiSerialization(std::string& rString)
+{
+    std::replace(rString.begin(), rString.end(), '<', '\n');
+    std::replace(rString.begin(), rString.end(), '>', '"');
+}
+
 } // helpers namespace
 
 SocketCommunication::SocketCommunication(
     const Info& I_Settings,
     std::shared_ptr<DataCommunicator> I_DataComm)
-    : Communication(I_Settings, I_DataComm)
+    : BaseType(I_Settings, I_DataComm)
 {
     CO_SIM_IO_TRY
 
-    mIpAddress = GetIpAddress(I_Settings);
-
-    CO_SIM_IO_CATCH
-}
-
-SocketCommunication::~SocketCommunication()
-{
-    CO_SIM_IO_TRY
-
-    if (GetIsConnected()) {
-        CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not performed, attempting automatic disconnection!" << std::endl;
-        Info tmp;
-        Disconnect(tmp);
+    if (GetIsPrimaryConnection()) {
+        mIpAddress = GetIpAddress(I_Settings);
     }
-
-    CO_SIM_IO_CATCH
-}
-
-Info SocketCommunication::ImportInfoImpl(const Info& I_Info)
-{
-    CO_SIM_IO_TRY
-
-    Info imported_info;
-    Receive(imported_info);
-    return imported_info;
-
-    CO_SIM_IO_CATCH
-}
-
-Info SocketCommunication::ExportInfoImpl(const Info& I_Info)
-{
-    CO_SIM_IO_TRY
-
-    Send(I_Info);
-    return Info(); // TODO use
-
-    CO_SIM_IO_CATCH
-}
-
-Info SocketCommunication::ImportDataImpl(
-    const Info& I_Info,
-    Internals::DataContainer<double>& rData)
-{
-    CO_SIM_IO_TRY
-
-    Receive(rData);
-    return Info(); // TODO use
-
-    CO_SIM_IO_CATCH
-}
-
-Info SocketCommunication::ExportDataImpl(
-    const Info& I_Info,
-    const Internals::DataContainer<double>& rData)
-{
-    CO_SIM_IO_TRY
-
-    Send(rData);
-    return Info(); // TODO use
-
-    CO_SIM_IO_CATCH
-}
-
-Info SocketCommunication::ImportMeshImpl(
-    const Info& I_Info,
-    ModelPart& O_ModelPart)
-{
-    CO_SIM_IO_TRY
-
-    Receive(O_ModelPart);
-    return Info(); // TODO use
-
-    CO_SIM_IO_CATCH
-}
-
-Info SocketCommunication::ExportMeshImpl(
-    const Info& I_Info,
-    const ModelPart& I_ModelPart)
-{
-    CO_SIM_IO_TRY
-
-    Send(I_ModelPart);
-    return Info(); // TODO use
 
     CO_SIM_IO_CATCH
 }
@@ -204,7 +143,9 @@ Info SocketCommunication::ConnectDetail(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
-    if (!GetIsPrimaryConnection()) {GetPortNumber();}
+    if (!GetIsPrimaryConnection()) {GetConnectionInformation();}
+
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Using IP-Address: " << mIpAddress << " and port number: " << mPortNumber << std::endl;
 
     using namespace asio::ip;
 
@@ -212,42 +153,20 @@ Info SocketCommunication::ConnectDetail(const Info& I_Info)
     if (GetIsPrimaryConnection()) { // this is the server
         mpAsioAcceptor->accept(*mpAsioSocket);
         mpAsioAcceptor->close();
+        mpAsioAcceptor.reset();
     } else { // this is the client
         tcp::endpoint my_endpoint(asio::ip::make_address(mIpAddress), mPortNumber);
         mpAsioSocket->connect(my_endpoint);
     }
 
-    // required such that asio keeps listening for incoming messages
-    mContextThread = std::thread([this]() { mAsioContext.run(); });
-
-    return Info();
+    return BaseType::ConnectDetail(I_Info);
 
     CO_SIM_IO_CATCH
 }
-
-Info SocketCommunication::DisconnectDetail(const Info& I_Info)
-{
-    CO_SIM_IO_TRY
-
-    // Request the context to close
-    mAsioContext.stop();
-
-    // Tidy up the context thread
-    if (mContextThread.joinable()) mContextThread.join();
-
-    mpAsioSocket->close();
-
-    return Info();
-
-    CO_SIM_IO_CATCH
-}
-
 
 void SocketCommunication::PrepareConnection(const Info& I_Info)
 {
     CO_SIM_IO_TRY
-
-    // CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Using IP Address: " << GetIpAddress(true) << std::endl;
 
     // preparing the acceptors to get the ports used for connecting the sockets
     if (GetIsPrimaryConnection()) {
@@ -256,26 +175,31 @@ void SocketCommunication::PrepareConnection(const Info& I_Info)
         mpAsioAcceptor = std::make_shared<tcp::acceptor>(mAsioContext, port_selection_endpoint);
         mPortNumber = mpAsioAcceptor->local_endpoint().port();
 
-        CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using port number: " << mPortNumber << std::endl;
+        // collect all IP-addresses and port numbers on rank 0 to
+        // exchange them during the handshake (which happens only on rank 0)
 
-        // collect all port numbers on rank 0
-        // to exchange them during the handshake
-        // (which happens only on rank 0)
         const auto& r_data_comm = GetDataCommunicator();
-        mAllPortNumbers.resize(r_data_comm.Size());
-        std::vector<int> my_ports(1);
-        my_ports[0] = mPortNumber;
-        r_data_comm.Gather(my_ports, mAllPortNumbers, 0);
+        std::vector<ConnectionInfo> conn_infos;
+
+        ConnectionInfo my_conn_info {mPortNumber, mIpAddress};
+
+        if (r_data_comm.Rank() == 0) {
+            conn_infos.resize(r_data_comm.Size());
+            conn_infos[0] = {mPortNumber, mIpAddress};
+            for (int i=1; i<r_data_comm.Size(); ++i) {
+                r_data_comm.Recv(conn_infos[i], i);
+            }
+        } else {
+            r_data_comm.Send(my_conn_info, 0);
+        }
+
+        StreamSerializer serializer(GetSerializerTraceType());
+        serializer.save("conn_info", conn_infos);
+        mSerializedConnectionInfo = serializer.GetStringRepresentation();
+        if (GetSerializerTraceType() != Serializer::TraceType::SERIALIZER_NO_TRACE) {
+            PrepareStringForAsciiSerialization(mSerializedConnectionInfo);
+        }
     }
-
-    CO_SIM_IO_CATCH
-}
-
-void SocketCommunication::DerivedHandShake() const
-{
-    CO_SIM_IO_TRY
-
-    CO_SIM_IO_ERROR_IF(GetMyInfo().Get<Info>("communication_settings").Get<std::string>("ip_address") != GetPartnerInfo().Get<Info>("communication_settings").Get<std::string>("ip_address")) << "IP addresses don't match!" << std::endl;
 
     CO_SIM_IO_CATCH
 }
@@ -285,12 +209,9 @@ Info SocketCommunication::GetCommunicationSettings() const
     CO_SIM_IO_TRY
 
     Info info;
-    info.Set("ip_address", mIpAddress);
 
     if (GetIsPrimaryConnection() && GetDataCommunicator().Rank() == 0) {
-        std::stringstream port_numbers_stream;
-        std::copy(mAllPortNumbers.begin(), mAllPortNumbers.end(), std::ostream_iterator<int>(port_numbers_stream, "-"));
-        info.Set("port_numbers", port_numbers_stream.str());
+        info.Set("connection_info", mSerializedConnectionInfo);
     }
 
     return info;
@@ -298,63 +219,29 @@ Info SocketCommunication::GetCommunicationSettings() const
     CO_SIM_IO_CATCH
 }
 
-void SocketCommunication::GetPortNumber()
+void SocketCommunication::GetConnectionInformation()
 {
     CO_SIM_IO_TRY
 
     CO_SIM_IO_ERROR_IF(GetIsPrimaryConnection()) << "This function can only be used as secondary connection!" << std::endl;
 
     const auto partner_info = GetPartnerInfo();
-    const std::string ports_string = partner_info.Get<Info>("communication_settings").Get<std::string>("port_numbers");
+    std::string serialized_info = partner_info.Get<Info>("communication_settings").Get<std::string>("connection_info");
 
-    std::vector<std::string> ports = SplitStringByDelimiter(ports_string, '-');
+    if (GetSerializerTraceType() != Serializer::TraceType::SERIALIZER_NO_TRACE) {
+        RevertAsciiSerialization(serialized_info);
+    }
 
-    CO_SIM_IO_ERROR_IF(static_cast<int>(ports.size()) != GetDataCommunicator().Size()) << "Wrong number of ports!" << std::endl;
+    std::vector<ConnectionInfo> conn_infos;
 
-    mPortNumber = static_cast<unsigned short>(std::stoul(ports[GetDataCommunicator().Rank()]));
+    StreamSerializer serializer(serialized_info, GetSerializerTraceType());
+    serializer.load("conn_info", conn_infos);
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using port number: " << mPortNumber << std::endl;
+    CO_SIM_IO_ERROR_IF(static_cast<int>(conn_infos.size()) != GetDataCommunicator().Size()) << "Wrong number of connection infos!" << std::endl;
 
-    CO_SIM_IO_CATCH
-}
-
-void SocketCommunication::Write(const std::string& rData)
-{
-    CO_SIM_IO_TRY
-
-    SendSize(rData.size());
-    asio::write(*mpAsioSocket, asio::buffer(rData.data(), rData.size()));
-
-    CO_SIM_IO_CATCH
-}
-
-void SocketCommunication::Read(std::string& rData)
-{
-    CO_SIM_IO_TRY
-
-    std::size_t received_size = ReceiveSize();
-    rData.resize(received_size);
-    asio::read(*mpAsioSocket, asio::buffer(&(rData.front()), received_size));
-
-    CO_SIM_IO_CATCH
-}
-
-void SocketCommunication::SendSize(const std::uint64_t Size)
-{
-    CO_SIM_IO_TRY
-
-    asio::write(*mpAsioSocket, asio::buffer(&Size, sizeof(Size)));
-
-    CO_SIM_IO_CATCH
-}
-
-std::uint64_t SocketCommunication::ReceiveSize()
-{
-    CO_SIM_IO_TRY
-
-    std::uint64_t imp_size_u;
-    asio::read(*mpAsioSocket, asio::buffer(&imp_size_u, sizeof(imp_size_u)));
-    return imp_size_u;
+    const auto& my_conn_info = conn_infos[GetDataCommunicator().Rank()];
+    mPortNumber = my_conn_info.PortNumber;
+    mIpAddress = my_conn_info.IpAddress;
 
     CO_SIM_IO_CATCH
 }
