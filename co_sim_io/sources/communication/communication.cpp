@@ -441,7 +441,6 @@ Info Communication::GetMyInfo() const
     my_info.Set<std::string>("communication_format", GetCommunicationName());
     my_info.Set<std::string>("operating_system", GetOsName());
 
-    my_info.Set<bool>("is_distributed", GetDataCommunicator().IsDistributed());
     my_info.Set<int>("num_processes",   GetDataCommunicator().Size());
 
     my_info.Set<bool>("is_big_endian", Utilities::IsBigEndian());
@@ -501,8 +500,6 @@ void Communication::HandShake(const Info& I_Info)
         CO_SIM_IO_ERROR_IF(GetCommunicationName() != mPartnerInfo.Get<std::string>("communication_format")) << "Mismatch in communication_format!\nMy communication_format: " << GetCommunicationName() << "\nPartner communication_format: " << mPartnerInfo.Get<std::string>("communication_format") << std::endl;
 
         CO_SIM_IO_ERROR_IF(GetDataCommunicator().Size() != mPartnerInfo.Get<int>("num_processes")) << "Mismatch in num_processes!\nMy num_processes: " << GetDataCommunicator().Size() << "\nPartner num_processes: " << mPartnerInfo.Get<int>("num_processes") << std::endl;
-
-        CO_SIM_IO_ERROR_IF(GetDataCommunicator().IsDistributed() != mPartnerInfo.Get<bool>("is_distributed")) << "Mismatch calling Connect(MPI)!\nMyself called: " << (GetDataCommunicator().IsDistributed()?"ConnectMPI":"Connect") << "\nPartner called: " << (mPartnerInfo.Get<bool>("is_distributed")?"ConnectMPI":"Connect") << std::endl;
 
         CO_SIM_IO_ERROR_IF(mAlwaysUseSerializer != mPartnerInfo.Get<bool>("always_use_serializer")) << std::boolalpha << "Mismatch in always_use_serializer!\nMy always_use_serializer: " << mAlwaysUseSerializer << "\nPartner always_use_serializer: " << mPartnerInfo.Get<bool>("always_use_serializer") << std::noboolalpha << std::endl;
 
