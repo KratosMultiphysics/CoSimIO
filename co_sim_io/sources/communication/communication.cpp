@@ -136,7 +136,7 @@ void Communication::BaseConnectDetail(const Info& I_Info)
         // delete and recreate directory to remove potential leftovers
         std::error_code ec;
         fs::remove_all(mCommFolder, ec);
-        CO_SIM_IO_INFO_IF("CoSimIO", ec) << "Warning, communication directory (" << mCommFolder << ")could not be deleted!\nError code: " << ec.message() << std::endl;
+        CO_SIM_IO_INFO_IF("CoSimIO", ec) << "Warning, communication directory (" << mCommFolder << ") could not be deleted!\nError code: " << ec.message() << std::endl;
         if (!fs::exists(mCommFolder)) {
             fs::create_directory(mCommFolder);
         }
@@ -324,9 +324,7 @@ void Communication::WaitForPath(
         Utilities::WaitUntilPathExists(avail_file);
 
         // once the file exists it means that the real file was written, hence it can be removed
-        std::error_code ec;
-        fs::remove(avail_file, ec);
-        CO_SIM_IO_ERROR_IF(ec) << avail_file << " could not be removed!\nError code: " << ec.message() << std::endl;
+        RemovePath(avail_file);
     }
     CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>=PrintEchoLevel) << "Found: " << rPath << std::endl;
 
@@ -443,8 +441,9 @@ Info Communication::GetMyInfo() const
     my_info.Set<std::string>("communication_format", GetCommunicationName());
     my_info.Set<std::string>("operating_system", GetOsName());
 
-    my_info.Set<bool>("is_distributed", GetDataCommunicator().IsDistributed());
     my_info.Set<int>("num_processes",   GetDataCommunicator().Size());
+
+    my_info.Set<bool>("is_big_endian", Utilities::IsBigEndian());
 
     my_info.Set<bool>("always_use_serializer", mAlwaysUseSerializer);
     my_info.Set<std::string>("serializer_trace_type", Serializer::TraceTypeToString(mSerializerTraceType));
@@ -502,11 +501,13 @@ void Communication::HandShake(const Info& I_Info)
 
         CO_SIM_IO_ERROR_IF(GetDataCommunicator().Size() != mPartnerInfo.Get<int>("num_processes")) << "Mismatch in num_processes!\nMy num_processes: " << GetDataCommunicator().Size() << "\nPartner num_processes: " << mPartnerInfo.Get<int>("num_processes") << std::endl;
 
-        CO_SIM_IO_ERROR_IF(GetDataCommunicator().IsDistributed() != mPartnerInfo.Get<bool>("is_distributed")) << "Mismatch calling Connect(MPI)!\nMyself called: " << (GetDataCommunicator().IsDistributed()?"ConnectMPI":"Connect") << "\nPartner called: " << (mPartnerInfo.Get<bool>("is_distributed")?"ConnectMPI":"Connect") << std::endl;
-
         CO_SIM_IO_ERROR_IF(mAlwaysUseSerializer != mPartnerInfo.Get<bool>("always_use_serializer")) << std::boolalpha << "Mismatch in always_use_serializer!\nMy always_use_serializer: " << mAlwaysUseSerializer << "\nPartner always_use_serializer: " << mPartnerInfo.Get<bool>("always_use_serializer") << std::noboolalpha << std::endl;
 
         CO_SIM_IO_ERROR_IF(Serializer::TraceTypeToString(mSerializerTraceType) != mPartnerInfo.Get<std::string>("serializer_trace_type")) << "Mismatch in serializer_trace_type!\nMy serializer_trace_type: " << Serializer::TraceTypeToString(mSerializerTraceType) << "\nPartner serializer_trace_type: " << mPartnerInfo.Get<std::string>("serializer_trace_type") << std::endl;
+
+        auto print_endianness = [](const bool IsBigEndian){return IsBigEndian ? "big endian" : "small endian";};
+
+        CO_SIM_IO_INFO_IF("CoSimIO", Utilities::IsBigEndian() != mPartnerInfo.Get<bool>("is_big_endian")) << "WARNING: Parnters have different endianness, check results carefully! It is recommended to use serialized ascii commuication.\n    My endianness:      " << print_endianness(Utilities::IsBigEndian()) << "\n    Partner endianness: " << print_endianness(mPartnerInfo.Get<bool>("is_big_endian")) << std::endl;
 
         // more things can be done in derived class if necessary
         DerivedHandShake();

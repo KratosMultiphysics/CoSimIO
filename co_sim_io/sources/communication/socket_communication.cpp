@@ -26,6 +26,8 @@ namespace Internals {
 
 namespace {
 
+static std::string LOCAL_IP_ADDRESS {"127.0.0.1"}; // local loopback interface
+
 std::unordered_map<std::string, std::string> GetIpv4Addresses()
 {
     CO_SIM_IO_TRY
@@ -79,7 +81,7 @@ std::string GetIpAddress(const Info& I_Settings)
             CO_SIM_IO_ERROR << err_msg.str() << std::endl;
         }
     } else {
-        return "127.0.0.1"; // local loopback interface
+        return LOCAL_IP_ADDRESS; // local loopback interface
     }
 
     CO_SIM_IO_CATCH
@@ -145,7 +147,9 @@ Info SocketCommunication::ConnectDetail(const Info& I_Info)
 
     if (!GetIsPrimaryConnection()) {GetConnectionInformation();}
 
-    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>0) << "Using IP-Address: " << mIpAddress << " and port number: " << mPortNumber << std::endl;
+    CO_SIM_IO_INFO_IF("CoSimIO", GetDataCommunicator().IsDistributed() && GetDataCommunicator().Rank()==0 && mIpAddress==LOCAL_IP_ADDRESS) << "Warning: Using the local IP address when connecting with MPI, this does not work in a distributed memory machine when communicating between different compute nodes!\nEither directly specify the IP address (with \"ip_address\") or specify the name of the network to be used (with \"network_name\")!" << std::endl;
+
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1) << "Using IP-Address: " << mIpAddress << " and port number: " << mPortNumber << std::endl;
 
     using namespace asio::ip;
 
@@ -209,7 +213,6 @@ Info SocketCommunication::GetCommunicationSettings() const
     CO_SIM_IO_TRY
 
     Info info;
-    info.Set("ip_address", mIpAddress);
 
     if (GetIsPrimaryConnection() && GetDataCommunicator().Rank() == 0) {
         info.Set("connection_info", mSerializedConnectionInfo);

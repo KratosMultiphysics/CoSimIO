@@ -23,10 +23,11 @@ namespace Internals {
 
 Connection::Connection(
     const Info& I_Settings,
-    std::shared_ptr<DataCommunicator> I_DataComm)
+    std::shared_ptr<DataCommunicator> I_DataComm,
+    const CommunicationFactory& rCommFactory)
     : mpDatacomm(I_DataComm)
 {
-    Initialize(I_Settings);
+    Initialize(I_Settings, rCommFactory);
 }
 
 Info Connection::Connect(const Info& I_Info)
@@ -85,20 +86,22 @@ Info Connection::Run(const Info& I_Info)
     return Info(); // TODO use this
 }
 
-void Connection::Initialize(const Info& I_Settings)
+void Connection::Initialize(
+    const Info& I_Settings,
+    const CommunicationFactory& rCommFactory)
 {
     Info comm_settings(I_Settings);
     if (!comm_settings.Has("communication_format")) {
         // set default communication format if not provided by user
-        // default is file-communication
-        comm_settings.Set<std::string>("communication_format", "file");
+        // default is socket-communication
+        comm_settings.Set<std::string>("communication_format", "socket");
     }
 
     const std::string comm_format = comm_settings.Get<std::string>("communication_format");
 
     CO_SIM_IO_INFO_IF("CoSimIO", mpDatacomm->Rank()==0) << "CoSimIO from \"" << comm_settings.Get<std::string>("my_name") << "\" to \"" << comm_settings.Get<std::string>("connect_to") << "\" uses communication format: " << comm_format << std::endl;
 
-    mpComm = CreateCommunication(comm_settings, mpDatacomm);
+    mpComm = rCommFactory.Create(comm_settings, mpDatacomm);
 }
 
 void Connection::CheckIfNameIsValid(const std::string& rName) const
@@ -124,8 +127,7 @@ void Connection::CheckIfNameIsValid(const std::string& rName) const
         for (const auto& name : allowed_names) {
             err_msg << "\n    " << name;
         }
-        err_msg << std::endl;
-        CO_SIM_IO_ERROR << err_msg.str();
+        CO_SIM_IO_ERROR << err_msg.str() << std::endl;
     }
 }
 

@@ -46,7 +46,7 @@ message("    CO_SIM_IO_BUILD_PYTHON:    " ${CO_SIM_IO_BUILD_PYTHON})
 message("    CO_SIM_IO_STRICT_COMPILER: " ${CO_SIM_IO_STRICT_COMPILER})
 message("")
 
-
+# needs to be here as otherwise doesn't find MPI properly
 if (CO_SIM_IO_BUILD_MPI)
     find_package(MPI REQUIRED)
     add_definitions( -DCO_SIM_IO_USING_MPI )
@@ -148,7 +148,17 @@ generate_export_header( co_sim_io EXPORT_MACRO_NAME CO_SIM_IO_API EXPORT_FILE_NA
 install(TARGETS co_sim_io DESTINATION bin)
 
 if (CO_SIM_IO_BUILD_MPI)
-    # Adding CoSimIO library
+    # optionally enable communication via MPI
+    OPTION ( CO_SIM_IO_BUILD_MPI_COMMUNICATION "Enabling communication via MPI" OFF )
+    if (CO_SIM_IO_BUILD_MPI_COMMUNICATION)
+        add_definitions( -DCO_SIM_IO_BUILD_MPI_COMMUNICATION )
+        message("Enabled communication via MPI")
+        if(MPI_CXX_VERSION_MAJOR VERSION_LESS 2.0)
+            message(WARNING "Communication via MPI requires at least MPI version 2.0! Currently detected version: " ${MPI_CXX_VERSION})
+        endif ()
+    endif()
+
+    # Adding CoSimIOMPI library
     file(GLOB_RECURSE co_sim_io_mpi_source_files ${CMAKE_CURRENT_SOURCE_DIR}/co_sim_io/mpi/sources/*.cpp)
     add_library (co_sim_io_mpi SHARED ${co_sim_io_mpi_source_files})
 

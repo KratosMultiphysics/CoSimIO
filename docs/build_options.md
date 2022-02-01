@@ -8,6 +8,7 @@ The CoSimIO uses [CMake](https://cmake.org/) as build system. The following opti
 | CMAKE_INSTALL_PREFIX | source directory of CoSimIO | Used to specify the install directory. Binaries will be installed in `${CMAKE_INSTALL_PREFIX}/bin` |
 | CO_SIM_IO_BUILD_TESTING | ON (same as `BUILD_TESTING`) | Build the tests. Useful for developing and initial installation to check if everything works as expected. |
 | CO_SIM_IO_BUILD_MPI | OFF | Enable MPI support for distributed environments. Requires an installation of [MPI](https://www.mpi-forum.org/). |
+| CO_SIM_IO_BUILD_MPI_COMMUNICATION | OFF | Enable communication via MPI. Requires to build CoSimIO with MPI support (using `CO_SIM_IO_BUILD_MPI`) |
 | CO_SIM_IO_BUILD_C | OFF | Build the C-interface |
 | CO_SIM_IO_BUILD_PYTHON | OFF | Build the Python-interface |
 | CO_SIM_IO_STRICT_COMPILER | OFF | Enable more warnings in the compiler, useful for development. |
