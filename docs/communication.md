@@ -104,6 +104,7 @@ The following logic is used for selecting the ip-address
 
 ## Unix domain socket-based communication
 **This form of communication is experimental**
+
 This type of communication uses unix domain sockets for the data exchange. It is similar to the tcp socket communication, but instead of passing the data through the network, it uses the kernel memory. This makes it faster, but at the same time it only works locally on one compute node.
 
 The [ASIO](https://think-async.com/Asio/) library is used as a high level interface for the sockets.
@@ -124,6 +125,7 @@ Set `communication_format` to `local_socket`.
 
 ## Pipe-based communication
 **This form of communication is experimental**
+
 A pipe is a data channel to perform interprocess communication between two processes. No data is written to the filesystem, it is directly exchanged through the kernel memory. This makes it more efficient than the file-based communication, but at the same time it only works locally on one compute node.
 
 The (default) buffer size is specific for each operating system, see e.g. [here](https://man7.org/linux/man-pages/man7/pipe.7.html) for information for Linux. If the data to be exchanged is larger than the buffer size, then it is exchanged in chuncks. Hence a larger buffer size results in less data exchanges.
@@ -145,6 +147,7 @@ Set `communication_format` to `pipe`.
 
 ## MPI-based communication
 **This form of communication is experimental**
+
 MPI is usually used to communicate between different ranks within an executable/one MPI-communicator. MPI 2.0 added functionalities with which the communication can be done also between independent communicators. This can be done similarly to the socket based communication through opening ports and accepting connection (on the primary/server side) and connecting to the opened port (on the secondary/client side). After the connection is established, communication is done with the standard MPI calls like `MPI_Send` and `MPI_Recv`. This is oftentimes the fastest way of exchanging data in a distributed memory environment.
 
 The disadvantage of this form of communication is that the features required for establishing communication across communicators are not robustly available for all MPI implementations. Experience shows that it is problematic with OpenMPI but works well with IntelMPI. Furthermore it might be required to use the same compilers and MPI implementation for successfully connecting.
