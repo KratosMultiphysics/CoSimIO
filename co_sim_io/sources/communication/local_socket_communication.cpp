@@ -23,6 +23,8 @@ Info LocalSocketCommunication::ConnectDetail(const Info& I_Info)
 {
     CO_SIM_IO_TRY
 
+    CO_SIM_IO_INFO_IF("CoSimIO", GetDataCommunicator().IsDistributed() && GetDataCommunicator().Rank()==0) << "Warning: Connection was done with MPI, but local-socket based communication works only within the same machine. Communicating between different compute nodes in a distributed memory machine when does not work, it will hang!" << std::endl;
+
     using asio::local::stream_protocol;
     mpAsioSocket = std::make_shared<stream_protocol::socket>(mAsioContext);
 

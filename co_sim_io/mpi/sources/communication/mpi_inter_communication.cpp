@@ -19,6 +19,8 @@
 namespace CoSimIO {
 namespace Internals {
 
+#ifdef CO_SIM_IO_BUILD_MPI_COMMUNICATION
+
 namespace {
 
 template<typename TMPIDataType>
@@ -35,8 +37,6 @@ int ReceiveSize(
 }
 
 }
-
-#ifdef CO_SIM_IO_BUILD_MPI_COMMUNICATION
 
 MPIInterCommunication::MPIInterCommunication(
     const Info& I_Settings,
@@ -61,8 +61,9 @@ Info MPIInterCommunication::ConnectDetail(const Info& I_Info)
 
     if (!GetIsPrimaryConnection()) {
         mPortName = GetPartnerInfo().Get<Info>("communication_settings").Get<std::string>("port_name");
-        std::cout << "SEC SIZE: " << mPortName.size() << std::endl;
     }
+
+    CO_SIM_IO_INFO_IF("CoSimIO", GetEchoLevel()>1 && GetDataCommunicator().Rank()==0) << "Using MPI-port: " << mPortName << std::endl;
 
     MPI_Comm my_comm = MPIDataCommunicator::GetMPICommunicator(GetDataCommunicator());
 

@@ -66,6 +66,10 @@ PipeCommunication::~PipeCommunication()
 
 Info PipeCommunication::ConnectDetail(const Info& I_Info)
 {
+    CO_SIM_IO_TRY
+
+    CO_SIM_IO_INFO_IF("CoSimIO", GetDataCommunicator().IsDistributed() && GetDataCommunicator().Rank()==0) << "Warning: Connection was done with MPI, but pipe based communication works only within the same machine. Communicating between different compute nodes in a distributed memory machine when does not work, it will hang!" << std::endl;
+
     mpPipe = std::make_shared<BidirectionalPipe>(
         GetCommunicationDirectory(),
         GetConnectionName() + "_r" + std::to_string(GetDataCommunicator().Rank()),
@@ -74,6 +78,8 @@ Info PipeCommunication::ConnectDetail(const Info& I_Info)
         GetEchoLevel());
 
     return Info(); // TODO use
+
+    CO_SIM_IO_CATCH
 }
 
 Info PipeCommunication::DisconnectDetail(const Info& I_Info)

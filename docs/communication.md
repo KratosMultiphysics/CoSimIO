@@ -158,7 +158,13 @@ This form of communication is based on MPI and is hence only available if a conn
 
 The two executables are expected to be started with separate MPI calls:
 ~~~
-mpiexec -np 4 ./execubtable_1 & mpiexec -np 4 ./execubtable_2
+mpiexec -np 4 ./execubtable_1  &  mpiexec -np 4 ./execubtable_2
+~~~
+
+OpenMPI works only with very recent versions (4.1) and requires additionally to start an `ompi-server`:
+~~~
+ompi-server -r server.txt
+mpiexec --ompi-server file:server.txt -np 4 ./execubtable_1  &  mpiexec --ompi-server file:server.txt -np 4 ./execubtable_2
 ~~~
 
 The implementation of the _MPIInterCommunication_ can be found [here](https://github.com/KratosMultiphysics/CoSimIO/blob/master/co_sim_io/mpi/includes/communication/mpi_inter_communication.hpp).
