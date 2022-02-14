@@ -4,8 +4,8 @@ on:
   pull_request:
     branches:
       - master
-  schedule:
-    - cron:  '0 1 * * *'
+  # schedule:
+  #   - cron:  '0 1 * * *'
 
   workflow_dispatch:
 
@@ -244,7 +244,7 @@ jobs:
 
 
   Windows-Cpp-C:
-    runs-on: windows-latest
+    runs-on: windows-2022
     name: Windows C++ & C
     timeout-minutes: 15
 
@@ -254,13 +254,13 @@ jobs:
     - name: Build CoSimIO
       shell: cmd
       run: |
-        call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64 || goto :error
+        call "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64 || goto :error
 
         set CC=cl.exe
         set CXX=cl.exe
 
         cmake                         ^
-          -G"Visual Studio 16 2019"   ^
+          -G"Visual Studio 17 2022"   ^
           -H"."                       ^
           -B"build"                   ^
           -DCMAKE_BUILD_TYPE="Debug"  ^
@@ -284,12 +284,12 @@ jobs:
 
 
   Windows-Python:
-    runs-on: windows-latest
+    runs-on: windows-2022
     name: Windows Python ${{ matrix.python-version }}
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
     timeout-minutes: 15
 
     steps:
@@ -308,13 +308,13 @@ jobs:
     - name: Build CoSimIO
       shell: cmd
       run: |
-        call "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64 || goto :error
+        call "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64 || goto :error
 
         set CC=cl.exe
         set CXX=cl.exe
 
         cmake                         ^
-          -G"Visual Studio 16 2019"   ^
+          -G"Visual Studio 17 2022"   ^
           -H"."                       ^
           -B"build"                   ^
           -DCO_SIM_IO_BUILD_PYTHON=ON           ^
