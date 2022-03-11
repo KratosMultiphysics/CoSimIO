@@ -10,6 +10,15 @@
 !  Main authors:    Philipp Bucher (https://github.com/philbucher)
 !
 
+! Fortran Interface for CoSimulation
+! see "co_sim_io.hpp"
+
+! TODOs:
+! - probably necessary to switch from subroutine to function to return the CoSimIO::Info objects
+! - Expose CoSimIO::Info and CoSimIO::ModelPart
+! - update function signatures
+
+
 MODULE co_sim_io
     USE, INTRINSIC :: ISO_C_BINDING
     IMPLICIT NONE

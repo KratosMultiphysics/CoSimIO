@@ -12,7 +12,5 @@
 
 program hello
     use co_sim_io
-    print *, 'Hello, World!'
-
-    call CoSimIO_Hello()
+    call CoSimIO_Hello() ! TODO print the returned info (see "Hello" tests for other languages)
 end program hello
