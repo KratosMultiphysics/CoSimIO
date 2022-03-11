@@ -42,7 +42,7 @@ message("    CO_SIM_IO_BUILD_MPI:       " ${CO_SIM_IO_BUILD_MPI})
 message("    CO_SIM_IO_BUILD_TESTING:   " ${CO_SIM_IO_BUILD_TESTING})
 message("    CO_SIM_IO_BUILD_C:         " ${CO_SIM_IO_BUILD_C})
 message("    CO_SIM_IO_BUILD_PYTHON:    " ${CO_SIM_IO_BUILD_PYTHON})
-# message("    CO_SIM_IO_BUILD_FORTRAN:   " ${CO_SIM_IO_BUILD_FORTRAN})
+message("    CO_SIM_IO_BUILD_FORTRAN:   " ${CO_SIM_IO_BUILD_FORTRAN})
 message("    CO_SIM_IO_STRICT_COMPILER: " ${CO_SIM_IO_STRICT_COMPILER})
 message("")
 
@@ -180,9 +180,14 @@ if (CO_SIM_IO_BUILD_PYTHON)
 endif()
 
 if (CO_SIM_IO_BUILD_FORTRAN)
-    # TODO since fortran relies on C, a check is needed
-    message( FATAL_ERROR "The CoSimIO is currently not working for Fortran")
-    add_subdirectory(co_sim_io/fortran)
+    if (NOT CO_SIM_IO_BUILD_C)
+        message(FATAL_ERROR "Fortran requires the C interface!")
+    endif()
+    include(CMakeAddFortranSubdirectory)
+    cmake_add_fortran_subdirectory(
+        co_sim_io/fortran
+        NO_EXTERNAL_INSTALL
+    )
 endif()
 
 if (CO_SIM_IO_BUILD_TESTING)
