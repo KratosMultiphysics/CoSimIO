@@ -11,6 +11,7 @@ The CoSimIO uses [CMake](https://cmake.org/) as build system. The following opti
 | CO_SIM_IO_BUILD_MPI_COMMUNICATION | OFF | Enable communication via MPI. Requires to build CoSimIO with MPI support (using `CO_SIM_IO_BUILD_MPI`) |
 | CO_SIM_IO_BUILD_C | OFF | Build the C-interface |
 | CO_SIM_IO_BUILD_PYTHON | OFF | Build the Python-interface |
+| CO_SIM_IO_BUILD_FORTRAN | OFF | Build the Fortran-interface (requires the C-interface) |
 | CO_SIM_IO_STRICT_COMPILER | OFF | Enable more warnings in the compiler, useful for development. |
 
 ---
@@ -24,5 +25,6 @@ Building the CoSimIO with the following configuration:
     CO_SIM_IO_BUILD_TESTING:   ON
     CO_SIM_IO_BUILD_C:         ON
     CO_SIM_IO_BUILD_PYTHON:    ON
+    CO_SIM_IO_BUILD_FORTRAN:   ON
     CO_SIM_IO_STRICT_COMPILER: ON
 ~~~
