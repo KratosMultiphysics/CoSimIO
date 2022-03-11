@@ -86,6 +86,7 @@ jobs:
         cmake -H"." -B"build"        \
           -DCMAKE_BUILD_TYPE="Debug" \
           -DCO_SIM_IO_BUILD_C=ON               \
+          -DCO_SIM_IO_BUILD_FORTRAN=ON               \
           -DCO_SIM_IO_BUILD_MPI=ON    \
           -DCO_SIM_IO_BUILD_MPI_COMMUNICATION=$build_mpi_comm \
           -DCO_SIM_IO_STRICT_COMPILER=ON
