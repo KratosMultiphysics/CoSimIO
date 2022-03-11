@@ -14,5 +14,5 @@ program hello
     use co_sim_io
     print *, 'Hello, World!'
 
-    call CoSimIO_Connect("asas", "ddddf")
+    call CoSimIO_Hello()
 end program hello
