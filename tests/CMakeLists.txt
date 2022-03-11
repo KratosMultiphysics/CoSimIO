@@ -179,9 +179,16 @@ endif()
 
 ### Fortran tests ###
 if(CO_SIM_IO_BUILD_FORTRAN)
-    enable_language( Fortran )
+    enable_language( Fortran ) # cannot be omitted!
     include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io/fortran )
-    link_directories( bin )
+
+    add_executable(hello_fortran "integration_tutorials/fortran/hello.f90")
+    target_link_libraries( hello_fortran co_sim_io_fortran )
+    install(TARGETS hello_fortran DESTINATION "bin/tests_fortran")
+
+    # include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io/fortran )
+    # link_directories( bin )
+    # message ("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
 
     # file( GLOB_RECURSE FORTRAN_TEST_FILES *.f90)
     # add_executable ( test_runner_fortran test_runners/test_runner.f90 ${FORTRAN_TEST_FILES})
