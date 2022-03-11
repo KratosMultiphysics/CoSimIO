@@ -182,17 +182,42 @@ if(CO_SIM_IO_BUILD_FORTRAN)
     enable_language( Fortran ) # cannot be omitted!
     include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io/fortran )
 
-    add_executable(hello_fortran "integration_tutorials/fortran/hello.f90")
-    target_link_libraries( hello_fortran co_sim_io_fortran )
-    install(TARGETS hello_fortran DESTINATION "bin/tests_fortran")
+    function(add_fortran_test TEST_SOURCE_FILE)
+        get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
+        string(REGEX REPLACE "[.]f90" "_fortran_test" TEST_NAME ${TEST_FILENAME})
+        message(STATUS  "adding ${TEST_NAME} ")
+        add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
+        target_link_libraries(${TEST_NAME} co_sim_io_fortran)
+        add_test(${TEST_NAME} ${TEST_NAME})
+        install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_fortran")
+    endfunction()
 
-    # include_directories( ${CMAKE_SOURCE_DIR}/co_sim_io/fortran )
-    # link_directories( bin )
-    # message ("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    function(add_fortran_executable TEST_SOURCE_FILE)
+        get_filename_component(TEST_FILENAME ${TEST_SOURCE_FILE} NAME)
+        string(REGEX REPLACE "[.]f90" "_fortran_test" TEST_NAME ${TEST_FILENAME})
+        message(STATUS  "adding ${TEST_NAME} ")
+        add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
+        target_link_libraries(${TEST_NAME} co_sim_io_fortran)
+        install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_fortran")
+    endfunction()
 
-    # file( GLOB_RECURSE FORTRAN_TEST_FILES *.f90)
-    # add_executable ( test_runner_fortran test_runners/test_runner.f90 ${FORTRAN_TEST_FILES})
-    # target_link_libraries(test_runner_fortran co_sim_io_c)
+    file(GLOB fortran_test_files
+        "co_sim_io/fortran/*.f90"
+    )
 
-    # install( TARGETS test_runner_fortran DESTINATION bin )
+    foreach(fortran_test_file ${fortran_test_files})
+        add_fortran_test(${fortran_test_file})
+    endforeach(fortran_test_file)
+
+    file(GLOB fortran_integration_test_files "integration_tutorials/fortran/*.f90")
+
+    foreach(fortran_integration_test_file ${fortran_integration_test_files})
+        add_fortran_executable(${fortran_integration_test_file})
+    endforeach(fortran_integration_test_file)
+
+    add_test(hello_fortran_test hello_fortran_test)
+    # add_test(NAME connect_disconnect_fortran_test COMMAND bash run.sh $<TARGET_FILE:connect_disconnect_a_fortran_test> $<TARGET_FILE:connect_disconnect_b_fortran_test>)
+    # add_test(NAME import_export_info_fortran_test COMMAND bash run.sh $<TARGET_FILE:export_info_fortran_test> $<TARGET_FILE:import_info_fortran_test>)
+    # add_test(NAME import_export_data_fortran_test COMMAND bash run.sh $<TARGET_FILE:export_data_fortran_test> $<TARGET_FILE:import_data_fortran_test>)
+    # add_test(NAME import_export_mesh_fortran_test COMMAND bash run.sh $<TARGET_FILE:export_mesh_fortran_test> $<TARGET_FILE:import_mesh_fortran_test>)
 endif()
