@@ -23,6 +23,7 @@
 
 The `CoSimIO::Info` object plays a very important role in the _CoSimIO_. It is a map (implemented with `std::map`) holding key-value pairs of different value types, similar to the `dict` of Python. It is used as a configuration object and supports the following value types:
 - `int`
+- `std::size_t`
 - `double`
 - `bool`
 - `std::string`

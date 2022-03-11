@@ -32,13 +32,29 @@ model_part = CoSimIO.ModelPart("my_model_part")
 name = model_part.Name()
 ```
 
-Nodes can be created like this:
+As single `Node` can be created with `CreateNewNode`:
 ```python
 node = model_part.CreateNewNode(
     1,    # Id
     0.0,  # X-Coordinate
     1.5,  # Y-Coordinate
     -4.22 # Z-Coordinate
+)
+```
+
+Multiple nodes can be created with `CreateNewNodes`:
+```python
+num_nodes = 10
+ids = [...] # len = num_nodes
+x_coords = [...] # len = num_nodes
+y_coords = [...] # len = num_nodes
+z_coords = [...] # len = num_nodes
+
+model_part.CreateNewNodes(
+    ids,      # Ids
+    x_coords, # X-Coordinates
+    y_coords, # Y-Coordinates
+    z_coords  # Z-Coordinates
 )
 ```
 
@@ -52,6 +68,26 @@ element = model_part.CreateNewElement(
     connectivity # Connectivity information, i.e. Ids of nodes that the element has
 )
 ```
+
+Multiple elements can be created with `CreateNewElements`:
+```python
+std::size_t num_elements = 10
+ids = [...] # len = num_elements
+types = [...] # len = num_elements
+connectivities = [...] # len depends on element types
+# the connectivities list is contiguous, not a list of list!
+# Example:
+# types is [Line2D2 and Triangle3D3] connectivities is [1,2,3,4,5],
+# the [1,2] are the connectivities for the line
+# and [3,4,5]  are the connectivities for the triangle
+
+model_part.CreateNewElements(
+    ids,           # Ids
+    types,         # Element types
+    connectivities # Connectivities
+)
+```
+
 Note: Node and Element Ids start with 1 (0 is not accepted).
 
 Use the following functions to get the number of nodes and elements:
@@ -102,18 +138,37 @@ ghost_node = model_part.CreateNewGhostNode(
     1.5,  # Y-Coordinate
     -4.2, # Z-Coordinate
     5     # Partition index where the node is local
-);
+)
 ```
+
+Multiple ghost nodes can be created with `CreateNewGhostNodes`, similar to the creation of multiple (local) nodes:
+```python
+num_ghost_nodes = 10
+ids = [...] # len = num_ghost_nodes
+x_coords = [...] # len = num_ghost_nodes
+y_coords = [...] # len = num_ghost_nodes
+z_coords = [...] # len = num_ghost_nodes
+partition_indices = [...] # len = num_ghost_nodes
+
+model_part.CreateNewGhostNodes(
+    ids,      # Ids
+    x_coords, # X-Coordinates
+    y_coords, # Y-Coordinates
+    z_coords, # Z-Coordinates
+    partition_indices # Partition indices where the nodes are local
+```
+
 These ghost nodes can also be used for the creation of elements.
 Note that this node has to be created as local node in its local partition, otherwise deadlocks can occur!
+Also the Ids must be unique, again otherwise deadlocks can occur!
 
 Use the following functions to get the number of local and ghost nodes:
 ```python
-number_of_local_nodes = model_part.NumberOfLocalNodes();
+number_of_local_nodes = model_part.NumberOfLocalNodes()
 
-number_of_ghost_nodes = model_part.NumberOfGhostNodes();
+number_of_ghost_nodes = model_part.NumberOfGhostNodes()
 
-number_of_all_nodes   = model_part.NumberOfNodes(); # local + ghost nodes
+number_of_all_nodes   = model_part.NumberOfNodes() # local + ghost nodes
 ```
 Note that `model_part.Nodes()` contains all the nodes, i.e. local and ghost nodes.
 
