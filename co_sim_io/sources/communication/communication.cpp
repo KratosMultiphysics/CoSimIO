@@ -23,6 +23,13 @@
 namespace CoSimIO {
 namespace Internals {
 
+void AddFilePermissions(const fs::path& rPath)
+{
+    fs::permissions(rPath,
+        fs::perms::owner_all | fs::perms::group_all | fs::perms::others_all,
+        fs::perm_options::add);
+}
+
 Communication::Communication(
     const Info& I_Settings,
     std::shared_ptr<DataCommunicator> I_DataComm)
@@ -139,6 +146,7 @@ void Communication::BaseConnectDetail(const Info& I_Info)
         CO_SIM_IO_INFO_IF("CoSimIO", ec) << "Warning, communication directory (" << mCommFolder << ") could not be deleted!\nError code: " << ec.message() << std::endl;
         if (!fs::exists(mCommFolder)) {
             fs::create_directory(mCommFolder);
+            AddFilePermissions(mCommFolder); // otherwise the process with lower rights cannot delete files in it
         }
     }
 
@@ -363,7 +371,10 @@ void Communication::MakeFileVisible(
         std::ofstream avail_file;
         avail_file.open(rPath.string() + ".avail");
         avail_file.close();
+        AddFilePermissions(rPath.string() + ".avail");
     }
+
+    AddFilePermissions(rPath);
 
     CO_SIM_IO_CATCH
 }
