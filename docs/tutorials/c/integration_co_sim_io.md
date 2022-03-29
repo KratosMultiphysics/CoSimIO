@@ -180,7 +180,7 @@ int main()
 
     // Here you may use the info but cannot call any CoSimIO function anymore
     CoSimIO_Info disconnect_settings=CoSimIO_CreateInfo();
-    CoSimIO_Info_SetString(settings, "connection_name", connection_name); // connection_name is obtained from calling "Connect"
+    CoSimIO_Info_SetString(disconnect_settings, "connection_name", connection_name); // connection_name is obtained from calling "Connect"
     CoSimIO_Info disconnect_info = CoSimIO_Disconnect(disconnect_settings); // disconnect afterwards
     if(CoSimIO_Info_GetInt(disconnect_info, "connection_status") != CoSimIO_Disconnected)
         return 1;
