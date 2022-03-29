@@ -26,7 +26,9 @@ namespace Internals {
 void AddFilePermissions(const fs::path& rPath)
 {
     fs::permissions(rPath,
-        fs::perms::owner_all | fs::perms::group_all | fs::perms::others_all,
+        fs::perms::owner_read  | fs::perms::owner_write |
+        fs::perms::group_read  | fs::perms::group_write |
+        fs::perms::others_read | fs::perms::others_write,
         fs::perm_options::add);
 }
 
