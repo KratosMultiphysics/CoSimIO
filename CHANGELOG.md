@@ -64,3 +64,8 @@ All important and notable changes in the _CoSimIO_ are documented in this file.
 - Improved synchronization during initial handshake to avoid deadlocks
 - Printing timing information for communication is now unified for all communication methods (can be enabled with `print_timing`)
 - other minor interal improvements and fixes
+
+## 4.1.0
+- Improving communication when the codes are running in admin mode by setting file permissions accordingly
+- Minor improvements in tests
+- Some work in bringing back the fortran interface
