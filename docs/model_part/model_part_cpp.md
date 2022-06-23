@@ -121,7 +121,7 @@ for (auto node_it=model_part.NodesBegin(); node_it!=model_part.NodesEnd(); ++nod
 }
 
 // iterate elements (with range based loop)
-for (auto& elem : model_part.Elements()) {
+for (auto& element : model_part.Elements()) {
     // do sth with element, e.g. print the id:
     std::cout << element.Id() << std::endl;
 }
