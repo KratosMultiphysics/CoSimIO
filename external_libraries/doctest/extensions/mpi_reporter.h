@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DOCTEST_MPI_REPORTER_H
+#define DOCTEST_MPI_REPORTER_H
 
 // #include <doctest/doctest.h>
 #include <fstream>
@@ -11,11 +12,14 @@
 
 namespace doctest {
 
+extern int nb_test_cases_skipped_insufficient_procs;
+int mpi_comm_world_size();
+
 namespace {
 
 // https://stackoverflow.com/a/11826666/1583122
 struct NullBuffer : std::streambuf {
-  int overflow(int c) override { return c; }
+  int overflow(int c) { return c; }
 };
 class NullStream : public std::ostream {
   public:
@@ -63,6 +67,7 @@ private:
       return nullStream;
     }
   }
+  std::vector<std::pair<std::string, int>> m_failure_str_queue = {};
 public:
   MpiConsoleReporter(const ContextOptions& co)
     : ConsoleReporter(co,replace_by_null_if_not_rank_0(co.cout))
@@ -106,12 +111,25 @@ public:
 
     if(rank == 0) {
       separator_to_stream();
-      s << Color::Cyan << "[doctest] " << Color::None << "glob assertions: " << std::setw(6)
+      s << Color::Cyan << "[doctest] " << Color::None << "assertions on all processes: " << std::setw(6)
         << g_numAsserts << " | "
         << ((g_numAsserts == 0 || anythingFailed) ? Color::None : Color::Green)
         << std::setw(6) << (g_numAsserts - g_numAssertsFailed) << " passed" << Color::None
         << " | " << (g_numAssertsFailed > 0 ? Color::Red : Color::None) << std::setw(6)
         << g_numAssertsFailed << " failed" << Color::None << " |\n";
+      if (nb_test_cases_skipped_insufficient_procs>0) {
+        s << Color::Cyan << "[doctest] " << Color::Yellow << "WARNING: Skipped ";
+        if (nb_test_cases_skipped_insufficient_procs>1) {
+          s << nb_test_cases_skipped_insufficient_procs << " tests requiring more than ";
+        } else {
+          s << nb_test_cases_skipped_insufficient_procs << " test requiring more than ";
+        }
+        if (mpi_comm_world_size()>1) {
+          s << mpi_comm_world_size() << " MPI processes to run\n";
+        } else {
+          s << mpi_comm_world_size() << " MPI process to run\n";
+        }
+      }
 
       separator_to_stream();
       if(g_numAssertsFailed > 0){
@@ -132,15 +150,31 @@ public:
   void test_case_end(const CurrentTestCaseStats& st) override {
     if (is_mpi_test_case()) {
       // function called by every rank at the end of a test
-      // if failed assertions happended, they have been sent to rank 0
+      // if failed assertions happened, they have been sent to rank 0
       // here rank zero gathers them and prints them all
 
       int rank;
       MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
+      std::vector<MPI_Request> requests;
+      requests.reserve(m_failure_str_queue.size());  // avoid realloc & copy of MPI_Request
+      for (const std::pair<std::string, int> &failure : m_failure_str_queue)
+      {
+        const std::string & failure_str = failure.first;
+        const int failure_line = failure.second;
+
+        int failure_msg_size = static_cast<int>(failure_str.size());
+
+        requests.push_back(MPI_REQUEST_NULL);
+        MPI_Isend(failure_str.c_str(), failure_msg_size, MPI_BYTE,
+                 0, failure_line, MPI_COMM_WORLD, &requests.back()); // Tag = file line
+      }
+
+
       // Compute the number of assert with fail among all procs
+      const int nb_fail_asserts = static_cast<int>(m_failure_str_queue.size());
       int nb_fail_asserts_glob = 0;
-      MPI_Reduce(&st.numAssertsFailedCurrentTest, &nb_fail_asserts_glob, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+      MPI_Reduce(&nb_fail_asserts, &nb_fail_asserts_glob, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
       if(rank == 0) {
         MPI_Status status;
@@ -180,6 +214,9 @@ public:
           s << "\n";
         }
       }
+
+      MPI_Waitall(static_cast<int>(requests.size()), requests.data(), MPI_STATUSES_IGNORE);
+      m_failure_str_queue.clear();
     }
 
     ConsoleReporter::test_case_end(st);
@@ -205,7 +242,7 @@ public:
 
       std::stringstream failure_msg;
       failure_msg << Color::Red << "On rank [" << rank << "] : " << Color::None;
-      failure_msg << file_line_to_string(rb.m_file, rb.m_line, " ") << "\n";
+      failure_msg << file_line_to_string(rb.m_file, rb.m_line, " ");
 
       if((rb.m_at & (assertType::is_throws_as | assertType::is_throws_with)) ==0){
         failure_msg << Color::Cyan
@@ -219,11 +256,7 @@ public:
                     << "( " << rb.m_decomp.c_str() << " )\n";
       }
 
-      std::string failure_str = failure_msg.str();
-      int failure_msg_size = static_cast<int>(failure_str.size());
-
-      MPI_Send(failure_str.c_str(), failure_msg_size, MPI_BYTE,
-               0, rb.m_line, MPI_COMM_WORLD); // Tag = file line
+      m_failure_str_queue.push_back({failure_msg.str(), rb.m_line});
     }
   }
 }; // MpiConsoleReporter
@@ -234,3 +267,5 @@ REGISTER_REPORTER("MpiFileReporter", 1, MpiFileReporter);
 
 } // anonymous
 } // doctest
+
+#endif // DOCTEST_REPORTER_H
