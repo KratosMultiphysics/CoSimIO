@@ -68,4 +68,9 @@ All important and notable changes in the _CoSimIO_ are documented in this file.
 ## 4.1.0
 - Improving communication when the codes are running in admin mode by setting file permissions accordingly
 - Minor improvements in tests
-- Some work in bringing back the fortran interface
+- Some work in bringing back the Fortran interface
+
+## 4.2.0
+- Brings back the Fortran interface!
+- Fixes compilation problems in some systems with the tests and with the pipe communication (happened only with old Linux kernels)
+- Minor improvements in documentation
