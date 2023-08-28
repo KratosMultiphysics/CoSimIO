@@ -32,7 +32,7 @@ std::string CodeLocation::GetCleanFileName() const
     const std::string to_string = "/";
     while ((start_position = clean_file_name.find(from_string, start_position)) != std::string::npos) {
         clean_file_name.replace(start_position, from_string.length(), to_string);
-        start_position += to_string.length(); // ...
+        start_position += to_string.length();
     }
 
     // Remove the path up to the co_sim_io root folder
