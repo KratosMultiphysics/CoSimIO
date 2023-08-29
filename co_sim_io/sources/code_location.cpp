@@ -14,15 +14,18 @@
 
 // Project includes
 #include "includes/code_location.hpp"
-// #include "includes/filesystem_inc.hpp"
+#ifndef _WIN32
+    #include "includes/filesystem_inc.hpp"
+#endif
 
 namespace CoSimIO {
 namespace Internals {
 
 std::string CodeLocation::GetCleanFileName() const
 {
-    // return fs::canonical(fs::path(GetFileName())).lexically_relative(fs::absolute(".")).string();
-
+#ifndef _WIN32
+    return fs::canonical(fs::path(GetFileName())).lexically_relative(fs::absolute(".")).string();
+#else
     // NOTE: This is a workaround for the above, since it doesn't work on some Windows systems. Inspired in Kratos solution https://github.com/KratosMultiphysics/Kratos/blob/c1d9b2e30b557612aa379acfa2e16298523731a8/kratos/sources/code_location.cpp#L46
     std::string clean_file_name(GetFileName());
 
@@ -46,6 +49,7 @@ std::string CodeLocation::GetCleanFileName() const
 
     // Return the file name
     return clean_file_name;
+#endif
 }
 
 } // namespace Internals
