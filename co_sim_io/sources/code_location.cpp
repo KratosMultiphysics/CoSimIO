@@ -15,7 +15,7 @@
 // Project includes
 #include "includes/code_location.hpp"
 #ifndef _WIN32
-    #include "includes/filesystem_inc.hpp"
+#include "includes/filesystem_inc.hpp"
 #endif
 
 namespace CoSimIO {
