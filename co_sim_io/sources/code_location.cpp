@@ -21,9 +21,12 @@ namespace Internals {
 
 std::string CodeLocation::GetCleanFileName() const
 {
-#ifndef CO_SIM_IO_COMPILED_IN_WINDOWS
-    return fs::canonical(fs::path(GetFileName())).lexically_relative(fs::absolute(".")).string();
-#else
+    auto clean_file_name_fs = fs::canonical(fs::path(GetFileName())).lexically_relative(fs::absolute(".")).string();
+
+    if (!clean_file_name_fs.empty()) {
+        return clean_file_name_fs;
+    }
+
     // NOTE: This is a workaround for the above, since it doesn't work on some Windows systems. Inspired in Kratos solution https://github.com/KratosMultiphysics/Kratos/blob/c1d9b2e30b557612aa379acfa2e16298523731a8/kratos/sources/code_location.cpp#L46
     std::string clean_file_name(GetFileName());
 
@@ -47,7 +50,6 @@ std::string CodeLocation::GetCleanFileName() const
 
     // Return the file name
     return clean_file_name;
-#endif
 }
 
 } // namespace Internals
