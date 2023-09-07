@@ -18,7 +18,7 @@
 
 #include "../checks.h"
 
-int main(int argc, char** argv)
+int main(/*int argc, char** argv*/)
 {
     /* TODO this test causes some valgrind failures
 
