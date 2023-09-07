@@ -20,16 +20,16 @@
 
 int main(int argc, char** argv)
 {
-    // TODO this test causes some valgrind failures
+    /* TODO this test causes some valgrind failures
 
-    // int rank;
-    // MPI_Init(&argc, &argv);
+    int rank;
+    MPI_Init(&argc, &argv);
 
-    // MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+    MPI_Comm_rank(MPI_COMM_WORLD,&rank);
 
-    // printf("RANK %d", rank);
+    printf("RANK %d", rank);
 
-    // MPI_Finalize();
+    MPI_Finalize(); */
 
     return 0;
 }
