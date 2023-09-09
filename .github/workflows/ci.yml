@@ -345,7 +345,7 @@ jobs:
     name: CentOS 7
 
     container:
-      image: kratosmultiphysics/kratos-image-ci-centos7-python35:latest
+      image: kratosmultiphysics/kratos-image-ci-centos7:latest
 
     steps:
     - uses: actions/checkout@v2
