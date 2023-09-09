@@ -120,7 +120,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
         compiler: [GCC, ICC]
     timeout-minutes: 15
 
@@ -214,7 +214,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
     timeout-minutes: 15
 
     steps:
@@ -245,7 +245,7 @@ jobs:
 
 
   Windows-Cpp-C:
-    runs-on: windows-2022
+    runs-on: windows-latest
     name: Windows C++ & C
     timeout-minutes: 15
 
@@ -285,12 +285,12 @@ jobs:
 
 
   Windows-Python:
-    runs-on: windows-2022
+    runs-on: windows-latest
     name: Windows Python ${{ matrix.python-version }}
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
     timeout-minutes: 15
 
     steps:
@@ -345,7 +345,7 @@ jobs:
     name: CentOS 7
 
     container:
-      image: kratosmultiphysics/kratos-image-ci-centos7-python35:latest
+      image: kratosmultiphysics/kratos-image-ci-centos7:latest
 
     steps:
     - uses: actions/checkout@v2
@@ -371,7 +371,7 @@ jobs:
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/bin
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
-        python3.5 run_python_tests.py
+        python3.8 run_python_tests.py
 
 
   Ubuntu-old-CMake:

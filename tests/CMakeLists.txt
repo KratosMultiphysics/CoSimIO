@@ -178,7 +178,8 @@ if(CO_SIM_IO_BUILD_C)
         file(GLOB c_mpi_test_exec_files "integration_tutorials/c/mpi/*.c")
 
         foreach(c_mpi_test_file ${c_mpi_test_files})
-            add_c_mpi_test(${c_mpi_test_file})
+            # currently only dummy tests exist, enable if needed
+            # add_c_mpi_test(${c_mpi_test_file})
         endforeach(c_mpi_test_file)
 
         foreach(c_mpi_test_file ${c_mpi_test_exec_files})
