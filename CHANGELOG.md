@@ -74,3 +74,8 @@ All important and notable changes in the _CoSimIO_ are documented in this file.
 - Brings back the Fortran interface!
 - Fixes compilation problems in some systems with the tests and with the pipe communication (happened only with old Linux kernels)
 - Minor improvements in documentation
+
+## 4.3.0
+- Drops support for Python < 3.6
+- Fixes problems with displaying error messages in some Windows systems
+- Updates external libraries pybind (used in Python-bindings) and ASIO (socket-based communication)
