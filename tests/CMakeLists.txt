@@ -7,7 +7,7 @@ add_executable ( co_sim_io_tests ${CO_SIM_IO_TEST_FILES})
 target_link_libraries(co_sim_io_tests co_sim_io)
 install( TARGETS co_sim_io_tests DESTINATION bin )
 set_target_properties(co_sim_io_tests PROPERTIES
-    CXX_STANDARD 11
+    CXX_STANDARD 17
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
 )
@@ -20,7 +20,7 @@ if (CO_SIM_IO_BUILD_MPI)
     target_link_libraries( co_sim_io_mpi_tests co_sim_io_mpi)
     install( TARGETS co_sim_io_mpi_tests DESTINATION bin )
     set_target_properties(co_sim_io_mpi_tests PROPERTIES
-        CXX_STANDARD 11
+        CXX_STANDARD 17
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO
     )
