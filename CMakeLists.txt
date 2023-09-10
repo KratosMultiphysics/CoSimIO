@@ -139,6 +139,12 @@ file(GLOB_RECURSE co_sim_io_source_files
 add_library (co_sim_io SHARED ${co_sim_io_source_files})
 target_link_libraries(co_sim_io ${CMAKE_THREAD_LIBS_INIT})
 
+set_target_properties(co_sim_io PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+)
+
 # To automatically configure a library export header into build tree
 include(GenerateExportHeader)
 generate_export_header( co_sim_io EXPORT_MACRO_NAME CO_SIM_IO_API EXPORT_FILE_NAME
