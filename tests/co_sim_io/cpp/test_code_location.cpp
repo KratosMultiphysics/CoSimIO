@@ -33,7 +33,7 @@ TEST_SUITE("CodeLocation") {
 TEST_CASE("macro_CO_SIM_IO_CODE_LOCATION")
 {
     auto code_loc = testing_aux_namespace::AuxFunction();
-    CHECK_MESSAGE(code_loc.GetCleanFileName().find(fs::path("co_sim_io/cpp/test_code_location.cpp").make_preferred().string()) != std::string::npos, code_loc.GetCleanFileName()); // must contain at least this
+    CHECK_EQ("co_sim_io/cpp/test_code_location.cpp", code_loc.GetCleanFileName());
     CHECK_EQ(code_loc.GetLineNumber(), 25);
     CHECK_MESSAGE(code_loc.GetCleanFunctionName().find("testing_aux_namespace::AuxFunction") != std::string::npos, code_loc.GetCleanFunctionName()); // must contain at least this
 }
