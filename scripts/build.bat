@@ -18,9 +18,6 @@ if not defined CO_SIM_IO_BUILD_PYTHON set CO_SIM_IO_BUILD_PYTHON=OFF
 if not defined CO_SIM_IO_BUILD_FORTRAN set CO_SIM_IO_BUILD_FORTRAN=OFF
 if not defined CO_SIM_IO_STRICT_COMPILER set CO_SIM_IO_STRICT_COMPILER=ON
 
-rem Warning: In windows this option only works if you run through a terminal with admin privileges
-rem set COSIMIO_INSTALL_PYTHON_USING_LINKS=ON
-
 rem Set basic configuration
 if not defined COSIMIO_BUILD_TYPE set COSIMIO_BUILD_TYPE=Release
 
