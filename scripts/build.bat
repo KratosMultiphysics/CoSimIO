@@ -12,10 +12,6 @@ if not defined COSIMIO_SOURCE set COSIMIO_SOURCE=%~dp0..
 if not defined COSIMIO_BUILD set COSIMIO_BUILD=%COSIMIO_SOURCE%/build
 
 rem Set defaults
-if not defined CO_SIM_IO_BUILD_TESTING set CO_SIM_IO_BUILD_TESTING=ON
-if not defined CO_SIM_IO_BUILD_C set CO_SIM_IO_BUILD_C=OFF
-if not defined CO_SIM_IO_BUILD_PYTHON set CO_SIM_IO_BUILD_PYTHON=OFF
-if not defined CO_SIM_IO_BUILD_FORTRAN set CO_SIM_IO_BUILD_FORTRAN=OFF
 if not defined CO_SIM_IO_STRICT_COMPILER set CO_SIM_IO_STRICT_COMPILER=ON
 
 rem Set basic configuration
