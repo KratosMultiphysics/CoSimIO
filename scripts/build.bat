@@ -1,5 +1,5 @@
 @echo off
-rem Please do not modify this script. Copyt into the build folder
+rem Please do not modify this script. Copy it into the build folder
 
 rem Set compiler
 set CC=cl.exe
