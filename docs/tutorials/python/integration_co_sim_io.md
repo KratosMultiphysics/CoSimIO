@@ -36,12 +36,19 @@ This tutorial helps you to integrate the _CoSimIO_ into a solver/software-tool u
 ## Building the CoSimIO
 The Python interface is located in [co_sim_io/python](https://github.com/KratosMultiphysics/CoSimIO/tree/master/co_sim_io/python) folder of the repository. It uses the [pybind11 library](https://github.com/pybind/pybind11) for exposing the C++ code to Python. It is provided in the [expternal_libraries/pybind11](https://github.com/KratosMultiphysics/CoSimIO/tree/master/external_libraries/pybind11) folder of this repo.
 
-One may use the [build_python.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_python.sh) script from the CoSimIO root folder to create a library of the python interface:
+One may use the [build_python.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_python.sh) or [build_python.bat](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_python.bat) script from the _CoSimIO_ root folder to create a library of the python interface:
 
-```
-sh scripts/build_python.sh
-```
-This will compile the binaries and install them into the `bin/` subfolder of _CoSimIO_, together with the CoSimIO Python module. Check [here](../../build_options.md) for the available build options.
+- For *GNU/Linux* or *MacOS*:
+    ```bash
+    $ bash scripts/build_python.sh
+    ```
+
+- For Windows OS:
+
+    ```cmd
+    $ scripts/build_python.bat
+    ```
+This will compile the binaries and install them into the `bin/` subfolder of _CoSimIO_, together with the _CoSimIO_ Python module. Check [here](../../build_options.md) for the available build options.
 
 The created folder structure should look like this:
 ```
@@ -56,7 +63,7 @@ Remember to add the `/bin` folder to your `PYTHONPATH`. For Linux this should lo
 export PYTHONPATH=$PYTHONPATH:/path/to/CoSimIO/bin
 ```
 
-Usually pybind automatically detects the Python installation. Sometimes it can however be necessary to explicitly specify the target Python version. This can be achieved through CMake by setting PYBIND11_PYTHON_VERSION or an exact Python installation can be specified with PYTHON_EXECUTABLE. For example:
+Usually pybind automatically detects the Python installation. Sometimes it can however be necessary to explicitly specify the target Python version. This can be achieved through CMake by setting `PYBIND11_PYTHON_VERSION` or an exact Python installation can be specified with `PYTHON_EXECUTABLE`. For example:
 ```cmake
 -DPYBIND11_PYTHON_VERSION=3.6
 # or
