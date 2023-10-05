@@ -39,11 +39,18 @@ Several options for using/integrating the _CoSimIO_ exist:
         Here the _CoSimIO_ is directly integrated into the host code and added with `add_subdirectory(CoSimIO)`. CMake then takes care of compiling and installing the _CoSimIO_.
         Kratos uses this way to integrate the CoSimIO, check the [`CMakeLists.txt` of the CoSimulationApplication for details](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/CMakeLists.txt)
     - Compiling _CoSimIO_ outside the host project:
-        One can use [build_c.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_c.sh) for compiling it.
+        One can use [build_c.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_c.sh) or [build_c.bat](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_c.bat) for compiling it.
 
-        ```bash
-        $ bash scripts/build_c.sh
-        ```
+        - For *GNU/Linux* or *MacOS*:
+            ```bash
+            $ bash scripts/build_c.sh
+            ```
+
+        - For Windows OS:
+
+            ```cmd
+            $ scripts/build_c.bat
+            ```
 
     After compiling, the headers need to be included (e.g. with `include_directories`) and the `co_sim_io_c` shared library needs to be linked (e.g with `target_link_libraries`).
     ```
@@ -52,11 +59,18 @@ Several options for using/integrating the _CoSimIO_ exist:
     ```
 
 - Compiling _CoSimIO_ outside the host and manually integrating it:
-    One can use [build_c.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_c.sh) for compiling it.
+    One can use [build_c.sh](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_c.sh) or [build_c.bat](https://github.com/KratosMultiphysics/CoSimIO/blob/master/scripts/build_c.bat) for compiling it.
 
-    ```bash
-    $ bash scripts/build_c.sh
-    ```
+    - For *GNU/Linux* or *MacOS*:
+        ```bash
+        $ bash scripts/build_c.sh
+        ```
+
+    - For Windows OS:
+
+        ```cmd
+        $ scripts/build_c.bat
+        ```
 
     Is important that the compiler can find the header files of the _CoSimIO_. For this, one can add the folder `co_sim_io` to the include path.
     Example:
