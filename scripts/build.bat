@@ -21,7 +21,12 @@ IF "%USE_INTEL_LLVM%"=="ON" (
 )
 
 rem Set defaults
-if not defined CO_SIM_IO_STRICT_COMPILER set CO_SIM_IO_STRICT_COMPILER=ON
+IF "%USE_INTEL_LLVM%"=="ON" (
+    @REM Intel LLVM compiler fails with strict compiler
+    if not defined CO_SIM_IO_STRICT_COMPILER set CO_SIM_IO_STRICT_COMPILER=OFF 
+) ELSE (
+    if not defined CO_SIM_IO_STRICT_COMPILER set CO_SIM_IO_STRICT_COMPILER=ON
+)
 
 rem Set basic configuration
 if not defined COSIMIO_BUILD_TYPE set COSIMIO_BUILD_TYPE=Release
