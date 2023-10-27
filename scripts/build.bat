@@ -1,15 +1,24 @@
 @echo off
 rem Please do not modify this script. Copy it into the build folder
 
-rem Set compiler
-set CC=cl.exe
-set CXX=cl.exe
-
 rem Set variables
+if not defined USE_INTEL_LLVM set USE_INTEL_LLVM="OFF"
 if not defined CMAKE_GENERATOR set CMAKE_GENERATOR=Visual Studio 16 2019
 if not defined NUMBER_OF_COMPILATION_CORES set NUMBER_OF_COMPILATION_CORES=%NUMBER_OF_PROCESSORS%
 if not defined COSIMIO_SOURCE set COSIMIO_SOURCE=%~dp0..
 if not defined COSIMIO_BUILD set COSIMIO_BUILD=%COSIMIO_SOURCE%/build
+
+rem oneAPI call and set compiler
+IF "%USE_INTEL_LLVM%"=="ON" (
+    call "C:\Program Files (x86)\Intel\oneAPI\setvars.bat"
+    set CC=icx-cl.exe
+    set CXX=icx-cl.exe
+    @REM Only Ninja compiler is supported
+    set CMAKE_GENERATOR=Ninja
+) ELSE (
+    set CC=cl.exe
+    set CXX=cl.exe
+)
 
 rem Set defaults
 if not defined CO_SIM_IO_STRICT_COMPILER set CO_SIM_IO_STRICT_COMPILER=ON
