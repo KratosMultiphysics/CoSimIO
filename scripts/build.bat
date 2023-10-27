@@ -15,16 +15,11 @@ IF "%USE_INTEL_LLVM%"=="ON" (
     set CXX=icx-cl.exe
     @REM Only Ninja compiler is supported
     set CMAKE_GENERATOR=Ninja
-) ELSE (
-    set CC=cl.exe
-    set CXX=cl.exe
-)
-
-rem Set defaults
-IF "%USE_INTEL_LLVM%"=="ON" (
     @REM Intel LLVM compiler fails with strict compiler
     if not defined CO_SIM_IO_STRICT_COMPILER set CO_SIM_IO_STRICT_COMPILER=OFF 
 ) ELSE (
+    set CC=cl.exe
+    set CXX=cl.exe
     if not defined CO_SIM_IO_STRICT_COMPILER set CO_SIM_IO_STRICT_COMPILER=ON
 )
 
