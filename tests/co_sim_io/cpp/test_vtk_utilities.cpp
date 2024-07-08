@@ -43,10 +43,17 @@ TEST_CASE("write_read_vtk")
     Info info_vtk;
     info_vtk.Set<std::string>("file_name", file_name);
 
-    CoSimIO::VtkUtilities::WriteVtk(info_vtk, model_part_write);
+    CoSimIO::VtkUtilities::WriteVtk(
+        info_vtk,
+        model_part_write,
+        {{std::string("pressure"),{1,2.5,3}}}, // nodal scalar data
+        {{std::string("Disp"),{{1,2.5,3}, {0,0,2}, {-215, 456, 98}}}}, // nodal vector data
+        {{std::string("AREA"),{1.02,25.5,-3}}}, // elemental scalar data
+        {{std::string("gradient"),{{1,2.5,3},{1,3,974},{0,0,0}}}} // elemental vector data
+        );
     CoSimIO::VtkUtilities::ReadVtk(info_vtk, model_part_read);
 
-    fs::remove(file_name);
+    // fs::remove(file_name);
 
     CheckModelPartsAreEqual(model_part_write, model_part_read);
 }
