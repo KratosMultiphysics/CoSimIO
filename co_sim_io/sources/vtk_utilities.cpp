@@ -68,22 +68,22 @@ void WriteVtk(
     // check sizes of data
     for (const auto& r_data : I_NodalScalarData) {
         CO_SIM_IO_ERROR_IF(r_data.first == "") << "No data name defined for nodal scalar data!" << std::endl;
-        CO_SIM_IO_ERROR_IF(r_data.second.size() == I_ModelPart.NumberOfNodes()) << "Size of scalar nodal data \"" << r_data.first << "\"(" << r_data.second.size() << ") does not match number of nodes (" << I_ModelPart.NumberOfNodes() << ")!" << std::endl;
+        CO_SIM_IO_ERROR_IF(r_data.second.size() != I_ModelPart.NumberOfNodes()) << "Size of scalar nodal data \"" << r_data.first << "\"(" << r_data.second.size() << ") does not match number of nodes (" << I_ModelPart.NumberOfNodes() << ")!" << std::endl;
     }
 
     for (const auto& r_data : I_NodalVectorData) {
         CO_SIM_IO_ERROR_IF(r_data.first == "") << "No data name defined for nodal vector data!" << std::endl;
-        CO_SIM_IO_ERROR_IF(r_data.second.size() == I_ModelPart.NumberOfNodes()) << "Size of vector nodal data \"" << r_data.first << "\"(" << r_data.second.size() << ") does not match number of nodes (" << I_ModelPart.NumberOfNodes() << ")!" << std::endl;
+        CO_SIM_IO_ERROR_IF(r_data.second.size() != I_ModelPart.NumberOfNodes()) << "Size of vector nodal data \"" << r_data.first << "\"(" << r_data.second.size() << ") does not match number of nodes (" << I_ModelPart.NumberOfNodes() << ")!" << std::endl;
     }
 
     for (const auto& r_data : I_ElementalScalarData) {
         CO_SIM_IO_ERROR_IF(r_data.first == "") << "No data name defined for elemental scalar data!" << std::endl;
-        CO_SIM_IO_ERROR_IF(r_data.second.size() == I_ModelPart.NumberOfNodes()) << "Size of scalar elemental data \"" << r_data.first << "\"(" << r_data.second.size() << ") does not match number of elements (" << I_ModelPart.NumberOfElements() << ")!" << std::endl;
+        CO_SIM_IO_ERROR_IF(r_data.second.size() != I_ModelPart.NumberOfNodes()) << "Size of scalar elemental data \"" << r_data.first << "\"(" << r_data.second.size() << ") does not match number of elements (" << I_ModelPart.NumberOfElements() << ")!" << std::endl;
     }
 
     for (const auto& r_data : I_ElementalVectorData) {
         CO_SIM_IO_ERROR_IF(r_data.first == "") << "No data name defined for elemental vector data!" << std::endl;
-        CO_SIM_IO_ERROR_IF(r_data.second.size() == I_ModelPart.NumberOfNodes()) << "Size of vector elemental data \"" << r_data.first << "\"(" << r_data.second.size() << ") does not match number of elements (" << I_ModelPart.NumberOfElements() << ")!" << std::endl;
+        CO_SIM_IO_ERROR_IF(r_data.second.size() != I_ModelPart.NumberOfNodes()) << "Size of vector elemental data \"" << r_data.first << "\"(" << r_data.second.size() << ") does not match number of elements (" << I_ModelPart.NumberOfElements() << ")!" << std::endl;
     }
 
     std::ofstream output_file;
@@ -139,36 +139,20 @@ void WriteVtk(
     }
     output_file << "\n";
 
+    const std::size_t num_point_data = 1 + I_NodalScalarData.size() + I_NodalVectorData.size();
+    const std::size_t num_cell_data = 2 + I_ElementalScalarData.size() + I_ElementalVectorData.size();
+
     // writing node Ids
     output_file << "POINT_DATA " << I_ModelPart.NumberOfNodes() << "\n";
-    output_file << "FIELD FieldData 1" << "\n";
+    output_file << "FIELD FieldData " << num_point_data << "\n";
     output_file << "NODE_ID 1 " << I_ModelPart.NumberOfNodes() << " int\n";
     for (const auto& r_node : I_ModelPart.Nodes()) {
         output_file << r_node.Id() << "\n";
     }
     output_file << "\n";
 
-    // writing element Ids
-    output_file << "CELL_DATA " << I_ModelPart.NumberOfElements() << "\n";
-    output_file << "FIELD FieldData 1" << "\n";
-    output_file << "ELEMENT_ID 1 " << I_ModelPart.NumberOfElements() << " int\n";
-    for (const auto& r_elem : I_ModelPart.Elements()) {
-        output_file << r_elem.Id() << "\n";
-    }
-    output_file << "\n";
-
-    // writing element types
-    output_file << "CELL_DATA " << I_ModelPart.NumberOfElements() << "\n";
-    output_file << "FIELD FieldData 1" << "\n";
-    output_file << "ELEMENT_TYPE 1 " << I_ModelPart.NumberOfElements() << " int\n";
-    for (const auto& r_elem : I_ModelPart.Elements()) {
-        output_file << static_cast<int>(r_elem.Type()) << "\n";
-    }
-
     // writing nodal scalar data
     for (const auto& r_data : I_NodalScalarData) {
-        output_file << "POINT_DATA " << I_ModelPart.NumberOfNodes() << "\n";
-        output_file << "FIELD FieldData 1" << "\n";
         output_file << r_data.first << " 1 " << I_ModelPart.NumberOfNodes() << " float\n";
         for (const auto& v : r_data.second) {
             output_file << v << "\n";
@@ -178,8 +162,6 @@ void WriteVtk(
 
     // writing nodal vector data
     for (const auto& r_data : I_NodalVectorData) {
-        output_file << "POINT_DATA " << I_ModelPart.NumberOfNodes() << "\n";
-        output_file << "FIELD FieldData 1" << "\n";
         output_file << r_data.first << " 3 " << I_ModelPart.NumberOfNodes() << " float\n";
         for (const auto& v : r_data.second) {
             output_file << v[0] << " " << v[1] << " " << v[2] << "\n";
@@ -187,10 +169,23 @@ void WriteVtk(
         output_file << "\n";
     }
 
+    // writing element Ids
+    output_file << "CELL_DATA " << I_ModelPart.NumberOfElements() << "\n";
+    output_file << "FIELD FieldData " << num_cell_data << "\n";
+    output_file << "ELEMENT_ID 1 " << I_ModelPart.NumberOfElements() << " int\n";
+    for (const auto& r_elem : I_ModelPart.Elements()) {
+        output_file << r_elem.Id() << "\n";
+    }
+    output_file << "\n";
+
+    // writing element types
+    output_file << "ELEMENT_TYPE 1 " << I_ModelPart.NumberOfElements() << " int\n";
+    for (const auto& r_elem : I_ModelPart.Elements()) {
+        output_file << static_cast<int>(r_elem.Type()) << "\n";
+    }
+
     // writing elemental scalar data
-    for (const auto& r_data : I_NodalScalarData) {
-        output_file << "CELL_DATA " << I_ModelPart.NumberOfElements() << "\n";
-        output_file << "FIELD FieldData 1" << "\n";
+    for (const auto& r_data : I_ElementalScalarData) {
         output_file << r_data.first << " 1 " << I_ModelPart.NumberOfElements() << " float\n";
         for (const auto& v : r_data.second) {
             output_file << v << "\n";
@@ -199,9 +194,7 @@ void WriteVtk(
     }
 
     // writing elemental vector data
-    for (const auto& r_data : I_NodalVectorData) {
-        output_file << "CELL_DATA " << I_ModelPart.NumberOfElements() << "\n";
-        output_file << "FIELD FieldData 1" << "\n";
+    for (const auto& r_data : I_ElementalVectorData) {
         output_file << r_data.first << " 3 " << I_ModelPart.NumberOfElements() << " float\n";
         for (const auto& v : r_data.second) {
             output_file << v[0] << " " << v[1] << " " << v[2] << "\n";
