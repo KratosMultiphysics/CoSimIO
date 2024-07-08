@@ -22,7 +22,7 @@ typedef struct CoSimIO_Info
 } CoSimIO_Info;
 
 
-CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_CreateInfo();
+CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_CreateInfo(void);
 
 CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_CopyInfo(const CoSimIO_Info I_Info);
 
