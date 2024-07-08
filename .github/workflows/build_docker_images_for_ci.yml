@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Build the Docker image
       run: docker build . --file .github/docker_files/docker_file_ci_ubuntu_20_04/DockerFile --tag kratosmultiphysics/co-sim-io-image-ci-ubuntu-20-04
     - name: Docker Login

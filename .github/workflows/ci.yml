@@ -29,7 +29,7 @@ jobs:
     timeout-minutes: 30
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Install dependencies
       run: |
@@ -132,7 +132,7 @@ jobs:
     timeout-minutes: 15
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Install Intel compiler
       if: ${{ matrix.compiler == 'ICC' }}
@@ -198,7 +198,7 @@ jobs:
     timeout-minutes: 15
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Build CoSimIO
       run: |
@@ -225,7 +225,7 @@ jobs:
     timeout-minutes: 15
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
@@ -257,7 +257,7 @@ jobs:
     timeout-minutes: 15
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Build CoSimIO
       shell: cmd
@@ -301,7 +301,7 @@ jobs:
     timeout-minutes: 15
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
@@ -355,7 +355,7 @@ jobs:
       image: kratosmultiphysics/kratos-image-ci-centos7:latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Build CoSimIO
       run: |
@@ -398,7 +398,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install libopenmpi-dev openmpi-bin
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Build CoSimIO
       run: |
