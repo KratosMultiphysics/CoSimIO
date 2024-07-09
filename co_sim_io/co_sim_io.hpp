@@ -10,8 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_INCLUDED
-#define CO_SIM_IO_INCLUDED
+#pragma once
 
 /*
 This file defines the IO of Kratos-CoSimulation for the exchange of data with external solvers.
@@ -71,5 +70,3 @@ Info CO_SIM_IO_API Register(
     TFunctionType rFunction);
 
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_INCLUDED

@@ -10,8 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_MPI_COMMUNICATION_FACTORY_INCLUDED
-#define CO_SIM_IO_MPI_COMMUNICATION_FACTORY_INCLUDED
+#pragma once
 
 // System includes
 
@@ -36,5 +35,3 @@ private:
 
 } // namespace Internals
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_MPI_COMMUNICATION_FACTORY_INCLUDED

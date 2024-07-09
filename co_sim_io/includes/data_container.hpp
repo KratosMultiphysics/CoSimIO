@@ -10,8 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_DATA_CONTAINER_INCLUDED
-#define CO_SIM_IO_DATA_CONTAINER_INCLUDED
+#pragma once
 
 // System includes
 #include <vector>
@@ -232,5 +231,3 @@ private:
 
 } // namespace Internals
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_DATA_CONTAINER_INCLUDED

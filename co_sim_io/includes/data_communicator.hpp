@@ -13,8 +13,7 @@
 // Ported from "kratos/includes/data_communicator.h"
 //
 
-#ifndef CO_SIM_IO_DATA_COMMUNICATOR_INCLUDED
-#define CO_SIM_IO_DATA_COMMUNICATOR_INCLUDED
+#pragma once
 
 // System includes
 #include <string>
@@ -936,5 +935,3 @@ inline std::ostream &operator<<(std::ostream &rOStream,
 #undef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_GATHER_INTERFACE_FOR_TYPE
 #undef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE
 #undef CO_SIM_IO_BASE_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE
-
-#endif // CO_SIM_IO_DATA_COMMUNICATOR_INCLUDED

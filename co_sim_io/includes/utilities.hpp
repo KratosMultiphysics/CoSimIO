@@ -10,8 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_UTILITIES_INCLUDED
-#define CO_SIM_IO_UTILITIES_INCLUDED
+#pragma once
 
 // System includes
 #include <string>
@@ -63,5 +62,3 @@ std::set<std::size_t> CO_SIM_IO_API ComputePartnerRanksAsExporter(
 
 } // namespace Utilities
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_UTILITIES_INCLUDED

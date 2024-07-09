@@ -10,8 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_INFO_INCLUDED
-#define CO_SIM_IO_INFO_INCLUDED
+#pragma once
 
 // System includes
 #include <string>
@@ -239,5 +238,3 @@ inline void InfoData<Info>::Print(
 
 } // namespace Internals
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_INFO_INCLUDED

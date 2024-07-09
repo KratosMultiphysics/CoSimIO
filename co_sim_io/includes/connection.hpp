@@ -10,8 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_CONNECTION_INCLUDED
-#define CO_SIM_IO_CONNECTION_INCLUDED
+#pragma once
 
 // System includes
 #include <unordered_map>
@@ -104,5 +103,3 @@ private:
 
 } // namespace Internals
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_CONNECTION_INCLUDED

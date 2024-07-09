@@ -10,8 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_FILESYSTEM_INC_INCLUDED
-#define CO_SIM_IO_FILESYSTEM_INC_INCLUDED
+#pragma once
 
 /* std::filesystem is part of C++17
 While we use C++11, the alternative implementation from
@@ -30,5 +29,3 @@ namespace fs = ghc::filesystem;
 // use this once moving to C++17
 // #include <filesystem>
 // namespace fs = std::filesystem;
-
-#endif // CO_SIM_IO_FILESYSTEM_INC_INCLUDED

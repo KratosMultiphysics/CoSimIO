@@ -11,8 +11,7 @@
 //                   Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_STREAM_SERIALIZER_INCLUDED
-#define CO_SIM_IO_STREAM_SERIALIZER_INCLUDED
+#pragma once
 
 // System includes
 
@@ -50,5 +49,3 @@ class CO_SIM_IO_API StreamSerializer : public Serializer
 
 } // namespace Internals
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_STREAM_SERIALIZER_INCLUDED

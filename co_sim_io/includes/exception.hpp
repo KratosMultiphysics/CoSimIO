@@ -10,8 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_EXCEPTION_INCLUDED
-#define CO_SIM_IO_EXCEPTION_INCLUDED
+#pragma once
 
 // System includes
 #include <iostream>
@@ -91,5 +90,3 @@ class CO_SIM_IO_API Exception : public std::exception
 
 } // namespace Internals
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_EXCEPTION_INCLUDED

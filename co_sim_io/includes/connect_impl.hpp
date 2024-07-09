@@ -10,8 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_CONNECT_IMPL_INCLUDED
-#define CO_SIM_IO_CONNECT_IMPL_INCLUDED
+#pragma once
 
 // System includes
 #include <memory>
@@ -40,5 +39,3 @@ void RemoveConnection(const std::string& rConnectionName);
 
 } // namespace Internals
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_CONNECT_IMPL_INCLUDED

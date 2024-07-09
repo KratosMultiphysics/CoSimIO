@@ -10,8 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_BASE_SOCKET_COMMUNICATION_INCLUDED
-#define CO_SIM_IO_BASE_SOCKET_COMMUNICATION_INCLUDED
+#pragma once
 
 // System includes
 #include <thread>
@@ -73,5 +72,3 @@ protected:
 
 } // namespace Internals
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_BASE_SOCKET_COMMUNICATION_INCLUDED

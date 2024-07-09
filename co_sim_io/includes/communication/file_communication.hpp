@@ -10,8 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_FILE_COMMUNICATION_INCLUDED
-#define CO_SIM_IO_FILE_COMMUNICATION_INCLUDED
+#pragma once
 
 // System includes
 
@@ -108,5 +107,3 @@ private:
 
 } // namespace Internals
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_FILE_COMMUNICATION_INCLUDED

@@ -10,8 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_CODE_LOCATION_INCLUDED
-#define CO_SIM_IO_CODE_LOCATION_INCLUDED
+#pragma once
 
 // System includes
 #include <string>
@@ -147,5 +146,3 @@ inline std::ostream & operator <<(std::ostream& rOStream,
 
 } // namespace Internals
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_CODE_LOCATION_INCLUDED

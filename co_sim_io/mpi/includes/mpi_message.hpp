@@ -13,8 +13,7 @@
 // Ported from "kratos/mpi/includes/mpi_message.h"
 //
 
-#ifndef CO_SIM_IO_MPI_MESSAGE_INCLUDED
-#define CO_SIM_IO_MPI_MESSAGE_INCLUDED
+#pragma once
 
 // System includes
 #include <string>
@@ -179,5 +178,3 @@ template<class ValueType> class MPIMessage< std::vector<ValueType> >: public Int
 template<class ValueType, std::size_t Dimension> class MPIMessage<std::array<ValueType,Dimension>>: public Internals::ArrayMessage<ValueType,Dimension>, public Internals::MPIDataType<ValueType> {};
 
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_MPI_MESSAGE_INCLUDED

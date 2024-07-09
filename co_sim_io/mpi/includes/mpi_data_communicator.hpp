@@ -13,8 +13,7 @@
 // Ported from "kratos/mpi/includes/mpi_data_communicator.h"
 //
 
-#ifndef CO_SIM_IO_MPI_DATA_COMMUNICATOR_INCLUDED
-#define CO_SIM_IO_MPI_DATA_COMMUNICATOR_INCLUDED
+#pragma once
 
 // System includes
 #include <string>
@@ -493,5 +492,3 @@ inline std::ostream &operator<<(std::ostream &rOStream,
 #undef KRATOS_MPI_DATA_COMMUNICATOR_DECLARE_GATHER_INTERFACE_FOR_TYPE
 #undef KRATOS_MPI_DATA_COMMUNICATOR_DECLARE_PUBLIC_INTERFACE_FOR_TYPE
 #undef KRATOS_MPI_DATA_COMMUNICATOR_DECLARE_IMPLEMENTATION_FOR_TYPE
-
-#endif // CO_SIM_IO_MPI_DATA_COMMUNICATOR_INCLUDED  defined

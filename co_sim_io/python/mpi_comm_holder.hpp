@@ -10,8 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_PYHON_MPI_COMM_HOLDER_INCLUDED
-#define CO_SIM_IO_PYHON_MPI_COMM_HOLDER_INCLUDED
+#pragma once
 
 // External includes
 #include "mpi.h"
@@ -31,5 +30,3 @@ private:
 };
 
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_PYHON_MPI_COMM_HOLDER_INCLUDED

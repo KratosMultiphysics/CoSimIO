@@ -10,8 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_VECTOR_TO_PYHON_INCLUDED
-#define CO_SIM_IO_VECTOR_TO_PYHON_INCLUDED
+#pragma once
 
 // Exposure of the CoSimIO to Python
 
@@ -127,5 +126,3 @@ void AddCoSimIOVectorToPython(pybind11::module& m)
 }
 
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_VECTOR_TO_PYHON_INCLUDED

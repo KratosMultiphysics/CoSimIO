@@ -11,8 +11,7 @@
 //                   Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_SERIALIZER_INCLUDED
-#define CO_SIM_IO_SERIALIZER_INCLUDED
+#pragma once
 
 // System includes
 #include <string>
@@ -929,5 +928,3 @@ private:
 
 #undef CO_SIM_IO_SERIALIZATION_DIRECT_LOAD
 #undef CO_SIM_IO_SERIALIZATION_DIRECT_SAVE
-
-#endif // CO_SIM_IO_SERIALIZER_INCLUDED

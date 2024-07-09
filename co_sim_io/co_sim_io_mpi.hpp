@@ -10,8 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_MPI_INCLUDED
-#define CO_SIM_IO_MPI_INCLUDED
+#pragma once
 
 /*
 This file contains the interface of the MPI extension for the CoSimIO
@@ -30,5 +29,3 @@ Info ConnectMPI(
     MPI_Comm ThisMPIComm);
 
 } // namespace CoSimIO
-
-#endif // CO_SIM_IO_MPI_INCLUDED

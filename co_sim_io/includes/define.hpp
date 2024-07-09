@@ -10,8 +10,7 @@
 //  Main authors:    Philipp Bucher (https://github.com/philbucher)
 //
 
-#ifndef CO_SIM_IO_DEFINE_INCLUDED
-#define CO_SIM_IO_DEFINE_INCLUDED
+#pragma once
 
 // System includes
 #include <iostream>
@@ -131,5 +130,3 @@ catch(std::exception& e) { CO_SIM_IO_ERROR << e.what(); }                   \
 catch(...)               { CO_SIM_IO_ERROR << "Unknown error"; }
 
 } //namespace CoSimIO
-
-#endif // CO_SIM_IO_DEFINE_INCLUDED
