@@ -11,9 +11,11 @@
 //
 
 // System includes
+#ifdef CO_SIM_IO_TIMESTAMP_DEBUG
 #include <chrono>
 #include <ctime>
 #include <iomanip>
+#endif
 
 // Project includes
 #include "includes/communication/base_socket_communication.hpp"
