@@ -169,6 +169,9 @@ void BaseSocketCommunication<TSocketType>::SendSize(const std::uint64_t Size)
     CO_SIM_IO_TRY
 
     DebugTimeInfo("SendSize", "Before send");
+#ifdef CO_SIM_IO_TIMESTAMP_DEBUG
+    CO_SIM_IO_INFO("CoSimIO::SendSize") << Size << std::endl;
+#endif
 
     asio::write(*mpAsioSocket, asio::buffer(&Size, sizeof(Size)));
 
@@ -188,6 +191,9 @@ std::uint64_t BaseSocketCommunication<TSocketType>::ReceiveSize()
     asio::read(*mpAsioSocket, asio::buffer(&imp_size_u, sizeof(imp_size_u)));
 
     DebugTimeInfo("ReceiveSize", "After receive");
+#ifdef CO_SIM_IO_TIMESTAMP_DEBUG
+    CO_SIM_IO_INFO("CoSimIO::ReceiveSize") << imp_size_u << std::endl;
+#endif
 
     return imp_size_u;
 
@@ -195,7 +201,10 @@ std::uint64_t BaseSocketCommunication<TSocketType>::ReceiveSize()
 }
 
 template<class TSocketType>
-void BaseSocketCommunication<TSocketType>::DebugTimeInfo(const std::string& rLabel, const std::string& rMessage) const
+void BaseSocketCommunication<TSocketType>::DebugTimeInfo(
+    const std::string& rLabel,
+    const std::string& rMessage
+    ) const
 {
 #ifdef CO_SIM_IO_TIMESTAMP_DEBUG
     // Get the current time
