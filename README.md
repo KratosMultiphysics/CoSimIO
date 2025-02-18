@@ -62,3 +62,4 @@ Coupling requires frequent exchange of data. Therefore the _CoSimIO_ uses the me
 - [filesystem](https://github.com/gulrak/filesystem) Header-only single-file std::filesystem compatible helper library, based on the C++17 specs
 - [asio](https://think-async.com/Asio/) for socket based interprocess communication
 - [doctest](https://github.com/onqtam/doctest) C++ testing framework for the unit tests
+- [Google Benchmark](https://github.com/google/benchmark) for microbenchmarking and performance testing
