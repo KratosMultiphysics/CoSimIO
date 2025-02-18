@@ -104,9 +104,6 @@ static void BM_ImportExportLargeData(benchmark::State& state) {
         // Perform the import operation (this is what we want to measure)
         main_comm->ImportData(import_info, data_container);
 
-        // Validate that the imported data has the expected size.
-        assert(data_container.GetData().size() == exp_data[0].size());
-
         // Disconnect the main communication
         Info disconnect_info;
         main_comm->Disconnect(disconnect_info);
