@@ -39,9 +39,7 @@ void ExportDataHelper(
     settings.Set<int>("echo_level", 0);
 
     using Communication = Internals::Communication;
-    std::unique_ptr<Communication> p_comm = 
-        Internals::CommunicationFactory().Create(
-            settings, std::make_shared<Internals::DataCommunicator>());
+    std::unique_ptr<Communication> p_comm =  Internals::CommunicationFactory().Create(settings, std::make_shared<Internals::DataCommunicator>());
 
     // Give the primary thread a chance to prepare (as in your test)
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -53,7 +51,7 @@ void ExportDataHelper(
     export_info.Set<std::string>("identifier", "data_exchange");
 
     for (const auto& data : DataToExport) {
-        Internals::DataContainerStdVectorReadOnly<double> data_container(data);
+        const Internals::DataContainerStdVectorReadOnly<double> data_container(data);
         p_comm->ExportData(export_info, data_container);
     }
 
@@ -77,15 +75,16 @@ static void BM_ImportExportLargeData(benchmark::State& state) {
 
     // Set up common communication settings
     Info settings;
+    settings.Set<std::string>("my_name", "main");
+    settings.Set<std::string>("connect_to", "thread");
     settings.Set<std::string>("communication_format", "pipe");
-    // You can add more settings if needed
+    settings.Set<bool>("is_primary_connection", true);
+    settings.Set<int>("echo_level", 0);
 
     // Benchmark loop: each iteration performs a full connect-import-disconnect cycle
     for (auto _ : state) {
         using Communication = Internals::Communication;
-        std::unique_ptr<Communication> main_comm = 
-            Internals::CommunicationFactory().Create(
-                settings, std::make_shared<Internals::DataCommunicator>());
+        std::unique_ptr<Communication> main_comm = Internals::CommunicationFactory().Create(settings, std::make_shared<Internals::DataCommunicator>());
 
         // Launch the exporter in a separate thread (it uses ExportDataHelper)
         std::thread export_thread(ExportDataHelper, settings, exp_data);
@@ -113,8 +112,8 @@ static void BM_ImportExportLargeData(benchmark::State& state) {
     }
 }
 
-// Register the benchmark with different sizes in MB (e.g., 5 MB, 10 MB, 20 MB)
-BENCHMARK(BM_ImportExportLargeData)->Arg(5)->Arg(10)->Arg(20);
+// Register the benchmark with different sizes in MB (e.g., 5 MB, 20 MB, 100 MB and 2000 MB)
+BENCHMARK(BM_ImportExportLargeData)->Arg(5)->Arg(20)->Arg(100)->Arg(2000);
 
 }  // namespace CoSimIO
 
