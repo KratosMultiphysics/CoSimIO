@@ -43,7 +43,13 @@ enum class VtkCellType {
 
 VtkCellType CO_SIM_IO_API GetVtkCellTypeForElementType(ElementType I_ElementType);
 
-void CO_SIM_IO_API WriteVtk(const Info& I_Settings, const ModelPart& I_ModelPart);
+void CO_SIM_IO_API WriteVtk(
+    const Info& I_Settings,
+    const ModelPart& I_ModelPart,
+    const std::unordered_map<std::string, std::vector<double>>& I_NodalScalarData={},
+    const std::unordered_map<std::string, std::vector<std::array<double,3>>>& I_NodalVectorData={},
+    const std::unordered_map<std::string, std::vector<double>>& I_ElementalScalarData={},
+    const std::unordered_map<std::string, std::vector<std::array<double,3>>>& I_ElementalVectorData={});
 
 void CO_SIM_IO_API ReadVtk(const Info& I_Settings, ModelPart& O_ModelPart);
 
