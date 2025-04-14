@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:jammy
 
 ENV HOME /root
 
@@ -15,7 +15,7 @@ RUN apt-get update -y && apt-get upgrade -y && \
     apt-get -y update && \
     apt-get install -y \
         build-essential \
-        clang-11 \
+        clang \
         cmake \
         git \
         intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic \

@@ -6,13 +6,13 @@ on:
     branches:
       - 'master'
     paths:
-      - '.github/docker_files/docker_file_ci_ubuntu_20_04/*'
+      - '.github/docker_files/docker_file_ci_ubuntu_22_04/*'
       - '.github/workflows/build_docker_images_for_ci.yml'
   pull_request:
     branches:
       - 'master'
     paths:
-      - '.github/docker_files/docker_file_ci_ubuntu_20_04/*'
+      - '.github/docker_files/docker_file_ci_ubuntu_22_04/*'
       - '.github/workflows/build_docker_images_for_ci.yml'
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file .github/docker_files/docker_file_ci_ubuntu_20_04/DockerFile --tag kratosmultiphysics/co-sim-io-image-ci-ubuntu-20-04
+      run: docker build . --file .github/docker_files/docker_file_ci_ubuntu_22_04/DockerFile --tag kratosmultiphysics/co-sim-io-image-ci-ubuntu-22-04
     - name: Docker Login
       uses: azure/docker-login@v1
       with:
@@ -31,4 +31,4 @@ jobs:
     - name: Publish the Docker image
       if: ${{ github.event_name == 'push'}}
       # only push the new image when the changes are merged to master
-      run: docker push kratosmultiphysics/co-sim-io-image-ci-ubuntu-20-04
+      run: docker push kratosmultiphysics/co-sim-io-image-ci-ubuntu-22-04
