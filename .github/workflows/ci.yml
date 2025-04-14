@@ -44,7 +44,7 @@ jobs:
 
         sudo apt-get install \
           valgrind \
-          clang-11
+          clang
 
     - name: Install legacy Intel compiler
       if: ${{ matrix.compiler == 'ICC' }}
@@ -68,8 +68,8 @@ jobs:
           export CXX=/usr/bin/g++
           export CC=/usr/bin/gcc
         elif [ ${{ matrix.compiler }} = CLANG ]; then
-          export CXX=/usr/bin/clang++-11
-          export CC=/usr/bin/clang-11
+          export CXX=/usr/bin/clang++
+          export CC=/usr/bin/clang
         elif [ ${{ matrix.compiler }} = ICC ]; then
           export CXX=icpc
           export CC=icc
