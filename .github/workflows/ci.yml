@@ -131,7 +131,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install Intel compiler
-      if: ${{ matrix.compiler == 'ICX' }}
+      if: ${{ matrix.compiler == 'ICX' || matrix.compiler == 'ICPX' }}
       run: |
         # see https://software.intel.com/content/www/us/en/develop/articles/installing-intel-oneapi-toolkits-via-apt.html#pkgtable
         cd /tmp
@@ -166,7 +166,7 @@ jobs:
 
     - name: Running tests
       run: |
-        if [ ${{ matrix.compiler }} = ICX ]; then
+        if [ ${{ matrix.compiler }} = ICX ] || [ ${{ matrix.compiler }} = ICPX ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
@@ -177,7 +177,7 @@ jobs:
 
     - name: Running MPI tests
       run: |
-        if [ ${{ matrix.compiler }} = ICX ]; then
+        if [ ${{ matrix.compiler }} = ICX ] || [ ${{ matrix.compiler }} = ICPX ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
