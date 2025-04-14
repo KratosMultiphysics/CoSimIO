@@ -15,7 +15,7 @@
 
 #include "../checks.h"
 
-int main(int argc, const char** argv)
+int main(int COSIMIO_MAYBE_UNUSED(argc), const char** COSIMIO_MAYBE_UNUSED(argv))
 {
     /* declaring variables */
     int i;
