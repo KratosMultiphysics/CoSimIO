@@ -17,12 +17,14 @@
 #include <math.h>
 #include <string.h>
 
-// Before the 23 standard, C and C++ handled unused arguments differently.
-// C does not allow variable names to be omitted, but does not complain if
-// the variable is unused. On the other hand, C++ allows variable names to
-// be omitted, but will complain if it is not used when named.
-// The "[[maybe_unused]]" attribute is a C23 extension, so it's not applicable
-// here until support for earlier standards is dropped.
+/*
+    Before the 23 standard, C and C++ handled unused arguments differently.
+    C does not allow variable names to be omitted, but does not complain if
+    the variable is unused. On the other hand, C++ allows variable names to
+    be omitted, but will complain if it is not used when named.
+    The "[[maybe_unused]]" attribute is a C23 extension, so it's not applicable
+    here until support for earlier standards is dropped.
+*/
 #ifndef __cplusplus
     #define COSIMIO_MAYBE_UNUSED(variable_name) variable_name
 #else
