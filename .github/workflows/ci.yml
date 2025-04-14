@@ -347,12 +347,12 @@ jobs:
         python run_python_tests.py
 
 
-  CentOS-7:
+  Rocky-8:
     runs-on: ubuntu-latest
-    name: CentOS 7
+    name: Rocky 8
 
     container:
-      image: kratosmultiphysics/kratos-image-ci-centos7:latest
+      image: kratosmultiphysics/kratos-image-ci-rocky8:latest
 
     steps:
     - uses: actions/checkout@v2
@@ -378,7 +378,7 @@ jobs:
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/bin
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
-        python3.8 run_python_tests.py
+        python3 run_python_tests.py
 
 
   Ubuntu-minimum-CMake:
