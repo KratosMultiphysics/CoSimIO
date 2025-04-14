@@ -23,11 +23,14 @@
         return 1;                                                \
     }
 
-int main()
+int main(int argc, const char** argv)
 {
     /* declaring variables */
     CoSimIO_Info hello_info;
     int major_version, minor_version;
+
+    (void)(argc);
+    (void)(argv);
 
     hello_info = CoSimIO_Hello();
 

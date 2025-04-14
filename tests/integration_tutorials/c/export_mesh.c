@@ -19,7 +19,7 @@
         return 1;                                                \
     }
 
-int main()
+int main(int argc, const char** argv)
 {
     /* declaring variables */
     int i,j;
@@ -53,6 +53,9 @@ int main()
     CoSimIO_Info_SetString(connection_settings, "connect_to", "c_import_mesh");
     CoSimIO_Info_SetInt(connection_settings, "echo_level", 1);
     CoSimIO_Info_SetString(connection_settings, "version", "1.25");
+
+    (void)(argc);
+    (void)(argv);
 
     /* Connecting using the connection settings */
     connect_info = CoSimIO_Connect(connection_settings);

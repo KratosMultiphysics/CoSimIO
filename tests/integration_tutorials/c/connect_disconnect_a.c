@@ -19,11 +19,14 @@
         return 1;                                                \
     }
 
-int main()
+int main(int argc, const char** argv)
 {
     /* declaring variables */
     CoSimIO_Info settings, connect_info, disconnect_settings, disconnect_info;
     const char* connection_name;
+
+    (void)(argc);
+    (void)(argv);
 
     settings = CoSimIO_CreateInfo();
     CoSimIO_Info_SetString(settings, "my_name", "c_connect_disconnect_a");
