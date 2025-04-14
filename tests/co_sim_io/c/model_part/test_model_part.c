@@ -15,8 +15,11 @@
 
 #include "../checks.h"
 
-int main(int COSIMIO_MAYBE_UNUSED(argc), const char** COSIMIO_MAYBE_UNUSED(argv))
+int main(int argc, const char** argv)
 {
+    COSIMIO_UNUSED(argc);
+    COSIMIO_UNUSED(argv);
+
     /* declaring variables */
     int i;
     int connectivity[2];
