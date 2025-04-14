@@ -17,9 +17,6 @@
 
 int main(int argc, const char** argv)
 {
-    COSIMIO_UNUSED(argc);
-    COSIMIO_UNUSED(argv);
-
     /* declaring variables */
     int i;
     CoSimIO_ModelPart model_part;
@@ -30,6 +27,9 @@ int main(int argc, const char** argv)
     double coords_1[] = {1.0, -2.7, 9.44};
     double coords_2[] = {-1.0, -2.8, 0.0};
     double coords_3[] = {0.0, 3.7, 39.44};
+
+    COSIMIO_UNUSED(argc);
+    COSIMIO_UNUSED(argv);
 
     model_part = CoSimIO_CreateModelPart("my_model_part");
 

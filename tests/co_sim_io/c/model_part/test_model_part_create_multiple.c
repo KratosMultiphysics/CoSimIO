@@ -17,9 +17,6 @@
 
 int main(int argc, const char** argv)
 {
-    COSIMIO_UNUSED(argc);
-    COSIMIO_UNUSED(argv);
-
     /* declaring variables */
     int i;
     int j;
@@ -39,6 +36,9 @@ int main(int argc, const char** argv)
     CoSimIO_ModelPart model_part;
     CoSimIO_Node node;
     CoSimIO_Element elem;
+
+    COSIMIO_UNUSED(argc);
+    COSIMIO_UNUSED(argv);
 
     model_part = CoSimIO_CreateModelPart("my_model_part");
 

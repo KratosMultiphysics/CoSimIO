@@ -17,15 +17,15 @@
 
 int main(int argc, const char** argv)
 {
-    COSIMIO_UNUSED(argc);
-    COSIMIO_UNUSED(argv);
-
     /* declaring variables */
     int i;
     int connectivity[2];
     CoSimIO_Node node;
     CoSimIO_Element elem;
     CoSimIO_ModelPart model_part;
+
+    COSIMIO_UNUSED(argc);
+    COSIMIO_UNUSED(argv);
 
     model_part = CoSimIO_CreateModelPart("my_model_part");
 

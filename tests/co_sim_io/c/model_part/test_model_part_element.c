@@ -17,17 +17,17 @@
 
 int main(int argc, const char** argv)
 {
-    COSIMIO_UNUSED(argc);
-    COSIMIO_UNUSED(argv);
-
     /* declaring variables */
     int i;
     int connectivity[3];
     CoSimIO_Element elem_tri, elem_line, elem_point, elem_tri_by_index, elem_line_by_index, elem_point_by_index, elem_tri_by_id, elem_line_by_id, elem_point_by_id;
     CoSimIO_ModelPart model_part;
 
-    model_part = CoSimIO_CreateModelPart("my_model_part");
+    COSIMIO_UNUSED(argc);
+    COSIMIO_UNUSED(argv);
+
     for (i=0; i<5; ++i) {
+    model_part = CoSimIO_CreateModelPart("my_model_part");
         CoSimIO_ModelPart_CreateNewNode(
             model_part,
             i+1,

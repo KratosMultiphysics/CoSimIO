@@ -17,11 +17,11 @@
 
 int main(int argc, const char** argv)
 {
-    COSIMIO_UNUSED(argc);
-    COSIMIO_UNUSED(argv);
-
     /* declaring variables */
     CoSimIO_Info info, copied_info;
+
+    COSIMIO_UNUSED(argc);
+    COSIMIO_UNUSED(argv);
 
     info = CoSimIO_CreateInfo();
 
