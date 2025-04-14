@@ -1,14 +1,5 @@
-cmake_minimum_required (VERSION 2.8.6)
-
-if(CMAKE_MAJOR_VERSION LESS 3)
-    project(CoSimIO CXX C)
-else()
-    if(POLICY CMP0048)
-        # project command manages version
-        cmake_policy(SET CMP0048 NEW)
-    endif(POLICY CMP0048)
-    project(CoSimIO LANGUAGES CXX C VERSION 3.0.0)
-endif()
+cmake_minimum_required (VERSION 3.15.0)
+project(CoSimIO LANGUAGES CXX C VERSION 3.0.0)
 
 # this has to be specified BEFORE including CTest!
 # suppressions file has to be included in the options, as using "MEMORYCHECK_SUPPRESSIONS_FILE" doesn't work on all systems
@@ -36,7 +27,7 @@ endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DCO_SIM_IO_DEBUG")
 
-message("Building the CoSimIO with the following configuration:")
+message("Building CoSimIO with the following configuration:")
 message("    CO_SIM_IO_BUILD_TYPE:      " ${CO_SIM_IO_BUILD_TYPE})
 message("    CO_SIM_IO_BUILD_MPI:       " ${CO_SIM_IO_BUILD_MPI})
 message("    CO_SIM_IO_BUILD_TESTING:   " ${CO_SIM_IO_BUILD_TESTING})
