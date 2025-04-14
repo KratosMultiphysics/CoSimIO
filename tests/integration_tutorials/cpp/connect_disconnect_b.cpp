@@ -20,7 +20,7 @@
         return 1;                                                \
     }
 
-int main()
+int main(int argc, const char** argv)
 {
     CoSimIO::Info settings;
     settings.Set("my_name", "cpp_connect_disconnect_b");
@@ -28,6 +28,9 @@ int main()
     settings.Set("communication_format", "socket");
     settings.Set("echo_level", 1);
     settings.Set("version", "1.25");
+
+    (void)(argc);
+    (void)(argv);
 
     auto info = CoSimIO::Connect(settings);
     COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);

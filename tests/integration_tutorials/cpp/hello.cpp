@@ -20,9 +20,12 @@
         return 1;                                                \
     }
 
-int main()
+int main(int argc, const char** argv)
 {
     auto info = CoSimIO::Hello();
+
+    (void)(argc);
+    (void)(argv);
 
     std::cout << info << std::endl;
 
