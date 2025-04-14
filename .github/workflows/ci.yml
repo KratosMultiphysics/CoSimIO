@@ -47,7 +47,7 @@ jobs:
           clang
 
     - name: Install Intel compiler
-      if: ${{ matrix.compiler == 'ICPX' }}
+      if: ${{ matrix.compiler == 'ICX' || matrix.compiler == 'ICPX' }}
       run: sudo apt-get install intel-oneapi-compiler-dpcpp-cpp
 
     - name: Install MPI
