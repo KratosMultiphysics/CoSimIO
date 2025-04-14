@@ -15,7 +15,7 @@
 
 #include "../checks.h"
 
-int main()
+int main(int argc, const char** argv)
 {
     /* declaring variables */
     int i;

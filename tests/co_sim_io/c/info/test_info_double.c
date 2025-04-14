@@ -15,7 +15,7 @@
 
 #include "../checks.h"
 
-int main()
+int main(int argc, const char** argv)
 {
     /* declaring variables */
     CoSimIO_Info info;
@@ -31,6 +31,6 @@ int main()
     COSIMIO_CHECK_DOUBLE_EQUAL(CoSimIO_Info_GetDouble(info, "tolerance"), 0.0086);
 
     CoSimIO_FreeInfo(info);
-    
+
     return 0;
 }

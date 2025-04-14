@@ -16,7 +16,7 @@
 
 #include "../checks.h"
 
-int main()
+int main(int argc, const char** argv)
 {
     /* declaring variables */
     CoSimIO_Info info;
