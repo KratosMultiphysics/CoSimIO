@@ -26,8 +26,8 @@ int main(int argc, const char** argv)
     COSIMIO_UNUSED(argc);
     COSIMIO_UNUSED(argv);
 
-    for (i=0; i<5; ++i) {
     model_part = CoSimIO_CreateModelPart("my_model_part");
+    for (i=0; i<5; ++i) {
         CoSimIO_ModelPart_CreateNewNode(
             model_part,
             i+1,
