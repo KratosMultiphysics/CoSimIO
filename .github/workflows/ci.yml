@@ -353,6 +353,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
+
     - name: Build CoSimIO
       run: |
         cmake -H"." -B"build"        \
