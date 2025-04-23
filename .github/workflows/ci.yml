@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [GCC, CLANG, ICX, ICPX]
+        compiler: [GCC, CLANG, ICPX]
         mpi: [OpenMPI, IntelMPI]
         exclude:
             # CLANG is not properly supported by Intel, better use LLVMIntel in the future
@@ -47,7 +47,7 @@ jobs:
           clang
 
     - name: Install Intel compiler
-      if: ${{ matrix.compiler == 'ICX' || matrix.compiler == 'ICPX' }}
+      if: ${{ matrix.compiler == 'ICPX' }}
       run: sudo apt-get install intel-oneapi-compiler-dpcpp-cpp
 
     - name: Install MPI
@@ -66,9 +66,6 @@ jobs:
         elif [ ${{ matrix.compiler }} = CLANG ]; then
           export CXX=/usr/bin/clang++
           export CC=/usr/bin/clang
-        elif [ ${{ matrix.compiler }} = ICX ]; then
-          export CXX=icpx
-          export CC=icx
         elif [ ${{ matrix.compiler }} = ICPX ]; then
           export CXX=icpx
           export CC=icx
@@ -77,7 +74,7 @@ jobs:
           exit 1
         fi
 
-        if [ ${{ matrix.compiler }} = ICX ] || [ ${{ matrix.compiler }} = ICPX ] || [ ${{ matrix.mpi }} = IntelMPI ]; then
+        if [ ${{ matrix.compiler }} = ICPX ] || [ ${{ matrix.mpi }} = IntelMPI ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
 
@@ -103,7 +100,7 @@ jobs:
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/bin
         export PATH=${PATH}:${GITHUB_WORKSPACE}/bin # required for IntelMPI
         export PATH=${PATH}:${GITHUB_WORKSPACE}/bin/tests_c_mpi # required for IntelMPI
-        if [ ${{ matrix.compiler }} = ICX ] || [ ${{ matrix.compiler }} = ICPX ] || [ ${{ matrix.mpi }} = IntelMPI ]; then
+        if [ ${{ matrix.compiler }} = ICPX ] || [ ${{ matrix.mpi }} = IntelMPI ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
 
@@ -124,14 +121,14 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-        compiler: [GCC, ICX]
+        compiler: [GCC, ICPX]
     timeout-minutes: 15
 
     steps:
     - uses: actions/checkout@v4
 
     - name: Install Intel compiler
-      if: ${{ matrix.compiler == 'ICX' || matrix.compiler == 'ICPX' }}
+      if: ${{ matrix.compiler == 'ICPX' }}
       run: |
         # see https://software.intel.com/content/www/us/en/develop/articles/installing-intel-oneapi-toolkits-via-apt.html#pkgtable
         cd /tmp
@@ -166,7 +163,7 @@ jobs:
 
     - name: Running tests
       run: |
-        if [ ${{ matrix.compiler }} = ICX ] || [ ${{ matrix.compiler }} = ICPX ]; then
+        if [ ${{ matrix.compiler }} = ICPX ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
@@ -177,7 +174,7 @@ jobs:
 
     - name: Running MPI tests
       run: |
-        if [ ${{ matrix.compiler }} = ICX ] || [ ${{ matrix.compiler }} = ICPX ]; then
+        if [ ${{ matrix.compiler }} = ICPX ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
