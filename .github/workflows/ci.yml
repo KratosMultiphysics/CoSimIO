@@ -361,7 +361,7 @@ jobs:
           -DCO_SIM_IO_BUILD_C=ON            \
           -DCO_SIM_IO_BUILD_PYTHON=ON       \
           -DCO_SIM_IO_STRICT_COMPILER=ON    \
-          -DPYTHON_EXECUTABLE=$(which python3.8)
+          -DPYTHON_EXECUTABLE=/usr/local/bin/python3.8
 
         cmake --build "build" --target install -- -j2
 
