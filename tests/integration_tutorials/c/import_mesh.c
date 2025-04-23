@@ -25,7 +25,7 @@
         return 1;                                                \
     }
 
-int main()
+int main(int argc, const char** argv)
 {
     /* declaring variables */
     int i, j;
@@ -52,6 +52,9 @@ int main()
     };
 
     int expected_number_of_elements = 4;
+
+    (void)(argc);
+    (void)(argv);
 
     /* Creating the connection settings */
     connection_settings=CoSimIO_CreateInfo();

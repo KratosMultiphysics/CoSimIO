@@ -17,6 +17,9 @@
 #include <math.h>
 #include <string.h>
 
+
+#define COSIMIO_UNUSED(variable_name) (void)(variable_name)
+
 #define COSIMIO_CHECK_INT_EQUAL(a, b)                                \
     if (a != b) {                                                    \
         printf("in line %d: %d is not equal to %d", __LINE__, a, b); \
