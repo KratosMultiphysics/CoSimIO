@@ -15,13 +15,16 @@
 
 #include "../checks.h"
 
-int main()
+int main(int argc, const char** argv)
 {
     /* declaring variables */
     int i;
     int connectivity[3];
     CoSimIO_Element elem_tri, elem_line, elem_point, elem_tri_by_index, elem_line_by_index, elem_point_by_index, elem_tri_by_id, elem_line_by_id, elem_point_by_id;
     CoSimIO_ModelPart model_part;
+
+    COSIMIO_UNUSED(argc);
+    COSIMIO_UNUSED(argv);
 
     model_part = CoSimIO_CreateModelPart("my_model_part");
     for (i=0; i<5; ++i) {

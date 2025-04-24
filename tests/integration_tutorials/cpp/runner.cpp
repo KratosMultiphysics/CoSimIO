@@ -67,13 +67,16 @@ bool ControlOtherCode(const std::string& I_FunctionName)
     return check_info.Get<std::string>("name_for_check") == I_FunctionName;
 }
 
-int main()
+int main(int argc, const char** argv)
 {
     CoSimIO::Info settings;
     settings.Set("my_name", "cpp_runner");
     settings.Set("connect_to", "cpp_run");
     settings.Set("echo_level", 1);
     settings.Set("version", "1.25");
+
+    (void)(argc);
+    (void)(argv);
 
     auto info = CoSimIO::Connect(settings);
     COSIMIO_CHECK_TRUE(info.Get<int>("connection_status") == CoSimIO::ConnectionStatus::Connected);

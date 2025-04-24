@@ -16,11 +16,14 @@
 
 #include "../checks.h"
 
-int main()
+int main(int argc, const char** argv)
 {
     /* declaring variables */
     CoSimIO_Info info;
     char buffer[BUFSIZ];
+
+    COSIMIO_UNUSED(argc);
+    COSIMIO_UNUSED(argv);
 
     info = CoSimIO_CreateInfo();
 

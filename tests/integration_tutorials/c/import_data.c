@@ -19,13 +19,16 @@
         return 1;                                                \
     }
 
-int main()
+int main(int argc, const char** argv)
 {
     /* declaring variables */
     CoSimIO_Info connection_settings, connect_info, import_settings, import_info, disconnect_settings, disconnect_info;
     const char* connection_name;
     double* data;
     int data_allocated_size = 0;
+
+    (void)(argc);
+    (void)(argv);
 
     /* Creating the connection settings */
     connection_settings=CoSimIO_CreateInfo();

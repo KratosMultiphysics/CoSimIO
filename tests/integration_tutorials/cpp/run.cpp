@@ -135,13 +135,16 @@ CoSimIO::Info ExportMesh(const CoSimIO::Info& I_Info)
 }
 
 
-int main()
+int main(int argc, const char** argv)
 {
     CoSimIO::Info settings;
     settings.Set("my_name", "cpp_run");
     settings.Set("connect_to", "cpp_runner");
     settings.Set("echo_level", 1);
     settings.Set("version", "1.25");
+
+    (void)(argc);
+    (void)(argv);
 
     auto info = CoSimIO::Connect(settings);
     COSIMIO_CHECK_EQUAL(info.Get<int>("connection_status"), CoSimIO::ConnectionStatus::Connected);

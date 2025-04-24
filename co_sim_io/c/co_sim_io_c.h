@@ -35,7 +35,8 @@ enum CoSimIO_ConnectionStatus
     CoSimIO_DisconnectionError
 };
 
-CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_Hello();
+CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_Hello(
+    void);
 
 CO_SIM_IO_NODISCARD CoSimIO_Info CoSimIO_Connect(
     const CoSimIO_Info I_Settings);

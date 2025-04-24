@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [GCC, CLANG, ICC, ICX]
+        compiler: [GCC, CLANG, ICPX]
         mpi: [OpenMPI, IntelMPI]
         exclude:
             # CLANG is not properly supported by Intel, better use LLVMIntel in the future
@@ -29,7 +29,7 @@ jobs:
     timeout-minutes: 30
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Install dependencies
       run: |
@@ -44,14 +44,10 @@ jobs:
 
         sudo apt-get install \
           valgrind \
-          clang-11
-
-    - name: Install legacy Intel compiler
-      if: ${{ matrix.compiler == 'ICC' }}
-      run: sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+          clang
 
     - name: Install Intel compiler
-      if: ${{ matrix.compiler == 'ICX' }}
+      if: ${{ matrix.compiler == 'ICPX' }}
       run: sudo apt-get install intel-oneapi-compiler-dpcpp-cpp
 
     - name: Install MPI
@@ -68,12 +64,9 @@ jobs:
           export CXX=/usr/bin/g++
           export CC=/usr/bin/gcc
         elif [ ${{ matrix.compiler }} = CLANG ]; then
-          export CXX=/usr/bin/clang++-11
-          export CC=/usr/bin/clang-11
-        elif [ ${{ matrix.compiler }} = ICC ]; then
-          export CXX=icpc
-          export CC=icc
-        elif [ ${{ matrix.compiler }} = ICX ]; then
+          export CXX=/usr/bin/clang++
+          export CC=/usr/bin/clang
+        elif [ ${{ matrix.compiler }} = ICPX ]; then
           export CXX=icpx
           export CC=icx
         else
@@ -81,7 +74,7 @@ jobs:
           exit 1
         fi
 
-        if [ ${{ matrix.compiler }} = ICC ] || [ ${{ matrix.compiler }} = ICX ] || [ ${{ matrix.mpi }} = IntelMPI ]; then
+        if [ ${{ matrix.compiler }} = ICPX ] || [ ${{ matrix.mpi }} = IntelMPI ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
 
@@ -107,14 +100,14 @@ jobs:
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/bin
         export PATH=${PATH}:${GITHUB_WORKSPACE}/bin # required for IntelMPI
         export PATH=${PATH}:${GITHUB_WORKSPACE}/bin/tests_c_mpi # required for IntelMPI
-        if [ ${{ matrix.compiler }} = ICC ] || [ ${{ matrix.compiler }} = ICX ] || [ ${{ matrix.mpi }} = IntelMPI ]; then
+        if [ ${{ matrix.compiler }} = ICPX ] || [ ${{ matrix.mpi }} = IntelMPI ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
 
         cd build
         ctest -T memcheck --output-on-failure
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       if: failure()
       with:
         name: "CTest Log Ubuntu C++ & C (${{ matrix.compiler }}-${{ matrix.mpi }})"
@@ -127,15 +120,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
-        compiler: [GCC, ICC]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        compiler: [GCC, ICPX]
     timeout-minutes: 15
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Install Intel compiler
-      if: ${{ matrix.compiler == 'ICC' }}
+      if: ${{ matrix.compiler == 'ICPX' }}
       run: |
         # see https://software.intel.com/content/www/us/en/develop/articles/installing-intel-oneapi-toolkits-via-apt.html#pkgtable
         cd /tmp
@@ -145,7 +138,7 @@ jobs:
         sudo add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
 
         sudo apt-get update
-        sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+        sudo apt-get install intel-oneapi-compiler-dpcpp-cpp
 
     - name: Install MPI
       run: |
@@ -153,7 +146,7 @@ jobs:
         sudo apt-get install libopenmpi-dev openmpi-bin
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -170,7 +163,7 @@ jobs:
 
     - name: Running tests
       run: |
-        if [ ${{ matrix.compiler }} = ICC ]; then
+        if [ ${{ matrix.compiler }} = ICPX ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
@@ -181,7 +174,7 @@ jobs:
 
     - name: Running MPI tests
       run: |
-        if [ ${{ matrix.compiler }} = ICC ]; then
+        if [ ${{ matrix.compiler }} = ICPX ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/bin
@@ -198,7 +191,7 @@ jobs:
     timeout-minutes: 15
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Build CoSimIO
       run: |
@@ -221,14 +214,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     timeout-minutes: 15
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -257,7 +250,7 @@ jobs:
     timeout-minutes: 15
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Build CoSimIO
       shell: cmd
@@ -297,14 +290,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     timeout-minutes: 15
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -325,7 +318,7 @@ jobs:
           -G"Visual Studio 17 2022"   ^
           -H"."                       ^
           -B"build"                   ^
-          -DCO_SIM_IO_BUILD_PYTHON=ON           ^
+          -DCO_SIM_IO_BUILD_PYTHON=ON ^
           -DCO_SIM_IO_STRICT_COMPILER=ON || goto :error
 
         cmake --build "build" --target install -- /p:Platform=x64 || goto :error
@@ -347,23 +340,25 @@ jobs:
         python run_python_tests.py
 
 
-  CentOS-7:
+  Rocky-8:
     runs-on: ubuntu-latest
-    name: CentOS 7
+    name: Rocky 8
 
     container:
-      image: kratosmultiphysics/kratos-image-ci-centos7:latest
+      image: kratosmultiphysics/kratos-image-ci-rocky8:latest
+      options: --user 1001
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Build CoSimIO
       run: |
-        cmake -H"." -B"build"        \
-          -DCMAKE_BUILD_TYPE="Debug" \
-          -DCO_SIM_IO_BUILD_C=ON               \
-          -DCO_SIM_IO_BUILD_PYTHON=ON          \
-          -DCO_SIM_IO_STRICT_COMPILER=ON
+        cmake -H"." -B"build"               \
+          -DCMAKE_BUILD_TYPE="Debug"        \
+          -DCO_SIM_IO_BUILD_C=ON            \
+          -DCO_SIM_IO_BUILD_PYTHON=ON       \
+          -DCO_SIM_IO_STRICT_COMPILER=ON    \
+          -DPYTHON_EXECUTABLE=/usr/local/bin/python3.8
 
         cmake --build "build" --target install -- -j2
 
@@ -381,14 +376,14 @@ jobs:
         python3.8 run_python_tests.py
 
 
-  Ubuntu-old-CMake:
+  Ubuntu-minimum-CMake:
     runs-on: ubuntu-latest
 
     steps:
     - name: Setup cmake
-      uses: jwlawson/actions-setup-cmake@v1.10
+      uses: jwlawson/actions-setup-cmake@v2
       with:
-        cmake-version: '2.8.x'
+        cmake-version: '3.15.x'
 
     - name: Use cmake
       run: cmake --version
@@ -398,7 +393,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install libopenmpi-dev openmpi-bin
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Build CoSimIO
       run: |
