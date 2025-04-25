@@ -69,6 +69,8 @@ protected:
     void SendSize(const std::uint64_t Size);
 
     std::uint64_t ReceiveSize();
+
+    void DebugTimeInfo(const std::string& rLabel, const std::string& rMessage) const;
 };
 
 } // namespace Internals
