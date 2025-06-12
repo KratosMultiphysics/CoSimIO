@@ -138,7 +138,11 @@ include(GenerateExportHeader)
 generate_export_header( co_sim_io EXPORT_MACRO_NAME CO_SIM_IO_API EXPORT_FILE_NAME
                         ${CMAKE_CURRENT_SOURCE_DIR}/co_sim_io/includes/co_sim_io_api.hpp )
 
-install(TARGETS co_sim_io DESTINATION bin)
+install(TARGETS co_sim_io
+        LIBRARY DESTINATION libs
+        ARCHIVE DESTINATION libs
+        RUNTIME DESTINATION bin
+        INCLUDES DESTINATION include)
 
 if (CO_SIM_IO_BUILD_MPI)
     # optionally enable communication via MPI
@@ -157,7 +161,11 @@ if (CO_SIM_IO_BUILD_MPI)
 
     target_link_libraries(co_sim_io_mpi co_sim_io ${MPI_LIBRARIES})
 
-    install(TARGETS co_sim_io_mpi DESTINATION bin)
+    install(TARGETS co_sim_io_mpi
+            LIBRARY DESTINATION libs
+            ARCHIVE DESTINATION libs
+            RUNTIME DESTINATION bin
+            INCLUDES DESTINATION include)
 endif()
 
 target_include_directories(co_sim_io PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/co_sim_io)
