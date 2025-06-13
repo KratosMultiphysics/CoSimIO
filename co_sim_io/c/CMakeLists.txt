@@ -23,5 +23,9 @@ if (CO_SIM_IO_BUILD_MPI)
 
     target_link_libraries(co_sim_io_c_mpi co_sim_io_c co_sim_io_mpi)
 
-    install(TARGETS co_sim_io_c_mpi DESTINATION bin)
+    install(TARGETS co_sim_io_c_mpi
+            LIBRARY DESTINATION libs
+            ARCHIVE DESTINATION libs
+            RUNTIME DESTINATION bin
+            INCLUDES DESTINATION include)
 endif()
