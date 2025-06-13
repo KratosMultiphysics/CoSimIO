@@ -43,6 +43,7 @@ function(add_cpp_executable TEST_SOURCE_FILE)
     message(STATUS  "adding ${TEST_NAME} ")
     add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
     target_link_libraries(${TEST_NAME} co_sim_io)
+    set_target_properties(${TEST_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN/../../libs")
     install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_cpp")
 endfunction()
 
