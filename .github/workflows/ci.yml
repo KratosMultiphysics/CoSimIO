@@ -334,7 +334,7 @@ jobs:
         PYTHON_CMD: python # for the tests (subprocess)
       shell: cmd
       run: |
-        set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%/bin
+        set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%/libs
         cd tests
         rem TODO delete build dir to make sure the linking etc works correctly?
         python run_python_tests.py
