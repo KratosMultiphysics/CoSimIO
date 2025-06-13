@@ -8,17 +8,17 @@ pybind11_add_module(PyCoSimIO co_sim_io_python.cpp)
 target_link_libraries( PyCoSimIO PRIVATE co_sim_io )
 
 if (WIN32)
-    set(CoSimIOPythonModuleRelativeDir "${CMAKE_INSTALL_PREFIX}/bin/CoSimIO")
+    set(CoSimIOPythonModuleRelativeDir "bin/CoSimIO")
 else()
-    set(CoSimIOPythonModuleRelativeDir "${CMAKE_INSTALL_PREFIX}/libs/CoSimIO")
+    set(CoSimIOPythonModuleRelativeDir "libs/CoSimIO")
 endif()
 set(CoSimIOPythonModuleDir "${CMAKE_INSTALL_PREFIX}/${CoSimIOPythonModuleRelativeDir}")
 
 install(TARGETS PyCoSimIO
-        LIBRARY DESTINATION "${CoSimIOPythonModuleRelativeDir}"
-        ARCHIVE DESTINATION "${CoSimIOPythonModuleRelativeDir}"
-        RUNTIME DESTINATION "${CoSimIOPythonModuleRelativeDir}")
-set_target_properties(PyCoSimIO PROPERTIES INSTALL_RPATH "$ORIGIN/..")
+        LIBRARY DESTINATION libs
+        ARCHIVE DESTINATION libs
+        RUNTIME DESTINATION bin)
+set_target_properties(PyCoSimIO PROPERTIES INSTALL_RPATH "$ORIGIN")
 
 set(CoSimIOInitFile "${CoSimIOPythonModuleDir}/__init__.py")
 set(CoSimIOMPIInitFile "${CoSimIOPythonModuleDir}/mpi/__init__.py")
@@ -28,25 +28,31 @@ file(WRITE "${CoSimIOInitFile}" "from PyCoSimIO import *\nfrom PyCoSimIO import 
 
 # dummy init files that give proper errors in case something related to MPI was not compiled
 # These files will be overwritten if the corresponding option is enabled, hence here we can write then unconditionally
-file(WRITE ${CoSimIOMPIInitFile} "raise Exception('CoSimIO was compiled without MPI support! (use \"CO_SIM_IO_BUILD_MPI\" to enable it)')\n")
-file(WRITE ${mpi4pyInterfaceInitFile} "raise Exception('The mpi4py interface was not compiled! (use \"CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE\" to enable it)')\n")
+file(WRITE "${CoSimIOMPIInitFile}" "raise Exception('CoSimIO was compiled without MPI support! (use \"CO_SIM_IO_BUILD_MPI\" to enable it)')\n")
+file(WRITE "${mpi4pyInterfaceInitFile}" "raise Exception('The mpi4py interface was not compiled! (use \"CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE\" to enable it)')\n")
 
 if (CO_SIM_IO_BUILD_MPI)
     pybind11_add_module(PyCoSimIOMPI co_sim_io_python_mpi.cpp)
 
     target_link_libraries( PyCoSimIOMPI PRIVATE co_sim_io co_sim_io_mpi )
 
-    install(TARGETS PyCoSimIOMPI DESTINATION bin)
+    install(TARGETS PyCoSimIOMPI
+            LIBRARY DESTINATION libs
+            ARCHIVE DESTINATION libs
+            RUNTIME DESTINATION bin)
     set_target_properties(PyCoSimIOMPI PROPERTIES INSTALL_RPATH "$ORIGIN")
-    file(WRITE ${CoSimIOMPIInitFile} "from PyCoSimIOMPI import *\n")
+    file(WRITE "${CoSimIOMPIInitFile}" "from PyCoSimIOMPI import *\n")
 
     OPTION ( CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE "Building the interface to mpi4py MPI communicators" OFF )
     if (CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE)
         message("Building the interface to mpi4py MPI communicators")
         pybind11_add_module(PyCoSimIOMPI_mpi4pyInterface mpi4py_interface.cpp)
         target_link_libraries( PyCoSimIOMPI_mpi4pyInterface PRIVATE ${MPI_LIBRARIES} )
-        install(TARGETS PyCoSimIOMPI_mpi4pyInterface DESTINATION bin)
+        install(TARGETS PyCoSimIOMPI_mpi4pyInterface
+                LIBRARY DESTINATION libs
+                ARCHIVE DESTINATION libs
+                RUNTIME DESTINATION bin)
         set_target_properties(PyCoSimIOMPI_mpi4pyInterface PROPERTIES INSTALL_RPATH "$ORIGIN")
-        file(WRITE ${mpi4pyInterfaceInitFile} "from PyCoSimIOMPI_mpi4pyInterface import *\n")
+        file(WRITE "${mpi4pyInterfaceInitFile}" "from PyCoSimIOMPI_mpi4pyInterface import *\n")
     endif()
 endif()
