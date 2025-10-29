@@ -19,20 +19,6 @@ namespace CoSimIO {
 namespace Internals {
 
 template<class TSocketType>
-BaseSocketCommunication<TSocketType>::~BaseSocketCommunication()
-{
-    CO_SIM_IO_TRY
-
-    if (GetIsConnected()) {
-        CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not performed, attempting automatic disconnection!" << std::endl;
-        Info tmp;
-        Disconnect(tmp);
-    }
-
-    CO_SIM_IO_CATCH
-}
-
-template<class TSocketType>
 Info BaseSocketCommunication<TSocketType>::ConnectDetail(const Info& I_Info)
 {
     CO_SIM_IO_TRY

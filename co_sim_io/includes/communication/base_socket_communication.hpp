@@ -39,7 +39,19 @@ public:
         std::shared_ptr<DataCommunicator> I_DataComm)
         : Communication(I_Settings, I_DataComm) {}
 
-    ~BaseSocketCommunication() override;
+    /// Destructor
+    ~BaseSocketCommunication() override
+    {
+        CO_SIM_IO_TRY
+
+        if (GetIsConnected()) {
+            CO_SIM_IO_INFO("CoSimIO") << "Warning: Disconnect was not performed, attempting automatic disconnection!" << std::endl;
+            Info tmp;
+            Disconnect(tmp);
+        }
+
+        CO_SIM_IO_CATCH
+    }
 
     Info ConnectDetail(const Info& I_Info) override;
 
