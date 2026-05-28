@@ -49,9 +49,12 @@ void AddCoSimIOModelPartToPython(pybind11::module_& m)
         .def("Id", &CoSimIO::Element::Id)
         .def("Type", &CoSimIO::Element::Type)
         .def("NumberOfNodes", &CoSimIO::Element::NumberOfNodes)
-        .def_property_readonly("Nodes", [](CoSimIO::Element& I_Element) {
-            return py::make_iterator(I_Element.NodesBegin(), I_Element.NodesEnd());
-            }, py::keep_alive<0, 1>()) /* Keep vector alive while iterator is used */
+        .def_property_readonly(
+            "Nodes",
+            pybind11::cpp_function(
+                [](CoSimIO::Element& I_Element) {
+                    return py::make_iterator(I_Element.NodesBegin(), I_Element.NodesEnd());},
+                py::keep_alive<0, 1>()))
         .def("__str__",   [](const CoSimIO::Element& I_Element)
             { std::stringstream ss; ss << I_Element; return ss.str(); } )
         ;
@@ -78,18 +81,30 @@ void AddCoSimIOModelPartToPython(pybind11::module_& m)
             return I_ModelPart.pGetNode(I_Id);}, py::return_value_policy::reference_internal)
         .def("GetElement",            [](CoSimIO::ModelPart& I_ModelPart, const CoSimIO::IdType I_Id){
             return I_ModelPart.pGetElement(I_Id);}, py::return_value_policy::reference_internal)
-        .def_property_readonly("Nodes", [](CoSimIO::ModelPart& I_ModelPart) {
-            return py::make_iterator(I_ModelPart.NodesBegin(), I_ModelPart.NodesEnd());
-            }, py::keep_alive<0, 1>()) /* Keep vector alive while iterator is used */
-        .def_property_readonly("LocalNodes", [](CoSimIO::ModelPart& I_ModelPart) {
-            return py::make_iterator(I_ModelPart.LocalNodesBegin(), I_ModelPart.LocalNodesEnd());
-            }, py::keep_alive<0, 1>()) /* Keep vector alive while iterator is used */
-        .def_property_readonly("GhostNodes", [](CoSimIO::ModelPart& I_ModelPart) {
-            return py::make_iterator(I_ModelPart.GhostNodesBegin(), I_ModelPart.GhostNodesEnd());
-            }, py::keep_alive<0, 1>()) /* Keep vector alive while iterator is used */
-        .def_property_readonly("Elements", [](CoSimIO::ModelPart& I_ModelPart) {
-            return py::make_iterator(I_ModelPart.ElementsBegin(), I_ModelPart.ElementsEnd());
-            }, py::keep_alive<0, 1>()) /* Keep vector alive while iterator is used */
+        .def_property_readonly(
+            "Nodes",
+            pybind11::cpp_function(
+                [](CoSimIO::ModelPart& I_ModelPart) {
+                    return py::make_iterator(I_ModelPart.NodesBegin(), I_ModelPart.NodesEnd());},
+                py::keep_alive<0, 1>()))
+        .def_property_readonly(
+            "LocalNodes",
+            pybind11::cpp_function(
+                [](CoSimIO::ModelPart& I_ModelPart) {
+                    return py::make_iterator(I_ModelPart.LocalNodesBegin(), I_ModelPart.LocalNodesEnd());},
+                py::keep_alive<0, 1>()))
+        .def_property_readonly(
+            "GhostNodes",
+            pybind11::cpp_function(
+                [](CoSimIO::ModelPart& I_ModelPart) {
+                    return py::make_iterator(I_ModelPart.GhostNodesBegin(), I_ModelPart.GhostNodesEnd());},
+                py::keep_alive<0, 1>()))
+        .def_property_readonly(
+            "Elements",
+            pybind11::cpp_function(
+                [](CoSimIO::ModelPart& I_ModelPart) {
+                    return py::make_iterator(I_ModelPart.ElementsBegin(), I_ModelPart.ElementsEnd());},
+                py::keep_alive<0, 1>()))
         .def("Clear", &CoSimIO::ModelPart::Clear)
         .def("__str__",   [](const CoSimIO::ModelPart& I_ModelPart)
             { std::stringstream ss; ss << I_ModelPart; return ss.str(); } )
