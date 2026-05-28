@@ -55,7 +55,7 @@ private:
 namespace { // anonymous namespace
 
 template<typename TDataType>
-void AddVectorWithTypeToPython(pybind11::module& m, const std::string& Name)
+void AddVectorWithTypeToPython(pybind11::module_& m, const std::string& Name)
 {
     namespace py = pybind11;
 
@@ -120,7 +120,7 @@ void AddVectorWithTypeToPython(pybind11::module& m, const std::string& Name)
 
 namespace CoSimIO {
 
-void AddCoSimIOVectorToPython(pybind11::module& m)
+void AddCoSimIOVectorToPython(pybind11::module_& m)
 {
     AddVectorWithTypeToPython<int>(m, "Int");
     AddVectorWithTypeToPython<double>(m, "Double");

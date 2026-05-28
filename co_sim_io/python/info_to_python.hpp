@@ -39,7 +39,7 @@ void AddGetSetInterface(pybind11::class_<CoSimIO::Info>& PythonInfo, const std::
 
 namespace CoSimIO {
 
-void AddCoSimIOInfoToPython(pybind11::module& m)
+void AddCoSimIOInfoToPython(pybind11::module_& m)
 {
     namespace py = pybind11;
 

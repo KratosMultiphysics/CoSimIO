@@ -28,7 +28,7 @@
 
 namespace CoSimIO {
 
-void AddCoSimIOModelPartToPython(pybind11::module& m)
+void AddCoSimIOModelPartToPython(pybind11::module_& m)
 {
     namespace py = pybind11;
 
