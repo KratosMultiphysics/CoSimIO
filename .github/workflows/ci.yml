@@ -337,7 +337,7 @@ jobs:
         set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%\bin
 
         @REM show what's on your PYTHONPATH
-        dir %GITHUB_WORKSPACE%/bin
+        dir %GITHUB_WORKSPACE%\bin
 
         cd tests
         rem TODO delete build dir to make sure the linking etc works correctly?
