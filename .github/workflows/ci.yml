@@ -372,6 +372,7 @@ jobs:
 
     - name: Running tests (Python)
       run: |
+        echo "running python tests with $(python3 --version)"
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/libs
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/libs
         cd tests
