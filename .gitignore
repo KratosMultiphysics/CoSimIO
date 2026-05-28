@@ -49,4 +49,5 @@ tests/compiled_config.json
 # Most used editor files
 *.vscode
 *.vs
+.clangd
 CMakeSettings.json
