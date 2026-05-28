@@ -1,5 +1,14 @@
 cmake_minimum_required (VERSION 3.15.0)
+
+if(POLICY CMP0048)
+    # project command manages version
+    cmake_policy(SET CMP0048 NEW)
+endif(POLICY CMP0048)
 project(CoSimIO LANGUAGES CXX C VERSION 3.0.0)
+
+if (NOT DEFINED CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 17)
+endif()
 
 # this has to be specified BEFORE including CTest!
 # suppressions file has to be included in the options, as using "MEMORYCHECK_SUPPRESSIONS_FILE" doesn't work on all systems
@@ -76,7 +85,7 @@ if(MSVC)
     endif()
 
 elseif(${CMAKE_COMPILER_IS_GNUCXX})
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c89")
 
     if (CO_SIM_IO_STRICT_COMPILER)
@@ -92,7 +101,7 @@ elseif(${CMAKE_COMPILER_IS_GNUCXX})
     # Note: This command makes sure that this option comes pretty late on the cmdline.
     link_libraries("$<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_GREATER:$<CXX_COMPILER_VERSION>,7.0>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.0>>:-lstdc++fs>")
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c89")
 
     if (CO_SIM_IO_STRICT_COMPILER)
@@ -101,7 +110,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     endif()
 
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c89")
 
     if (CO_SIM_IO_STRICT_COMPILER)
@@ -110,7 +119,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
     endif()
 
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wpedantic")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c89 -Wall -Wpedantic")
 endif()
 
