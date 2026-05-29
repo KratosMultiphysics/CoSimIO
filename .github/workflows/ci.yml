@@ -358,6 +358,7 @@ jobs:
 
     - name: Build CoSimIO
       run: |
+        if [ -f /etc/bashrc ]; then source /etc/bashrc; fi
         cmake -H"." -B"build"               \
           -DCMAKE_BUILD_TYPE="Debug"        \
           -DCO_SIM_IO_BUILD_C=ON            \
@@ -370,11 +371,13 @@ jobs:
 
     - name: Running tests (Ctest)
       run: |
+        if [ -f /etc/bashrc ]; then source /etc/bashrc; fi
         cd build
         ctest  --output-on-failure
 
     - name: Running tests (Python)
       run: |
+        if [ -f /etc/bashrc ]; then source /etc/bashrc; fi
         export PYTHONPATH=${PYTHONPATH}:${GITHUB_WORKSPACE}/install/libs
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/install/libs
         cd tests
