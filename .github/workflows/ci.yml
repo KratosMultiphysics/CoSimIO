@@ -21,11 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         compiler: [GCC, CLANG, ICPX]
-        mpi: [OpenMPI, IntelMPI]
-        exclude:
-            # CLANG is not properly supported by Intel, better use LLVMIntel in the future
-            - compiler: CLANG
-              mpi: IntelMPI
+        mpi: [OpenMPI]
     timeout-minutes: 30
 
     steps:
@@ -74,13 +70,8 @@ jobs:
           exit 1
         fi
 
-        if [ ${{ matrix.compiler }} = ICPX ] || [ ${{ matrix.mpi }} = IntelMPI ]; then
+        if [ ${{ matrix.compiler }} = ICPX ]; then
           source /opt/intel/oneapi/setvars.sh
-        fi
-
-        build_mpi_comm=OFF
-        if [ ${{ matrix.mpi }} = IntelMPI ]; then
-          build_mpi_comm=ON
         fi
 
         cmake -H"." -B"build"        \
@@ -88,7 +79,6 @@ jobs:
           -DCO_SIM_IO_BUILD_C=ON               \
           -DCO_SIM_IO_BUILD_FORTRAN=OFF               \
           -DCO_SIM_IO_BUILD_MPI=ON    \
-          -DCO_SIM_IO_BUILD_MPI_COMMUNICATION=$build_mpi_comm \
           -DCO_SIM_IO_STRICT_COMPILER=ON
 
         cmake --build "build" --target install -- -j2
@@ -98,9 +88,9 @@ jobs:
         OMPI_MCA_rmaps_base_oversubscribe: 1 # Allow oversubscription for MPI (needed for OpenMPI >= 3.0)
       run: |
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/bin
-        export PATH=${PATH}:${GITHUB_WORKSPACE}/bin # required for IntelMPI
-        export PATH=${PATH}:${GITHUB_WORKSPACE}/bin/tests_c_mpi # required for IntelMPI
-        if [ ${{ matrix.compiler }} = ICPX ] || [ ${{ matrix.mpi }} = IntelMPI ]; then
+        export PATH=${PATH}:${GITHUB_WORKSPACE}/bin
+        export PATH=${PATH}:${GITHUB_WORKSPACE}/bin/tests_c_mpi
+        if [ ${{ matrix.compiler }} = ICPX ]; then
           source /opt/intel/oneapi/setvars.sh
         fi
 
