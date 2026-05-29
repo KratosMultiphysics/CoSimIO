@@ -3,6 +3,24 @@ message("Configuring CoSimIO for Python")
 # TODO make this configureable
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../external_libraries/pybind11 dummy)
 
+# Windows has to work in mysterious ways.
+# From Windows' perspective, a shared library is a runtime binary
+# bot not a module, even though it's pretty much a shared library
+# as well.
+function(install_pybind_module target)
+    if (WIN32)
+        install(TARGETS ${target}
+            LIBRARY DESTINATION bin
+            ARCHIVE DESTINATION bin
+            RUNTIME DESTINATION bin)
+    else()
+        install(TARGETS ${target}
+            LIBRARY DESTINATION libs
+            ARCHIVE DESTINATION libs
+            RUNTIME DESTINATION bin)
+    endif()
+endfunction()
+
 pybind11_add_module(PyCoSimIO co_sim_io_python.cpp)
 
 target_link_libraries( PyCoSimIO PRIVATE co_sim_io )
@@ -14,10 +32,7 @@ else()
 endif()
 set(CoSimIOPythonModuleDir "${CMAKE_INSTALL_PREFIX}/${CoSimIOPythonModuleRelativeDir}")
 
-install(TARGETS PyCoSimIO
-        LIBRARY DESTINATION libs
-        ARCHIVE DESTINATION libs
-        RUNTIME DESTINATION bin)
+install_pybind_module(PyCoSimIO)
 set_target_properties(PyCoSimIO PROPERTIES INSTALL_RPATH "$ORIGIN")
 
 set(CoSimIOInitFile "${CoSimIOPythonModuleDir}/__init__.py")
@@ -36,10 +51,7 @@ if (CO_SIM_IO_BUILD_MPI)
 
     target_link_libraries( PyCoSimIOMPI PRIVATE co_sim_io co_sim_io_mpi )
 
-    install(TARGETS PyCoSimIOMPI
-            LIBRARY DESTINATION libs
-            ARCHIVE DESTINATION libs
-            RUNTIME DESTINATION bin)
+    install_pybind_module(PyCoSimIOMPI)
     set_target_properties(PyCoSimIOMPI PROPERTIES INSTALL_RPATH "$ORIGIN")
     file(WRITE "${CoSimIOMPIInitFile}" "from PyCoSimIOMPI import *\n")
 
@@ -48,10 +60,7 @@ if (CO_SIM_IO_BUILD_MPI)
         message("Building the interface to mpi4py MPI communicators")
         pybind11_add_module(PyCoSimIOMPI_mpi4pyInterface mpi4py_interface.cpp)
         target_link_libraries( PyCoSimIOMPI_mpi4pyInterface PRIVATE ${MPI_LIBRARIES} )
-        install(TARGETS PyCoSimIOMPI_mpi4pyInterface
-                LIBRARY DESTINATION libs
-                ARCHIVE DESTINATION libs
-                RUNTIME DESTINATION bin)
+        install_pybind_module(PyCoSimIOMPI_mpi4pyInterface)
         set_target_properties(PyCoSimIOMPI_mpi4pyInterface PROPERTIES INSTALL_RPATH "$ORIGIN")
         file(WRITE "${mpi4pyInterfaceInitFile}" "from PyCoSimIOMPI_mpi4pyInterface import *\n")
     endif()
