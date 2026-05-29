@@ -365,7 +365,7 @@ jobs:
           -DCO_SIM_IO_BUILD_PYTHON=ON       \
           -DCO_SIM_IO_STRICT_COMPILER=ON    \
           -DCMAKE_INSTALL_PREFIX=install    \
-          -DPython_EXECUTABLE=$(which python3.8)
+          -DPython_EXECUTABLE=$(which python3)
 
         cmake --build "build" --target install -- -j2
 
@@ -382,7 +382,7 @@ jobs:
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/install/libs
         cd tests
         # TODO delete build dir to make sure the linking etc works correctly? (Needs to be done after running CTests)
-        python3.8 run_python_tests.py
+        python3 run_python_tests.py
 
 
   Ubuntu-minimum-CMake:
