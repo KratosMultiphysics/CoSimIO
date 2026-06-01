@@ -10,6 +10,7 @@ set_target_properties(co_sim_io_tests PROPERTIES
     CXX_STANDARD 11
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
+    INSTALL_RPATH "$ORIGIN/../libs"
 )
 
 doctest_discover_tests(co_sim_io_tests TEST_PREFIX "cpp_" WORKING_DIRECTORY $<TARGET_FILE_DIR:co_sim_io>)
@@ -23,6 +24,7 @@ if (CO_SIM_IO_BUILD_MPI)
         CXX_STANDARD 11
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO
+        INSTALL_RPATH "$ORIGIN/../libs"
     )
 
     doctest_discover_tests(co_sim_io_mpi_tests TEST_PREFIX "cpp_mpi_" WORKING_DIRECTORY $<TARGET_FILE_DIR:co_sim_io_mpi> TEST_EXECUTOR mpiexec TEST_EXECUTOR_ARGS -np 4)
@@ -44,6 +46,7 @@ function(add_cpp_executable TEST_SOURCE_FILE)
     add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
     target_link_libraries(${TEST_NAME} co_sim_io)
     install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_cpp")
+    set_target_properties(${TEST_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN/../../libs")
 endfunction()
 
 file(GLOB cpp_test_files "integration_tutorials/cpp/*.cpp")
@@ -96,6 +99,7 @@ if (CO_SIM_IO_BUILD_MPI)
         add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
         target_link_libraries(${TEST_NAME} co_sim_io_mpi)
         install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_cpp_mpi")
+        set_target_properties(${TEST_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN/../../libs")
     endfunction()
 
     file(GLOB cpp_mpi_test_files "integration_tutorials/cpp/mpi/*.cpp")
@@ -120,6 +124,7 @@ if(CO_SIM_IO_BUILD_C)
         target_link_libraries(${TEST_NAME} co_sim_io_c)
         add_test(${TEST_NAME} ${TEST_NAME})
         install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_c")
+        set_target_properties(${TEST_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN/../../libs")
     endfunction()
 
     function(add_c_executable TEST_SOURCE_FILE)
@@ -129,6 +134,7 @@ if(CO_SIM_IO_BUILD_C)
         add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
         target_link_libraries(${TEST_NAME} co_sim_io_c)
         install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_c")
+        set_target_properties(${TEST_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN/../../libs")
     endfunction()
 
     file(GLOB c_test_files
@@ -162,6 +168,7 @@ if(CO_SIM_IO_BUILD_C)
             add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
             target_link_libraries(${TEST_NAME} co_sim_io_c_mpi)
             install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_c_mpi")
+            set_target_properties(${TEST_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN/../../libs")
         endfunction()
 
         function(add_c_mpi_test TEST_SOURCE_FILE)
@@ -172,6 +179,7 @@ if(CO_SIM_IO_BUILD_C)
             target_link_libraries(${TEST_NAME} co_sim_io_c_mpi)
             add_test(NAME ${TEST_NAME} COMMAND mpiexec -np 4 ${TEST_NAME})
             install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_c_mpi")
+            set_target_properties(${TEST_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN/../../libs")
         endfunction()
 
         file(GLOB c_mpi_test_files "co_sim_io/c/mpi/*.c")
@@ -208,6 +216,7 @@ if(CO_SIM_IO_BUILD_FORTRAN)
         target_link_libraries(${TEST_NAME} co_sim_io_fortran)
         add_test(${TEST_NAME} ${TEST_NAME})
         install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_fortran")
+        set_target_properties(${TEST_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN/../../libs")
     endfunction()
 
     function(add_fortran_executable TEST_SOURCE_FILE)
@@ -217,6 +226,7 @@ if(CO_SIM_IO_BUILD_FORTRAN)
         add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
         target_link_libraries(${TEST_NAME} co_sim_io_fortran)
         install(TARGETS ${TEST_NAME} DESTINATION "bin/tests_fortran")
+        set_target_properties(${TEST_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN/../../libs")
     endfunction()
 
     file(GLOB fortran_test_files

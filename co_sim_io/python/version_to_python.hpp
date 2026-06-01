@@ -27,7 +27,7 @@
 
 namespace CoSimIO {
 
-void AddCoSimIOVersionToPython(pybind11::module& m)
+void AddCoSimIOVersionToPython(pybind11::module_& m)
 {
     namespace py = pybind11;
 

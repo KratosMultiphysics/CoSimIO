@@ -25,7 +25,7 @@
 
 namespace CoSimIO {
 
-void AddCoSimIOConnectionStatusToPython(pybind11::module& m)
+void AddCoSimIOConnectionStatusToPython(pybind11::module_& m)
 {
     namespace py = pybind11;
 
