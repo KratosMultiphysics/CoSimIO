@@ -58,7 +58,21 @@ if (CO_SIM_IO_BUILD_MPI)
     OPTION ( CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE "Building the interface to mpi4py MPI communicators" OFF )
     if (CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE)
         message("Building the interface to mpi4py MPI communicators")
+        if (Python_EXECUTABLE)
+            set(MPI4PY_PYTHON_EXECUTABLE "${Python_EXECUTABLE}")
+        else()
+            set(MPI4PY_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}")
+        endif()
+        execute_process(
+            COMMAND "${MPI4PY_PYTHON_EXECUTABLE}" -c "import mpi4py; print(mpi4py.get_include())"
+            OUTPUT_VARIABLE MPI4PY_INCLUDE_DIR
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            RESULT_VARIABLE MPI4PY_RESULT)
+        if (NOT MPI4PY_RESULT EQUAL 0 OR NOT EXISTS "${MPI4PY_INCLUDE_DIR}")
+            message(FATAL_ERROR "mpi4py could not be found with \"${MPI4PY_PYTHON_EXECUTABLE}\", it is required for CO_SIM_IO_BUILD_PYTHON_MPI4PY_INTERFACE")
+        endif()
         pybind11_add_module(PyCoSimIOMPI_mpi4pyInterface mpi4py_interface.cpp)
+        target_include_directories( PyCoSimIOMPI_mpi4pyInterface SYSTEM PRIVATE ${MPI4PY_INCLUDE_DIR} )
         target_link_libraries( PyCoSimIOMPI_mpi4pyInterface PRIVATE ${MPI_LIBRARIES} )
         install_pybind_module(PyCoSimIOMPI_mpi4pyInterface)
         set_target_properties(PyCoSimIOMPI_mpi4pyInterface PROPERTIES INSTALL_RPATH "$ORIGIN")
