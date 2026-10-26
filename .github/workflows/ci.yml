@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   Ubuntu-Cpp-C:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: "Ubuntu C++ & C (${{ matrix.compiler }} / ${{ matrix.mpi }})"
     strategy:
       fail-fast: false
@@ -31,10 +31,8 @@ jobs:
       run: |
         # see https://software.intel.com/content/www/us/en/develop/articles/installing-intel-oneapi-toolkits-via-apt.html#pkgtable
         cd /tmp
-        wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
-        sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
-        rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
-        sudo add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
+        wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+        echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
 
         sudo apt-get update
 
@@ -105,7 +103,7 @@ jobs:
 
 
   Ubuntu-Python:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Ubuntu Python ${{ matrix.python-version }} (${{ matrix.compiler }})
     strategy:
       fail-fast: false
@@ -122,10 +120,8 @@ jobs:
       run: |
         # see https://software.intel.com/content/www/us/en/develop/articles/installing-intel-oneapi-toolkits-via-apt.html#pkgtable
         cd /tmp
-        wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
-        sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
-        rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
-        sudo add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
+        wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+        echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
 
         sudo apt-get update
         sudo apt-get install intel-oneapi-compiler-dpcpp-cpp
@@ -235,7 +231,7 @@ jobs:
 
 
   Windows-Cpp-C:
-    runs-on: windows-latest
+    runs-on: windows-2022
     name: Windows C++ & C
     timeout-minutes: 15
 
@@ -275,7 +271,7 @@ jobs:
 
 
   Windows-Python:
-    runs-on: windows-latest
+    runs-on: windows-2022
     name: Windows Python ${{ matrix.python-version }}
     strategy:
       fail-fast: false
